@@ -18,7 +18,9 @@ SPORTS = [
     "soccer_fifa_world_cup",   # FIFA World Cup 2026
     "rugbyleague_nrl",         # NRL
     "basketball_nba",          # NBA
-    "rugbyunion_super_rugby",  # Super Rugby
+    "rugbyunion_super_rugby",  # Rugby
+    "tennis_atp_french_open",  # Tennis ATP
+    "tennis_wta_french_open",  # Tennis WTA
 ]
 
 def fetch_upcoming_odds():

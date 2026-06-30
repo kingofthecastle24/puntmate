@@ -10,7 +10,9 @@ SPORT_LABELS = {
     "soccer_fifa_world_cup": "FIFA World Cup 2026 🌍",
     "rugbyleague_nrl": "NRL 🏉",
     "basketball_nba": "NBA 🏀",
-    "rugbyunion_super_rugby": "Super Rugby 🏉",
+    "rugbyunion_super_rugby": "Rugby 🏉",
+    "tennis_atp_french_open": "Tennis ATP 🎾",
+    "tennis_wta_french_open": "Tennis WTA 🎾",
 }
 
 SYSTEM_PROMPT = """You are PuntMate NZ — a sharp, straight-talking sports betting analyst for New Zealand audiences who bet with TAB NZ.
@@ -50,7 +52,7 @@ Analyse this match and generate a pick. Return this exact JSON:
 }}"""
 
     message = client.messages.create(
-        model="claude-haiku-4-5-20251001",
+        model="claude-sonnet-4-6",
         max_tokens=400,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_prompt}]
