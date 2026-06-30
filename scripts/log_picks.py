@@ -39,9 +39,11 @@ def log_picks():
     run_date = run_data.get('run_date', datetime.now(timezone.utc).strftime('%Y-%m-%d'))
     added = 0
     for pick in picks_to_log:
+        personality = pick.get('personality', 'punter')
         entry = {
-            "id": f"{run_date}_{pick['sport_key']}_{pick['home_team'].replace(' ', '_')}",
+            "id": f"{run_date}_{pick['sport_key']}_{pick['home_team'].replace(' ', '_')}_{personality}",
             "date": run_date,
+            "personality": personality,
             "sport_key": pick['sport_key'],
             "sport": pick['sport'],
             "match": pick['match'],

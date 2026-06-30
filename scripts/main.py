@@ -2,7 +2,7 @@
 main.py — PuntMate NZ daily picks pipeline
 Runs via GitHub Actions on schedule
 
-Flow: Fetch odds → Generate picks via Claude → Post to Telegram → Save latest_run.json
+Flow: Fetch odds → Generate picks (3 personalities) → Post to Telegram → Save latest_run.json
 """
 
 import sys
@@ -11,7 +11,7 @@ import json
 from datetime import datetime, timezone
 from fetch_odds import fetch_upcoming_odds
 from generate_pick import generate_picks_for_matches
-from post_telegram import post_daily_header, post_pick, post_no_picks
+from post_telegram import post_daily_header, post_all_picks, post_no_picks
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
@@ -22,7 +22,6 @@ def save_latest_run(matches, picks):
     Write data/latest_run.json with enriched pick data for log_picks.py.
     Merges pick output with raw match data (sport_key, home_team, away_team).
     """
-    # Build a lookup from match string → raw match data
     match_lookup = {m['match']: m for m in matches}
 
     enriched_picks = []
@@ -31,8 +30,8 @@ def save_latest_run(matches, picks):
         enriched_picks.append({
             **pick,
             "sport_key": raw.get('sport', ''),
-            "home_team": raw.get('home_team', ''),
-            "away_team": raw.get('away_team', ''),
+            "home_team": raw.get('home_team', pick.get('home_team', '')),
+            "away_team": raw.get('away_team', pick.get('away_team', '')),
         })
 
     run_data = {
@@ -53,7 +52,7 @@ def run():
     print("=" * 50)
 
     # 1. Fetch odds
-    print("\n[1/3] Fetching upcoming match odds...")
+    print("\n[1/4] Fetching upcoming match odds...")
     matches = fetch_upcoming_odds()
     print(f"Found {len(matches)} matches in next 48hrs")
 
@@ -62,22 +61,21 @@ def run():
         post_no_picks()
         return
 
-    # 2. Generate picks
-    print(f"\n[2/3] Generating picks for {len(matches)} matches...")
+    # 2. Generate picks (3 personalities per match)
+    print(f"\n[2/4] Generating Investor/Punter/Gambler picks for {len(matches)} matches...")
     picks = generate_picks_for_matches(matches)
-    print(f"Generated {len(picks)} picks")
+    print(f"\nGenerated {len(picks)} picks total")
 
     if not picks:
         print("No picks generated — posting no-picks message")
         post_no_picks()
         return
 
-    # 3. Post to Telegram
-    print(f"\n[3/3] Posting {len(picks)} picks to Telegram...")
+    # 3. Post to Telegram grouped by personality
+    match_count = len(matches)
+    print(f"\n[3/4] Posting to Telegram ({match_count} match(es), 3 personality blocks)...")
     post_daily_header(len(picks))
-
-    for pick in picks:
-        post_pick(pick)
+    post_all_picks(picks)
 
     # 4. Save latest run for results tracking
     print("\n[4/4] Saving run data for results tracker...")
@@ -88,11 +86,10 @@ def run():
 
 
 if __name__ == "__main__":
-    # Validate required env vars
     required = ['ANTHROPIC_API_KEY', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHANNEL_ID', 'ODDS_API_KEY']
     missing = [v for v in required if not os.environ.get(v)]
     if missing:
-        print(f"❌ Missing environment variables: {', '.join(missing)}")
+        print(f"Missing environment variables: {', '.join(missing)}")
         sys.exit(1)
 
     run()

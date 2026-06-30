@@ -1,5 +1,6 @@
 """
 post_telegram.py — Posts picks to PuntMate NZ Telegram channel
+Picks are grouped by personality: Investor | Punter | Gambler
 """
 
 import os
@@ -10,74 +11,130 @@ BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
 CHANNEL_ID = os.environ['TELEGRAM_CHANNEL_ID']
 
 CONFIDENCE_BAR = {
-    "High":   "🟢🟢🟢 HIGH",
-    "Medium": "🟡🟡⚪ MEDIUM",
-    "Low":    "🟡⚪⚪ SPECCY",
+    "High":   "🟢🟢🟢",
+    "Medium": "🟡🟡⚪",
+    "Low":    "🟡⚪⚪",
 }
 
+PERSONALITY_CONFIG = {
+    "investor": {
+        "label": "INVESTOR",
+        "emoji": "📊",
+        "tagline": "Low risk. Steady returns. Long game.",
+        "header_emoji": "📊📊📊",
+    },
+    "punter": {
+        "label": "PUNTER",
+        "emoji": "🎯",
+        "tagline": "Back what you know. Trust the form.",
+        "header_emoji": "🎯🎯🎯",
+    },
+    "gambler": {
+        "label": "GAMBLER",
+        "emoji": "🎰",
+        "tagline": "Big odds. Big dreams. No regrets.",
+        "header_emoji": "🎰🎰🎰",
+    },
+}
 
-def post_pick(pick):
-    """Post a single pick to Telegram channel."""
-    conf = CONFIDENCE_BAR.get(pick.get('confidence', 'Medium'), '⚪⚪⚪')
-
-    message = (
-        f"{pick.get('emoji', '✅')} *PUNTMATE PICK*\n"
-        f"━━━━━━━━━━━━━━\n"
-        f"🏆 {pick['sport']}\n"
-        f"⚔️ {pick['match']}\n\n"
-        f"📌 *{pick['pick']}* @ `{pick['odds']}`\n"
-        f"📊 Confidence: {conf}\n\n"
-        f"💬 _{pick['reasoning']}_\n\n"
-        f"━━━━━━━━━━━━━━\n"
-        f"🔗 Free picks daily — share with your mates\n"
-        f"#PuntMateNZ #{pick['sport'].split()[0].replace('🌍','').replace('🏉','').replace('🏀','').strip()}"
-    )
+RESPONSIBLE_LINE = "_All analysis is for entertainment only. Bet responsibly — Problem Gambling Foundation NZ: 0800 664 262_"
 
 
+def _send(text):
+    """Send a message to the Telegram channel."""
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    response = requests.post(url, json={
+    resp = requests.post(url, json={
         "chat_id": CHANNEL_ID,
-        "text": message,
+        "text": text,
         "parse_mode": "Markdown"
     }, timeout=10)
-
-    result = response.json()
-    if result.get('ok'):
-        print(f"  ✅ Posted to Telegram: {pick['match']}")
-    else:
-        print(f"  ❌ Telegram error: {result}")
+    result = resp.json()
+    if not result.get('ok'):
+        print(f"  Telegram error: {result}")
     return result
 
 
 def post_daily_header(pick_count, date_str=None):
-    """Post a header message before the picks."""
+    """Post a header message before the personality picks."""
     if not date_str:
         date_str = datetime.now().strftime("%A %-d %B")
 
-    message = (
+    match_count = pick_count // 3 if pick_count >= 3 else pick_count
+    text = (
         f"🎯 *PUNTMATE DAILY PICKS*\n"
         f"📅 {date_str}\n\n"
-        f"Found {pick_count} pick{'s' if pick_count != 1 else ''} today 👇\n\n"
-        f"_All analysis is for entertainment only. Bet responsibly — Problem Gambling Foundation NZ: 0800 664 262_"
+        f"Three personalities. Three angles. {match_count} match{'es' if match_count != 1 else ''}.\n\n"
+        f"📊 *Investor* — safe, steady, value-first\n"
+        f"🎯 *Punter* — balanced, gut-feel, everyday\n"
+        f"🎰 *Gambler* — bold, long shots, big returns\n\n"
+        f"{RESPONSIBLE_LINE}"
     )
+    _send(text)
 
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, json={
-        "chat_id": CHANNEL_ID,
-        "text": message,
-        "parse_mode": "Markdown"
-    }, timeout=10)
+
+def post_personality_block(personality_key, picks):
+    """Post all picks for one personality as a single Telegram message."""
+    if not picks:
+        return
+
+    cfg = PERSONALITY_CONFIG.get(personality_key, {
+        "label": personality_key.upper(),
+        "emoji": "✅",
+        "tagline": "",
+        "header_emoji": "✅✅✅",
+    })
+
+    lines = [
+        f"{cfg['header_emoji']} *{cfg['label']}*",
+        f"_{cfg['tagline']}_",
+        f"━━━━━━━━━━━━━━",
+    ]
+
+    for pick in picks:
+        conf = CONFIDENCE_BAR.get(pick.get('confidence', 'Medium'), '⚪⚪⚪')
+        lines.append(
+            f"\n{pick.get('emoji', cfg['emoji'])} *{pick['sport']}*\n"
+            f"⚔️ {pick['match']}\n"
+            f"📌 *{pick['pick']}* @ `{pick['odds']}`  {conf}\n"
+            f"💬 _{pick['reasoning']}_"
+        )
+
+    lines.append(f"\n━━━━━━━━━━━━━━")
+    lines.append(f"#PuntMateNZ #{cfg['label']}")
+
+    _send("\n".join(lines))
+    print(f"  ✅ Posted {cfg['label']} block ({len(picks)} pick(s))")
+
+
+def post_all_picks(picks):
+    """
+    Group picks by personality and post one block per personality.
+    Order: Investor → Punter → Gambler
+    """
+    grouped = {"investor": [], "punter": [], "gambler": []}
+    for pick in picks:
+        key = pick.get("personality", "punter")
+        if key in grouped:
+            grouped[key].append(pick)
+
+    for personality_key in ["investor", "punter", "gambler"]:
+        personality_picks = grouped[personality_key]
+        if personality_picks:
+            post_personality_block(personality_key, personality_picks)
 
 
 def post_no_picks():
     """Post a message when no picks are found."""
-    message = (
-        "📭 No standout value picks today — sometimes the best bet is no bet.\n\n"
+    text = (
+        "📭 No standout picks today — sometimes the best bet is no bet.\n\n"
         "Back tomorrow with fresh picks. 🤙\n\n"
         "#PuntMateNZ"
     )
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, json={
-        "chat_id": CHANNEL_ID,
-        "text": message
-    }, timeout=10)
+    _send(text)
+
+
+# Legacy single-pick function (kept for compatibility)
+def post_pick(pick):
+    """Post a single pick. Deprecated — use post_all_picks() instead."""
+    personality_key = pick.get("personality", "punter")
+    post_personality_block(personality_key, [pick])
