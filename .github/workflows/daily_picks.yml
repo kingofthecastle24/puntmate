@@ -13,6 +13,8 @@ jobs:
   post_picks:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repo
@@ -36,6 +38,21 @@ jobs:
         run: |
           cd scripts
           python main.py
+
+      - name: Log picks to ledger
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          cd scripts
+          python log_picks.py
+
+      - name: Commit picks ledger
+        run: |
+          git config user.name "PuntMate Bot"
+          git config user.email "puntmatenz@gmail.com"
+          git add data/picks.json data/latest_run.json
+          git diff --staged --quiet || git commit -m "chore: log picks $(date -u +%Y-%m-%d) [skip ci]"
+          git push
 
       - name: Log run summary
         if: always()

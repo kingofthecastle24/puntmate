@@ -1,0 +1,56 @@
+name: PuntMate Check Results
+
+on:
+  schedule:
+    # 11pm NZT daily (NZT is UTC+12, so 11am UTC)
+    # Runs ~15hrs after morning picks — enough time for most games to finish
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+    # Allow manual trigger for testing
+
+jobs:
+  check_results:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Resolve pending picks
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          cd scripts
+          python check_results.py
+
+      - name: Post results to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: |
+          cd scripts
+          python post_results_telegram.py
+
+      - name: Commit resolved picks
+        run: |
+          git config user.name "PuntMate Bot"
+          git config user.email "puntmatenz@gmail.com"
+          git add data/picks.json
+          git diff --staged --quiet || git commit -m "chore: resolve picks $(date -u +%Y-%m-%d) [skip ci]"
+          git push
+
+      - name: Log run summary
+        if: always()
+        run: echo "Results check completed at $(date -u)"
