@@ -1,0 +1,42 @@
+name: PuntMate Daily Picks
+
+on:
+  schedule:
+    # 8am NZT daily (NZT is UTC+12, so 8pm UTC the day before)
+    - cron: '0 20 * * *'
+    # Extra run at 6pm NZT on Fri/Sat/Sun for weekend evening games
+    - cron: '0 6 * * 5,6,0'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions tab (for testing)
+
+jobs:
+  post_picks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run PuntMate picks pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          cd scripts
+          python main.py
+
+      - name: Log run summary
+        if: always()
+        run: echo "PuntMate run completed at $(date -u)"
