@@ -33,6 +33,7 @@ def post_pick(pick):
         f"#PuntMateNZ #{pick['sport'].split()[0].replace('🌍','').replace('🏉','').replace('🏀','').strip()}"
     )
 
+
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     response = requests.post(url, json={
         "chat_id": CHANNEL_ID,
@@ -57,7 +58,7 @@ def post_daily_header(pick_count, date_str=None):
         f"🎯 *PUNTMATE DAILY PICKS*\n"
         f"📅 {date_str}\n\n"
         f"Found {pick_count} pick{'s' if pick_count != 1 else ''} today 👇\n\n"
-        f"_All analysis is for entertainment. Bet responsibly — TAB NZ problem gambling: 0800 654 655_"
+        f"_All analysis is for entertainment only. Bet responsibly — Problem Gambling Foundation NZ: 0800 664 262_"
     )
 
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
