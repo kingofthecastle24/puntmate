@@ -2,7 +2,7 @@
 main.py — PuntMate NZ daily picks pipeline
 Runs via GitHub Actions on schedule
 
-Flow: Fetch odds → Generate picks (3 personalities) → Post to Telegram → Save latest_run.json
+Flow: Fetch odds → Generate picks (3 personalities) → Post to Telegram + Facebook → Save latest_run.json
 """
 
 import sys
@@ -12,6 +12,15 @@ from datetime import datetime, timezone
 from fetch_odds import fetch_upcoming_odds
 from generate_pick import generate_picks_for_matches
 from post_telegram import post_daily_header, post_all_picks, post_no_picks
+
+# Facebook posting is optional — only runs if secrets are set
+FB_ENABLED = bool(os.environ.get('FACEBOOK_PAGE_TOKEN') and os.environ.get('FACEBOOK_PAGE_ID'))
+if FB_ENABLED:
+    from post_facebook import (
+        post_daily_header as fb_post_header,
+        post_all_picks as fb_post_picks,
+        post_no_picks as fb_post_no_picks,
+    )
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
@@ -71,11 +80,20 @@ def run():
         post_no_picks()
         return
 
-    # 3. Post to Telegram grouped by personality
+    # 3. Post to Telegram + Facebook grouped by personality
     match_count = len(matches)
-    print(f"\n[3/4] Posting to Telegram ({match_count} match(es), 3 personality blocks)...")
+    print(f"\n[3/4] Posting picks ({match_count} match(es), 3 personality blocks)...")
+
+    print("  → Telegram")
     post_daily_header(len(picks))
     post_all_picks(picks)
+
+    if FB_ENABLED:
+        print("  → Facebook")
+        fb_post_header(len(picks))
+        fb_post_picks(picks)
+    else:
+        print("  → Facebook (skipped — FACEBOOK_PAGE_TOKEN not set)")
 
     # 4. Save latest run for results tracking
     print("\n[4/4] Saving run data for results tracker...")
