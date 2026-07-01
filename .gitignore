@@ -1,0 +1,22 @@
+# Fonts (auto-downloaded at runtime)
+.fonts/
+
+# Generated card images
+data/cards/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Environment
+.env
+*.env
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
