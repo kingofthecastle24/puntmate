@@ -9,9 +9,10 @@ import sys
 import os
 import json
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from fetch_odds import fetch_upcoming_odds
 from generate_pick import generate_picks_for_matches
-from post_telegram import post_daily_header, post_all_picks, post_no_picks
+from post_telegram import post_daily_header, post_all_picks, post_no_picks, send_picks_card
 
 # Facebook posting is optional — only runs if secrets are set
 FB_ENABLED = bool(os.environ.get('FACEBOOK_PAGE_TOKEN') and os.environ.get('FACEBOOK_PAGE_ID'))
@@ -101,12 +102,28 @@ def run():
     else:
         print("  → Facebook (skipped — FACEBOOK_PAGE_TOKEN not set)")
 
-    # 3b. Generate picks image + post to Instagram
-    if IG_ENABLED:
-        print("  → Instagram (generating picks card...)")
-        image_path = os.path.join(REPO_ROOT, 'data', 'picks_card_today.png')
-        generate_picks_image(picks, output_path=image_path)
-        post_picks_to_instagram(picks, image_path)
+    # 3b. Generate picks card image (used for both Telegram and Instagram)
+    print("\n  → Generating picks card image...")
+    card_dir = os.path.join(REPO_ROOT, 'data', 'cards')
+    try:
+        from generate_picks_image import generate_picks_images
+        card_paths = generate_picks_images(picks, output_dir=card_dir)
+        print(f"  Generated {len(card_paths)} card(s)")
+
+        # Send first card to Telegram
+        if card_paths:
+            match_count = len(set(p.get('match') for p in picks))
+            send_picks_card(card_paths[0],
+                caption=f"🎯 *PUNTMATE NZ* — {datetime.now(timezone.utc).strftime('%-d %B %Y')}\n{match_count} match(es) · Three angles · #PuntMateNZ")
+    except Exception as e:
+        print(f"  ⚠️  Image generation failed: {e}")
+        card_paths = []
+
+    # Post to Instagram if enabled
+    if IG_ENABLED and card_paths:
+        print("  → Instagram")
+        from post_instagram import post_picks_to_instagram
+        post_picks_to_instagram(picks, card_paths[0])
     else:
         print("  → Instagram (skipped — INSTAGRAM_ACCESS_TOKEN not set)")
 

@@ -54,6 +54,26 @@ def _send(text):
     return result
 
 
+def send_picks_card(image_path, caption=None):
+    """Send the picks card image to the Telegram channel."""
+    if not image_path or not os.path.exists(image_path):
+        print(f"  ⚠️  No image to send: {image_path}")
+        return None
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+    with open(image_path, 'rb') as f:
+        resp = requests.post(url, data={
+            "chat_id": CHANNEL_ID,
+            "caption": caption or "PuntMate NZ — Daily Picks",
+            "parse_mode": "Markdown",
+        }, files={"photo": f}, timeout=30)
+    result = resp.json()
+    if not result.get('ok'):
+        print(f"  ⚠️  Telegram photo error: {result.get('description', result)}")
+    else:
+        print(f"  ✅ Sent picks card image to Telegram")
+    return result
+
+
 def post_daily_header(pick_count, date_str=None):
     """Post a header message before the personality picks."""
     if not date_str:
