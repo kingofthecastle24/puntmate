@@ -22,6 +22,12 @@ if FB_ENABLED:
         post_no_picks as fb_post_no_picks,
     )
 
+# Instagram posting is optional — requires image + token
+IG_ENABLED = bool(os.environ.get('INSTAGRAM_ACCESS_TOKEN') and os.environ.get('INSTAGRAM_USER_ID'))
+if IG_ENABLED:
+    from generate_picks_image import generate_picks_image
+    from post_instagram import post_picks_to_instagram
+
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
 
@@ -94,6 +100,15 @@ def run():
         fb_post_picks(picks)
     else:
         print("  → Facebook (skipped — FACEBOOK_PAGE_TOKEN not set)")
+
+    # 3b. Generate picks image + post to Instagram
+    if IG_ENABLED:
+        print("  → Instagram (generating picks card...)")
+        image_path = os.path.join(REPO_ROOT, 'data', 'picks_card_today.png')
+        generate_picks_image(picks, output_path=image_path)
+        post_picks_to_instagram(picks, image_path)
+    else:
+        print("  → Instagram (skipped — INSTAGRAM_ACCESS_TOKEN not set)")
 
     # 4. Save latest run for results tracking
     print("\n[4/4] Saving run data for results tracker...")
