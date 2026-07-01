@@ -1,18 +1,20 @@
 """
-post_instagram.py — Posts the daily picks card to Instagram via Graph API.
+post_instagram.py — Posts daily picks to Instagram via Graph API.
+
+Supports two post types:
+  - Single image post (legacy, falls back if carousel fails)
+  - Carousel post (4 slides: intro + one per personality) — preferred
 
 Requirements:
-  - INSTAGRAM_USER_ID  : your Instagram Professional account ID
-  - INSTAGRAM_ACCESS_TOKEN : a long-lived token with instagram_content_publish permission
-  - The picks image must be publicly accessible (we upload to Imgur or use a GitHub raw URL)
+  - INSTAGRAM_USER_ID      : your Instagram Professional account ID
+  - INSTAGRAM_ACCESS_TOKEN : long-lived token with instagram_content_publish permission
+  - IMGUR_CLIENT_ID        : free Imgur API key for image hosting
 
-Flow:
-  1. Upload picks card image to Imgur (free, no auth needed for anonymous upload)
-     OR serve via GitHub raw URL (slower but no extra service)
-  2. Create an Instagram media container
-  3. Publish the container
-
-Note: Instagram does not allow text-only posts — an image is always required.
+Carousel flow:
+  1. Upload each slide to Imgur
+  2. Create a media container per slide (IMAGE type, is_carousel_item=true)
+  3. Create a CAROUSEL container referencing all slide containers
+  4. Wait 5s then publish the carousel
 """
 
 import os
@@ -117,8 +119,77 @@ def build_caption(picks, date_str=None):
     return "\n".join(lines)
 
 
+def post_carousel_to_instagram(picks, slide_paths):
+    """
+    Post a 4-slide carousel to Instagram.
+    slide_paths: list of local image file paths (intro + 3 personality slides)
+    """
+    if not IG_USER_ID or not IG_TOKEN:
+        print("  ⚠️  IG credentials not set — skipping carousel")
+        return False
+
+    caption = build_caption(picks)
+
+    # 1. Upload each slide to Imgur
+    print(f"  → Uploading {len(slide_paths)} slides to Imgur...")
+    slide_urls = []
+    for path in slide_paths:
+        url = _upload_to_imgur(path)
+        if not url:
+            print(f"  ❌ Imgur upload failed for {path}")
+            return False
+        slide_urls.append(url)
+
+    # 2. Create a media container per slide (carousel items)
+    print("  → Creating carousel item containers...")
+    item_ids = []
+    for i, img_url in enumerate(slide_urls):
+        resp = requests.post(
+            f"{GRAPH_URL}/{IG_USER_ID}/media",
+            data={
+                "image_url": img_url,
+                "is_carousel_item": "true",
+                "access_token": IG_TOKEN,
+            },
+            timeout=20,
+        )
+        result = resp.json()
+        if "error" in result:
+            print(f"  ❌ Carousel item {i+1} error: {result['error']}")
+            return False
+        item_ids.append(result["id"])
+        print(f"    ✅ Slide {i+1} container: {result['id']}")
+
+    # 3. Create the CAROUSEL container
+    print("  → Creating carousel container...")
+    resp = requests.post(
+        f"{GRAPH_URL}/{IG_USER_ID}/media",
+        data={
+            "media_type": "CAROUSEL",
+            "children": ",".join(item_ids),
+            "caption": caption,
+            "access_token": IG_TOKEN,
+        },
+        timeout=20,
+    )
+    result = resp.json()
+    if "error" in result:
+        print(f"  ❌ Carousel container error: {result['error']}")
+        return False
+    carousel_id = result["id"]
+    print(f"  ✅ Carousel container: {carousel_id}")
+
+    # 4. Wait and publish
+    time.sleep(5)
+    print("  → Publishing carousel...")
+    post_id = _publish_ig_container(carousel_id)
+    if post_id:
+        print(f"  ✅ Carousel published: {post_id}")
+    return post_id is not None
+
+
 def post_picks_to_instagram(picks, image_path):
-    """Main function: upload image + post to Instagram."""
+    """Legacy single-image post. Used when carousel slides aren't available."""
     if not IG_USER_ID or not IG_TOKEN:
         print("  ⚠️  INSTAGRAM_USER_ID or INSTAGRAM_ACCESS_TOKEN not set — skipping")
         return False
@@ -140,9 +211,7 @@ def post_picks_to_instagram(picks, image_path):
     if not container_id:
         return False
 
-    # Instagram requires a short wait before publishing
     time.sleep(3)
-
     print("  → Publishing to Instagram...")
     post_id = _publish_ig_container(container_id)
     return post_id is not None

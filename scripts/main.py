@@ -102,28 +102,41 @@ def run():
     else:
         print("  → Facebook (skipped — FACEBOOK_PAGE_TOKEN not set)")
 
-    # 3b. Generate picks card image (used for both Telegram and Instagram)
-    print("\n  → Generating picks card image...")
-    card_dir = os.path.join(REPO_ROOT, 'data', 'cards')
+    # 3b. Generate picks card + carousel slides
+    print("\n  → Generating picks card + carousel...")
+    card_dir       = os.path.join(REPO_ROOT, 'data', 'cards')
+    card_paths     = []
+    carousel_paths = []
+    date_str = datetime.now(timezone.utc).strftime('%-d %B %Y')
+
     try:
         from generate_picks_image import generate_picks_images
-        card_paths = generate_picks_images(picks, output_dir=card_dir)
-        print(f"  Generated {len(card_paths)} card(s)")
-
-        # Send first card to Telegram
-        if card_paths:
-            match_count = len(set(p.get('match') for p in picks))
-            send_picks_card(card_paths[0],
-                caption=f"🎯 *PUNTMATE NZ* — {datetime.now(timezone.utc).strftime('%-d %B %Y')}\n{match_count} match(es) · Three angles · #PuntMateNZ")
+        card_paths = generate_picks_images(picks, output_dir=card_dir, date_str=date_str)
+        print(f"  Summary card: {len(card_paths)} file(s)")
     except Exception as e:
-        print(f"  ⚠️  Image generation failed: {e}")
-        card_paths = []
+        print(f"  ⚠️  Summary card failed: {e}")
 
-    # Post to Instagram if enabled
-    if IG_ENABLED and card_paths:
+    try:
+        from generate_carousel import generate_carousel_slides
+        carousel_paths = generate_carousel_slides(picks, output_dir=card_dir, date_str=date_str)
+        print(f"  Carousel: {len(carousel_paths)} slide(s)")
+    except Exception as e:
+        print(f"  ⚠️  Carousel failed: {e}")
+
+    # Send summary card to Telegram
+    if card_paths:
+        send_picks_card(card_paths[0],
+            caption=f"🎯 *PUNTMATE NZ* — {date_str}\nThree picks · Three personalities · #PuntMateNZ")
+
+    # Post to Instagram (carousel preferred, single card fallback)
+    if IG_ENABLED:
         print("  → Instagram")
-        from post_instagram import post_picks_to_instagram
-        post_picks_to_instagram(picks, card_paths[0])
+        if carousel_paths:
+            from post_instagram import post_carousel_to_instagram
+            post_carousel_to_instagram(picks, carousel_paths)
+        elif card_paths:
+            from post_instagram import post_picks_to_instagram
+            post_picks_to_instagram(picks, card_paths[0])
     else:
         print("  → Instagram (skipped — INSTAGRAM_ACCESS_TOKEN not set)")
 
