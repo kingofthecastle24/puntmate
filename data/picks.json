@@ -286,5 +286,53 @@
     "confidence": "Low",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-01_soccer_fifa_world_cup_Portugal_investor",
+    "date": "2026-07-01",
+    "personality": "investor",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Portugal vs Croatia",
+    "home_team": "Portugal",
+    "away_team": "Croatia",
+    "pick": "Portugal",
+    "market": "Head to Head",
+    "odds": 1.8,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-01_soccer_fifa_world_cup_Portugal_punter",
+    "date": "2026-07-01",
+    "personality": "punter",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Portugal vs Croatia",
+    "home_team": "Portugal",
+    "away_team": "Croatia",
+    "pick": "Portugal",
+    "market": "Head to Head",
+    "odds": 1.8,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-01_soccer_fifa_world_cup_Spain_gambler",
+    "date": "2026-07-01",
+    "personality": "gambler",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Spain vs Austria",
+    "home_team": "Spain",
+    "away_team": "Austria",
+    "pick": "Austria",
+    "market": "Head to Head",
+    "odds": 12.0,
+    "confidence": "Low",
+    "result": "pending",
+    "pnl": null
   }
 ]
