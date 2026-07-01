@@ -12,8 +12,8 @@
     "market": "Head to Head",
     "odds": 2.92,
     "confidence": "Low",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-06-30_soccer_fifa_world_cup_Mexico_punter",
@@ -28,8 +28,8 @@
     "market": "Head to Head",
     "odds": 2.32,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 13.2
   },
   {
     "id": "2026-06-30_soccer_fifa_world_cup_Mexico_gambler",
@@ -44,8 +44,8 @@
     "market": "Head to Head",
     "odds": 4.3,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-06-30_soccer_fifa_world_cup_England_investor",
@@ -60,7 +60,7 @@
     "market": "Handicap",
     "odds": 2.1,
     "confidence": "Medium",
-    "result": "pending",
+    "result": "manual",
     "pnl": null
   },
   {
@@ -76,8 +76,8 @@
     "market": "Head to Head",
     "odds": 5.5,
     "confidence": "Low",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-06-30_soccer_fifa_world_cup_England_gambler",
@@ -92,8 +92,8 @@
     "market": "Head to Head",
     "odds": 16.5,
     "confidence": "Low",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-06-30_soccer_fifa_world_cup_Belgium_investor",
@@ -156,7 +156,7 @@
     "market": "Handicap",
     "odds": 1.95,
     "confidence": "Medium",
-    "result": "pending",
+    "result": "manual",
     "pnl": null
   },
   {
@@ -172,8 +172,8 @@
     "market": "Head to Head",
     "odds": 5.5,
     "confidence": "Low",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_England_gambler",
@@ -188,8 +188,8 @@
     "market": "Head to Head",
     "odds": 16.5,
     "confidence": "Low",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_Belgium_investor",
