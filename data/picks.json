@@ -334,5 +334,53 @@
     "confidence": "Low",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-02_rugbyleague_nrl_Penrith_Panthers_investor",
+    "date": "2026-07-02",
+    "personality": "investor",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "NRL",
+    "match": "Penrith Panthers vs South Sydney Rabbitohs",
+    "home_team": "Penrith Panthers",
+    "away_team": "South Sydney Rabbitohs",
+    "pick": "Penrith Panthers",
+    "market": "Head to Head",
+    "odds": 1.64,
+    "confidence": "High",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-02_soccer_fifa_world_cup_Switzerland_punter",
+    "date": "2026-07-02",
+    "personality": "punter",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Switzerland vs Algeria",
+    "home_team": "Switzerland",
+    "away_team": "Algeria",
+    "pick": "Switzerland",
+    "market": "Head to Head",
+    "odds": 2.04,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-02_soccer_fifa_world_cup_Australia_gambler",
+    "date": "2026-07-02",
+    "personality": "gambler",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Australia vs Egypt",
+    "home_team": "Australia",
+    "away_team": "Egypt",
+    "pick": "Australia",
+    "market": "Head to Head",
+    "odds": 3.55,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
   }
 ]
