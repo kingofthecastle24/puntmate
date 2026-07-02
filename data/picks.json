@@ -108,8 +108,8 @@
     "market": "Head to Head",
     "odds": 2.2,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 12.0
   },
   {
     "id": "2026-06-30_soccer_fifa_world_cup_Belgium_punter",
@@ -124,8 +124,8 @@
     "market": "Head to Head",
     "odds": 2.2,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 12.0
   },
   {
     "id": "2026-06-30_soccer_fifa_world_cup_Belgium_gambler",
@@ -140,8 +140,8 @@
     "market": "Head to Head",
     "odds": 3.95,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_England_investor",
@@ -204,8 +204,8 @@
     "market": "Head to Head",
     "odds": 2.22,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 12.2
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_Belgium_punter",
@@ -220,8 +220,8 @@
     "market": "Head to Head",
     "odds": 2.22,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 12.2
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_Belgium_gambler",
@@ -236,8 +236,8 @@
     "market": "Head to Head",
     "odds": 3.9,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_USA_investor",
@@ -252,8 +252,8 @@
     "market": "Head to Head",
     "odds": 1.42,
     "confidence": "High",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 4.2
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_USA_punter",
@@ -268,7 +268,7 @@
     "market": "Handicap",
     "odds": 2.1,
     "confidence": "Medium",
-    "result": "pending",
+    "result": "manual",
     "pnl": null
   },
   {
@@ -284,8 +284,8 @@
     "market": "Head to Head",
     "odds": 9.6,
     "confidence": "Low",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_Portugal_investor",
