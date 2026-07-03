@@ -300,8 +300,8 @@
     "market": "Head to Head",
     "odds": 1.8,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 8.0
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_Portugal_punter",
@@ -316,8 +316,8 @@
     "market": "Head to Head",
     "odds": 1.8,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 8.0
   },
   {
     "id": "2026-07-01_soccer_fifa_world_cup_Spain_gambler",
@@ -332,8 +332,8 @@
     "market": "Head to Head",
     "odds": 12.0,
     "confidence": "Low",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-02_rugbyleague_nrl_Penrith_Panthers_investor",
@@ -348,8 +348,8 @@
     "market": "Head to Head",
     "odds": 1.64,
     "confidence": "High",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 6.4
   },
   {
     "id": "2026-07-02_soccer_fifa_world_cup_Switzerland_punter",
@@ -364,8 +364,8 @@
     "market": "Head to Head",
     "odds": 2.04,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 10.4
   },
   {
     "id": "2026-07-02_soccer_fifa_world_cup_Australia_gambler",
