@@ -382,5 +382,53 @@
     "confidence": "Medium",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-03_rugbyleague_nrl_Parramatta_Eels_investor",
+    "date": "2026-07-03",
+    "personality": "investor",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "NRL",
+    "match": "Parramatta Eels vs Manly Warringah Sea Eagles",
+    "home_team": "Parramatta Eels",
+    "away_team": "Manly Warringah Sea Eagles",
+    "pick": "Manly Warringah Sea Eagles",
+    "market": "Head to Head",
+    "odds": 1.41,
+    "confidence": "High",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-03_rugbyleague_nrl_St_George_Illawarra_Dragons_punter",
+    "date": "2026-07-03",
+    "personality": "punter",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "NRL",
+    "match": "St George Illawarra Dragons vs Wests Tigers",
+    "home_team": "St George Illawarra Dragons",
+    "away_team": "Wests Tigers",
+    "pick": "St George Illawarra Dragons",
+    "market": "Head to Head",
+    "odds": 2.4,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-03_soccer_fifa_world_cup_Australia_gambler",
+    "date": "2026-07-03",
+    "personality": "gambler",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Australia vs Egypt",
+    "home_team": "Australia",
+    "away_team": "Egypt",
+    "pick": "Australia",
+    "market": "Head to Head",
+    "odds": 3.85,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
   }
 ]
