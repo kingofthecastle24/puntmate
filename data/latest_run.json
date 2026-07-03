@@ -1,6 +1,6 @@
 {
   "run_date": "2026-07-03",
-  "run_ts": "2026-07-03T12:31:02.595906+00:00",
+  "run_ts": "2026-07-03T23:40:03.458743+00:00",
   "picks": [
     {
       "match": "Parramatta Eels vs Manly Warringah Sea Eagles",
@@ -9,7 +9,7 @@
       "pick": "Manly Warringah Sea Eagles",
       "market": "Head to Head",
       "odds": "1.41",
-      "reasoning": "Manly sit at the bottom of the target odds range and represent the most defensible pick across all six matches today. The Sea Eagles have been the stronger NRL outfit this season, and Parramatta at home offers little deterrent given their inconsistent form. The news cycle around both clubs references NRLW content rather than any injury concerns or momentum shifts, so there's no credible evidence to move away from the market favourite here.",
+      "reasoning": "Manly sit at the bottom of the target odds range at 1.41, suggesting the market has strong conviction in their superiority here. The Sea Eagles recent form reference \u2014 including a noted Round 27 outing \u2014 indicates they are active and competitive late in the season, while Parramatta's odds of 3.35 reflect a side the market views as significantly outmatched. With news material pointing to Manly's continued activity and Parramatta showing no meaningful counterweight, this is the cleanest probability-backed selection across today's card.",
       "confidence": "High",
       "emoji": "\ud83d\udcca",
       "home_team": "Parramatta Eels",
@@ -22,8 +22,8 @@
       "personality": "punter",
       "pick": "St George Illawarra Dragons",
       "market": "Head to Head",
-      "odds": "2.40",
-      "reasoning": "Dragons at home against the Tigers at 2.40 \u2014 that's genuine value right there. Wests Tigers are perennial underperformers and I can't back them as favourites in any derby, that just doesn't sit right. Dragons playing on their patch, bit of pride on the line, I'm taking them all day.",
+      "odds": "2.36",
+      "reasoning": "Derby games are always tight but the Dragons at home at 2.36 is decent value against a Tigers side that's been inconsistent all year. Home ground advantage in a local rivalry counts for heaps, and I reckon the Dragons are due a big performance here. Gut says back the red V.",
       "confidence": "Medium",
       "emoji": "\ud83d\udc09",
       "home_team": "St George Illawarra Dragons",
@@ -31,17 +31,17 @@
       "sport_key": "rugbyleague_nrl"
     },
     {
-      "match": "Australia vs Egypt",
+      "match": "Colombia vs Ghana",
       "sport": "FIFA World Cup 2026",
       "personality": "gambler",
-      "pick": "Australia",
+      "pick": "Ghana",
       "market": "Head to Head",
-      "odds": "3.85",
-      "reasoning": "Australia at 3.85 at a World Cup knockout stage? Mate, I'm already booking the celebration. The Socceroos have history of punching above their weight on the biggest stage, and Egypt's odds suggest the market is sleeping on home continental support and Australia's never-say-die attitude. Nearly 4-to-1 for a team that belongs at this level? That's free money in a punter's language.",
-      "confidence": "Medium",
-      "emoji": "\ud83e\udd98",
-      "home_team": "Australia",
-      "away_team": "Egypt",
+      "odds": "9.8",
+      "reasoning": "Ghana at nearly 10-to-1 on the World Cup stage? I'm practically PRINTING money. The Black Stars have a history of shocking South American heavyweights on the biggest stage, and Colombia \u2014 despite the short odds \u2014 are beatable when their attackers go cold. One moment of African magic and we're sipping something expensive.",
+      "confidence": "Low",
+      "emoji": "\ud83d\udca5",
+      "home_team": "Colombia",
+      "away_team": "Ghana",
       "sport_key": "soccer_fifa_world_cup"
     }
   ]

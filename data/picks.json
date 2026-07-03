@@ -430,5 +430,21 @@
     "confidence": "Medium",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-03_soccer_fifa_world_cup_Colombia_gambler",
+    "date": "2026-07-03",
+    "personality": "gambler",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Colombia vs Ghana",
+    "home_team": "Colombia",
+    "away_team": "Ghana",
+    "pick": "Ghana",
+    "market": "Head to Head",
+    "odds": 9.8,
+    "confidence": "Low",
+    "result": "pending",
+    "pnl": null
   }
 ]
