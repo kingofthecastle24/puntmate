@@ -380,8 +380,8 @@
     "market": "Head to Head",
     "odds": 3.55,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-03_rugbyleague_nrl_Parramatta_Eels_investor",
@@ -412,8 +412,8 @@
     "market": "Head to Head",
     "odds": 2.4,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 14.0
   },
   {
     "id": "2026-07-03_soccer_fifa_world_cup_Australia_gambler",
@@ -428,8 +428,8 @@
     "market": "Head to Head",
     "odds": 3.85,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-03_soccer_fifa_world_cup_Colombia_gambler",
@@ -444,8 +444,8 @@
     "market": "Head to Head",
     "odds": 9.8,
     "confidence": "Low",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-04_soccer_fifa_world_cup_Paraguay_investor",
