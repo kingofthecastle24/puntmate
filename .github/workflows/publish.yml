@@ -7,27 +7,27 @@
 # Can also be triggered manually for retries.
 #
 # Posts to:
-#   Instagram — container upload flow:
-#     POST /{ig-user-id}/media          → creates container, returns ID
-#     POST /{ig-user-id}/media_publish  → publishes the container
 #   Facebook — single photo post:
 #     POST /{page-id}/photos (with image URL + caption)
 #     Falls back to POST /{page-id}/feed if no image is available
+#   Instagram — skipped if IG_USER_ID secret is not set
 #
 # Reads data/social_post.json committed by generate.yml. No picks re-generation.
 #
 # Secrets required (add at Settings → Secrets → Actions):
-#   META_PAGE_TOKEN  — never-expiring System User token (covers both IG and FB)
-#   IG_USER_ID       — Instagram Business account user ID
+#   META_PAGE_TOKEN  — Page access token
 #   FB_PAGE_ID       — Facebook Page ID
+#   IG_USER_ID       — (optional) Instagram Business account user ID
 
 name: PuntMate Social — Publish
 
 on:
   workflow_run:
+    # Must match the name: field in generate.yml exactly
     workflows: ["PuntMate Social — Generate & Approve"]
     types: [completed]
   workflow_dispatch:
+    # Manual trigger — use for retries or testing without running the full pipeline
 
 jobs:
   publish:
@@ -35,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
+    # Run only if the triggering generate.yml workflow succeeded (meaning Micah approved),
+    # OR if this was triggered manually via workflow_dispatch.
     if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
@@ -43,11 +45,18 @@ jobs:
       - name: Checkout repo (main)
         uses: actions/checkout@v4
         with:
+          # Check out main explicitly — generate.yml commits data/social_post.json
+          # to main before completing, so HEAD of main is what we want here.
           ref: main
 
       - name: Install requests
         run: pip install requests --quiet
 
+      # ── Instagram ────────────────────────────────────────────────────────────
+      # Meta Content Publishing API requires a two-step flow:
+      #   1. Create container (Meta fetches the image from Imgur and processes it)
+      #   2. Publish the container (makes the post live)
+      # A 5-second wait between steps gives Meta time to process the image.
       - name: Post to Instagram
         env:
           IG_USER_ID:      ${{ secrets.IG_USER_ID }}
@@ -62,8 +71,8 @@ jobs:
           GRAPH      = "https://graph.facebook.com/v19.0"
 
           if not IG_USER_ID or not TOKEN:
-              print("::error::IG_USER_ID or META_PAGE_TOKEN not set — skipping Instagram")
-              sys.exit(1)
+              print("::notice::IG_USER_ID not set — Instagram posting skipped")
+              sys.exit(0)
 
           with open('data/social_post.json') as f:
               post = json.load(f)
@@ -75,6 +84,7 @@ jobs:
               print("::warning::No image URL in social_post.json — skipping Instagram post")
               sys.exit(0)
 
+          # Step 1: Create media container
           print(f"Creating IG media container for image: {image_url}")
           resp = requests.post(
               f"{GRAPH}/{IG_USER_ID}/media",
@@ -92,9 +102,11 @@ jobs:
           container_id = result["id"]
           print(f"✅ Container created: {container_id}")
 
+          # Wait for Meta to fetch and process the image before publishing
           print("Waiting 5s for container to process...")
           time.sleep(5)
 
+          # Step 2: Publish the container
           print("Publishing to Instagram...")
           resp = requests.post(
               f"{GRAPH}/{IG_USER_ID}/media_publish",
@@ -111,6 +123,9 @@ jobs:
           print(f"✅ Posted to Instagram: {result.get('id')}")
           PYEOF
 
+      # ── Facebook ─────────────────────────────────────────────────────────────
+      # If an image URL is available, post to /{page-id}/photos so the image
+      # appears natively in the feed. Falls back to a text-only feed post.
       - name: Post to Facebook
         env:
           FB_PAGE_ID:      ${{ secrets.FB_PAGE_ID }}
@@ -135,6 +150,7 @@ jobs:
           caption   = post.get('caption', '')
 
           if image_url:
+              # Photo post — image rendered natively in the Facebook feed
               print(f"Posting photo to Facebook Page (image: {image_url})...")
               resp = requests.post(
                   f"{GRAPH}/{PAGE_ID}/photos",
@@ -146,6 +162,7 @@ jobs:
                   timeout=30,
               )
           else:
+              # Fallback: text-only feed post if Imgur upload failed earlier
               print("::warning::No image URL — falling back to text-only Facebook post")
               resp = requests.post(
                   f"{GRAPH}/{PAGE_ID}/feed",
