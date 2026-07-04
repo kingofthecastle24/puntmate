@@ -494,5 +494,53 @@
     "confidence": "Medium",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-04_rugbyleague_nrl_Parramatta_Eels_investor",
+    "date": "2026-07-04",
+    "personality": "investor",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "NRL",
+    "match": "Parramatta Eels vs Manly Warringah Sea Eagles",
+    "home_team": "Parramatta Eels",
+    "away_team": "Manly Warringah Sea Eagles",
+    "pick": "Manly Warringah Sea Eagles",
+    "market": "Head to Head",
+    "odds": 1.41,
+    "confidence": "High",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-04_rugbyleague_nrl_Newcastle_Knights_punter",
+    "date": "2026-07-04",
+    "personality": "punter",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "NRL",
+    "match": "Newcastle Knights vs Dolphins",
+    "home_team": "Newcastle Knights",
+    "away_team": "Dolphins",
+    "pick": "Newcastle Knights",
+    "market": "Head to Head",
+    "odds": 2.2,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-04_soccer_fifa_world_cup_Portugal_gambler",
+    "date": "2026-07-04",
+    "personality": "gambler",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Portugal vs Spain",
+    "home_team": "Portugal",
+    "away_team": "Spain",
+    "pick": "Portugal",
+    "market": "Head to Head",
+    "odds": 4.3,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
   }
 ]
