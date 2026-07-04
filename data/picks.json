@@ -446,5 +446,53 @@
     "confidence": "Low",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-04_soccer_fifa_world_cup_Paraguay_investor",
+    "date": "2026-07-04",
+    "personality": "investor",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Paraguay vs France",
+    "home_team": "Paraguay",
+    "away_team": "France",
+    "pick": "France",
+    "market": "Head to Head",
+    "odds": 1.2,
+    "confidence": "High",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-04_soccer_fifa_world_cup_Brazil_punter",
+    "date": "2026-07-04",
+    "personality": "punter",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Brazil vs Norway",
+    "home_team": "Brazil",
+    "away_team": "Norway",
+    "pick": "Brazil",
+    "market": "Head to Head",
+    "odds": 1.86,
+    "confidence": "High",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-04_soccer_fifa_world_cup_Brazil_gambler",
+    "date": "2026-07-04",
+    "personality": "gambler",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Brazil vs Norway",
+    "home_team": "Brazil",
+    "away_team": "Norway",
+    "pick": "Norway",
+    "market": "Head to Head",
+    "odds": 4.9,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
   }
 ]
