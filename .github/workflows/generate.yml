@@ -1,0 +1,184 @@
+# .github/workflows/generate.yml
+#
+# PuntMate NZ — Social: Generate & Approve
+#
+# Flow:
+#   1. Run picks pipeline → posts text picks to Telegram (FB/IG tokens intentionally
+#      not passed here, so main.py skips those channels).
+#   2. Log picks to the ledger (data/picks.json).
+#   3. Upload the generated picks card to Imgur for a public URL.
+#   4. Build the brand caption and save data/social_post.json.
+#   5. Commit everything back to main.
+#   6. Pause at the "production" environment gate — Micah reviews and clicks Approve.
+#   7. On approval, workflow completes → triggers publish.yml automatically.
+#
+# NOTE: If daily_picks.yml is still active it will also post to Telegram on the same
+# schedule. Disable its cron triggers (or the whole file) once this workflow is live
+# to avoid duplicate Telegram posts.
+
+name: PuntMate Social — Generate & Approve
+
+on:
+  schedule:
+    # 8am NZT daily (NZT = UTC+12, so 20:00 UTC the day before)
+    - cron: '0 20 * * *'
+    # 6pm NZT Fri/Sat/Sun for evening game coverage
+    - cron: '0 6 * * 5,6,0'
+  workflow_dispatch:
+    # Allows manual trigger from the Actions tab (useful for testing or re-runs)
+
+jobs:
+  generate:
+    name: Generate picks & prepare social post
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    outputs:
+      image_url: ${{ steps.imgur.outputs.image_url }}
+      post_date: ${{ steps.meta.outputs.post_date }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run picks pipeline (Telegram only)
+        env:
+          ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
+          ODDS_API_KEY:        ${{ secrets.ODDS_API_KEY }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          IMGUR_CLIENT_ID:     ${{ secrets.IMGUR_CLIENT_ID }}
+        run: |
+          cd scripts
+          python main.py
+
+      - name: Log picks to ledger
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          cd scripts
+          python log_picks.py
+
+      - name: Upload picks card to Imgur
+        id: imgur
+        env:
+          IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
+        run: |
+          CARD=$(ls -t data/cards/*.png 2>/dev/null | head -1)
+          if [ -z "$CARD" ]; then
+            echo "::warning::No card image found in data/cards/ — Imgur upload skipped"
+            echo "image_url=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "Uploading: $CARD"
+          RESPONSE=$(curl -s -X POST \
+            -H "Authorization: Client-ID ${IMGUR_CLIENT_ID}" \
+            -F "image=@${CARD}" \
+            https://api.imgur.com/3/image)
+          URL=$(echo "$RESPONSE" | python3 -c "
+          import sys, json
+          d = json.load(sys.stdin)
+          print(d['data']['link'] if d.get('success') else '')
+          " 2>/dev/null)
+          if [ -z "$URL" ]; then
+            echo "::error::Imgur upload failed. Response: $RESPONSE"
+            exit 1
+          fi
+          echo "image_url=$URL" >> "$GITHUB_OUTPUT"
+          echo "✅ Imgur: $URL"
+
+      - name: Build caption & save social_post.json
+        id: meta
+        env:
+          IMAGE_URL: ${{ steps.imgur.outputs.image_url }}
+        run: |
+          python3 - <<'PYEOF'
+          import json, os
+          from datetime import datetime, timezone
+
+          now       = datetime.now(timezone.utc)
+          image_url = os.environ.get('IMAGE_URL', '')
+          display_date = now.strftime('%-d %B %Y').upper()
+
+          try:
+              with open('data/latest_run.json') as f:
+                  run_data = json.load(f)
+              picks = run_data.get('picks', [])
+          except FileNotFoundError:
+              print("::warning::latest_run.json not found — caption will have no picks")
+              picks = []
+
+          grouped = {}
+          for p in picks:
+              key = p.get('personality', '').lower()
+              if key in ('investor', 'punter', 'gambler') and key not in grouped:
+                  grouped[key] = p
+
+          lines = [f"🏆 TODAY'S PICKS — {display_date}", ""]
+          for key, label in [('investor', 'INVESTOR'), ('punter', 'PUNTER'), ('gambler', 'GAMBLER')]:
+              p = grouped.get(key)
+              if p:
+                  lines.append(f"{label}: {p.get('pick', 'TBD')} @ {p.get('odds', 'N/A')}")
+          lines += [
+              "",
+              "Follow for daily value picks 🎯",
+              "@puntmatenz",
+              "",
+              "Problem Gambling Foundation NZ: 0800 664 262",
+          ]
+          caption = "\n".join(lines)
+
+          post_data = {
+              "generated_at": now.isoformat(),
+              "post_date":    now.strftime('%Y-%m-%d'),
+              "image_url":    image_url,
+              "caption":      caption,
+          }
+          os.makedirs('data', exist_ok=True)
+          with open('data/social_post.json', 'w') as f:
+              json.dump(post_data, f, indent=2)
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as gh_out:
+              gh_out.write(f"post_date={now.strftime('%Y-%m-%d')}\n")
+
+          print("── Caption preview ─────────────────────────────────")
+          print(caption)
+          print(f"Image URL: {image_url or '(none)'}")
+          PYEOF
+
+      - name: Commit ledger & social post metadata
+        run: |
+          git config user.name  "PuntMate Bot"
+          git config user.email "puntmatenz@gmail.com"
+          git add data/picks.json data/latest_run.json data/social_post.json
+          git diff --staged --quiet || git commit \
+            -m "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
+          git push
+
+      - name: Summary
+        if: always()
+        run: echo "Generate step finished at $(date -u)"
+
+  approve:
+    name: "⏳ Awaiting approval to publish"
+    needs: generate
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Approved — publish.yml will now run
+        run: |
+          echo "✅ Post approved by reviewer."
+          echo "Post date : ${{ needs.generate.outputs.post_date }}"
+          echo "Image URL : ${{ needs.generate.outputs.image_url }}"
