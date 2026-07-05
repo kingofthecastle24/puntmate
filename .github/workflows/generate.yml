@@ -6,7 +6,7 @@
 #   1. Run picks pipeline → posts text picks to Telegram (FB/IG tokens intentionally
 #      not passed here, so main.py skips those channels).
 #   2. Log picks to the ledger (data/picks.json).
-#   3. Upload the generated picks card to Imgur for a public URL.
+#   3. Upload the generated picks card to catbox.moe for a public URL.
 #   4. Build the brand caption and save data/social_post.json.
 #   5. Commit everything back to main.
 #   6. Pause at the "production" environment gate — Micah reviews and clicks Approve.
@@ -28,12 +28,15 @@ on:
     # Allows manual trigger from the Actions tab (useful for testing or re-runs)
 
 jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 1: Generate picks, card image, and social post metadata
+  # ─────────────────────────────────────────────────────────────────────────────
   generate:
     name: Generate picks & prepare social post
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: write
+      contents: write   # needed to commit data/social_post.json back to main
 
     outputs:
       image_url: ${{ steps.imgur.outputs.image_url }}
@@ -52,17 +55,20 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # Run the picks pipeline. Only Telegram tokens are passed — main.py checks
+      # for FACEBOOK_PAGE_TOKEN and INSTAGRAM_ACCESS_TOKEN and skips those channels
+      # when absent. Image-based FB posting is handled by publish.yml after approval.
       - name: Run picks pipeline (Telegram only)
         env:
           ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
           ODDS_API_KEY:        ${{ secrets.ODDS_API_KEY }}
           TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-          IMGUR_CLIENT_ID:     ${{ secrets.IMGUR_CLIENT_ID }}
         run: |
           cd scripts
           python main.py
 
+      # Update the picks ledger for results tracking
       - name: Log picks to ledger
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
@@ -70,34 +76,38 @@ jobs:
           cd scripts
           python log_picks.py
 
-      - name: Upload picks card to Imgur
+      # Meta's Graph API requires a publicly accessible image URL.
+      # catbox.moe provides free anonymous uploads with no API key required.
+      - name: Upload picks card to catbox.moe
         id: imgur
-        env:
-          IMGUR_CLIENT_ID: ${{ secrets.IMGUR_CLIENT_ID }}
         run: |
+          # Find the most recently generated card image
           CARD=$(ls -t data/cards/*.png 2>/dev/null | head -1)
+
           if [ -z "$CARD" ]; then
-            echo "::warning::No card image found in data/cards/ — Imgur upload skipped"
+            echo "::warning::No card image found in data/cards/ — image upload skipped"
             echo "image_url=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
           echo "Uploading: $CARD"
-          RESPONSE=$(curl -s -X POST \
-            -H "Authorization: Client-ID ${IMGUR_CLIENT_ID}" \
-            -F "image=@${CARD}" \
-            https://api.imgur.com/3/image)
-          URL=$(echo "$RESPONSE" | python3 -c "
-          import sys, json
-          d = json.load(sys.stdin)
-          print(d['data']['link'] if d.get('success') else '')
-          " 2>/dev/null)
-          if [ -z "$URL" ]; then
-            echo "::error::Imgur upload failed. Response: $RESPONSE"
+
+          URL=$(curl -s \
+            -F "reqtype=fileupload" \
+            -F "fileToUpload=@${CARD}" \
+            https://catbox.moe/user/api.php)
+
+          # catbox.moe returns the URL directly (or empty on failure)
+          if [[ "$URL" != https://files.catbox.moe/* ]]; then
+            echo "::error::catbox.moe upload failed. Response: $URL"
             exit 1
           fi
-          echo "image_url=$URL" >> "$GITHUB_OUTPUT"
-          echo "✅ Imgur: $URL"
 
+          echo "image_url=$URL" >> "$GITHUB_OUTPUT"
+          echo "✅ catbox.moe: $URL"
+
+      # Build the brand caption and save all post metadata to data/social_post.json.
+      # publish.yml reads this file after checkout — no need to re-run any picks logic.
       - name: Build caption & save social_post.json
         id: meta
         env:
@@ -109,6 +119,7 @@ jobs:
 
           now       = datetime.now(timezone.utc)
           image_url = os.environ.get('IMAGE_URL', '')
+
           display_date = now.strftime('%-d %B %Y').upper()
 
           try:
@@ -154,9 +165,12 @@ jobs:
 
           print("── Caption preview ─────────────────────────────────")
           print(caption)
+          print("────────────────────────────────────────────────────")
           print(f"Image URL: {image_url or '(none)'}")
           PYEOF
 
+      # Commit picks ledger + social_post.json to main so publish.yml can read
+      # data/social_post.json after a plain checkout.
       - name: Commit ledger & social post metadata
         run: |
           git config user.name  "PuntMate Bot"
@@ -170,11 +184,14 @@ jobs:
         if: always()
         run: echo "Generate step finished at $(date -u)"
 
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 2: Approval gate
+  # ─────────────────────────────────────────────────────────────────────────────
   approve:
     name: "⏳ Awaiting approval to publish"
     needs: generate
     runs-on: ubuntu-latest
-    environment: production
+    environment: production   # ← this is the approval gate
 
     steps:
       - name: Approved — publish.yml will now run
