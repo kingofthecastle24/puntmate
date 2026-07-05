@@ -1,287 +1,221 @@
 """
 generate_picks_image.py — PuntMate NZ daily picks card generator.
-Creates one 1080x1080 PNG showing the day's three best picks (Investor/Punter/Gambler).
+Creates one 1080x1350 portrait PNG showing the day's three picks (Investor/Punter/Gambler).
 
-Design: "Midnight Authority" — dark navy, surgical gold accents, Poppins typography.
-Uses SVG + cairosvg for crisp, professional output. No custom font downloads required
-(uses system Poppins/Lato fonts available in GitHub Actions ubuntu-latest).
+Design: "Neon Oracle" — pure black, surgical neon green accents, editorial data-forward layout.
+Uses Pillow with bundled fonts from ../fonts/ (BigShoulders, InstrumentSans, GeistMono).
 """
 
 import os
-import cairosvg
+import math
 from datetime import datetime
+from PIL import Image, ImageDraw, ImageFont
 
+# ── Font paths ────────────────────────────────────────────────────────────────
+FONTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'fonts')
+LOGO_PATH = os.path.join(os.path.dirname(__file__), '..', 'assets', 'logo.png')
 
-# ── Brand config ────────────────────────────────────────────────────────────────
-GOLD       = "#C9A84B"
-GOLD_LIGHT = "#E0C070"
-WHITE      = "white"
-NAVY_BG    = "#060C18"
-NAVY_MID   = "#0C1A2E"
+def _f(name, size):
+    try:
+        return ImageFont.truetype(os.path.join(FONTS_DIR, name), size)
+    except Exception:
+        return ImageFont.load_default()
+
+# ── Palette ───────────────────────────────────────────────────────────────────
+BLACK    = "#000000"
+CARD_BG  = "#0A0A0A"
+BORDER   = "#1A1A1A"
+WHITE    = "#FFFFFF"
+GREEN    = "#00FF87"
+ORANGE   = "#FF8C00"
+RED      = "#FF3B5C"
+GREY_HI  = "#AAAAAA"
+GREY_MID = "#666666"
+GREY_LO  = "#2E2E2E"
+DIVIDER  = "#1A1A1A"
 
 PERSONA_CONFIG = {
-    "investor": {"label": "INVESTOR", "tagline": "Safe · Steady · Long game",  "color": "#5AB4FF", "row_grad": "row_inv"},
-    "punter":   {"label": "PUNTER",   "tagline": "Form · Value · Gut feel",    "color": "#C9A84B", "row_grad": "row_pun"},
-    "gambler":  {"label": "GAMBLER",  "tagline": "Long shots · Big returns",   "color": "#FF5A6E", "row_grad": "row_gam"},
+    "investor": {"label": "INVESTOR", "sub": "LOWEST RISK",      "color": GREEN},
+    "punter":   {"label": "PUNTER",   "sub": "CALCULATED RISK",  "color": ORANGE},
+    "gambler":  {"label": "GAMBLER",  "sub": "HIGH REWARD",      "color": RED},
 }
 
 SPORT_LABELS = {
-    "soccer_fifa_world_cup":     "WORLD CUP",
-    "rugbyleague_nrl":           "NRL",
-    "basketball_nba":            "NBA",
-    "rugbyunion_super_rugby":    "SUPER RUGBY",
-    "tennis_atp_french_open":    "ATP",
-    "tennis_wta_french_open":    "WTA",
+    "soccer_fifa_world_cup":  "WORLD CUP",
+    "rugbyleague_nrl":        "NRL",
+    "basketball_nba":         "NBA",
+    "rugbyunion_super_rugby": "SUPER RUGBY",
+    "tennis_atp_french_open": "ATP",
+    "tennis_wta_french_open": "WTA",
 }
 
-SPORT_COLORS = {
-    "soccer_fifa_world_cup":     "#1A9E5E",
-    "rugbyleague_nrl":           "#CC3030",
-    "basketball_nba":            "#C85520",
-    "rugbyunion_super_rugby":    "#CC3030",
-    "tennis_atp_french_open":    "#B0458A",
-    "tennis_wta_french_open":    "#B0458A",
-}
-
-CONF_COLORS = {
-    "High":   ["#4CAF50", "#4CAF50", "#4CAF50"],
-    "Medium": ["#FFC107", "#FFC107", "#1C2E48"],
-    "Low":    ["#FF5722", "#1C2E48", "#1C2E48"],
-    "HIGH":   ["#4CAF50", "#4CAF50", "#4CAF50"],
-    "MEDIUM": ["#FFC107", "#FFC107", "#1C2E48"],
-    "LOW":    ["#FF5722", "#1C2E48", "#1C2E48"],
-}
+CONF_MAP = {"High": 4, "HIGH": 4, "Medium": 3, "MEDIUM": 3, "Low": 2, "LOW": 2}
 
 
-def _esc(s):
-    return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+def _rrect(draw, box, r, fill, outline=None, width=1):
+    draw.rounded_rectangle(box, radius=r, fill=fill, outline=outline, width=width)
 
 
-def _wrap(text, max_chars):
-    words = text.split()
-    lines, cur = [], ""
-    for w in words:
-        test = (cur + " " + w).strip()
-        if len(test) <= max_chars:
-            cur = test
-        else:
-            if cur:
-                lines.append(cur)
-            cur = w
-    if cur:
-        lines.append(cur)
-    return lines
+def _dots(draw, x, y, filled, total=5, size=7, gap=5, color_on=GREEN):
+    for i in range(total):
+        cx = x + i * (size + gap)
+        c = color_on if i < filled else GREY_LO
+        draw.ellipse([cx, y, cx + size, y + size], fill=c)
 
 
-def _build_svg(picks, date_str):
-    W, H   = 1080, 1080
-    MARGIN = 48
-    INNER  = W - MARGIN * 2  # 984
+def _pill(draw, x, y, text, font, fg, bg, pad_x=9, pad_y=3):
+    tw = draw.textlength(text, font=font)
+    draw.rounded_rectangle([x, y, x + tw + pad_x * 2, y + 18], radius=4, fill=bg)
+    draw.text((x + pad_x, y + pad_y), text, fill=fg, font=font)
+    return x + tw + pad_x * 2 + 8
 
-    # Column layout
-    COL_LEFT    = 200
-    GAP         = 16
-    SEP_W       = 1
-    COL_PICK    = 240
-    SEP1_X      = MARGIN + COL_LEFT + GAP
-    SEP2_X      = SEP1_X + SEP_W + GAP + COL_PICK + GAP
-    PICK_CX     = SEP1_X + SEP_W + GAP + COL_PICK // 2
-    REASON_X    = SEP2_X + GAP
-    REASON_W    = W - MARGIN - REASON_X
 
-    HEADER_H    = 106
-    FOOTER_H    = 50
-    ROW_TOP     = HEADER_H + 8
-    ROW_AREA    = H - ROW_TOP - FOOTER_H - 8
-    ROW_GAP     = 10
-    ROW_H       = (ROW_AREA - ROW_GAP * 2) // 3
+def _text_right(draw, x, y, text, font, fill):
+    w = draw.textlength(text, font=font)
+    draw.text((x - w, y), text, fill=fill, font=font)
 
-    svg = [f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
-<defs>
-  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="{NAVY_MID}"/>
-    <stop offset="100%" stop-color="{NAVY_BG}"/>
-  </linearGradient>
-  <linearGradient id="row_inv" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%" stop-color="#101E38"/><stop offset="100%" stop-color="#0C1830"/>
-  </linearGradient>
-  <linearGradient id="row_pun" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%" stop-color="#18140A"/><stop offset="100%" stop-color="#110D06"/>
-  </linearGradient>
-  <linearGradient id="row_gam" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%" stop-color="#1C0A10"/><stop offset="100%" stop-color="#12060A"/>
-  </linearGradient>
-  <filter id="gold_glow" x="-20%" y="-20%" width="140%" height="140%">
-    <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
-    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
-</defs>
-<rect width="{W}" height="{H}" fill="url(#bg)"/>
-<rect x="0" y="0" width="{W}" height="5" fill="{GOLD}"/>
 
-<!-- Header -->
-<text x="{MARGIN}" y="68" font-family="Poppins,Lato,DejaVu Sans" font-weight="800" font-size="54"
-  fill="white" letter-spacing="-1">PUNTMATE</text>
-<text x="{MARGIN+320}" y="68" font-family="Poppins,Lato,DejaVu Sans" font-weight="800" font-size="54"
-  fill="{GOLD}" letter-spacing="-1"> NZ</text>
-<text x="{W-MARGIN}" y="46" text-anchor="end" font-family="Poppins,Lato,DejaVu Sans" font-weight="400"
-  font-size="12" fill="#50708A" letter-spacing="2">{_esc(date_str.upper())}</text>
-<text x="{W-MARGIN}" y="66" text-anchor="end" font-family="Poppins,Lato,DejaVu Sans" font-weight="300"
-  font-size="11" fill="#304050" letter-spacing="1">THREE PICKS · ONE DAILY CARD</text>
-<line x1="{MARGIN}" y1="90" x2="{W-MARGIN}" y2="90" stroke="{GOLD}" stroke-width="1.5" opacity="0.5"/>
-''']
+def _build_card(picks, date_str):
+    W, H   = 1080, 1350
+    MARGIN = 40
+    CARD_W = W - MARGIN * 2
 
-    # Group picks by personality
+    # Fonts
+    f_brand   = _f("BigShoulders-Bold.ttf",    48)
+    f_tier    = _f("BigShoulders-Bold.ttf",    13)
+    f_sub     = _f("GeistMono-Regular.ttf",    10)
+    f_matchup = _f("InstrumentSans-Bold.ttf",  17)
+    f_pick    = _f("InstrumentSans-Bold.ttf",  22)
+    f_odds    = _f("InstrumentSans-Bold.ttf",  76)
+    f_odds_at = _f("InstrumentSans-Bold.ttf",  13)
+    f_bet     = _f("GeistMono-Regular.ttf",    11)
+    f_reason  = _f("InstrumentSans-Regular.ttf", 13)
+    f_label   = _f("InstrumentSans-Regular.ttf", 11)
+    f_date    = _f("GeistMono-Regular.ttf",    11)
+    f_league  = _f("GeistMono-Regular.ttf",    10)
+    f_footer  = _f("InstrumentSans-Regular.ttf", 11)
+    f_foot_b  = _f("InstrumentSans-Bold.ttf",  13)
+
+    img  = Image.new("RGB", (W, H), BLACK)
+    draw = ImageDraw.Draw(img)
+
+    # ── Logo ──────────────────────────────────────────────────────────────────
+    logo_size = 64
+    try:
+        logo = Image.open(LOGO_PATH).convert("RGBA").resize((logo_size, logo_size), Image.LANCZOS)
+        img.paste(logo, (MARGIN, 32), logo)
+    except Exception:
+        pass
+
+    lx = MARGIN + logo_size + 14
+    draw.text((lx, 38), "PUNT", fill=WHITE, font=f_brand)
+    pw = draw.textlength("PUNT", font=f_brand)
+    draw.text((lx + pw, 38), "MATE", fill=GREEN, font=f_brand)
+
+    _text_right(draw, W - MARGIN, 38, date_str.upper(), f_date, GREY_MID)
+    _text_right(draw, W - MARGIN, 55, "DAILY PICKS", f_date, GREY_LO)
+
+    pill_x = lx
+    for label in ["NRL", "WORLD CUP", "NBA"]:
+        pill_x = _pill(draw, pill_x, 88, label, f_league, BLACK, GREEN, 8, 3)
+
+    # ── Header divider ────────────────────────────────────────────────────────
+    div_y = 118
+    draw.line([(MARGIN, div_y), (W - MARGIN, div_y)], fill=GREEN, width=1)
+    draw.line([(MARGIN, div_y + 2), (W - MARGIN, div_y + 2)], fill=GREY_LO, width=1)
+
+    # ── Pick cards ────────────────────────────────────────────────────────────
+    CARD_H   = 320
+    CARD_GAP = 16
+    CARD_TOP = div_y + 22
+    ACC_W    = 4
+    R        = 10
+
     grouped = {p.get("personality", "punter"): p for p in picks}
 
     for i, pk in enumerate(["investor", "punter", "gambler"]):
         pick = grouped.get(pk, {})
         cfg  = PERSONA_CONFIG[pk]
-        ry   = ROW_TOP + i * (ROW_H + ROW_GAP)
-        rx   = MARGIN
         col  = cfg["color"]
-        rg   = cfg["row_grad"]
+        cy   = CARD_TOP + i * (CARD_H + CARD_GAP)
+        cx   = MARGIN
+        cx1  = MARGIN + CARD_W
+        cy1  = cy + CARD_H
 
-        # Panel
-        svg.append(f'''
-<rect x="{rx}" y="{ry}" width="{INNER}" height="{ROW_H}" rx="13" fill="url(#{rg})"/>
-<rect x="{rx}" y="{ry+18}" width="5" height="{ROW_H-36}" rx="2.5" fill="{col}"/>
-''')
+        _rrect(draw, [cx, cy, cx1, cy1], R, CARD_BG, outline=BORDER, width=1)
+        draw.rectangle([cx, cy + R, cx + ACC_W, cy1 - R], fill=col)
 
-        lx = rx + 18
+        cont_x = cx + ACC_W + 18
 
-        # Persona label + tagline
-        svg.append(f'''
-<text x="{lx}" y="{ry+34}" font-family="Poppins,Lato,DejaVu Sans" font-weight="800" font-size="16"
-  fill="{col}" letter-spacing="2">{_esc(cfg["label"])}</text>
-<text x="{lx}" y="{ry+52}" font-family="Poppins,Lato,DejaVu Sans" font-weight="300" font-size="10.5"
-  fill="#506080">{_esc(cfg["tagline"])}</text>
-''')
+        # Row 1: tier + sublabel + league pill
+        r1y = cy + 20
+        draw.text((cont_x, r1y), cfg["label"], fill=col, font=f_tier)
+        tw = draw.textlength(cfg["label"], font=f_tier)
+        draw.text((cont_x + tw + 10, r1y + 1), cfg["sub"], fill=GREY_MID, font=f_sub)
 
         if pick:
             sport_key   = pick.get("sport_key", "")
             sport_label = SPORT_LABELS.get(sport_key, pick.get("sport", "SPORT").split()[0].upper())
-            sport_color = SPORT_COLORS.get(sport_key, GOLD)
+            lp_w = draw.textlength(sport_label, font=f_league)
+            lp_x = cx1 - lp_w - 22
+            _rrect(draw, [lp_x - 8, r1y - 2, cx1 - 14, r1y + 16], 4, GREY_LO)
+            draw.text((lp_x, r1y + 1), sport_label, fill=GREY_HI, font=f_league)
 
-            # Sport badge
-            badge_w = min(len(sport_label) * 7 + 20, 110)
-            svg.append(f'''
-<rect x="{lx}" y="{ry+60}" width="{badge_w}" height="19" rx="9.5" fill="{sport_color}"/>
-<text x="{lx + badge_w//2}" y="{ry+73}" text-anchor="middle"
-  font-family="Poppins,Lato,DejaVu Sans" font-weight="700" font-size="9.5"
-  fill="white" letter-spacing="1">{_esc(sport_label)}</text>
-''')
+        # Row 2: matchup
+        r2y = r1y + 28
+        match_str = pick.get("match", "TBD") if pick else "TBD"
+        draw.text((cont_x, r2y), match_str.upper(), fill=GREY_HI, font=f_matchup)
+        draw.line([(cx + ACC_W + 10, r2y + 26), (cx1 - 14, r2y + 26)], fill=DIVIDER, width=1)
 
-            # Match name
-            match_name = pick.get("match", "")
-            words = match_name.split()
-            half = max(1, len(words) // 2)
-            m1, m2 = " ".join(words[:half]), " ".join(words[half:])
-            svg.append(f'''
-<text x="{lx}" y="{ry+96}" font-family="Poppins,Lato,DejaVu Sans" font-weight="600" font-size="12"
-  fill="#A0B8CC">{_esc(m1)}</text>
-<text x="{lx}" y="{ry+112}" font-family="Poppins,Lato,DejaVu Sans" font-weight="600" font-size="12"
-  fill="#A0B8CC">{_esc(m2)}</text>
-''')
+        # Row 3: pick selection + odds
+        r3y = r2y + 36
+        pick_str = pick.get("pick", "—").upper() if pick else "—"
+        draw.text((cont_x, r3y), pick_str, fill=WHITE, font=f_pick)
 
-            # Confidence dots
-            conf = pick.get("confidence", "Medium")
-            dot_cols = CONF_COLORS.get(conf, ["#304050", "#304050", "#304050"])
-            dot_y = ry + ROW_H - 20
-            for di, dc in enumerate(dot_cols):
-                svg.append(f'<circle cx="{lx + di*12}" cy="{dot_y}" r="4" fill="{dc}"/>')
-            svg.append(f'<text x="{lx+42}" y="{dot_y+5}" font-family="Poppins,Lato,DejaVu Sans" '
-                       f'font-size="10" font-weight="500" fill="#304050">{_esc(conf.upper())}</text>')
+        odds_str = str(pick.get("odds", "—")) if pick else "—"
+        odds_w   = draw.textlength(odds_str, font=f_odds)
+        odds_x   = cx1 - 14 - odds_w
+        draw.text((odds_x, r3y - 10), odds_str, fill=GREEN, font=f_odds)
+        draw.text((odds_x - 18, r3y + 2), "@", fill=GREY_MID, font=f_odds_at)
 
-        # Separator 1
-        svg.append(f'<line x1="{SEP1_X}" y1="{ry+16}" x2="{SEP1_X}" y2="{ry+ROW_H-16}" stroke="#1C2E48" stroke-width="1"/>')
+        market = pick.get("market", "").upper() if pick else ""
+        bt_w   = draw.textlength(market, font=f_bet)
+        draw.text((cx1 - 14 - bt_w, r3y + 72), market, fill=GREY_MID, font=f_bet)
 
-        # ── Centre: pick + odds ──────────────────────────────────────────────
-        if pick:
-            pick_str = pick.get("pick", "—").upper()
-            pick_words = pick_str.split()
+        # Divider
+        div2 = r3y + 90
+        draw.line([(cx + ACC_W + 10, div2), (cx1 - 14, div2)], fill=DIVIDER, width=1)
 
-            # Auto-size font
-            pick_font = 36
-            est_w = len(pick_str) * pick_font * 0.55
-            if est_w > COL_PICK - 10:
-                pick_font = max(20, int((COL_PICK - 10) / max(1, len(pick_str) * 0.55)))
+        # Row 4: reasoning
+        r4y = div2 + 14
+        reason = pick.get("reasoning", "") if pick else ""
+        draw.text((cont_x, r4y), reason, fill=GREY_HI, font=f_reason)
 
-            needs_wrap = len(pick_str) * pick_font * 0.55 > COL_PICK - 8 and len(pick_words) > 1
-            if needs_wrap:
-                mid = len(pick_words) // 2
-                pl1, pl2 = " ".join(pick_words[:mid]), " ".join(pick_words[mid:])
-                svg.append(f'''
-<text x="{PICK_CX}" y="{ry+46}" text-anchor="middle"
-  font-family="Poppins,Lato,DejaVu Sans" font-weight="800" font-size="{pick_font}"
-  fill="white">{_esc(pl1)}</text>
-<text x="{PICK_CX}" y="{ry+46+pick_font+4}" text-anchor="middle"
-  font-family="Poppins,Lato,DejaVu Sans" font-weight="800" font-size="{pick_font}"
-  fill="white">{_esc(pl2)}</text>
-''')
-                odds_top = ry + 46 + (pick_font + 4) * 2 + 10
-            else:
-                svg.append(f'''
-<text x="{PICK_CX}" y="{ry+54}" text-anchor="middle"
-  font-family="Poppins,Lato,DejaVu Sans" font-weight="800" font-size="{pick_font}"
-  fill="white">{_esc(pick_str)}</text>
-''')
-                odds_top = ry + 54 + pick_font + 10
+        # Row 5: confidence dots
+        r5y = r4y + 30
+        draw.text((cont_x, r5y + 1), "CONFIDENCE", fill=GREY_MID, font=f_label)
+        cl_w = draw.textlength("CONFIDENCE", font=f_label)
+        filled = CONF_MAP.get(pick.get("confidence", "Medium"), 3) if pick else 3
+        _dots(draw, cont_x + cl_w + 10, r5y + 3, filled, color_on=col)
+        draw.text((cont_x, r5y + 18), "STAKE TO WIN", fill=GREY_LO, font=f_label)
 
-            svg.append(f'<line x1="{SEP1_X+GAP+SEP_W}" y1="{odds_top-4}" x2="{SEP2_X-GAP}" y2="{odds_top-4}" stroke="#1C2E48" stroke-width="1"/>')
+    # ── Footer ────────────────────────────────────────────────────────────────
+    footer_top = CARD_TOP + 3 * (CARD_H + CARD_GAP) + 12
+    draw.line([(MARGIN, footer_top), (W - MARGIN, footer_top)], fill=GREY_LO, width=1)
+    fy = footer_top + 14
+    draw.text((MARGIN, fy), "@PUNTMATENZ", fill=GREEN, font=f_foot_b)
+    hw = draw.textlength("@PUNTMATENZ", font=f_foot_b)
+    draw.text((MARGIN + hw + 14, fy + 1), "·  FREE DAILY PICKS  ·  NRL  ·  RUGBY  ·  NBA", fill=GREY_MID, font=f_footer)
+    draw.text((MARGIN, fy + 20), "Gamble responsibly. Problem Gambling Foundation NZ: 0800 664 262", fill=GREY_LO, font=f_footer)
 
-            odds_str = f"@ {pick.get('odds', '—')}"
-            odds_font = 64
-            svg.append(f'''
-<text x="{PICK_CX}" y="{odds_top + odds_font - 8}" text-anchor="middle"
-  font-family="Poppins,Lato,DejaVu Sans" font-weight="900" font-size="{odds_font}"
-  fill="{GOLD}" filter="url(#gold_glow)">{_esc(odds_str)}</text>
-<text x="{PICK_CX}" y="{ry+ROW_H-18}" text-anchor="middle"
-  font-family="Poppins,Lato,DejaVu Sans" font-weight="400" font-size="10"
-  fill="#2C4060" letter-spacing="2">{_esc(pick.get("market", "").upper())}</text>
-''')
-
-        # Separator 2
-        svg.append(f'<line x1="{SEP2_X}" y1="{ry+16}" x2="{SEP2_X}" y2="{ry+ROW_H-16}" stroke="#1C2E48" stroke-width="1"/>')
-
-        # ── Right: reasoning ─────────────────────────────────────────────────
-        if pick:
-            reasoning = pick.get("reasoning", "")
-            chars = max(20, int(REASON_W / (11.5 * 0.53)))
-            rlines = _wrap(reasoning, chars)
-            line_h = 17
-            total_h = len(rlines[:6]) * line_h
-            start_y = ry + (ROW_H - total_h) // 2 + 14
-
-            for li, rline in enumerate(rlines[:6]):
-                ly = start_y + li * line_h
-                if ly + line_h > ry + ROW_H - 12:
-                    break
-                svg.append(f'''<text x="{REASON_X}" y="{ly}"
-  font-family="Poppins,Lato,DejaVu Sans" font-weight="400" font-size="11.5"
-  fill="#7090B0">{_esc(rline)}</text>''')
-
-    # Footer
-    fy = H - FOOTER_H
-    svg.append(f'''
-<line x1="0" y1="{fy+2}" x2="{W}" y2="{fy+2}" stroke="{GOLD}" stroke-width="1" opacity="0.35"/>
-<text x="{MARGIN}" y="{fy+28}" font-family="Poppins,Lato,DejaVu Sans" font-weight="700"
-  font-size="12" fill="{GOLD}" letter-spacing="1">@PUNTMATENZ</text>
-<text x="{W//2}" y="{fy+28}" text-anchor="middle" font-family="Poppins,Lato,DejaVu Sans"
-  font-weight="300" font-size="10.5" fill="#2C4060">Bet responsibly  ·  Problem Gambling Foundation NZ: 0800 664 262</text>
-<text x="{W-MARGIN}" y="{fy+28}" text-anchor="end" font-family="Poppins,Lato,DejaVu Sans"
-  font-weight="500" font-size="11" fill="#304050">Join on WhatsApp</text>
-<rect x="0" y="{H-5}" width="{W}" height="5" fill="{GOLD}"/>
-</svg>''')
-
-    return "".join(svg)
+    return img
 
 
-# ── Public API ────────────────────────────────────────────────────────────────────
+# ── Public API ────────────────────────────────────────────────────────────────
 
 def generate_picks_images(picks, output_dir=None, date_str=None):
     """
-    Generate one 1080x1080 daily picks card (three personality rows).
+    Generate one 1080x1350 portrait daily picks card.
     Returns list with a single file path.
     """
     if not date_str:
@@ -290,16 +224,10 @@ def generate_picks_images(picks, output_dir=None, date_str=None):
         output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'cards')
     os.makedirs(output_dir, exist_ok=True)
 
-    svg_content = _build_svg(picks, date_str)
+    card = _build_card(picks, date_str)
     fname = f"picks_{datetime.now().strftime('%Y-%m-%d')}.png"
     path  = os.path.join(output_dir, fname)
-
-    cairosvg.svg2png(
-        bytestring=svg_content.encode(),
-        write_to=path,
-        output_width=1080,
-        output_height=1080,
-    )
+    card.save(path, "PNG", dpi=(300, 300))
     print(f"  ✅ Saved picks card: {fname}")
     return [path]
 
@@ -319,17 +247,17 @@ if __name__ == "__main__":
         {"personality": "investor", "sport_key": "soccer_fifa_world_cup",
          "sport": "FIFA World Cup 2026", "match": "England vs DR Congo",
          "pick": "England -1.5", "market": "Handicap", "odds": "1.95",
-         "reasoning": "England are a top-10 FIFA ranked side facing DR Congo with limited World Cup pedigree. Group-stage pressure favours the favourite covering two goals comfortably.",
+         "reasoning": "England are a top-10 FIFA ranked side facing DR Congo with limited World Cup pedigree. Strong value at the handicap.",
          "confidence": "High"},
         {"personality": "punter", "sport_key": "rugbyleague_nrl",
          "sport": "NRL", "match": "Melbourne Storm vs Parramatta Eels",
          "pick": "Melbourne Storm", "market": "Head to Head", "odds": "2.10",
-         "reasoning": "Storm at home is always a banker. Parramatta have been inconsistent and Melbourne's defence is the best in the comp right now. Good value at $2.10.",
+         "reasoning": "Storm at home is always a banker. Parramatta have been inconsistent. Good value at $2.10.",
          "confidence": "High"},
         {"personality": "gambler", "sport_key": "soccer_fifa_world_cup",
          "sport": "FIFA World Cup 2026", "match": "Belgium vs Senegal",
          "pick": "Senegal", "market": "Head to Head", "odds": "4.30",
-         "reasoning": "Belgium's golden generation is rusty and Senegal showed serious hunger in qualifying. Africa's champion with chips on their shoulder — value at 4.30 all day.",
+         "reasoning": "Belgium rusty, Senegal motivated. Africa's champion with chips on their shoulder — value at 4.30 all day.",
          "confidence": "Low"},
     ]
     paths = generate_picks_images(test_picks, output_dir="/tmp/puntmate_test")
