@@ -177,6 +177,24 @@ jobs:
             -m "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
           git push
 
+      - name: "📋 Preview — review this before approving"
+        run: |
+          python3 - <<'PYEOF'
+          import json, os
+          with open('data/social_post.json') as f:
+              post = json.load(f)
+          image_url = post.get('image_url', '')
+          caption   = post.get('caption', '')
+          post_date = post.get('post_date', '')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write(f"## 📸 Post Preview — {post_date}\n\n")
+              if image_url:
+                  out.write(f"![Picks Card]({image_url})\n\n")
+              out.write("### Caption\n")
+              out.write(f"```\n{caption}\n```\n\n")
+              out.write("> ✅ **Approve the gate below** to publish, or cancel to abort.\n")
+          PYEOF
+
       - name: Summary
         if: always()
         run: echo "Generate step finished at $(date -u)"
