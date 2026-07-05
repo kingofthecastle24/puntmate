@@ -396,8 +396,8 @@
     "market": "Head to Head",
     "odds": 1.41,
     "confidence": "High",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-03_rugbyleague_nrl_St_George_Illawarra_Dragons_punter",
@@ -460,8 +460,8 @@
     "market": "Head to Head",
     "odds": 1.2,
     "confidence": "High",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 2.0
   },
   {
     "id": "2026-07-04_soccer_fifa_world_cup_Brazil_punter",
@@ -508,8 +508,8 @@
     "market": "Head to Head",
     "odds": 1.41,
     "confidence": "High",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-04_rugbyleague_nrl_Newcastle_Knights_punter",
@@ -524,8 +524,8 @@
     "market": "Head to Head",
     "odds": 2.2,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 12.0
   },
   {
     "id": "2026-07-04_soccer_fifa_world_cup_Portugal_gambler",
@@ -556,8 +556,8 @@
     "market": "Head to Head",
     "odds": 1.33,
     "confidence": "High",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-05_rugbyleague_nrl_Newcastle_Knights_punter",
@@ -572,8 +572,8 @@
     "market": "Head to Head",
     "odds": 2.1,
     "confidence": "Medium",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 11.0
   },
   {
     "id": "2026-07-05_soccer_fifa_world_cup_Portugal_gambler",
