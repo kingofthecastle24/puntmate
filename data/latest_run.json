@@ -1,6 +1,6 @@
 {
   "run_date": "2026-07-05",
-  "run_ts": "2026-07-05T11:49:11.257623+00:00",
+  "run_ts": "2026-07-05T23:42:06.268762+00:00",
   "picks": [
     {
       "match": "Portugal vs Spain",
@@ -8,10 +8,10 @@
       "personality": "investor",
       "pick": "Spain",
       "market": "Head to Head",
-      "odds": "1.97",
-      "reasoning": "Spain sit comfortably within my target odds range at 1.97 and represent the stronger footballing unit at this stage of the tournament. Their recent international pedigree, superior squad depth, and tactical cohesion under De la Fuente make them the most statistically sound selection across all three matches today. Portugal can be dangerous, but Spain's consistency at major tournaments gives them a clear edge here.",
-      "confidence": "High",
-      "emoji": "\ud83e\uddee",
+      "odds": "1.96",
+      "reasoning": "Spain sit at 1.96 \u2014 the only pick across today's card that lands within my target range. They arrive at this World Cup as one of the most tactically cohesive sides in international football, with a deep squad and strong recent tournament pedigree. Portugal without Ronaldo at his peak carry more uncertainty, and Spain's structured pressing game historically gives them the edge in high-stakes knockout encounters.",
+      "confidence": "Medium",
+      "emoji": "\ud83d\udcca",
       "home_team": "Portugal",
       "away_team": "Spain",
       "sport_key": "soccer_fifa_world_cup"
@@ -20,12 +20,12 @@
       "match": "Mexico vs England",
       "sport": "FIFA World Cup 2026",
       "personality": "punter",
-      "pick": "England",
+      "pick": "Mexico",
       "market": "Head to Head",
-      "odds": "2.52",
-      "reasoning": "England at 2.52 is decent value against a Mexico side that's going to be absolutely pumped on home soil energy \u2014 but at a World Cup knockout stage, England's squad depth and tournament experience has to count for something. Mexico are dangerous but England have the firepower to see this out. Greggs pulling the Mexican sarnie is basically a sign from the universe.",
+      "odds": "3.2",
+      "reasoning": "Mexico at home soil energy in a World Cup knockout game with their fans trying to keep England up all night? That's a proper vibe bet mate. England look shaky at the best of times and a delayed kickoff plus sleep-deprived Lions fans could be the edge. 3.20 is too good to ignore for a team that loves a big occasion.",
       "confidence": "Medium",
-      "emoji": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f",
+      "emoji": "\ud83c\udf2e",
       "home_team": "Mexico",
       "away_team": "England",
       "sport_key": "soccer_fifa_world_cup"
@@ -37,9 +37,9 @@
       "pick": "Portugal",
       "market": "Head to Head",
       "odds": "4.3",
-      "reasoning": "Portugal at 4.3 on home soil in a World Cup knockout scenario? Yes please! Ronaldo's legacy, F\u00e9lix's flair, and the burning desire to finally knock Spain off their high horse \u2014 this is a team playing for national pride and that means dangerous. Spain might be the bookies' darling but Iberian derbies are NEVER comfortable, and I'll take 4.3 all day long for the upset of the tournament.",
+      "reasoning": "Spain at 1.96 is where the sheep are hiding \u2014 I'm running the other way! Portugal on home soil energy at a World Cup knockout stage, with Ronaldo and co. absolutely DESPERATE to make history, and you're getting 4.3?! Iberian derbies are always coin flips and someone's getting 4.3 on one side \u2014 that someone is me, baby!",
       "confidence": "Medium",
-      "emoji": "\ud83d\udc09",
+      "emoji": "\ud83c\udfb0",
       "home_team": "Portugal",
       "away_team": "Spain",
       "sport_key": "soccer_fifa_world_cup"
