@@ -590,5 +590,37 @@
     "confidence": "Medium",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-05_soccer_fifa_world_cup_Portugal_investor",
+    "date": "2026-07-05",
+    "personality": "investor",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Portugal vs Spain",
+    "home_team": "Portugal",
+    "away_team": "Spain",
+    "pick": "Spain",
+    "market": "Head to Head",
+    "odds": 1.97,
+    "confidence": "High",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-05_soccer_fifa_world_cup_Mexico_punter",
+    "date": "2026-07-05",
+    "personality": "punter",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "Mexico vs England",
+    "home_team": "Mexico",
+    "away_team": "England",
+    "pick": "England",
+    "market": "Head to Head",
+    "odds": 2.48,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
   }
 ]
