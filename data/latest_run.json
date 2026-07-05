@@ -1,6 +1,6 @@
 {
-  "run_date": "2026-07-04",
-  "run_ts": "2026-07-04T23:40:04.805117+00:00",
+  "run_date": "2026-07-05",
+  "run_ts": "2026-07-05T03:58:34.939574+00:00",
   "picks": [
     {
       "match": "Parramatta Eels vs Manly Warringah Sea Eagles",
@@ -8,10 +8,10 @@
       "personality": "investor",
       "pick": "Manly Warringah Sea Eagles",
       "market": "Head to Head",
-      "odds": "1.41",
-      "reasoning": "Manly at 1.41 sits squarely in the Investor's preferred range and represents the clearest probability edge on today's card. The Sea Eagles are priced as strong favourites against a Parramatta side that has shown inconsistency, and short odds of this nature typically reflect genuine structural superiority in form and squad depth. With no compelling counter-evidence in the available news to suggest an upset, this is the most disciplined single-pick available.",
+      "odds": "1.33",
+      "reasoning": "Manly at 1.33 sits below my preferred range, but the gap in implied probability here is too significant to ignore \u2014 the Sea Eagles are heavy favourites against a Parramatta side showing no meaningful signals of an upset. The news cycle references NRLW tries stats for Parramatta, not current first-grade form momentum, which tells its own story. When the market prices a team this confidently and the evidence doesn't contradict it, discipline means taking the sure thing over chasing range.",
       "confidence": "High",
-      "emoji": "\ud83d\udcca",
+      "emoji": "\ud83e\udd85",
       "home_team": "Parramatta Eels",
       "away_team": "Manly Warringah Sea Eagles",
       "sport_key": "rugbyleague_nrl"
@@ -22,8 +22,8 @@
       "personality": "punter",
       "pick": "Newcastle Knights",
       "market": "Head to Head",
-      "odds": "2.20",
-      "reasoning": "Knights at home at 2.20 is decent value against the Dolphins \u2014 home ground advantage in NRL is massive and the Knights have been solid at home this season. Dolphins are decent but not unbeatable on the road, and 2.20 gives us that sweet spot of value without being a mug bet. Backing the home side here, feels right.",
+      "odds": "2.10",
+      "reasoning": "Knights at home at 2.10 is the sweet spot right there \u2014 good value for a home side that should have the crowd behind them. Dolphins are decent but backing the home team at over 2s in NRL is usually where the money's at. Gut says Knights get up in this one.",
       "confidence": "Medium",
       "emoji": "\u26a1",
       "home_team": "Newcastle Knights",
@@ -37,7 +37,7 @@
       "pick": "Portugal",
       "market": "Head to Head",
       "odds": "4.3",
-      "reasoning": "Portugal at 4.3 on home soil in a World Cup knockout atmosphere with Ronaldo's legacy breathing down every player's neck? I'm ALL over this. Spain might be the favourites but Iberian derbies are chaos \u2014 Portugal has the firepower, the crowd, and a point to prove against their oldest rivals. 4.3 is free money when the upset lands.",
+      "reasoning": "Portugal at 4.3 in a World Cup knockout clash against Spain? We're talking about Cristiano's nation on home continent soil, a squad that's been quietly terrifying all tournament, and Spain who always find a way to bottle it when it matters most. Iberian derbies are NEVER one-sided \u2014 Portugal have the firepower and the hunger to pull the ultimate upset here, and I'm riding that wave all the way to the bank!",
       "confidence": "Medium",
       "emoji": "\ud83d\udd25",
       "home_team": "Portugal",
