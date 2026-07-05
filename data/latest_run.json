@@ -1,6 +1,6 @@
 {
   "run_date": "2026-07-05",
-  "run_ts": "2026-07-05T04:48:46.868000+00:00",
+  "run_ts": "2026-07-05T11:49:11.257623+00:00",
   "picks": [
     {
       "match": "Portugal vs Spain",
@@ -9,26 +9,26 @@
       "pick": "Spain",
       "market": "Head to Head",
       "odds": "1.97",
-      "reasoning": "Spain are the reigning European champions and have demonstrated consistent, structured football under their current system. Their head-to-head record against Portugal in competitive fixtures is strong, and at 1.97 this sits squarely in the target range with genuine statistical backing. Portugal without a settled tactical identity post-Ronaldo era present a manageable risk here.",
-      "confidence": "Medium",
-      "emoji": "\ud83d\udcca",
+      "reasoning": "Spain sit comfortably within my target odds range at 1.97 and represent the stronger footballing unit at this stage of the tournament. Their recent international pedigree, superior squad depth, and tactical cohesion under De la Fuente make them the most statistically sound selection across all three matches today. Portugal can be dangerous, but Spain's consistency at major tournaments gives them a clear edge here.",
+      "confidence": "High",
+      "emoji": "\ud83e\uddee",
       "home_team": "Portugal",
       "away_team": "Spain",
       "sport_key": "soccer_fifa_world_cup"
     },
     {
-      "match": "Newcastle Knights vs Dolphins",
-      "sport": "NRL",
+      "match": "Mexico vs England",
+      "sport": "FIFA World Cup 2026",
       "personality": "punter",
-      "pick": "Newcastle Knights",
+      "pick": "England",
       "market": "Head to Head",
-      "odds": "2.10",
-      "reasoning": "Knights at home at $2.10 is decent value \u2014 they've been competitive and home ground matters in the NRL. Dolphins are solid but Knights fans will be loud and I reckon they get up here. Good enough price to have a crack.",
+      "odds": "2.52",
+      "reasoning": "England at 2.52 is decent value against a Mexico side that's going to be absolutely pumped on home soil energy \u2014 but at a World Cup knockout stage, England's squad depth and tournament experience has to count for something. Mexico are dangerous but England have the firepower to see this out. Greggs pulling the Mexican sarnie is basically a sign from the universe.",
       "confidence": "Medium",
-      "emoji": "\u26a1",
-      "home_team": "Newcastle Knights",
-      "away_team": "Dolphins",
-      "sport_key": "rugbyleague_nrl"
+      "emoji": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f",
+      "home_team": "Mexico",
+      "away_team": "England",
+      "sport_key": "soccer_fifa_world_cup"
     },
     {
       "match": "Portugal vs Spain",
@@ -36,10 +36,10 @@
       "personality": "gambler",
       "pick": "Portugal",
       "market": "Head to Head",
-      "odds": "4.30",
-      "reasoning": "Portugal at 4.30 in a World Cup knockout clash against Spain? That's free money sitting on the table! Ronaldo's heir generation has been building to exactly this moment, and Iberian derbies are NEVER straightforward \u2014 Spain know it, we know it, and the bookies are sleeping on it. When the upset machine fires in a derby at a World Cup, it pays like a slot jackpot \u2014 I'm loading up!",
+      "odds": "4.3",
+      "reasoning": "Portugal at 4.3 on home soil in a World Cup knockout scenario? Yes please! Ronaldo's legacy, F\u00e9lix's flair, and the burning desire to finally knock Spain off their high horse \u2014 this is a team playing for national pride and that means dangerous. Spain might be the bookies' darling but Iberian derbies are NEVER comfortable, and I'll take 4.3 all day long for the upset of the tournament.",
       "confidence": "Medium",
-      "emoji": "\ud83d\udd25",
+      "emoji": "\ud83d\udc09",
       "home_team": "Portugal",
       "away_team": "Spain",
       "sport_key": "soccer_fifa_world_cup"
