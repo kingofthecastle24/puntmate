@@ -6,9 +6,9 @@
 #   1. Run picks pipeline → posts text picks to Telegram (FB/IG tokens intentionally
 #      not passed here, so main.py skips those channels).
 #   2. Log picks to the ledger (data/picks.json).
-#   3. Upload the generated picks card to catbox.moe for a public URL.
+#   3. Copy the picks card to data/cards/latest.png and commit it.
 #   4. Build the brand caption and save data/social_post.json.
-#   5. Commit everything back to main.
+#   5. Commit everything back to main — image URL is the raw GitHub URL.
 #   6. Pause at the "production" environment gate — Micah reviews and clicks Approve.
 #   7. On approval, workflow completes → triggers publish.yml automatically.
 #
@@ -36,10 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: write   # needed to commit data/social_post.json back to main
+      contents: write   # needed to commit data/ back to main
 
     outputs:
-      image_url: ${{ steps.imgur.outputs.image_url }}
+      image_url: ${{ steps.card.outputs.image_url }}
       post_date: ${{ steps.meta.outputs.post_date }}
 
     steps:
@@ -76,42 +76,33 @@ jobs:
           cd scripts
           python log_picks.py
 
-      # Meta's Graph API requires a publicly accessible image URL.
-      # catbox.moe provides free anonymous uploads with no API key required.
-      - name: Upload picks card to catbox.moe
-        id: imgur
+      # Copy the latest card to a fixed filename so the raw GitHub URL is stable.
+      # Meta's Graph API will fetch this URL directly from GitHub.
+      - name: Prepare card image
+        id: card
         run: |
-          # Find the most recently generated card image
           CARD=$(ls -t data/cards/*.png 2>/dev/null | head -1)
 
           if [ -z "$CARD" ]; then
-            echo "::warning::No card image found in data/cards/ — image upload skipped"
+            echo "::warning::No card image found in data/cards/ — image will be skipped"
             echo "image_url=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          echo "Uploading: $CARD"
+          echo "Using card: $CARD"
+          cp "$CARD" data/cards/latest.png
 
-          URL=$(curl -s \
-            -F "reqtype=fileupload" \
-            -F "fileToUpload=@${CARD}" \
-            https://catbox.moe/user/api.php)
-
-          # catbox.moe returns the URL directly (or empty on failure)
-          if [[ "$URL" != https://files.catbox.moe/* ]]; then
-            echo "::error::catbox.moe upload failed. Response: $URL"
-            exit 1
-          fi
-
-          echo "image_url=$URL" >> "$GITHUB_OUTPUT"
-          echo "✅ catbox.moe: $URL"
+          # Raw GitHub URL — always points to the latest committed card
+          IMAGE_URL="https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/latest.png"
+          echo "image_url=$IMAGE_URL" >> "$GITHUB_OUTPUT"
+          echo "✅ Image URL: $IMAGE_URL"
 
       # Build the brand caption and save all post metadata to data/social_post.json.
       # publish.yml reads this file after checkout — no need to re-run any picks logic.
       - name: Build caption & save social_post.json
         id: meta
         env:
-          IMAGE_URL: ${{ steps.imgur.outputs.image_url }}
+          IMAGE_URL: ${{ steps.card.outputs.image_url }}
         run: |
           python3 - <<'PYEOF'
           import json, os
@@ -120,8 +111,10 @@ jobs:
           now       = datetime.now(timezone.utc)
           image_url = os.environ.get('IMAGE_URL', '')
 
+          # Caption date: "4 JULY 2026"
           display_date = now.strftime('%-d %B %Y').upper()
 
+          # Read picks from the run that just completed
           try:
               with open('data/latest_run.json') as f:
                   run_data = json.load(f)
@@ -130,12 +123,14 @@ jobs:
               print("::warning::latest_run.json not found — caption will have no picks")
               picks = []
 
+          # Take the first pick per personality
           grouped = {}
           for p in picks:
               key = p.get('personality', '').lower()
               if key in ('investor', 'punter', 'gambler') and key not in grouped:
                   grouped[key] = p
 
+          # Brand caption format
           lines = [f"🏆 TODAY'S PICKS — {display_date}", ""]
           for key, label in [('investor', 'INVESTOR'), ('punter', 'PUNTER'), ('gambler', 'GAMBLER')]:
               p = grouped.get(key)
@@ -150,6 +145,7 @@ jobs:
           ]
           caption = "\n".join(lines)
 
+          # Save metadata for publish.yml
           post_data = {
               "generated_at": now.isoformat(),
               "post_date":    now.strftime('%Y-%m-%d'),
@@ -160,6 +156,7 @@ jobs:
           with open('data/social_post.json', 'w') as f:
               json.dump(post_data, f, indent=2)
 
+          # Expose post_date as a job output
           with open(os.environ['GITHUB_OUTPUT'], 'a') as gh_out:
               gh_out.write(f"post_date={now.strftime('%Y-%m-%d')}\n")
 
@@ -169,13 +166,12 @@ jobs:
           print(f"Image URL: {image_url or '(none)'}")
           PYEOF
 
-      # Commit picks ledger + social_post.json to main so publish.yml can read
-      # data/social_post.json after a plain checkout.
-      - name: Commit ledger & social post metadata
+      # Commit picks ledger + social_post.json + latest.png to main
+      - name: Commit ledger, card & social post metadata
         run: |
           git config user.name  "PuntMate Bot"
           git config user.email "puntmatenz@gmail.com"
-          git add data/picks.json data/latest_run.json data/social_post.json
+          git add data/picks.json data/latest_run.json data/social_post.json data/cards/latest.png
           git diff --staged --quiet || git commit \
             -m "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
           git push
@@ -186,6 +182,10 @@ jobs:
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Job 2: Approval gate
+  #
+  # This job blocks until Micah approves in the GitHub Actions UI.
+  # Once approved, the job (and the workflow) completes with success, which
+  # triggers publish.yml via its workflow_run event.
   # ─────────────────────────────────────────────────────────────────────────────
   approve:
     name: "⏳ Awaiting approval to publish"
