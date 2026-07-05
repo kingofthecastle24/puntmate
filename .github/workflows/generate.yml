@@ -81,7 +81,7 @@ jobs:
       - name: Prepare card image
         id: card
         run: |
-          CARD=$(ls -t data/cards/*.png 2>/dev/null | head -1)
+          CARD=$(ls -t data/cards/picks_*.png 2>/dev/null | head -1)
 
           if [ -z "$CARD" ]; then
             echo "::warning::No card image found in data/cards/ — image will be skipped"
