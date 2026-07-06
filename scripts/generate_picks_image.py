@@ -1,264 +1,680 @@
 """
-generate_picks_image.py — PuntMate NZ daily picks card generator.
-Creates one 1080x1350 portrait PNG showing the day's three picks (Investor/Punter/Gambler).
+generate_picks_image.py — PuntMate NZ brand-compliant carousel generator.
 
-Design: "Neon Oracle" — pure black, surgical neon green accents, editorial data-forward layout.
-Uses Pillow with bundled fonts from ../fonts/ (BigShoulders, InstrumentSans, GeistMono).
+Generates 3-slide PNG carousels matching the PuntMate Brand Kit v2:
+  - Betslip Night (dark): everyday default
+  - Matchday Print (cream/red): big games, finals, UFC, World Cup knockouts
+
+Slide structure:
+  Slide 1 — Cover:  sport tag + cover kicker + big headline + "SWIPE →"
+  Slide 2 — The Tip: betslip card (MATCH / SELECTION / DECIMAL ODDS)
+  Slide 3 — The Breakdown: analysis + confidence dots + risk tagline + follow CTA
+
+Fonts required in ../fonts/:
+  Archivo-Black.ttf        (cover headlines, wordmark)
+  SpaceGrotesk-Bold.ttf    (match names, selection)
+  SpaceGrotesk-Medium.ttf  (body text, analysis)
+  SpaceMono-Bold.ttf       (odds, labels, tags)
+  SpaceMono-Regular.ttf    (muted labels)
+
+If fonts are missing, falls back to system defaults gracefully.
 """
 
 import os
 import math
-from datetime import datetime
-from PIL import Image, ImageDraw, ImageFont
+from datetime import datetime, timezone
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
-# ── Font paths ────────────────────────────────────────────────────────────────
 FONTS_DIR = os.path.join(os.path.dirname(__file__), '..', 'fonts')
-LOGO_PATH = os.path.join(os.path.dirname(__file__), '..', 'assets', 'logo.png')
+ASSETS_DIR = os.path.join(os.path.dirname(__file__), '..', 'assets')
+
+W, H = 1080, 1350  # 4:5 portrait (brand spec)
+
+
+# ── Font loader ───────────────────────────────────────────────────────────────
 
 def _f(name, size):
-    try:
-        return ImageFont.truetype(os.path.join(FONTS_DIR, name), size)
-    except Exception:
-        return ImageFont.load_default()
+    """Load a font by filename; gracefully falls back to system fonts or default."""
+    path = os.path.join(FONTS_DIR, name)
+    if os.path.exists(path):
+        try:
+            return ImageFont.truetype(path, size)
+        except Exception:
+            pass
+    # Fallback chain: DejaVu Sans → Pillow default
+    fallbacks = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+    ]
+    for fb in fallbacks:
+        if os.path.exists(fb):
+            try:
+                return ImageFont.truetype(fb, size)
+            except Exception:
+                pass
+    return ImageFont.load_default()
 
-# ── Palette ───────────────────────────────────────────────────────────────────
-BLACK    = "#000000"
-CARD_BG  = "#0A0A0A"
-BORDER   = "#1A1A1A"
-WHITE    = "#FFFFFF"
-GREEN    = "#00FF87"
-ORANGE   = "#FF8C00"
-RED      = "#FF3B5C"
-GREY_HI  = "#AAAAAA"
-GREY_MID = "#666666"
-GREY_LO  = "#2E2E2E"
-DIVIDER  = "#1A1A1A"
 
-PERSONA_CONFIG = {
-    "investor": {"label": "INVESTOR", "sub": "LOWEST RISK",      "color": GREEN},
-    "punter":   {"label": "PUNTER",   "sub": "CALCULATED RISK",  "color": ORANGE},
-    "gambler":  {"label": "GAMBLER",  "sub": "HIGH REWARD",      "color": RED},
+# ── Colour palettes ───────────────────────────────────────────────────────────
+
+# Betslip Night accents — rotate each post
+NIGHT_ACCENTS = {
+    "green": {"accent": "#35E07E", "accent_dim": "#1A5C38", "glow": "#35E07E66"},
+    "blue":  {"accent": "#3DB2FF", "accent_dim": "#1A3D5C", "glow": "#3DB2FF66"},
+    "amber": {"accent": "#FFC145", "accent_dim": "#5C4200", "glow": "#FFC14566"},
+    "pink":  {"accent": "#FF4FA3", "accent_dim": "#5C1A3D", "glow": "#FF4FA366"},
 }
 
-SPORT_LABELS = {
-    "soccer_fifa_world_cup":  "WORLD CUP",
-    "rugbyleague_nrl":        "NRL",
-    "basketball_nba":         "NBA",
-    "rugbyunion_super_rugby": "SUPER RUGBY",
-    "tennis_atp_french_open": "ATP",
-    "tennis_wta_french_open": "WTA",
+# Fixed night palette
+NIGHT = {
+    "bg":      "#0B0F0D",
+    "surface": "#111815",
+    "text":    "#EAF7EF",
+    "muted":   "#6B7A72",
+    "dimmer":  "#3A4A40",
 }
 
-CONF_MAP = {"High": 4, "HIGH": 4, "Medium": 3, "MEDIUM": 3, "Low": 2, "LOW": 2}
+# Matchday Print palette (fixed — no rotation)
+PRINT = {
+    "bg":      "#F4EEE2",
+    "ink":     "#16130F",
+    "red":     "#E8402A",
+    "yellow":  "#FFD400",
+    "muted":   "#8C8070",
+}
 
 
-def _rrect(draw, box, r, fill, outline=None, width=1):
+# ── Cover theme text map ──────────────────────────────────────────────────────
+
+COVER_HEADLINES = {
+    "Tip of the Week":    ("TIP OF",   "THE",    "WEEK."),
+    "Value Alert":        ("VALUE",    "ALERT.", ""),
+    "Daily Pick":         ("DAILY",    "PICK.",  ""),
+    "Banker of the Day":  ("BANKER",   "OF",     "THE DAY."),
+    "Multi Monday":       ("MULTI",    "MONDAY.",""),
+}
+
+
+# ── Utility drawing helpers ───────────────────────────────────────────────────
+
+def _rrect(draw, box, r, fill=None, outline=None, width=1):
     draw.rounded_rectangle(box, radius=r, fill=fill, outline=outline, width=width)
 
 
-def _dots(draw, x, y, filled, total=5, size=7, gap=5, color_on=GREEN):
+def _text_center(draw, text, y, font, fill, width=W):
+    bbox = draw.textbbox((0, 0), text, font=font)
+    tw = bbox[2] - bbox[0]
+    draw.text(((width - tw) // 2, y), text, font=font, fill=fill)
+
+
+def _draw_grid(draw, color=(255, 255, 255, 7), cell=60):
+    """Draw the subtle 60×60 grid used on Cover and Breakdown slides."""
+    for x in range(0, W, cell):
+        draw.line([(x, 0), (x, H)], fill=color, width=1)
+    for y in range(0, H, cell):
+        draw.line([(0, y), (W, y)], fill=color, width=1)
+
+
+def _draw_value_arrow(draw, cx, cy, size, color):
+    """Draw the PuntMate value-arrow logo mark (rising trend line + arrowhead)."""
+    s = size / 120
+    pts = [
+        (int(cx + (22 - 60) * s), int(cy + (84 - 60) * s)),
+        (int(cx + (54 - 60) * s), int(cy + (52 - 60) * s)),
+        (int(cx + (72 - 60) * s), int(cy + (70 - 60) * s)),
+        (int(cx + (100 - 60) * s), int(cy + (30 - 60) * s)),
+    ]
+    draw.line(pts, fill=color, width=max(2, int(17 * s)), joint="curve")
+    # Arrowhead lines
+    tip = pts[-1]
+    draw.line([tip, (int(cx + (74 - 60) * s), int(cy + (30 - 60) * s))], fill=color, width=max(2, int(17 * s)))
+    draw.line([tip, (int(cx + (100 - 60) * s), int(cy + (56 - 60) * s))], fill=color, width=max(2, int(17 * s)))
+
+
+def _draw_confidence_dots(draw, cx, y, value, total=5, accent="#35E07E"):
+    """Draw confidence meter as filled/empty dots."""
+    size = 20
+    gap = 10
+    total_w = total * size + (total - 1) * gap
+    x = cx - total_w // 2
     for i in range(total):
-        cx = x + i * (size + gap)
-        c = color_on if i < filled else GREY_LO
-        draw.ellipse([cx, y, cx + size, y + size], fill=c)
+        fill = accent if i < value else NIGHT["dimmer"]
+        draw.ellipse([x, y, x + size, y + size], fill=fill)
+        x += size + gap
 
 
-def _pill(draw, x, y, text, font, fg, bg, pad_x=9, pad_y=3):
-    tw = draw.textlength(text, font=font)
-    draw.rounded_rectangle([x, y, x + tw + pad_x * 2, y + 18], radius=4, fill=bg)
-    draw.text((x + pad_x, y + pad_y), text, fill=fg, font=font)
-    return x + tw + pad_x * 2 + 8
+def _wordmark(draw, x, y, size, accent):
+    """Draw PUNTMATE wordmark: PUNT (white) + MATE (accent)."""
+    f = _f("Archivo-Black.ttf", size)
+    draw.text((x, y), "PUNT", font=f, fill="#EAF7EF")
+    bbox = draw.textbbox((x, y), "PUNT", font=f)
+    draw.text((bbox[2], y), "MATE", font=f, fill=accent)
 
 
-def _text_right(draw, x, y, text, font, fill):
-    w = draw.textlength(text, font=font)
-    draw.text((x - w, y), text, fill=fill, font=font)
+# ── Slide generators — Betslip Night ─────────────────────────────────────────
+
+def _night_slide1_cover(pick):
+    """Betslip Night — Cover slide with grid, big headline, sport tag."""
+    palette = NIGHT_ACCENTS.get(pick.get("palette", "green"), NIGHT_ACCENTS["green"])
+    accent = palette["accent"]
+    accent_dim = palette["accent_dim"]
+
+    img = Image.new("RGB", (W, H), NIGHT["bg"])
+    draw = ImageDraw.Draw(img)
+    _draw_grid(draw)
+
+    pad = 88
+
+    # Top bar — icon + wordmark + sport tag
+    icon_cx, icon_cy = pad + 32, pad + 32
+    draw.ellipse(
+        [icon_cx - 32, icon_cy - 32, icon_cx + 32, icon_cy + 32],
+        fill=NIGHT["surface"], outline=accent_dim, width=2
+    )
+    _draw_value_arrow(draw, icon_cx, icon_cy, 40, accent)
+
+    _wordmark(draw, icon_cx + 50, icon_cy - 14, 28, accent)
+
+    # Sport tag pill
+    sport = pick.get("sport_label", "SPORT")
+    tag_f = _f("SpaceMono-Bold.ttf", 24)
+    tag_bbox = draw.textbbox((0, 0), sport, font=tag_f)
+    tag_w = tag_bbox[2] + 40
+    tag_x = W - pad - tag_w
+    _rrect(draw, [tag_x, icon_cy - 22, tag_x + tag_w, icon_cy + 22], r=999, outline=accent, width=2)
+    draw.text((tag_x + 20, icon_cy - 16), sport, font=tag_f, fill=accent)
+
+    # Cover kicker
+    theme = pick.get("coverTheme", "Daily Pick")
+    kicker_f = _f("SpaceMono-Bold.ttf", 26)
+    kicker_y = pad + 120
+    draw.text((pad, kicker_y), f"// {theme.upper()}", font=kicker_f, fill=accent)
+
+    # Giant headline
+    lines = COVER_HEADLINES.get(theme, ("BEST", "VALUE", "BET."))
+    headline_f = _f("Archivo-Black.ttf", 172)
+    line_h = 155
+    hy = kicker_y + 70
+    for i, line in enumerate(lines):
+        if not line:
+            continue
+        col = accent if i == 1 else "#EAF7EF"
+        draw.text((pad, hy), line, font=headline_f, fill=col)
+        hy += line_h
+
+    # Subline
+    sub_f = _f("SpaceGrotesk-Medium.ttf", 34)
+    sub_y = H - pad - 160
+    draw.text((pad, sub_y), "One selection. One slide. Locked in below.", font=sub_f, fill=NIGHT["muted"])
+
+    # SWIPE →
+    swipe_f = _f("SpaceMono-Bold.ttf", 26)
+    swipe_y = sub_y + 60
+    draw.text((pad, swipe_y), "SWIPE  →", font=swipe_f, fill=accent)
+
+    # Bottom rule
+    draw.line([(pad, H - pad - 50), (W - pad, H - pad - 50)], fill=NIGHT["dimmer"], width=1)
+
+    # Handle
+    handle_f = _f("SpaceGrotesk-Medium.ttf", 24)
+    draw.text((pad, H - pad - 38), "@puntmatenz", font=handle_f, fill="#EAF7EF")
+
+    return img
 
 
-def _build_card(picks, date_str):
-    W, H   = 1080, 1350
-    MARGIN = 40
-    CARD_W = W - MARGIN * 2
+def _night_slide2_tip(pick):
+    """Betslip Night — The Tip slide: betslip card."""
+    palette = NIGHT_ACCENTS.get(pick.get("palette", "green"), NIGHT_ACCENTS["green"])
+    accent = palette["accent"]
+    accent_dim = palette["accent_dim"]
 
-    # Fonts
-    f_brand   = _f("BigShoulders-Bold.ttf",    48)
-    f_tier    = _f("BigShoulders-Bold.ttf",    13)
-    f_sub     = _f("GeistMono-Regular.ttf",    10)
-    f_matchup = _f("InstrumentSans-Bold.ttf",  17)
-    f_pick    = _f("InstrumentSans-Bold.ttf",  22)
-    f_odds    = _f("InstrumentSans-Bold.ttf",  76)
-    f_odds_at = _f("InstrumentSans-Bold.ttf",  13)
-    f_bet     = _f("GeistMono-Regular.ttf",    11)
-    f_reason  = _f("InstrumentSans-Regular.ttf", 13)
-    f_label   = _f("InstrumentSans-Regular.ttf", 11)
-    f_date    = _f("GeistMono-Regular.ttf",    11)
-    f_league  = _f("GeistMono-Regular.ttf",    10)
-    f_footer  = _f("InstrumentSans-Regular.ttf", 11)
-    f_foot_b  = _f("InstrumentSans-Bold.ttf",  13)
-
-    img  = Image.new("RGB", (W, H), BLACK)
+    img = Image.new("RGB", (W, H), NIGHT["bg"])
     draw = ImageDraw.Draw(img)
 
-    # ── Logo ──────────────────────────────────────────────────────────────────
-    logo_size = 64
-    try:
-        logo = Image.open(LOGO_PATH).convert("RGBA").resize((logo_size, logo_size), Image.LANCZOS)
-        img.paste(logo, (MARGIN, 32), logo)
-    except Exception:
-        pass
+    pad = 80
 
-    lx = MARGIN + logo_size + 14
-    draw.text((lx, 38), "PUNT", fill=WHITE, font=f_brand)
-    pw = draw.textlength("PUNT", font=f_brand)
-    draw.text((lx + pw, 38), "MATE", fill=GREEN, font=f_brand)
+    # Header
+    header_f = _f("SpaceMono-Bold.ttf", 26)
+    draw.text((pad, pad), "// THE PICK", font=header_f, fill=accent)
 
-    _text_right(draw, W - MARGIN, 38, date_str.upper(), f_date, GREY_MID)
-    _text_right(draw, W - MARGIN, 55, "DAILY PICKS", f_date, GREY_LO)
+    market_f = _f("SpaceMono-Regular.ttf", 24)
+    draw.text((pad, pad + 50), pick.get("market", "Head to Head").upper(), font=market_f, fill=NIGHT["muted"])
 
-    pill_x = lx
-    for label in ["NRL", "WORLD CUP", "NBA"]:
-        pill_x = _pill(draw, pill_x, 88, label, f_league, BLACK, GREEN, 8, 3)
+    # Betslip card
+    card_top = pad + 110
+    card_bot = H - pad - 30
+    _rrect(draw, [pad, card_top, W - pad, card_bot], r=32,
+           fill=NIGHT["surface"], outline=accent_dim, width=2)
 
-    # ── Header divider ────────────────────────────────────────────────────────
-    div_y = 118
-    draw.line([(MARGIN, div_y), (W - MARGIN, div_y)], fill=GREEN, width=1)
-    draw.line([(MARGIN, div_y + 2), (W - MARGIN, div_y + 2)], fill=GREY_LO, width=1)
+    # Betslip header bar
+    dot_x, dot_y = pad + 44, card_top + 50
+    draw.ellipse([dot_x, dot_y, dot_x + 12, dot_y + 12], fill=accent)
+    bs_f = _f("SpaceMono-Bold.ttf", 24)
+    draw.text((dot_x + 24, dot_y - 6), "BETSLIP", font=bs_f, fill=accent)
 
-    # ── Pick cards ────────────────────────────────────────────────────────────
-    CARD_H   = 320
-    CARD_GAP = 16
-    CARD_TOP = div_y + 22
-    ACC_W    = 4
-    R        = 10
+    leg_f = _f("SpaceMono-Regular.ttf", 22)
+    draw.text((W - pad - 80, card_top + 42), "1 LEG", font=leg_f, fill=NIGHT["muted"])
 
-    grouped = {p.get("personality", "punter"): p for p in picks}
+    # Match
+    lbl_f = _f("SpaceMono-Regular.ttf", 20)
+    val_f  = _f("SpaceGrotesk-Bold.ttf", 46)
+    sel_f  = _f("SpaceGrotesk-Bold.ttf", 80)
+    mkt_f  = _f("SpaceMono-Bold.ttf", 24)
 
-    for i, pk in enumerate(["investor", "punter", "gambler"]):
-        pick = grouped.get(pk, {})
-        cfg  = PERSONA_CONFIG[pk]
-        col  = cfg["color"]
-        cy   = CARD_TOP + i * (CARD_H + CARD_GAP)
-        cx   = MARGIN
-        cx1  = MARGIN + CARD_W
-        cy1  = cy + CARD_H
+    cy = card_top + 120
+    draw.text((pad + 44, cy), "MATCH", font=lbl_f, fill=NIGHT["muted"])
+    cy += 32
+    draw.text((pad + 44, cy), pick.get("match", ""), font=val_f, fill=NIGHT["text"])
 
-        _rrect(draw, [cx, cy, cx1, cy1], R, CARD_BG, outline=BORDER, width=1)
-        draw.rectangle([cx, cy + R, cx + ACC_W, cy1 - R], fill=col)
+    cy += 70
+    draw.text((pad + 44, cy), "SELECTION", font=lbl_f, fill=NIGHT["muted"])
+    cy += 30
+    selection = pick.get("selection", "")
+    draw.text((pad + 44, cy), selection, font=sel_f, fill=NIGHT["text"])
 
-        cont_x = cx + ACC_W + 18
+    # Market pill
+    cy += 100
+    pill_text = pick.get("market", "Head to Head")
+    pill_bbox = draw.textbbox((0, 0), pill_text, font=mkt_f)
+    pill_w = pill_bbox[2] + 52
+    _rrect(draw, [pad + 44, cy, pad + 44 + pill_w, cy + 52], r=999,
+           outline=accent_dim, width=2)
+    draw.text((pad + 70, cy + 12), pill_text, font=mkt_f, fill=accent)
 
-        # Row 1: tier + sublabel + league pill
-        r1y = cy + 20
-        draw.text((cont_x, r1y), cfg["label"], fill=col, font=f_tier)
-        tw = draw.textlength(cfg["label"], font=f_tier)
-        draw.text((cont_x + tw + 10, r1y + 1), cfg["sub"], fill=GREY_MID, font=f_sub)
+    # Ticket tear divider
+    div_y = card_bot - 220
+    circle_r = 18
+    draw.ellipse(
+        [pad - circle_r, div_y - circle_r, pad + circle_r, div_y + circle_r],
+        fill=NIGHT["bg"]
+    )
+    draw.ellipse(
+        [W - pad - circle_r, div_y - circle_r, W - pad + circle_r, div_y + circle_r],
+        fill=NIGHT["bg"]
+    )
+    # Dashed line
+    x = pad + 20
+    while x < W - pad - 20:
+        draw.line([(x, div_y), (x + 18, div_y)], fill=NIGHT["dimmer"], width=2)
+        x += 28
 
-        if pick:
-            sport_key   = pick.get("sport_key", "")
-            sport_label = SPORT_LABELS.get(sport_key, pick.get("sport", "SPORT").split()[0].upper())
-            lp_w = draw.textlength(sport_label, font=f_league)
-            lp_x = cx1 - lp_w - 22
-            _rrect(draw, [lp_x - 8, r1y - 2, cx1 - 14, r1y + 16], 4, GREY_LO)
-            draw.text((lp_x, r1y + 1), sport_label, fill=GREY_HI, font=f_league)
+    # Odds section
+    odds_lbl_y = div_y + 28
+    draw.text((pad + 44, odds_lbl_y), "DECIMAL ODDS", font=lbl_f, fill=NIGHT["muted"])
+    draw.text((pad + 44, odds_lbl_y + 28), pick.get("insight", ""), font=_f("SpaceGrotesk-Medium.ttf", 24), fill=NIGHT["muted"])
 
-        # Row 2: matchup
-        r2y = r1y + 28
-        match_str = pick.get("match", "TBD") if pick else "TBD"
-        draw.text((cont_x, r2y), match_str.upper(), fill=GREY_HI, font=f_matchup)
-        draw.line([(cx + ACC_W + 10, r2y + 26), (cx1 - 14, r2y + 26)], fill=DIVIDER, width=1)
+    odds_f = _f("SpaceMono-Bold.ttf", 118)
+    odds_str = str(pick.get("odds", "2.00"))
+    odds_bbox = draw.textbbox((0, 0), odds_str, font=odds_f)
+    odds_x = W - pad - (odds_bbox[2] - odds_bbox[0]) - 20
+    draw.text((odds_x, div_y + 20), odds_str, font=odds_f, fill=accent)
 
-        # Row 3: pick selection + odds
-        r3y = r2y + 36
-        pick_str = pick.get("pick", "—").upper() if pick else "—"
-        draw.text((cont_x, r3y), pick_str, fill=WHITE, font=f_pick)
+    # Compliance
+    comp_f = _f("SpaceGrotesk-Medium.ttf", 20)
+    draw.text((pad, H - pad + 10), "R18 · Gamble responsibly · 0800 654 655 · gamblinghelpline.co.nz",
+              font=comp_f, fill=NIGHT["muted"])
 
-        odds_str = str(pick.get("odds", "—")) if pick else "—"
-        odds_w   = draw.textlength(odds_str, font=f_odds)
-        odds_x   = cx1 - 14 - odds_w
-        draw.text((odds_x, r3y - 10), odds_str, fill=GREEN, font=f_odds)
-        draw.text((odds_x - 18, r3y + 2), "@", fill=GREY_MID, font=f_odds_at)
+    return img
 
-        market = pick.get("market", "").upper() if pick else ""
-        bt_w   = draw.textlength(market, font=f_bet)
-        draw.text((cx1 - 14 - bt_w, r3y + 72), market, fill=GREY_MID, font=f_bet)
 
-        # Divider
-        div2 = r3y + 90
-        draw.line([(cx + ACC_W + 10, div2), (cx1 - 14, div2)], fill=DIVIDER, width=1)
+def _night_slide3_breakdown(pick):
+    """Betslip Night — The Breakdown slide: analysis + confidence + CTA."""
+    palette = NIGHT_ACCENTS.get(pick.get("palette", "green"), NIGHT_ACCENTS["green"])
+    accent = palette["accent"]
+    accent_dim = palette["accent_dim"]
 
-        # Row 4: reasoning
-        r4y = div2 + 14
-        reason = pick.get("reasoning", "") if pick else ""
-        draw.text((cont_x, r4y), reason, fill=GREY_HI, font=f_reason)
+    img = Image.new("RGB", (W, H), NIGHT["bg"])
+    draw = ImageDraw.Draw(img)
+    _draw_grid(draw)
 
-        # Row 5: confidence dots
-        r5y = r4y + 30
-        draw.text((cont_x, r5y + 1), "CONFIDENCE", fill=GREY_MID, font=f_label)
-        cl_w = draw.textlength("CONFIDENCE", font=f_label)
-        filled = CONF_MAP.get(pick.get("confidence", "Medium"), 3) if pick else 3
-        _dots(draw, cont_x + cl_w + 10, r5y + 3, filled, color_on=col)
-        draw.text((cont_x, r5y + 18), "STAKE TO WIN", fill=GREY_LO, font=f_label)
+    pad = 80
 
-    # ── Footer ────────────────────────────────────────────────────────────────
-    footer_top = CARD_TOP + 3 * (CARD_H + CARD_GAP) + 12
-    draw.line([(MARGIN, footer_top), (W - MARGIN, footer_top)], fill=GREY_LO, width=1)
-    fy = footer_top + 14
-    draw.text((MARGIN, fy), "@PUNTMATENZ", fill=GREEN, font=f_foot_b)
-    hw = draw.textlength("@PUNTMATENZ", font=f_foot_b)
-    draw.text((MARGIN + hw + 14, fy + 1), "·  FREE DAILY PICKS  ·  NRL  ·  RUGBY  ·  NBA", fill=GREY_MID, font=f_footer)
-    draw.text((MARGIN, fy + 20), "Gamble responsibly. Problem Gambling Foundation NZ: 0800 664 262", fill=GREY_LO, font=f_footer)
+    # Header
+    header_f = _f("SpaceMono-Bold.ttf", 26)
+    draw.text((pad, pad), "// THE BREAKDOWN", font=header_f, fill=accent)
+
+    conf_lbl_f = _f("SpaceMono-Regular.ttf", 22)
+    draw.text((pad, pad + 50), f"{pick.get('confidenceLabel', 'MODERATE')} CONFIDENCE", font=conf_lbl_f, fill=NIGHT["muted"])
+
+    # Risk chips
+    chip_f = _f("SpaceMono-Regular.ttf", 20)
+    chips = [pick.get("riskTagline", "SOLID VALUE"), pick.get("tier", "punter").upper(), pick.get("sport_label", "")]
+    cx = pad
+    cy = pad + 100
+    for chip in chips:
+        if not chip:
+            continue
+        cb = draw.textbbox((0, 0), chip, font=chip_f)
+        cw = cb[2] + 40
+        _rrect(draw, [cx, cy, cx + cw, cy + 44], r=999, outline=accent_dim, width=2)
+        draw.text((cx + 20, cy + 10), chip, font=chip_f, fill=accent)
+        cx += cw + 16
+
+    # Main analysis card
+    card_top = cy + 70
+    card_bot = H - pad - 230
+    _rrect(draw, [pad, card_top, W - pad, card_bot], r=28,
+           fill=NIGHT["surface"], outline=accent_dim, width=2)
+
+    inner_pad = pad + 44
+
+    # Competition / sport label
+    comp_f = _f("SpaceMono-Regular.ttf", 22)
+    draw.text((inner_pad, card_top + 36), pick.get("sport_label", ""), font=comp_f, fill=NIGHT["muted"])
+
+    # Match name
+    match_f = _f("SpaceGrotesk-Bold.ttf", 38)
+    draw.text((inner_pad, card_top + 76), pick.get("match", ""), font=match_f, fill=NIGHT["text"])
+
+    # Sport tag pill
+    tag_f = _f("SpaceMono-Bold.ttf", 20)
+    tag = pick.get("sport_label", "")
+    tag_bbox = draw.textbbox((0, 0), tag, font=tag_f)
+    tag_w = tag_bbox[2] + 36
+    tag_y = card_top + 76
+    _rrect(draw, [W - pad - tag_w - 20, tag_y + 4, W - pad - 20, tag_y + 44], r=999,
+           outline=accent, width=2)
+    draw.text((W - pad - tag_w + 2, tag_y + 12), tag, font=tag_f, fill=accent)
+
+    # Divider
+    div_y = card_top + 150
+    draw.line([(inner_pad, div_y), (W - inner_pad, div_y)], fill=NIGHT["dimmer"], width=1)
+
+    # Selection + odds inline
+    sel_f = _f("SpaceGrotesk-Bold.ttf", 52)
+    odds_f = _f("SpaceMono-Bold.ttf", 44)
+    sel_y = div_y + 24
+    draw.text((inner_pad, sel_y), pick.get("selection", ""), font=sel_f, fill=NIGHT["text"])
+    odds_str = f"@ {pick.get('odds', '')}"
+    draw.text((inner_pad, sel_y + 72), odds_str, font=odds_f, fill=accent)
+
+    # Confidence dots
+    dots_y = sel_y + 140
+    draw.text((inner_pad, dots_y), "CONFIDENCE", font=comp_f, fill=NIGHT["muted"])
+    _draw_confidence_dots(draw, inner_pad + 200, dots_y, pick.get("confidence", 3), accent=accent)
+
+    # The Read
+    read_lbl_y = dots_y + 50
+    read_f_lbl = _f("SpaceMono-Regular.ttf", 22)
+    draw.text((inner_pad, read_lbl_y), "THE READ", font=read_f_lbl, fill=NIGHT["muted"])
+
+    analysis_f = _f("SpaceGrotesk-Medium.ttf", 32)
+    analysis = pick.get("analysis", "")
+    # Word wrap
+    words = analysis.split()
+    lines, line = [], []
+    for w in words:
+        test = ' '.join(line + [w])
+        bb = draw.textbbox((0, 0), test, font=analysis_f)
+        if bb[2] > (W - inner_pad - pad - 40) and line:
+            lines.append(' '.join(line))
+            line = [w]
+        else:
+            line.append(w)
+    if line:
+        lines.append(' '.join(line))
+
+    analysis_y = read_lbl_y + 38
+    for l in lines[:4]:  # max 4 lines
+        draw.text((inner_pad, analysis_y), l, font=analysis_f, fill="#C7D6CE")
+        analysis_y += 44
+
+    # Bottom divider
+    draw.line([(pad, card_bot + 20), (W - pad, card_bot + 20)], fill=NIGHT["dimmer"], width=1)
+
+    # Follow CTA
+    cta_y = card_bot + 40
+    cta_circle_x = pad + 28
+    draw.ellipse([pad, cta_y, pad + 56, cta_y + 56], fill=accent)
+    _draw_value_arrow(draw, cta_circle_x, cta_y + 28, 34, NIGHT["bg"])
+
+    cta_f = _f("SpaceGrotesk-Bold.ttf", 38)
+    draw.text((pad + 76, cta_y + 8), "Follow @puntmatenz", font=cta_f, fill=NIGHT["text"])
+
+    edge_f = _f("SpaceMono-Bold.ttf", 26)
+    draw.text((pad, cta_y + 70), "DAILY EDGE  →", font=edge_f, fill=accent)
+
+    comp_f2 = _f("SpaceGrotesk-Medium.ttf", 20)
+    draw.text((pad, H - pad + 10), "R18 · Gamble responsibly · 0800 654 655 · gamblinghelpline.co.nz",
+              font=comp_f2, fill=NIGHT["muted"])
+
+    return img
+
+
+# ── Slide generators — Matchday Print ────────────────────────────────────────
+
+def _print_slide1_cover(pick):
+    """Matchday Print — Cover slide. Anton for big headlines, Barlow Condensed for kickers."""
+    img = Image.new("RGB", (W, H), PRINT["bg"])
+    draw = ImageDraw.Draw(img)
+
+    pad = 72
+
+    # Red top bar
+    draw.rectangle([0, 0, W, 100], fill=PRINT["red"])
+    wm_f = _f("Archivo-Black.ttf", 36)
+    draw.text((pad, 30), "PUNTMATE", font=wm_f, fill=PRINT["yellow"])
+    sport_f = _f("BarlowCondensed-Bold.ttf", 30)
+    sport = pick.get("sport_label", "SPORT")
+    draw.text((W - pad - 180, 33), sport, font=sport_f, fill=PRINT["bg"])
+
+    # Kicker — Barlow Condensed
+    kicker_f = _f("BarlowCondensed-SemiBold.ttf", 30)
+    theme = pick.get("coverTheme", "Daily Pick")
+    draw.text((pad, 130), f"// {theme.upper()}", font=kicker_f, fill=PRINT["red"])
+
+    # Giant headline — Anton (proper tabloid stacked)
+    lines = COVER_HEADLINES.get(theme, ("BEST", "VALUE", "BET."))
+    headline_f = _f("Anton-Regular.ttf", 188)
+    hy = 185
+    for i, line in enumerate(lines):
+        if not line:
+            continue
+        col = PRINT["red"] if i == 1 else PRINT["ink"]
+        draw.text((pad, hy), line, font=headline_f, fill=col)
+        hy += 168
+
+    # Subline — Barlow Condensed
+    sub_f = _f("BarlowCondensed-SemiBold.ttf", 38)
+    draw.text((pad, hy + 30), "ONE SELECTION. ONE SLIDE.", font=sub_f, fill=PRINT["muted"])
+    draw.text((pad, hy + 76), "LOCKED IN BELOW.", font=sub_f, fill=PRINT["muted"])
+
+    # Yellow swipe strip
+    strip_y = H - 140
+    draw.rectangle([0, strip_y, W, strip_y + 100], fill=PRINT["yellow"])
+    swipe_f = _f("BarlowCondensed-Bold.ttf", 36)
+    draw.text((pad, strip_y + 30), "SWIPE  →  @PUNTMATENZ", font=swipe_f, fill=PRINT["ink"])
+
+    # Compliance
+    comp_f = _f("BarlowCondensed-SemiBold.ttf", 22)
+    draw.text((pad, H - 38), "R18 · GAMBLE RESPONSIBLY · 0800 654 655", font=comp_f, fill=PRINT["muted"])
+
+    return img
+
+
+def _print_slide2_tip(pick):
+    """Matchday Print — The Tip slide."""
+    img = Image.new("RGB", (W, H), PRINT["bg"])
+    draw = ImageDraw.Draw(img)
+
+    pad = 72
+
+    # Red top bar
+    draw.rectangle([0, 0, W, 100], fill=PRINT["red"])
+    wm_f = _f("Archivo-Black.ttf", 36)
+    draw.text((pad, 30), "PUNTMATE", font=wm_f, fill=PRINT["yellow"])
+
+    # THE PICK kicker — Barlow Condensed
+    kicker_f = _f("BarlowCondensed-Bold.ttf", 32)
+    draw.text((pad, 120), "// THE PICK", font=kicker_f, fill=PRINT["red"])
+
+    # MATCH — Barlow Condensed
+    lbl_f = _f("BarlowCondensed-SemiBold.ttf", 26)
+    draw.text((pad, 185), "MATCH", font=lbl_f, fill=PRINT["muted"])
+    match_f = _f("BarlowCondensed-Bold.ttf", 56)
+    draw.text((pad, 215), pick.get("match", ""), font=match_f, fill=PRINT["ink"])
+
+    # Red rule
+    draw.rectangle([pad, 285, W - pad, 292], fill=PRINT["red"])
+
+    # Giant selection — Anton
+    sel_f = _f("Anton-Regular.ttf", 128)
+    draw.text((pad, 308), pick.get("selection", ""), font=sel_f, fill=PRINT["ink"])
+
+    # Market pill
+    mkt_f = _f("BarlowCondensed-Bold.ttf", 28)
+    mkt_txt = pick.get("market", "HEAD TO HEAD").upper()
+    mkt_bb = draw.textbbox((0, 0), mkt_txt, font=mkt_f)
+    mkt_w = mkt_bb[2] + 48
+    _rrect(draw, [pad, 468, pad + mkt_w, 516], r=999, fill=PRINT["red"])
+    draw.text((pad + 24, 478), mkt_txt, font=mkt_f, fill=PRINT["bg"])
+
+    # Odds — Anton for the number
+    odds_lbl_f = _f("BarlowCondensed-SemiBold.ttf", 26)
+    draw.text((pad, 560), "DECIMAL ODDS", font=odds_lbl_f, fill=PRINT["muted"])
+    odds_f = _f("Anton-Regular.ttf", 150)
+    draw.text((pad, 592), str(pick.get("odds", "")), font=odds_f, fill=PRINT["red"])
+
+    # Insight line
+    insight_f = _f("BarlowCondensed-SemiBold.ttf", 32)
+    draw.text((pad, 768), pick.get("insight", ""), font=insight_f, fill=PRINT["muted"])
+
+    # Yellow bottom strip
+    strip_y = H - 140
+    draw.rectangle([0, strip_y, W, strip_y + 100], fill=PRINT["yellow"])
+    swipe_f = _f("BarlowCondensed-Bold.ttf", 34)
+    draw.text((pad, strip_y + 32), "SWIPE  →  SEE THE BREAKDOWN", font=swipe_f, fill=PRINT["ink"])
+
+    comp_f = _f("BarlowCondensed-SemiBold.ttf", 22)
+    draw.text((pad, H - 38), "R18 · GAMBLE RESPONSIBLY · 0800 654 655", font=comp_f, fill=PRINT["muted"])
+
+    return img
+
+
+def _print_slide3_breakdown(pick):
+    """Matchday Print — The Breakdown slide."""
+    img = Image.new("RGB", (W, H), PRINT["bg"])
+    draw = ImageDraw.Draw(img)
+
+    pad = 72
+
+    # Red top bar
+    draw.rectangle([0, 0, W, 100], fill=PRINT["red"])
+    wm_f = _f("Archivo-Black.ttf", 36)
+    draw.text((pad, 30), "PUNTMATE", font=wm_f, fill=PRINT["yellow"])
+
+    kicker_f = _f("BarlowCondensed-Bold.ttf", 32)
+    draw.text((pad, 120), "// THE BREAKDOWN", font=kicker_f, fill=PRINT["red"])
+
+    # Confidence + risk — Barlow
+    conf_f = _f("BarlowCondensed-SemiBold.ttf", 28)
+    draw.text((pad, 185), f"CONFIDENCE: {pick.get('confidenceLabel', 'MODERATE')}", font=conf_f, fill=PRINT["muted"])
+    draw.text((pad, 225), f"RISK: {pick.get('riskTagline', 'GOOD VALUE')}", font=conf_f, fill=PRINT["ink"])
+
+    # Red rule
+    draw.rectangle([pad, 280, W - pad, 287], fill=PRINT["red"])
+
+    # Selection — Anton
+    sel_f = _f("Anton-Regular.ttf", 80)
+    draw.text((pad, 305), pick.get("selection", ""), font=sel_f, fill=PRINT["ink"])
+    odds_f = _f("BarlowCondensed-Bold.ttf", 56)
+    draw.text((pad, 400), f"@ {pick.get('odds', '')}", font=odds_f, fill=PRINT["red"])
+
+    # Confidence dots
+    draw.text((pad, 478), "CONFIDENCE", font=conf_f, fill=PRINT["muted"])
+    for i in range(5):
+        fill = PRINT["ink"] if i < pick.get("confidence", 3) else PRINT["muted"]
+        draw.ellipse([pad + 170 + i * 34, 480, pad + 170 + i * 34 + 22, 502], fill=fill)
+
+    # Analysis
+    draw.text((pad, 540), "THE READ", font=conf_f, fill=PRINT["muted"])
+    analysis_f = _f("BarlowCondensed-SemiBold.ttf", 34)
+    analysis = pick.get("analysis", "")
+    words = analysis.split()
+    lines_out, line = [], []
+    for w in words:
+        test = ' '.join(line + [w])
+        bb = draw.textbbox((0, 0), test, font=analysis_f)
+        if bb[2] > W - pad * 2 and line:
+            lines_out.append(' '.join(line))
+            line = [w]
+        else:
+            line.append(w)
+    if line:
+        lines_out.append(' '.join(line))
+
+    ay = 586
+    for l in lines_out[:6]:
+        draw.text((pad, ay), l, font=analysis_f, fill=PRINT["ink"])
+        ay += 48
+
+    # Yellow CTA strip
+    strip_y = H - 140
+    draw.rectangle([0, strip_y, W, strip_y + 100], fill=PRINT["yellow"])
+    cta_f = _f("BarlowCondensed-Bold.ttf", 34)
+    draw.text((pad, strip_y + 32), "FOLLOW @PUNTMATENZ · DAILY PICKS", font=cta_f, fill=PRINT["ink"])
+
+    comp_f = _f("BarlowCondensed-SemiBold.ttf", 22)
+    draw.text((pad, H - 38), "R18 · GAMBLE RESPONSIBLY · 0800 654 655", font=comp_f, fill=PRINT["muted"])
 
     return img
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
-def generate_picks_images(picks, output_dir=None, date_str=None):
+def generate_carousel(pick, output_dir):
     """
-    Generate one 1080x1350 portrait daily picks card.
-    Returns list with a single file path.
+    Generate a 3-slide carousel for a single pick.
+    Uses Betslip Night or Matchday Print based on pick metadata.
+    Returns list of 3 file paths.
     """
-    if not date_str:
-        date_str = datetime.now().strftime("%-d %B %Y")
-    if not output_dir:
-        output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'cards')
     os.makedirs(output_dir, exist_ok=True)
 
-    card = _build_card(picks, date_str)
-    fname = f"picks_{datetime.now().strftime('%Y-%m-%d')}.png"
-    path  = os.path.join(output_dir, fname)
-    card.save(path, "PNG", dpi=(300, 300))
-    print(f"  ✅ Saved picks card: {fname}")
-    return [path]
+    big_game = pick.get("big_game", False)
+    # Matchday Print for big events; Betslip Night for everything else
+    look = "print" if big_game else "night"
+
+    date_str = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    safe_match = pick.get("match", "pick").replace(" vs ", "_vs_").replace(" ", "")[:30]
+    prefix = f"{output_dir}/{date_str}_{safe_match}_{look}"
+
+    if look == "print":
+        slides = [
+            _print_slide1_cover(pick),
+            _print_slide2_tip(pick),
+            _print_slide3_breakdown(pick),
+        ]
+    else:
+        slides = [
+            _night_slide1_cover(pick),
+            _night_slide2_tip(pick),
+            _night_slide3_breakdown(pick),
+        ]
+
+    paths = []
+    labels = ["1_cover", "2_tip", "3_breakdown"]
+    for img, label in zip(slides, labels):
+        path = f"{prefix}_{label}.png"
+        img.save(path, "PNG", optimize=True)
+        print(f"  Saved: {path}")
+        paths.append(path)
+
+    return paths
 
 
-def generate_picks_image(picks, output_path=None, date_str=None):
-    """Single-image alias for backwards compatibility."""
-    paths = generate_picks_images(picks, date_str=date_str)
-    if output_path and paths:
-        import shutil
-        shutil.copy(paths[0], output_path)
-        return output_path
-    return paths[0] if paths else None
+def generate_picks_image(picks, output_dir=None):
+    """
+    Generate carousels for all picks.
+    Backward-compatible entry point for main.py.
+    Returns the path of the first slide of the first pick (for legacy IG posting).
+    """
+    if output_dir is None:
+        output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'cards')
 
+    all_paths = []
+    for pick in picks:
+        paths = generate_carousel(pick, output_dir)
+        all_paths.extend(paths)
 
-if __name__ == "__main__":
-    test_picks = [
-        {"personality": "investor", "sport_key": "soccer_fifa_world_cup",
-         "sport": "FIFA World Cup 2026", "match": "England vs DR Congo",
-         "pick": "England -1.5", "market": "Handicap", "odds": "1.95",
-         "reasoning": "England are a top-10 FIFA ranked side facing DR Congo with limited World Cup pedigree. Strong value at the handicap.",
-         "confidence": "High"},
-        {"personality": "punter", "sport_key": "rugbyleague_nrl",
-         "sport": "NRL", "match": "Melbourne Storm vs Parramatta Eels",
-         "pick": "Melbourne Storm", "market": "Head to Head", "odds": "2.10",
-         "reasoning": "Storm at home is always a banker. Parramatta have been inconsistent. Good value at $2.10.",
-         "confidence": "High"},
-        {"personality": "gambler", "sport_key": "soccer_fifa_world_cup",
-         "sport": "FIFA World Cup 2026", "match": "Belgium vs Senegal",
-         "pick": "Senegal", "market": "Head to Head", "odds": "4.30",
-         "reasoning": "Belgium rusty, Senegal motivated. Africa's champion with chips on their shoulder — value at 4.30 all day.",
-         "confidence": "Low"},
-    ]
-    paths = generate_picks_images(test_picks, output_dir="/tmp/puntmate_test")
-    print("Generated:", paths)
+    # Return cover slide of first pick for backward compatibility
+    return all_paths[0] if all_paths else None

@@ -40,18 +40,23 @@ PERSONALITY_CONFIG = {
 RESPONSIBLE_LINE = "_All analysis is for entertainment only. Bet responsibly — Problem Gambling Foundation NZ: 0800 664 262_"
 
 
-def _send(text):
+def _send(text, parse_mode="Markdown"):
     """Send a message to the Telegram channel."""
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     resp = requests.post(url, json={
         "chat_id": CHANNEL_ID,
         "text": text,
-        "parse_mode": "Markdown"
+        "parse_mode": parse_mode,
     }, timeout=10)
     result = resp.json()
     if not result.get('ok'):
         print(f"  Telegram error: {result}")
     return result
+
+
+def post_text(text, parse_mode="Markdown"):
+    """Public wrapper — send plain text to the channel."""
+    return _send(text, parse_mode=parse_mode)
 
 
 def send_picks_card(image_path, caption=None):

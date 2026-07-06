@@ -29,7 +29,7 @@ IMGUR_CLIENT  = os.environ.get('IMGUR_CLIENT_ID', '')  # optional — for image 
 GRAPH_URL     = "https://graph.facebook.com/v19.0"
 
 RESPONSIBLE_LINE = "⚠️ Bet responsibly. Problem Gambling Foundation NZ: 0800 664 262"
-HASHTAGS = "#PuntMateNZ #NRL #FIFA #WorldCup2026 #SportsBetting #NZSports #DailyPicks #Investor #Punter #Gambler"
+HASHTAGS = "#PuntMateNZ #NRL #WorldCup2026 #SportsBetting #NZSports #DailyPicks #ValueBet #SportsTipping"
 
 
 def _upload_to_imgur(image_path):
@@ -87,30 +87,27 @@ def _publish_ig_container(container_id):
 
 
 def build_caption(picks, date_str=None):
-    """Build the Instagram caption text."""
+    """Build the Instagram caption for value betting picks."""
     if not date_str:
         date_str = datetime.now().strftime("%-d %B %Y")
 
-    grouped = {"investor": [], "punter": [], "gambler": []}
-    for p in picks:
-        key = p.get("personality", "punter")
-        if key in grouped:
-            grouped[key].append(p)
+    tier_emoji = {"investor": "📊", "punter": "🎯", "gambler": "🎰"}
 
     lines = [
-        f"🎯 PUNTMATE DAILY PICKS — {date_str}",
-        "",
-        "Three personalities. Three angles. One winner.",
+        f"🏆 PUNTMATE VALUE PICKS — {date_str}",
         "",
     ]
 
-    emoji_map = {"investor": "📊", "punter": "🎯", "gambler": "🎰"}
-    for key in ["investor", "punter", "gambler"]:
-        if grouped[key]:
-            p = grouped[key][0]  # first pick per personality for caption
-            lines.append(f"{emoji_map[key]} {key.upper()}: {p['pick']} @ {p['odds']} — {p['match']}")
+    for p in picks:
+        tier = p.get("tier", "punter").lower()
+        emoji = tier_emoji.get(tier, "🎯")
+        lines.append(f"{emoji} {p.get('sport_label', '')} | {p.get('selection', '')} @ {p.get('odds', '')}")
+        lines.append(f"   {p.get('insight', '')}")
+        lines.append("")
 
     lines += [
+        "Swipe for the full breakdown 👆",
+        "Follow @puntmatenz for daily value picks",
         "",
         RESPONSIBLE_LINE,
         "",
@@ -119,16 +116,19 @@ def build_caption(picks, date_str=None):
     return "\n".join(lines)
 
 
-def post_carousel_to_instagram(picks, slide_paths):
+def post_carousel_to_instagram(slide_paths, caption=None, picks=None):
     """
-    Post a 4-slide carousel to Instagram.
-    slide_paths: list of local image file paths (intro + 3 personality slides)
+    Post a carousel to Instagram.
+    slide_paths: list of local image file paths (cover, tip, breakdown)
+    caption: pre-built caption string (optional — built from picks if not provided)
+    picks: list of pick dicts (used to build caption if caption not provided)
     """
     if not IG_USER_ID or not IG_TOKEN:
         print("  ⚠️  IG credentials not set — skipping carousel")
         return False
 
-    caption = build_caption(picks)
+    if caption is None:
+        caption = build_caption(picks or [])
 
     # 1. Upload each slide to Imgur
     print(f"  → Uploading {len(slide_paths)} slides to Imgur...")

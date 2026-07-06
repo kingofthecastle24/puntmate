@@ -162,7 +162,7 @@ jobs:
                   timeout=30,
               )
           else:
-              # Fallback: text-only feed post if Imgur upload failed earlier
+              # Fallback: text-only feed post if catbox.moe upload failed earlier
               print("::warning::No image URL — falling back to text-only Facebook post")
               resp = requests.post(
                   f"{GRAPH}/{PAGE_ID}/feed",

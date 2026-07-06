@@ -1,158 +1,187 @@
 """
 main.py — PuntMate NZ daily picks pipeline
-Runs via GitHub Actions on schedule
+Runs via GitHub Actions on schedule.
 
-Flow: Fetch odds → Generate picks (3 personalities) → Post to Telegram + Facebook → Save latest_run.json
+Flow:
+  1. Fetch odds (The Odds API)
+  2. Value analysis → 1–2 picks above edge threshold
+  3. Generate carousel PNGs (Betslip Night or Matchday Print)
+  4. Post to Telegram (full analysis)
+  5. Post carousel to Instagram (first slide for social discovery)
+  6. Post to Facebook (optional)
+  7. Log pick for weekly results tracking
 """
 
 import sys
 import os
 import json
 from datetime import datetime, timezone
-from zoneinfo import ZoneInfo
-from fetch_odds import fetch_upcoming_odds
-from generate_pick import generate_picks_for_matches
-from post_telegram import post_daily_header, post_all_picks, post_no_picks, send_picks_card
-
-# Facebook posting is optional — only runs if secrets are set
-FB_ENABLED = bool(os.environ.get('FACEBOOK_PAGE_TOKEN') and os.environ.get('FACEBOOK_PAGE_ID'))
-if FB_ENABLED:
-    from post_facebook import (
-        post_daily_header as fb_post_header,
-        post_all_picks as fb_post_picks,
-        post_no_picks as fb_post_no_picks,
-    )
-
-# Instagram posting is optional — requires image + token
-IG_ENABLED = bool(os.environ.get('INSTAGRAM_ACCESS_TOKEN') and os.environ.get('INSTAGRAM_USER_ID'))
-if IG_ENABLED:
-    from generate_picks_image import generate_picks_image
-    from post_instagram import post_picks_to_instagram
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
+CARDS_DIR = os.path.join(REPO_ROOT, 'data', 'cards')
+
+# Optional integrations — only activated if secrets are set
+FB_ENABLED = bool(os.environ.get('FACEBOOK_PAGE_TOKEN') and os.environ.get('FACEBOOK_PAGE_ID'))
+IG_ENABLED = bool(os.environ.get('INSTAGRAM_ACCESS_TOKEN') and os.environ.get('INSTAGRAM_USER_ID'))
 
 
 def save_latest_run(matches, picks):
-    """
-    Write data/latest_run.json with enriched pick data for log_picks.py.
-    Merges pick output with raw match data (sport_key, home_team, away_team).
-    """
+    """Persist enriched picks to data/latest_run.json for results tracking."""
     match_lookup = {m['match']: m for m in matches}
-
-    enriched_picks = []
+    enriched = []
     for pick in picks:
         raw = match_lookup.get(pick.get('match'), {})
-        enriched_picks.append({
+        enriched.append({
             **pick,
-            "sport_key": raw.get('sport', ''),
-            "home_team": raw.get('home_team', pick.get('home_team', '')),
-            "away_team": raw.get('away_team', pick.get('away_team', '')),
+            "sport_key":  raw.get('sport', ''),
+            "home_team":  raw.get('home_team', pick.get('home_team', '')),
+            "away_team":  raw.get('away_team', pick.get('away_team', '')),
+            "result":     "PENDING",  # updated by check_results.py
         })
 
     run_data = {
         "run_date": datetime.now(timezone.utc).strftime('%Y-%m-%d'),
-        "run_ts": datetime.now(timezone.utc).isoformat(),
-        "picks": enriched_picks,
+        "run_ts":   datetime.now(timezone.utc).isoformat(),
+        "picks":    enriched,
     }
 
     os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
     with open(LATEST_RUN_PATH, 'w') as f:
         json.dump(run_data, f, indent=2)
-    print(f"  Saved {len(enriched_picks)} picks to data/latest_run.json")
+
+    print(f"  Saved {len(enriched)} pick(s) to data/latest_run.json")
+
+
+def _format_telegram_pick(pick):
+    """Format a single pick as a Telegram message (standard Markdown)."""
+    tier_emoji = {"investor": "📊", "punter": "🎯", "gambler": "🎰"}.get(pick.get("tier", "punter"), "🎯")
+    dots = "●" * pick.get("confidence", 3) + "○" * (5 - pick.get("confidence", 3))
+    edge = pick.get("edge_pct", "")
+    edge_str = f"+{edge}%" if edge else ""
+
+    lines = [
+        f"*{tier_emoji} PUNTMATE NZ — {pick.get('sport_label', '')}*",
+        "",
+        f"🏟 {pick.get('match', '')}",
+        "",
+        f"*PICK:* {pick.get('selection', '')}",
+        f"*ODDS:* {pick.get('odds', '')} ({pick.get('market', '')})",
+        "",
+        f"_{pick.get('analysis', '')}_",
+        "",
+        f"Confidence: {dots} {pick.get('confidenceLabel', '')}",
+        f"Edge: {edge_str}",
+        "",
+        "──────────────────",
+        "📲 Join Telegram for daily picks",
+        "R18 · Gamble responsibly · 0800 654 655",
+    ]
+    return "\n".join(lines)
 
 
 def run():
-    print("=" * 50)
-    print("PuntMate NZ — Daily Picks Pipeline")
-    print("=" * 50)
+    from fetch_odds import fetch_upcoming_odds
+    from generate_pick import generate_picks_for_matches
+    from generate_picks_image import generate_carousel
+    from post_telegram import post_text, send_picks_card, post_no_picks
+    from post_instagram import post_carousel_to_instagram
 
-    # 1. Fetch odds
+    print("=" * 55)
+    print("PuntMate NZ — Daily Picks Pipeline")
+    print(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'))
+    print("=" * 55)
+
+    # ── 1. Fetch odds ──────────────────────────────────────────────────────────
     print("\n[1/4] Fetching upcoming match odds...")
     matches = fetch_upcoming_odds()
-    print(f"Found {len(matches)} matches in next 48hrs")
 
     if not matches:
-        print("No upcoming matches found — posting no-picks message")
+        print("  No matches today — posting hold message")
         post_no_picks()
         return
 
-    # 2. Generate picks (3 personalities per match)
-    print(f"\n[2/4] Generating Investor/Punter/Gambler picks for {len(matches)} matches...")
+    # ── 2. Value analysis ──────────────────────────────────────────────────────
+    print(f"\n[2/4] Running value analysis on {len(matches)} matches...")
     picks = generate_picks_for_matches(matches)
-    print(f"\nGenerated {len(picks)} picks total")
 
     if not picks:
-        print("No picks generated — posting no-picks message")
-        post_no_picks()
+        print("  No value picks found today — staying silent (quality > quantity)")
+        # Only post if there's genuinely nothing worth betting on
+        # Don't post just to post; silence is fine
         return
 
-    # 3. Post to Telegram + Facebook grouped by personality
-    match_count = len(matches)
-    print(f"\n[3/4] Posting picks ({match_count} match(es), 3 personality blocks)...")
+    print(f"  → {len(picks)} value pick(s) selected")
 
-    print("  → Telegram")
-    post_daily_header(len(picks))
-    post_all_picks(picks)
+    # ── 3. Generate carousel images ────────────────────────────────────────────
+    print(f"\n[3/4] Generating carousel cards...")
+    os.makedirs(CARDS_DIR, exist_ok=True)
 
+    all_card_sets = []  # list of [cover, tip, breakdown] per pick
+    for pick in picks:
+        try:
+            card_paths = generate_carousel(pick, CARDS_DIR)
+            all_card_sets.append(card_paths)
+            look = "Matchday Print" if pick.get("big_game") else "Betslip Night"
+            print(f"  ✓ {pick.get('match', '')} [{look}] → {len(card_paths)} slides")
+        except Exception as e:
+            print(f"  ✗ Image generation failed for {pick.get('match', '')}: {e}")
+            all_card_sets.append([])
+
+    # ── 4. Post to Telegram ────────────────────────────────────────────────────
+    print(f"\n[4/4] Posting to channels...")
+
+    for i, pick in enumerate(picks):
+        msg = _format_telegram_pick(pick)
+
+        # Send text analysis
+        post_text(msg)
+
+        # Send carousel (cover slide only for now; full multi-image via IG)
+        card_set = all_card_sets[i] if i < len(all_card_sets) else []
+        if card_set:
+            caption = (
+                f"🎯 {pick.get('selection', '')} @ {pick.get('odds', '')} "
+                f"| {pick.get('sport_label', '')} | @puntmatenz"
+            )
+            send_picks_card(card_set[0], caption=caption)  # cover slide
+
+    # ── 5. Instagram (carousel — all 3 slides for first pick) ─────────────────
+    if IG_ENABLED and all_card_sets and all_card_sets[0]:
+        print("  → Instagram")
+        try:
+            post_carousel_to_instagram(slide_paths=all_card_sets[0], picks=picks)
+        except Exception as e:
+            print(f"  ✗ Instagram error: {e}")
+    else:
+        print("  → Instagram (skipped — not configured)")
+
+    # ── 6. Facebook ────────────────────────────────────────────────────────────
     if FB_ENABLED:
         print("  → Facebook")
-        fb_post_header(len(picks))
-        fb_post_picks(picks)
+        try:
+            from post_facebook import post_pick_to_facebook
+            for i, pick in enumerate(picks):
+                card_set = all_card_sets[i] if i < len(all_card_sets) else []
+                img = card_set[0] if card_set else None
+                post_pick_to_facebook(pick, img)
+        except Exception as e:
+            print(f"  ✗ Facebook error: {e}")
     else:
-        print("  → Facebook (skipped — FACEBOOK_PAGE_TOKEN not set)")
+        print("  → Facebook (skipped — not configured)")
 
-    # 3b. Generate picks card + carousel slides
-    print("\n  → Generating picks card + carousel...")
-    card_dir       = os.path.join(REPO_ROOT, 'data', 'cards')
-    card_paths     = []
-    carousel_paths = []
-    date_str = datetime.now(timezone.utc).strftime('%-d %B %Y')
-
-    try:
-        from generate_picks_image import generate_picks_images
-        card_paths = generate_picks_images(picks, output_dir=card_dir, date_str=date_str)
-        print(f"  Summary card: {len(card_paths)} file(s)")
-    except Exception as e:
-        print(f"  ⚠️  Summary card failed: {e}")
-
-    try:
-        from generate_carousel import generate_carousel_slides
-        carousel_paths = generate_carousel_slides(picks, output_dir=card_dir, date_str=date_str)
-        print(f"  Carousel: {len(carousel_paths)} slide(s)")
-    except Exception as e:
-        print(f"  ⚠️  Carousel failed: {e}")
-
-    # Send summary card to Telegram
-    if card_paths:
-        send_picks_card(card_paths[0],
-            caption=f"🎯 *PUNTMATE NZ* — {date_str}\nThree picks · Three personalities · #PuntMateNZ")
-
-    # Post to Instagram (carousel preferred, single card fallback)
-    if IG_ENABLED:
-        print("  → Instagram")
-        if carousel_paths:
-            from post_instagram import post_carousel_to_instagram
-            post_carousel_to_instagram(picks, carousel_paths)
-        elif card_paths:
-            from post_instagram import post_picks_to_instagram
-            post_picks_to_instagram(picks, card_paths[0])
-    else:
-        print("  → Instagram (skipped — INSTAGRAM_ACCESS_TOKEN not set)")
-
-    # 4. Save latest run for results tracking
-    print("\n[4/4] Saving run data for results tracker...")
+    # ── 7. Log for results ─────────────────────────────────────────────────────
     save_latest_run(matches, picks)
 
-    print("\n✅ Done — all picks posted to PuntMate NZ Telegram")
-    print("=" * 50)
+    print("\n✅ Pipeline complete")
+    print("=" * 55)
 
 
 if __name__ == "__main__":
     required = ['ANTHROPIC_API_KEY', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHANNEL_ID', 'ODDS_API_KEY']
     missing = [v for v in required if not os.environ.get(v)]
     if missing:
-        print(f"Missing environment variables: {', '.join(missing)}")
+        print(f"ERROR: Missing env vars: {', '.join(missing)}")
         sys.exit(1)
 
     run()
