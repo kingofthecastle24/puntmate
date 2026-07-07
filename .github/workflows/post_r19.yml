@@ -6,15 +6,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
       - run: pip install pillow requests --quiet
       - name: Download fonts
         run: |
           mkdir -p fonts
-          curl -fsSL "https://fonts.gstatic.com/s/spacemono/v13/i7dPIFZifjKcF5UAWdDRYEF8RQ.ttf" -o fonts/SpaceMono-Regular.ttf
-          curl -fsSL "https://fonts.gstatic.com/s/spacemono/v13/i7dMIFZifjKcF5UAWdDRaPpZYFKQHwyVd3U.ttf" -o fonts/SpaceMono-Bold.ttf
-          curl -fsSL "https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gx63OHpQ4yY.ttf" -o fonts/SpaceGrotesk-Medium.ttf
-          curl -fsSL "https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gx6dOTpQ4yY.ttf" -o fonts/SpaceGrotesk-Bold.ttf
-          curl -fsSL "https://fonts.gstatic.com/s/archivoblack/v21/HTxqL289NzCGg4MkRbTuR4h59N2jWg.ttf" -o fonts/Archivo-Black.ttf
+          BASE="https://github.com/google/fonts/raw/main/ofl"
+          curl -fsSL "$BASE/archivo/Archivo%5Bwdth%2Cwght%5D.ttf" -o fonts/Archivo-Black.ttf 2>/dev/null || curl -fsSL "https://fonts.gstatic.com/s/archivoblack/v21/HTxqL289NzCGg4MkRbTuR4h59N2jWg.ttf" -o fonts/Archivo-Black.ttf || echo "Archivo fallback to system"
+          curl -fsSL "https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gx63OHpQ4yY.ttf" -o fonts/SpaceGrotesk-Medium.ttf || echo "SpaceGrotesk-Medium fallback"
+          curl -fsSL "https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gx6dOTpQ4yY.ttf" -o fonts/SpaceGrotesk-Bold.ttf || echo "SpaceGrotesk-Bold fallback"
+          curl -fsSL "https://fonts.gstatic.com/s/spacemono/v13/i7dPIFZifjKcF5UAWdDRYEF8RQ.ttf" -o fonts/SpaceMono-Regular.ttf || echo "SpaceMono-Regular fallback"
+          curl -fsSL "https://fonts.gstatic.com/s/spacemono/v13/i7dMIFZifjKcF5UAWdDRaPpZYFKQHwyVd3U.ttf" -o fonts/SpaceMono-Bold.ttf || echo "SpaceMono-Bold fallback"
+          ls -lh fonts/ 2>/dev/null || echo "No fonts dir"
       - name: Generate + Post
         env:
           TG_BOT: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -22,7 +27,6 @@ jobs:
           FB_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
           FB_PAGE: ${{ secrets.FB_PAGE_ID }}
         run: |
-          python3 scripts/generate_picks_image.py 2>/dev/null || true
           python3 - <<'PYEOF'
           import sys, os
           sys.path.insert(0, "scripts")
@@ -74,7 +78,6 @@ jobs:
           def fb_photo(path, caption):
             if not FB_TOKEN or not FB_PAGE:
               print("FB skipped"); return
-            # Upload to imgur first for URL
             with open(path, "rb") as f:
               ir = requests.post("https://api.imgur.com/3/image",
                 headers={"Authorization": "Client-ID 546c25a59c58ad7"},
