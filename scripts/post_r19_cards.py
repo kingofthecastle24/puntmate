@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """PuntMate R19 — generate cards + post to Telegram & Facebook"""
 import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'scripts'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'scripts'))
 sys.path.insert(0, 'scripts')
 
 from generate_picks_image import generate_carousel, generate_multi_images
@@ -43,14 +43,17 @@ mpaths = generate_multi_images(legs, meta, OUT)
 print('Banker:', spaths[0])
 print('Multi:', mpaths[0])
 
+
 def tg_photo(path, caption):
     with open(path, 'rb') as f:
-        r = requests.post(f'https://api.telegram.org/bot{TG_BOT}/sendPhoto',
+        r = requests.post(
+            'https://api.telegram.org/bot' + TG_BOT + '/sendPhoto',
             data={'chat_id': TG_CHAN, 'caption': caption, 'parse_mode': 'Markdown'},
             files={'photo': f}, timeout=30)
     j = r.json()
     print('TG', os.path.basename(path), 'ok:', j.get('ok'), j.get('description', ''))
     return j
+
 
 def fb_photo(path, caption):
     if not FB_TOKEN or not FB_PAGE:
@@ -64,29 +67,33 @@ def fb_photo(path, caption):
         print('Imgur failed:', ij.get('data', {})); return
     img_url = ij['data']['link']
     print('Imgur:', img_url)
-    r = requests.post(f'https://graph.facebook.com/v19.0/{FB_PAGE}/photos',
+    r = requests.post(
+        'https://graph.facebook.com/v19.0/' + FB_PAGE + '/photos',
         data={'url': img_url, 'caption': caption, 'access_token': FB_TOKEN}, timeout=30)
     j = r.json()
     print('FB', j.get('id'), j.get('error', ''))
 
-banker_caption = f'🎯 *STORM TO WIN @ 1.40 | NRL R19*
-Banker play. Class side at home.
-_{FOOTER}_'
-multi_caption  = f'🔥 *HOME TREBLE | NRL R19*
-Storm 1.40 + Warriors 1.40 + Dolphins 1.52 = *$2.98*
-_{FOOTER}_'
+
+NL = "\n"
+banker_caption = (
+    "\U0001f3af *STORM TO WIN @ 1.40 | NRL R19*" + NL +
+    "Banker play. Class side at home." + NL +
+    "_" + FOOTER + "_"
+)
+multi_caption = (
+    "\U0001f525 *HOME TREBLE | NRL R19*" + NL +
+    "Storm 1.40 + Warriors 1.40 + Dolphins 1.52 = *$2.98*" + NL +
+    "_" + FOOTER + "_"
+)
 fb_banker = banker_caption.replace('*', '').replace('_', '')
 fb_multi  = multi_caption.replace('*', '').replace('_', '')
 
-print('
-Posting to Telegram...')
+print('\nPosting to Telegram...')
 tg_photo(spaths[0], banker_caption)
 tg_photo(mpaths[0], multi_caption)
 
-print('
-Posting to Facebook...')
+print('\nPosting to Facebook...')
 fb_photo(spaths[0], fb_banker)
 fb_photo(mpaths[0], fb_multi)
 
-print('
-Done!')
+print('\nDone!')
