@@ -6,7 +6,8 @@
 #   1. Run picks pipeline → posts text picks to Telegram (FB/IG tokens intentionally
 #      not passed here, so main.py skips those channels).
 #   2. Log picks to the ledger (data/picks.json).
-#   3. Upload the generated picks card to catbox.moe for a public URL.
+#   3. Copy the latest card image to data/cards/latest.png and commit it.
+#      The raw.githubusercontent.com URL is stable and publicly accessible.
 #   4. Build the brand caption and save data/social_post.json.
 #   5. Commit everything back to main.
 #   6. Pause at the "production" environment gate — Micah reviews and clicks Approve.
@@ -39,7 +40,7 @@ jobs:
       contents: write   # needed to commit data/social_post.json back to main
 
     outputs:
-      image_url: ${{ steps.imgur.outputs.image_url }}
+      image_url: ${{ steps.card_url.outputs.image_url }}
       post_date: ${{ steps.meta.outputs.post_date }}
 
     steps:
@@ -77,41 +78,35 @@ jobs:
           python log_picks.py
 
       # Meta's Graph API requires a publicly accessible image URL.
-      # catbox.moe provides free anonymous uploads with no API key required.
-      - name: Upload picks card to catbox.moe
-        id: imgur
+      # We commit the latest card to the repo as data/cards/latest.png and use
+      # the raw.githubusercontent.com CDN URL — no third-party upload service needed.
+      - name: Stage latest card as latest.png
+        id: card_url
         run: |
           # Find the most recently generated card image
-          CARD=$(ls -t data/cards/*.png 2>/dev/null | head -1)
+          CARD=$(ls -t data/cards/*.png 2>/dev/null | grep -v latest.png | head -1)
 
           if [ -z "$CARD" ]; then
-            echo "::warning::No card image found in data/cards/ — image upload skipped"
+            echo "::warning::No card image found in data/cards/ — image URL will be empty"
             echo "image_url=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          echo "Uploading: $CARD"
+          cp "$CARD" data/cards/latest.png
+          echo "Staged: $CARD → data/cards/latest.png"
 
-          URL=$(curl -s \
-            -F "reqtype=fileupload" \
-            -F "fileToUpload=@${CARD}" \
-            https://catbox.moe/user/api.php)
-
-          # catbox.moe returns the URL directly (or empty on failure)
-          if [[ "$URL" != https://files.catbox.moe/* ]]; then
-            echo "::error::catbox.moe upload failed. Response: $URL"
-            exit 1
-          fi
-
-          echo "image_url=$URL" >> "$GITHUB_OUTPUT"
-          echo "✅ catbox.moe: $URL"
+          # Build the raw CDN URL
+          REPO="${GITHUB_REPOSITORY}"
+          URL="https://raw.githubusercontent.com/${REPO}/main/data/cards/latest.png"
+          echo "image_url=${URL}" >> "$GITHUB_OUTPUT"
+          echo "✅ Image URL: ${URL}"
 
       # Build the brand caption and save all post metadata to data/social_post.json.
       # publish.yml reads this file after checkout — no need to re-run any picks logic.
       - name: Build caption & save social_post.json
         id: meta
         env:
-          IMAGE_URL: ${{ steps.imgur.outputs.image_url }}
+          IMAGE_URL: ${{ steps.card_url.outputs.image_url }}
         run: |
           python3 - <<'PYEOF'
           import json, os
@@ -172,13 +167,13 @@ jobs:
           print(f"Image URL: {image_url or '(none)'}")
           PYEOF
 
-      # Commit picks ledger + social_post.json to main so publish.yml can read
-      # data/social_post.json after a plain checkout.
-      - name: Commit ledger & social post metadata
+      # Commit picks ledger + card image + social_post.json to main.
+      # latest.png must be committed BEFORE publish.yml runs so the raw CDN URL resolves.
+      - name: Commit ledger, card & social post metadata
         run: |
           git config user.name  "PuntMate Bot"
           git config user.email "puntmatenz@gmail.com"
-          git add data/picks.json data/latest_run.json data/social_post.json
+          git add data/picks.json data/latest_run.json data/social_post.json data/cards/latest.png
           git diff --staged --quiet || git commit \
             -m "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
           git push
