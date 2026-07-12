@@ -105,6 +105,7 @@ jobs:
           PYEOF
 
       - name: Post to Facebook
+        continue-on-error: true
         env:
           FB_PAGE_ID:      ${{ secrets.FB_PAGE_ID }}
           META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
