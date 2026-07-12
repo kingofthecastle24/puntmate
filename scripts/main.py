@@ -133,18 +133,16 @@ def run():
 
     for i, pick in enumerate(picks):
         msg = _format_telegram_pick(pick)
-
-        # Send text analysis
-        post_text(msg)
-
-        # Send carousel (cover slide only for now; full multi-image via IG)
         card_set = all_card_sets[i] if i < len(all_card_sets) else []
+
+        # Send pick slide image with full explanation as caption (one post, not two)
+        # Use slide 2 (tip slide) if available — it shows the actual pick/odds
         if card_set:
-            caption = (
-                f"🎯 {pick.get('selection', '')} @ {pick.get('odds', '')} "
-                f"| {pick.get('sport_label', '')} | @puntmatenz"
-            )
-            send_picks_card(card_set[0], caption=caption)  # cover slide
+            slide = card_set[1] if len(card_set) > 1 else card_set[0]
+            send_picks_card(slide, caption=msg)
+        else:
+            # Fallback: text only if image generation failed
+            post_text(msg)
 
     # ── 5. Instagram (carousel — all 3 slides for first pick) ─────────────────
     if IG_ENABLED and all_card_sets and all_card_sets[0]:
