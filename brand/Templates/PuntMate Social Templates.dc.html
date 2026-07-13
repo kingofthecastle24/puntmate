@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Archivo:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #C9C4B4; }
+  </style>
+</helmet>
+
+<!--
+  PUNTMATE — social template pack
+  Formats: Instagram Post (1080x1080), Instagram Story (1080x1920), Facebook Cover (820x312),
+  Profile Picture (1080x1080), Carousel Slide (1080x1350).
+  One prop set drives the pick-content formats — edit matchup/selection/odds once, every format updates.
+  Rotate "palette" per post for variety. Cover + avatar are evergreen brand assets (not pick-specific).
+-->
+
+<div style="font-family:'Space Grotesk',sans-serif;color:#16130F;padding:72px;box-sizing:border-box;display:flex;flex-direction:column;gap:40px;">
+
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <div style="font-family:'Space Mono',monospace;font-size:20px;letter-spacing:4px;color:#8a8578;">PUNTMATE · SOCIAL TEMPLATE PACK</div>
+    <div style="font-size:34px;font-weight:700;letter-spacing:-1px;">Post · Story · Cover · Banner · Avatar · Carousel slide</div>
+    <div style="font-size:22px;color:#6f6a5e;max-width:900px;line-height:1.4;">Edit the Tweaks panel each time you have a new pick, rotate the palette, export each canvas.</div>
+  </div>
+
+  <div style="display:flex;gap:56px;flex-wrap:wrap;align-items:flex-start;">
+
+    <!-- ============ IG POST 1080x1080 ============ -->
+    <div data-screen-label="IG Post" style="display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">INSTAGRAM POST · 1080 × 1080</div>
+      <div style="width:1080px;height:1080px;position:relative;overflow:hidden;background:#0B0F0D;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:60px 60px;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:#111815;border:2.5px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg viewBox="0 0 120 120" width="30" height="30"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px {{ accentGlow }});"/></svg>
+            </div>
+            <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:28px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+          </div>
+          <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:20px;letter-spacing:3px;padding:10px 22px;border-radius:999px;">{{ sportTag }}</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:22px;letter-spacing:5px;">// TIP OF THE WEEK</div>
+          <div style="color:#EAF7EF;font-size:42px;font-weight:700;">{{ matchup }}</div>
+          <div style="color:#EAF7EF;font-size:66px;font-weight:700;line-height:1.05;letter-spacing:-1px;">{{ selection }}</div>
+          <div style="color:{{ accent }};font-size:26px;">{{ market }}</div>
+        </div>
+
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="color:#EAF7EF;font-size:26px;">{{ handle }}</div>
+            <div style="color:#6B7A72;font-size:20px;">R18 · Gamble responsibly · 0800 654 655</div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:104px;line-height:0.8;letter-spacing:-2px;">{{ odds }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ IG STORY 1080x1920 ============ -->
+    <div data-screen-label="IG Story" style="display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">INSTAGRAM / TIKTOK STORY · 1080 × 1920</div>
+      <div style="width:1080px;height:1920px;position:relative;overflow:hidden;background:#0B0F0D;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:60px 60px;box-sizing:border-box;padding:120px 80px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:56px;height:56px;border-radius:50%;background:#111815;border:2.5px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg viewBox="0 0 120 120" width="30" height="30"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px {{ accentGlow }});"/></svg>
+          </div>
+          <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:28px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:30px;">
+          <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:6px;">// TIP OF THE WEEK</div>
+          <div style="color:#8FA69A;font-size:36px;">{{ matchup }}</div>
+          <div style="color:#EAF7EF;font-size:88px;font-weight:700;line-height:1.02;letter-spacing:-2px;">{{ selection }}</div>
+          <div style="display:inline-block;align-self:flex-start;color:{{ accent }};border:1.5px solid {{ accentDim }};border-radius:999px;padding:14px 28px;font-size:30px;">{{ market }}</div>
+          <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:150px;line-height:0.85;letter-spacing:-3px;margin-top:20px;">{{ odds }}</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div style="height:1px;background:rgba(255,255,255,0.12);"></div>
+          <div style="display:flex;justify-content:space-between;color:#EAF7EF;font-size:32px;">
+            <span>{{ handle }}</span>
+            <span style="color:{{ accent }};font-family:'Space Mono',monospace;font-size:26px;letter-spacing:3px;">SWIPE UP →</span>
+          </div>
+          <div style="color:#6B7A72;font-size:24px;">R18 · Gamble responsibly · 0800 654 655 · gamblinghelpline.co.nz</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ FACEBOOK COVER 820x312 ============ -->
+    <div data-screen-label="FB Cover" style="display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">FACEBOOK COVER · 820 × 312</div>
+      <div style="width:820px;height:312px;position:relative;overflow:hidden;background:#0B0F0D;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:44px 44px;box-sizing:border-box;padding:48px 64px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:22px;">
+          <div style="width:74px;height:74px;border-radius:50%;background:#111815;border:2.5px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg viewBox="0 0 120 120" width="40" height="40"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px {{ accentGlow }});"/></svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:36px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+            <div style="color:#8FA69A;font-size:19px;">{{ tagline }}</div>
+          </div>
+        </div>
+        <div style="text-align:right;display:flex;flex-direction:column;gap:6px;">
+          <div style="color:{{ accent }};font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ handle }}</div>
+          <div style="color:#6B7A72;font-size:15px;">R18 · Gamble responsibly · 0800 654 655</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SOCIAL PREVIEW / BANNER 1280x640 ============ -->
+    <div data-screen-label="Social Preview" style="display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">GITHUB / LINKEDIN / X PREVIEW · 1280 × 640</div>
+      <div style="width:1280px;height:640px;position:relative;overflow:hidden;background:#0B0F0D;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:56px 56px;box-sizing:border-box;padding:88px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:24px;">
+          <div style="width:96px;height:96px;border-radius:50%;background:#111815;border:3px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg viewBox="0 0 120 120" width="52" height="52"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 10px {{ accentGlow }});"/></svg>
+          </div>
+          <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:56px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:18px;">
+          <div style="color:#EAF7EF;font-size:64px;font-weight:700;line-height:1.05;letter-spacing:-1px;max-width:1040px;">{{ tagline }}</div>
+          <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:3px;">{{ handle }} · DAILY VALUE BETS</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;color:#6B7A72;font-size:22px;">
+          <span>New Zealand</span>
+          <span>R18 · Gamble responsibly · 0800 654 655</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PROFILE PICTURE 1080x1080 ============ -->
+    <div data-screen-label="Avatar" style="display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">PROFILE PICTURE · 1080 × 1080 · IG / FB / TIKTOK (safe-zone circle)</div>
+      <div style="width:1080px;height:1080px;position:relative;overflow:hidden;background:#0B0F0D;display:flex;align-items:center;justify-content:center;">
+        <div style="position:absolute;inset:0;border-radius:50%;border:3px dashed rgba(255,255,255,0.14);margin:36px;pointer-events:none;"></div>
+        <svg viewBox="0 0 120 120" width="440" height="440"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 30px {{ accentGlow }});"/></svg>
+      </div>
+    </div>
+
+    <!-- ============ CAROUSEL SLIDE 1080x1350 ============ -->
+    <div data-screen-label="Carousel Slide" style="display:flex;flex-direction:column;gap:18px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">CAROUSEL SLIDE · 1080 × 1350 (4:5)</div>
+      <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;gap:36px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE PICK</div>
+          <div style="color:#6B7A72;font-size:24px;letter-spacing:2px;">{{ market }}</div>
+        </div>
+
+        <div style="flex:1;position:relative;background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:32px;padding:64px;display:flex;flex-direction:column;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:14px;color:{{ accent }};font-family:'Space Mono',monospace;font-size:24px;letter-spacing:3px;"><span style="width:12px;height:12px;border-radius:50%;background:{{ accent }};"></span>BETSLIP</div>
+            <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">1 LEG</div>
+          </div>
+
+          <div style="margin-top:52px;">
+            <div style="color:#6B7A72;font-size:22px;letter-spacing:4px;">MATCH</div>
+            <div style="color:#EAF7EF;font-size:46px;font-weight:700;margin-top:8px;">{{ matchup }}</div>
+          </div>
+
+          <div style="margin-top:44px;">
+            <div style="color:#6B7A72;font-size:22px;letter-spacing:4px;">SELECTION</div>
+            <div style="color:#EAF7EF;font-size:80px;font-weight:700;line-height:1.02;letter-spacing:-2px;margin-top:12px;">{{ selection }}</div>
+            <div style="display:inline-block;margin-top:26px;color:{{ accent }};border:1.5px solid {{ accentDim }};border-radius:999px;padding:12px 26px;font-size:26px;letter-spacing:1px;">{{ market }}</div>
+          </div>
+
+          <div style="flex:1;"></div>
+
+          <div style="position:relative;border-top:2.5px dashed rgba(255,255,255,0.16);margin:0 -64px;"></div>
+          <div style="position:absolute;left:-18px;bottom:200px;width:36px;height:36px;border-radius:50%;background:#0B0F0D;"></div>
+          <div style="position:absolute;right:-18px;bottom:200px;width:36px;height:36px;border-radius:50%;background:#0B0F0D;"></div>
+
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:44px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="color:#6B7A72;font-size:22px;letter-spacing:4px;">DECIMAL ODDS</div>
+              <div style="color:#8FA69A;font-size:24px;">{{ oddsNote }}</div>
+            </div>
+            <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:118px;line-height:0.8;letter-spacing:-3px;">{{ odds }}</div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;color:#6B7A72;font-size:23px;">
+          <span>{{ insight }}</span>
+          <span>R18</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: {&quot;width&quot;: 1600, &quot;height&quot;: 1000},
+  &quot;matchup&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NZ Warriors v Stormers&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;sportTag&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NRL&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;market&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Anytime Try Scorer&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;selection&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Darren Watene Zelezniak&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;odds&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;$3.00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;oddsNote&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Best value on the board&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;insight&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Return to form — the book's outsider is the game's insider.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;handle&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;@puntmatenz&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Brand&quot;},
+  &quot;tagline&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Daily value bets across NRL, AFL, NBA &amp; Racing&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Brand&quot;},
+  &quot;palette&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;green&quot;, &quot;options&quot;: [&quot;green&quot;, &quot;blue&quot;, &quot;amber&quot;, &quot;pink&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Style&quot;}
+}">
+class Component extends DCLogic {
+  hexToRgba(hex, alpha) {
+    const h = hex.replace('#', '');
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  renderVals() {
+    const palettes = {
+      green: '#35E07E',
+      blue: '#3DB2FF',
+      amber: '#FFC145',
+      pink: '#FF4FA3'
+    };
+    const key = this.props.palette ?? 'green';
+    const accent = palettes[key] ?? palettes.green;
+
+    return {
+      matchup: this.props.matchup ?? 'NZ Warriors v Stormers',
+      sportTag: this.props.sportTag ?? 'NRL',
+      market: this.props.market ?? 'Anytime Try Scorer',
+      selection: this.props.selection ?? 'Darren Watene Zelezniak',
+      odds: this.props.odds ?? '$3.00',
+      oddsNote: this.props.oddsNote ?? 'Best value on the board',
+      insight: this.props.insight ?? "Return to form — the book's outsider is the game's insider.",
+      handle: this.props.handle ?? '@puntmatenz',
+      tagline: this.props.tagline ?? 'Daily value bets across NRL, AFL, NBA & Racing',
+      accent,
+      accentGlow: this.hexToRgba(accent, 0.6),
+      accentDim: this.hexToRgba(accent, 0.35)
+    };
+  }
+}
+
+</script>
+</body>
+</html>

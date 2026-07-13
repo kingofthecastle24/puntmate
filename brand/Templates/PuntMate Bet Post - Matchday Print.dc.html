@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@600;700;900&family=Barlow+Condensed:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #C9C4B4; }
+  </style>
+</helmet>
+
+<!--
+  PUNTMATE BET POST — MATCHDAY PRINT (1B)
+  Loud cream/red tabloid carousel. 3 slides (Cover / The Tip / Lock It In), each 1080x1350.
+  Edit pick props in the Tweaks panel each post: matchup, matchupCaps, sportTag, market,
+  selectionLines, odds, insightHtml, handle. NZ compliance line baked in.
+-->
+
+<div style="font-family:'Archivo',sans-serif;color:#16130F;padding:56px;box-sizing:border-box;display:flex;flex-direction:column;gap:28px;">
+
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="background:#E8402A;color:#F4EEE2;font-family:'Archivo',sans-serif;font-weight:900;font-size:20px;letter-spacing:1px;padding:8px 16px;border-radius:8px;">1B</div>
+    <div style="font-family:'Space Mono',monospace;font-size:18px;letter-spacing:2px;color:#6f6a5e;">MATCHDAY PRINT · edit the Tweaks panel (matchup, pick, odds) for each new post</div>
+  </div>
+
+  <div style="display:flex;gap:56px;">
+
+    <!-- SLIDE 1 · COVER -->
+    <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#F4EEE2;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;justify-content:space-between;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;flex-direction:column;">
+          <div style="font-weight:900;font-size:38px;letter-spacing:-1px;color:#16130F;">PUNT<span style="color:#E8402A;">MATE</span></div>
+          <div style="height:8px;width:100%;background:#E8402A;margin-top:6px;"></div>
+        </div>
+        <div style="transform:rotate(6deg);border:3px solid #E8402A;color:#E8402A;font-weight:900;font-size:30px;letter-spacing:2px;padding:10px 20px;">{{ sportTag }}</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;font-family:'Anton',sans-serif;line-height:0.82;text-transform:uppercase;">
+        <div style="font-size:44px;letter-spacing:3px;color:#E8402A;font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:14px;">{{ coverKicker }}</div>
+        <div style="font-size:210px;color:#16130F;">{{ coverL1 }}</div>
+        <div style="font-size:210px;color:#16130F;display:inline-block;"><span style="background:#FFD400;padding:0 14px;box-decoration-break:clone;-webkit-box-decoration-break:clone;">{{ coverL2 }}</span></div>
+        <div style="font-size:210px;color:#E8402A;">{{ coverL3 }}</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:40px;letter-spacing:2px;color:#16130F;">SWIPE FOR THE PICK →</div>
+        <div style="text-align:right;font-family:'Space Mono',monospace;font-size:22px;color:#8a8578;line-height:1.5;">{{ handle }}<br>R18 · Gamble responsibly</div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 · THE TIP -->
+    <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#F4EEE2;box-sizing:border-box;display:flex;flex-direction:column;">
+      <div style="background:#16130F;color:#F4EEE2;padding:44px 80px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;letter-spacing:1px;">{{ matchupCaps }}</div>
+        <div style="color:#E8402A;font-family:'Anton',sans-serif;font-size:38px;letter-spacing:2px;">{{ sportTag }}</div>
+      </div>
+
+      <div style="flex:1;padding:70px 80px;display:flex;flex-direction:column;position:relative;">
+        <div style="font-family:'Anton',sans-serif;text-transform:uppercase;color:#E8402A;font-size:46px;letter-spacing:2px;">{{ market }}</div>
+
+        <div style="font-family:'Anton',sans-serif;text-transform:uppercase;color:#16130F;font-size:150px;line-height:0.86;letter-spacing:-1px;margin-top:24px;max-width:920px;">{{ selection }}</div>
+
+        <div style="flex:1;"></div>
+
+        <div style="display:flex;align-items:center;gap:44px;">
+          <div style="position:relative;width:300px;height:300px;flex:none;transform:rotate(-8deg);">
+            <div style="position:absolute;inset:0;border-radius:50%;background:#FFD400;"></div>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:30px;letter-spacing:3px;color:#16130F;">ODDS</div>
+              <div style="font-family:'Anton',sans-serif;font-size:100px;color:#E8402A;line-height:0.9;">{{ odds }}</div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;letter-spacing:2px;color:#16130F;">BEST VALUE</div>
+            </div>
+          </div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:38px;line-height:1.15;color:#16130F;">{{ insight }}</div>
+        </div>
+      </div>
+
+      <div style="background:#E8402A;color:#F4EEE2;padding:30px 80px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:32px;letter-spacing:2px;display:flex;justify-content:space-between;">
+        <span>GET TO IT · LOCK IT IN</span><span>R18</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 · THE VERDICT -->
+    <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#F4EEE2;box-sizing:border-box;display:flex;flex-direction:column;">
+      <div style="background:#16130F;color:#F4EEE2;padding:44px 80px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:44px;letter-spacing:1px;">THE VERDICT</div>
+        <div style="color:#FFD400;font-family:'Anton',sans-serif;font-size:38px;letter-spacing:2px;">{{ confidenceLabel }} RISK</div>
+      </div>
+
+      <div style="flex:1;padding:64px 80px;display:flex;flex-direction:column;gap:40px;">
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <sc-for list="{{ riskChips }}" as="chip" hint-placeholder-count="3">
+            <div style="background:#16130F;color:#F4EEE2;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;letter-spacing:2px;padding:8px 20px;">{{ chip.label }}</div>
+          </sc-for>
+        </div>
+
+        <div style="font-family:'Anton',sans-serif;text-transform:uppercase;color:#16130F;font-size:120px;line-height:0.84;">WHY WE'RE <span style="color:#E8402A;">ON</span></div>
+
+        <div style="border-top:4px solid #16130F;border-bottom:4px solid #16130F;padding:28px 0;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+          <div style="display:flex;flex-direction:column;gap:8px;min-width:0;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:28px;letter-spacing:2px;color:#8a8578;text-transform:uppercase;">{{ competition }} · {{ matchupCaps }}</div>
+            <div style="font-family:'Anton',sans-serif;font-size:60px;color:#16130F;text-transform:uppercase;line-height:0.9;">{{ selectionShort }} <span style="color:#E8402A;">{{ odds }}</span></div>
+          </div>
+          <div style="display:flex;gap:12px;flex:none;">
+            <sc-for list="{{ printDots }}" as="dot" hint-placeholder-count="5">
+              <div style="width:28px;height:28px;border-radius:50%;background:{{ dot.bg }};border:3px solid #16130F;"></div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:40px;line-height:1.25;color:#16130F;">{{ analysis }}</div>
+      </div>
+
+      <div style="background:#E8402A;color:#F4EEE2;padding:30px 80px;font-family:'Space Mono',monospace;font-size:20px;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+        <span>FOLLOW {{ handle }}</span>
+        <span>R18 · Gamble responsibly · 0800 654 655</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: {&quot;width&quot;: 1400, &quot;height&quot;: 750},
+  &quot;coverTheme&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;Tip of the Week&quot;, &quot;options&quot;: [&quot;Tip of the Week&quot;, &quot;Multi Monday&quot;, &quot;Daily Pick&quot;, &quot;Banker of the Day&quot;, &quot;Value Alert&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Cover&quot;},
+  &quot;matchup&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NZ Warriors v Stormers&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;sportTag&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NRL&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;market&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Anytime Try Scorer&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;selection&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Darren Watene Zelezniak&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;selectionShort&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Watene Zelezniak&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;odds&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;$3.00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;insight&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Return-to-form outsider. The book's outsider is the game's insider.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;handle&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;@puntmatenz&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;competition&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NRL · Round 18&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;analysis&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Watene Zelezniak has crossed in three of his past four and shifts back to his preferred right edge against a Stormers side conceding tries out wide. At $3.00 the market is overpricing an in-form finisher — genuine value with statistical backing.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;confidence&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 4, &quot;min&quot;: 1, &quot;max&quot;: 5, &quot;step&quot;: 1, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;confidenceLabel&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;LOW&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;riskTagline&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Low risk · Steady returns · Long game&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;}
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const matchup = this.props.matchup ?? 'NZ Warriors v Stormers';
+    const market = this.props.market ?? 'Anytime Try Scorer';
+    const selection = this.props.selection ?? 'Darren Watene Zelezniak';
+    const insight = this.props.insight ?? "Return-to-form outsider. The book's outsider is the game's insider.";
+
+    // Cover theme presets
+    const themes = {
+      'Tip of the Week':   { kicker: 'TIP OF THE WEEK',   l1: 'BEST',  l2: 'VALUE',  l3: 'BET.' },
+      'Multi Monday':      { kicker: 'MULTI MONDAY',       l1: 'THE',   l2: 'MULTI',  l3: 'IS ON.' },
+      'Daily Pick':        { kicker: "PUNTMATE'S DAILY PICK", l1: 'DAILY', l2: 'PICK', l3: 'LOCKED' },
+      'Banker of the Day': { kicker: 'BANKER OF THE DAY',  l1: 'THE',   l2: 'BANKER', l3: 'IS IN.' },
+      'Value Alert':       { kicker: 'VALUE ALERT',        l1: 'VALUE', l2: 'ALERT',  l3: 'LIVE.' }
+    };
+    const theme = themes[this.props.coverTheme] ?? themes['Tip of the Week'];
+
+    // Breakdown / confidence
+    const confidence = Math.max(1, Math.min(5, parseInt(this.props.confidence ?? 4, 10) || 4));
+    const labels = { 5: 'MINIMAL', 4: 'LOW', 3: 'MODERATE', 2: 'HIGHER', 1: 'SPECULATIVE' };
+    const confidenceLabel = this.props.confidenceLabel ?? labels[confidence];
+    const printDots = [1, 2, 3, 4, 5].map(n => ({ bg: n <= confidence ? '#E8402A' : 'transparent' }));
+
+    const riskTagline = this.props.riskTagline ?? 'Low risk · Steady returns · Long game';
+    const riskChips = riskTagline.split(/[·.]/).map(s => s.trim()).filter(Boolean).map(l => ({ label: l.toUpperCase() }));
+
+    return {
+      matchup,
+      matchupCaps: matchup.toUpperCase(),
+      sportTag: this.props.sportTag ?? 'NRL',
+      market,
+      selection,
+      selectionShort: (this.props.selectionShort ?? selection).toUpperCase(),
+      odds: this.props.odds ?? '$3.00',
+      insight,
+      handle: this.props.handle ?? '@puntmatenz',
+      coverKicker: theme.kicker,
+      coverL1: theme.l1,
+      coverL2: theme.l2,
+      coverL3: theme.l3,
+      competition: this.props.competition ?? 'NRL · Round 18',
+      analysis: this.props.analysis ?? "Watene Zelezniak has crossed in three of his past four and shifts back to his preferred right edge against a Stormers side conceding tries out wide. At $3.00 the market is overpricing an in-form finisher — genuine value with statistical backing.",
+      confidenceLabel,
+      printDots,
+      riskChips
+    };
+  }
+}
+
+</script>
+</body>
+</html>

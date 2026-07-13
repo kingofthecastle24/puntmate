@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Archivo:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #C9C4B4; }
+  </style>
+</helmet>
+
+<!--
+  PUNTMATE — RESULTS / RECAP carousel (Betslip Night look)
+  2 slides (1080x1350): The Record · The Card.
+  Builds trust: shows the settled results, strike rate and units P/L (1 unit per pick).
+  Enter results in the "results" prop, one per line:  Match | Selection | Odds | WON  (or LOST / VOID)
+  Wins, losses, strike rate and profit all auto-calculate. Wordmark PUNT/MATE, handle @puntmatenz.
+-->
+
+<div style="font-family:'Space Grotesk',sans-serif;color:#16130F;padding:56px;box-sizing:border-box;display:flex;flex-direction:column;gap:28px;">
+
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="width:34px;height:34px;border-radius:50%;background:#0B0F0D;display:flex;align-items:center;justify-content:center;flex:none;">
+      <svg viewBox="0 0 120 120" width="18" height="18"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div style="font-family:'Space Mono',monospace;font-size:18px;letter-spacing:3px;color:#6f6a5e;">RESULTS TEMPLATE · enter settled picks (Match | Selection | Odds | WON/LOST/VOID) — record auto-calculates</div>
+  </div>
+
+  <div style="display:flex;gap:56px;">
+
+    <!-- SLIDE 1 · THE RECORD -->
+    <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:60px 60px;box-sizing:border-box;padding:88px;display:flex;flex-direction:column;justify-content:space-between;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:18px;">
+          <div style="width:64px;height:64px;border-radius:50%;background:#111815;border:2.5px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg viewBox="0 0 120 120" width="34" height="34"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px {{ accentGlow }});"/></svg>
+          </div>
+          <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:38px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+        </div>
+        <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:22px;letter-spacing:3px;padding:12px 24px;border-radius:999px;">{{ period }}</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:26px;">
+        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:6px;">// THE RESULTS</div>
+        <div style="font-weight:700;font-size:230px;line-height:0.86;letter-spacing:-6px;color:#EAF7EF;">{{ wins }}<span style="color:#6B7A72;">–</span><span style="color:{{ accent }};">{{ losses }}</span></div>
+        <div style="font-size:38px;color:#8FA69A;max-width:760px;line-height:1.3;">{{ settled }} picks settled · <span style="color:#EAF7EF;font-weight:700;">{{ strikeRate }}% strike rate</span></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:34px;">
+        <div style="display:flex;gap:20px;">
+          <div style="flex:1;background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:22px;padding:32px;display:flex;flex-direction:column;gap:8px;">
+            <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:20px;letter-spacing:3px;">PROFIT / LOSS</div>
+            <div style="color:{{ profitColor }};font-family:'Space Mono',monospace;font-weight:700;font-size:60px;line-height:0.9;">{{ profit }}u</div>
+          </div>
+          <div style="flex:1;background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:22px;padding:32px;display:flex;flex-direction:column;gap:8px;">
+            <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:20px;letter-spacing:3px;">BEST WIN</div>
+            <div style="color:{{ accent }};font-family:'Space Mono',monospace;font-weight:700;font-size:60px;line-height:0.9;">{{ bestWin }}</div>
+          </div>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.12);"></div>
+        <div style="display:flex;justify-content:space-between;color:#6B7A72;font-size:24px;letter-spacing:1px;">
+          <span style="color:#EAF7EF;">{{ handle }}</span>
+          <span>R18 · Gamble responsibly · 0800 654 655</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 · THE CARD -->
+    <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;gap:28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE CARD</div>
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ period }}</div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;gap:16px;">
+        <sc-for list="{{ rows }}" as="row" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:24px;background-color:#111815;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:26px 30px;">
+            <div style="width:112px;flex:none;text-align:center;color:{{ row.tagColor }};background:{{ row.tagBg }};border-radius:10px;padding:12px 0;font-family:'Space Mono',monospace;font-weight:700;font-size:24px;letter-spacing:1px;">{{ row.result }}</div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;">
+              <div style="color:#EAF7EF;font-size:33px;font-weight:700;line-height:1.05;">{{ row.selection }}</div>
+              <div style="color:#8FA69A;font-size:21px;">{{ row.match }}</div>
+            </div>
+            <div style="color:{{ row.oddsColor }};font-family:'Space Mono',monospace;font-weight:700;font-size:38px;flex:none;">{{ row.odds }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:24px;padding:32px 40px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:20px;letter-spacing:3px;">{{ wins }}W · {{ losses }}L · {{ strikeRate }}% STRIKE</div>
+          <div style="color:#EAF7EF;font-size:30px;font-weight:700;">{{ summary }}</div>
+        </div>
+        <div style="color:{{ profitColor }};font-family:'Space Mono',monospace;font-weight:700;font-size:64px;line-height:0.8;">{{ profit }}u</div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:48px;height:48px;border-radius:50%;background:{{ accent }};display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg viewBox="0 0 120 120" width="26" height="26"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="#0B0F0D" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="color:#EAF7EF;font-size:30px;font-weight:700;">Follow {{ handle }}</div>
+        </div>
+        <div style="color:#6B7A72;font-size:19px;">R18 · Gamble responsibly · 0800 654 655</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: {&quot;width&quot;: 1400, &quot;height&quot;: 750},
+  &quot;results&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Warriors v Stormers | Warriors to win | $1.85 | WON\nBroncos v Panthers | Broncos +4.5 | $1.95 | WON\nStorm v Eels | Over 38.5 pts | $1.90 | WON\nRoosters v Sharks | Roosters ML | $2.10 | LOST\nDolphins v Titans | Hammer to score | $3.00 | WON&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Results&quot;},
+  &quot;period&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;THIS WEEK&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Results&quot;},
+  &quot;summary&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Another green week on the board.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Results&quot;},
+  &quot;handle&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;@puntmatenz&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Brand&quot;},
+  &quot;palette&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;green&quot;, &quot;options&quot;: [&quot;green&quot;, &quot;blue&quot;, &quot;amber&quot;, &quot;pink&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Style&quot;}
+}">
+class Component extends DCLogic {
+  hexToRgba(hex, alpha) {
+    const h = hex.replace('#', '');
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  renderVals() {
+    const palettes = { green: '#35E07E', blue: '#3DB2FF', amber: '#FFC145', pink: '#FF4FA3' };
+    const key = this.props.palette ?? 'green';
+    const accent = palettes[key] ?? palettes.green;
+    const LOSS = '#FF5C5C', MUTE = '#6B7A72';
+
+    const raw = this.props.results ?? "Warriors v Stormers | Warriors to win | $1.85 | WON\nBroncos v Panthers | Broncos +4.5 | $1.95 | WON\nStorm v Eels | Over 38.5 pts | $1.90 | WON\nRoosters v Sharks | Roosters ML | $2.10 | LOST\nDolphins v Titans | Hammer to score | $3.00 | WON";
+    const parsed = raw.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 7).map(line => {
+      const p = line.split('|').map(x => x.trim());
+      let match = '', selection = '', odds = '', result = 'WON';
+      if (p.length >= 4) { [match, selection, odds, result] = p; }
+      else if (p.length === 3) { [selection, odds, result] = p; }
+      else { selection = p[0] || ''; }
+      result = (result || '').toUpperCase();
+      return { match, selection, odds, result };
+    });
+
+    let wins = 0, losses = 0, voids = 0, profit = 0, best = 0;
+    parsed.forEach(r => {
+      const o = parseFloat(String(r.odds).replace(/[^0-9.]/g, ''));
+      if (r.result === 'WON') { wins++; if (!isNaN(o)) { profit += (o - 1); if (o - 1 > best) best = o - 1; } }
+      else if (r.result === 'LOST') { losses++; profit -= 1; }
+      else { voids++; }
+    });
+    const settled = wins + losses;
+    const strikeRate = settled ? Math.round((wins / settled) * 100) : 0;
+    const profitStr = (profit >= 0 ? '+' : '') + profit.toFixed(2);
+    const profitColor = profit >= 0 ? accent : LOSS;
+    const bestWin = best > 0 ? ('+' + best.toFixed(2) + 'u') : '—';
+
+    const rows = parsed.map(r => {
+      let tagColor = accent, tagBg = this.hexToRgba(accent, 0.15), oddsColor = accent;
+      if (r.result === 'LOST') { tagColor = LOSS; tagBg = this.hexToRgba(LOSS, 0.15); oddsColor = MUTE; }
+      else if (r.result !== 'WON') { tagColor = MUTE; tagBg = 'rgba(255,255,255,0.06)'; oddsColor = MUTE; }
+      return { result: r.result, selection: r.selection, match: r.match, odds: r.odds, tagColor, tagBg, oddsColor };
+    });
+
+    return {
+      rows,
+      wins: String(wins),
+      losses: String(losses),
+      settled: String(settled + voids),
+      strikeRate: String(strikeRate),
+      profit: profitStr,
+      profitColor,
+      bestWin,
+      period: this.props.period ?? 'THIS WEEK',
+      summary: this.props.summary ?? 'Another green week on the board.',
+      handle: this.props.handle ?? '@puntmatenz',
+      accent,
+      accentGlow: this.hexToRgba(accent, 0.6),
+      accentDim: this.hexToRgba(accent, 0.35)
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Archivo:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #C9C4B4; }
+  </style>
+</helmet>
+
+<!--
+  PUNTMATE — mobile web foundations
+  Three core templates: Home, All Tips (archive), Tip Detail.
+  Reusable pieces: nav header, tip card (compact), featured tip card, odds/betslip widget, footer.
+  Tweaks: palette (recolour brand accent) + monetization (free vs freemium lock on PREMIUM tips).
+-->
+
+<div style="font-family:'Space Grotesk',sans-serif;color:#16130F;padding:72px;box-sizing:border-box;display:flex;flex-direction:column;gap:40px;">
+
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <div style="font-family:'Space Mono',monospace;font-size:20px;letter-spacing:4px;color:#8a8578;">PUNTMATE · SITE FOUNDATIONS · MOBILE WEB</div>
+    <div style="font-size:34px;font-weight:700;letter-spacing:-1px;">Home · All Tips · Tip Detail</div>
+    <div style="font-size:22px;color:#6f6a5e;max-width:900px;line-height:1.4;">Same dark sportsbook system as the carousels — tick badge, neon accent, Space Grotesk/Archivo/Space Mono. Freemium tier shown on PREMIUM picks.</div>
+  </div>
+
+  <div style="display:flex;gap:48px;flex-wrap:wrap;align-items:flex-start;">
+
+    <!-- ============ HOME ============ -->
+    <div data-screen-label="Home" style="display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">01 · HOME</div>
+      <div style="width:402px;border-radius:28px;overflow:hidden;background:#0B0F0D;box-shadow:0 30px 60px rgba(0,0,0,0.25);">
+
+        <!-- nav -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:34px;height:34px;border-radius:50%;background:#111815;border:2px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg viewBox="0 0 120 120" width="18" height="18"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:20px;letter-spacing:-0.5px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:2px;color:#6B7A72;">MENU</div>
+        </div>
+
+        <!-- hero -->
+        <div style="padding:28px 24px 8px;display:flex;flex-direction:column;gap:14px;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:40px 40px;">
+          <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:14px;letter-spacing:4px;">// TODAY'S BEST VALUE</div>
+          <div style="font-weight:900;font-family:'Archivo',sans-serif;font-size:44px;line-height:0.95;letter-spacing:-1px;color:#EAF7EF;">LOCK IN<br>THE <span style="color:{{ accent }};">EDGE.</span></div>
+        </div>
+
+        <!-- featured card -->
+        <div style="padding:20px 24px;">
+          <div style="position:relative;background:#111815;border:1.5px solid {{ accentDim }};border-radius:24px;padding:26px;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:2px;color:{{ accent }};border:1px solid {{ accentDim }};padding:4px 10px;border-radius:999px;">{{ featured.sport }}</span>
+              <span style="font-family:'Space Mono',monospace;font-size:13px;color:#6B7A72;">{{ featured.date }}</span>
+            </div>
+            <div style="color:#EAF7EF;font-size:19px;font-weight:600;">{{ featured.match }}</div>
+            <div style="color:#EAF7EF;font-size:30px;font-weight:700;letter-spacing:-0.5px;line-height:1.05;">{{ featured.selection }}</div>
+            <div style="color:#8FA69A;font-size:15px;line-height:1.4;">{{ featured.note }}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+              <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:38px;">{{ featured.odds }}</div>
+              <div style="color:#EAF7EF;background:{{ accent }};border-radius:999px;padding:12px 20px;font-size:14px;font-weight:700;color:#0B0F0D;">View pick →</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- latest tips -->
+        <div style="padding:8px 24px 24px;display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="color:#EAF7EF;font-size:16px;font-weight:700;letter-spacing:1px;">LATEST TIPS</div>
+            <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:{{ accent }};">SEE ALL →</div>
+          </div>
+          <sc-for list="{{ latestTips }}" as="item" hint-placeholder-count="3">
+            <div style="position:relative;overflow:hidden;background:#111815;border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:16px;">
+              <div style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;color:{{ accent }};">{{ item.sport }}</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:12px;color:#6B7A72;">{{ item.date }}</span>
+                </div>
+                <div style="color:#EAF7EF;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.selection }}</div>
+                <div style="color:#8FA69A;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.match }}</div>
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:20px;flex:none;">{{ item.odds }}</div>
+              <sc-if value="{{ item.locked }}">
+                <div style="position:absolute;inset:0;background:rgba(11,15,13,0.86);display:flex;align-items:center;justify-content:center;gap:8px;">
+                  <span style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;color:{{ accent }};">🔒 PREMIUM</span>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- follow banner -->
+        <div style="margin:0 24px 24px;background:{{ accent }};border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:6px;">
+          <div style="color:#0B0F0D;font-size:19px;font-weight:800;">Follow @puntmatenz</div>
+          <div style="color:#0B0F0D;font-size:14px;opacity:0.75;">New picks daily on Instagram & TikTok.</div>
+        </div>
+
+        <!-- footer -->
+        <div style="padding:24px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:20px;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#8FA69A;">
+            <span>HOME</span><span>TIPS</span><span>ABOUT</span>
+          </div>
+          <div style="color:#6B7A72;font-size:12px;line-height:1.5;">R18 · Think of the odds, not the outcome.<br>Gamble responsibly · 0800 654 655 · gamblinghelpline.co.nz</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ ALL TIPS ============ -->
+    <div data-screen-label="All Tips" style="display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">02 · ALL TIPS (ARCHIVE)</div>
+      <div style="width:402px;border-radius:28px;overflow:hidden;background:#0B0F0D;box-shadow:0 30px 60px rgba(0,0,0,0.25);">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:34px;height:34px;border-radius:50%;background:#111815;border:2px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg viewBox="0 0 120 120" width="18" height="18"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:20px;letter-spacing:-0.5px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:2px;color:#6B7A72;">MENU</div>
+        </div>
+
+        <div style="padding:24px 24px 12px;display:flex;flex-direction:column;gap:16px;">
+          <div style="font-weight:900;font-family:'Archivo',sans-serif;font-size:32px;color:#EAF7EF;letter-spacing:-0.5px;">ALL TIPS</div>
+          <div style="display:flex;gap:10px;overflow:hidden;">
+            <sc-for list="{{ sports }}" as="s" hint-placeholder-count="5">
+              <sc-if value="{{ s.active }}" hint-placeholder-val="{{ false }}">
+                <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;background:{{ accent }};color:#0B0F0D;font-weight:700;padding:8px 16px;border-radius:999px;flex:none;">{{ s.name }}</span>
+              </sc-if>
+              <sc-if value="{{ s.inactive }}" hint-placeholder-val="{{ true }}">
+                <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#8FA69A;border:1px solid rgba(255,255,255,0.14);padding:8px 16px;border-radius:999px;flex:none;">{{ s.name }}</span>
+              </sc-if>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="padding:8px 24px 24px;display:flex;flex-direction:column;gap:14px;">
+          <sc-for list="{{ tipsWithLock }}" as="item" hint-placeholder-count="5">
+            <div style="position:relative;overflow:hidden;background:#111815;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;color:{{ accent }};">{{ item.sport }}</span>
+                <span style="font-family:'Space Mono',monospace;font-size:12px;color:#6B7A72;">{{ item.date }}</span>
+              </div>
+              <div style="color:#EAF7EF;font-size:16px;font-weight:600;">{{ item.match }}</div>
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+                <div style="color:#8FA69A;font-size:14px;max-width:230px;">{{ item.selection }} · {{ item.market }}</div>
+                <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:24px;flex:none;">{{ item.odds }}</div>
+              </div>
+              <sc-if value="{{ item.locked }}">
+                <div style="position:absolute;inset:0;background:rgba(11,15,13,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 16px;">
+                  <span style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;color:{{ accent }};white-space:nowrap;">🔒 PREMIUM PICK</span>
+                  <span style="color:#EAF7EF;font-size:12px;font-weight:600;white-space:nowrap;">Unlock with membership</span>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="padding:24px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:20px;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#8FA69A;">
+            <span>HOME</span><span>TIPS</span><span>ABOUT</span>
+          </div>
+          <div style="color:#6B7A72;font-size:12px;line-height:1.5;">R18 · Think of the odds, not the outcome.<br>Gamble responsibly · 0800 654 655 · gamblinghelpline.co.nz</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ TIP DETAIL ============ -->
+    <div data-screen-label="Tip Detail" style="display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'Space Mono',monospace;font-size:16px;letter-spacing:3px;color:#8a8578;">03 · TIP DETAIL</div>
+      <div style="width:402px;border-radius:28px;overflow:hidden;background:#0B0F0D;box-shadow:0 30px 60px rgba(0,0,0,0.25);">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid rgba(255,255,255,0.08);">
+          <div style="font-family:'Space Mono',monospace;font-size:14px;letter-spacing:1px;color:{{ accent }};">← ALL TIPS</div>
+          <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:{{ accent }};border:1px solid {{ accentDim }};padding:4px 10px;border-radius:999px;">{{ featured.sport }}</span>
+        </div>
+
+        <div style="padding:24px;display:flex;flex-direction:column;gap:24px;">
+          <div>
+            <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:14px;letter-spacing:3px;">// THE PICK</div>
+            <div style="color:#EAF7EF;font-size:22px;font-weight:700;margin-top:8px;">{{ featured.match }}</div>
+            <div style="color:#6B7A72;font-size:13px;margin-top:4px;">{{ featured.date }} · {{ featured.market }}</div>
+          </div>
+
+          <!-- betslip / odds widget -->
+          <div style="position:relative;background:#111815;border:1.5px solid {{ accentDim }};border-radius:24px;padding:28px;display:flex;flex-direction:column;">
+            <div style="display:flex;align-items:center;gap:10px;color:{{ accent }};font-family:'Space Mono',monospace;font-size:13px;letter-spacing:2px;">
+              <span style="width:9px;height:9px;border-radius:50%;background:{{ accent }};"></span>BETSLIP · 1 LEG
+            </div>
+            <div style="color:#EAF7EF;font-size:32px;font-weight:700;line-height:1.1;margin-top:22px;">{{ featured.selection }}</div>
+            <div style="display:inline-block;margin-top:14px;align-self:flex-start;color:{{ accent }};border:1.5px solid {{ accentDim }};border-radius:999px;padding:8px 18px;font-size:13px;">{{ featured.market }}</div>
+
+            <div style="border-top:2px dashed rgba(255,255,255,0.16);margin:26px -28px 0;"></div>
+
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:22px;">
+              <div style="color:#8FA69A;font-size:13px;max-width:150px;">{{ featured.note }}</div>
+              <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:48px;line-height:0.9;">{{ featured.odds }}</div>
+            </div>
+          </div>
+
+          <div style="background:{{ accent }};border-radius:999px;padding:16px;text-align:center;color:#0B0F0D;font-size:15px;font-weight:700;">Follow @puntmatenz for daily picks</div>
+        </div>
+
+        <div style="padding:24px;border-top:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;gap:20px;font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#8FA69A;">
+            <span>HOME</span><span>TIPS</span><span>ABOUT</span>
+          </div>
+          <div style="color:#6B7A72;font-size:12px;line-height:1.5;">R18 · Think of the odds, not the outcome.<br>Gamble responsibly · 0800 654 655 · gamblinghelpline.co.nz</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: {&quot;width&quot;: 1500, &quot;height&quot;: 1000},
+  &quot;palette&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;green&quot;, &quot;options&quot;: [&quot;green&quot;, &quot;blue&quot;, &quot;amber&quot;, &quot;pink&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Style&quot;},
+  &quot;monetization&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;freemium&quot;, &quot;options&quot;: [&quot;free&quot;, &quot;freemium&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Business model&quot;}
+}">
+class Component extends DCLogic {
+  hexToRgba(hex, alpha) {
+    const h = hex.replace('#', '');
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  renderVals() {
+    const palettes = {
+      green: '#35E07E',
+      blue: '#3DB2FF',
+      amber: '#FFC145',
+      pink: '#FF4FA3'
+    };
+    const key = this.props.palette ?? 'green';
+    const accent = palettes[key] ?? palettes.green;
+    const monetization = this.props.monetization ?? 'freemium';
+
+    const rawTips = [
+      { sport: 'NRL', match: 'NZ Warriors v Stormers', market: 'Anytime Try Scorer', selection: 'Darren Watene Zelezniak', odds: '$3.00', note: "Return to form — the book's outsider is the game's insider.", tag: 'FREE', date: 'Fri 4 Jul' },
+      { sport: 'AFL', match: 'Carlton v Essendon', market: 'Head to Head', selection: 'Carlton', odds: '$2.35', note: 'Home form has been unstoppable through the bye.', tag: 'FREE', date: 'Sat 5 Jul' },
+      { sport: 'NBA', match: 'Celtics v Heat', market: 'Total Points Over', selection: 'Over 214.5', odds: '$1.90', note: 'Both defenses banged up — expect a track meet.', tag: 'PREMIUM', date: 'Sat 5 Jul' },
+      { sport: 'RACING', match: 'Randwick R6', market: 'Win', selection: 'Golden Mile (4)', odds: '$4.60', note: 'Drawn to lead, and speed wins on this track.', tag: 'FREE', date: 'Sat 5 Jul' },
+      { sport: 'NRL', match: 'Broncos v Panthers', market: 'Line -4.5', selection: 'Broncos', odds: '$1.95', note: 'Panthers travel poorly up north this time of year.', tag: 'PREMIUM', date: 'Sun 6 Jul' }
+    ];
+
+    const tipsWithLock = rawTips.map(t => ({ ...t, locked: monetization === 'freemium' && t.tag === 'PREMIUM' }));
+
+    const sportNames = ['ALL', 'NRL', 'AFL', 'NBA', 'RACING'];
+    const sports = sportNames.map((name, i) => ({ name, active: i === 0, inactive: i !== 0 }));
+
+    return {
+      accent,
+      accentGlow: this.hexToRgba(accent, 0.6),
+      accentDim: this.hexToRgba(accent, 0.35),
+      featured: tipsWithLock[0],
+      latestTips: tipsWithLock.slice(0, 3),
+      tipsWithLock,
+      sports
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Archivo:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #C9C4B4; }
+  </style>
+</helmet>
+
+<!--
+  PUNTMATE BET POST — reusable template
+  For Cowork: this file generates one 3-slide Instagram carousel (1080x1350 each: Cover / The Tip / Lock It In).
+  To publish a new pick, just edit the props below (dc_set_props or the Tweaks panel):
+    matchup, sportTag, market, selection, odds, oddsNote, insight, handle
+  and rotate "palette" (green / blue / amber / pink) each post so the feed doesn't look identical every time.
+  Logo used throughout is the PuntMate tick badge (finalized mark from turn 2).
+-->
+
+<div style="font-family:'Space Grotesk',sans-serif;color:#16130F;padding:56px;box-sizing:border-box;display:flex;flex-direction:column;gap:28px;">
+
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="width:34px;height:34px;border-radius:50%;background:#0B0F0D;display:flex;align-items:center;justify-content:center;flex:none;">
+      <svg viewBox="0 0 120 120" width="18" height="18"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div style="font-family:'Space Mono',monospace;font-size:18px;letter-spacing:3px;color:#6f6a5e;">BET POST TEMPLATE · edit the Tweaks panel (matchup, pick, odds, colour) for each new post</div>
+  </div>
+
+  <div style="display:flex;gap:56px;">
+
+    <!-- SLIDE 1 · COVER -->
+    <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:60px 60px;box-sizing:border-box;padding:88px;display:flex;flex-direction:column;justify-content:space-between;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:18px;">
+          <div style="width:64px;height:64px;border-radius:50%;background:#111815;border:2.5px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg viewBox="0 0 120 120" width="34" height="34"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px {{ accentGlow }});"/></svg>
+          </div>
+          <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:32px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+        </div>
+        <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:22px;letter-spacing:3px;padding:12px 24px;border-radius:999px;">{{ sportTag }}</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:26px;">
+        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:6px;">// {{ coverKicker }}</div>
+        <div style="font-weight:700;font-size:172px;line-height:0.9;letter-spacing:-4px;color:#EAF7EF;">{{ coverL1 }}<br><span style="color:{{ accent }};">{{ coverL2 }}</span><br>{{ coverL3 }}</div>
+        <div style="font-size:34px;color:#8FA69A;max-width:640px;line-height:1.35;">One selection. One slide. Locked in below.</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:34px;">
+        <div style="display:flex;align-items:center;gap:16px;color:{{ accent }};font-family:'Space Mono',monospace;font-size:26px;letter-spacing:4px;">SWIPE <span style="font-size:34px;">→</span></div>
+        <div style="height:1px;background:rgba(255,255,255,0.12);"></div>
+        <div style="display:flex;justify-content:space-between;color:#6B7A72;font-size:24px;letter-spacing:1px;">
+          <span style="color:#EAF7EF;">{{ handle }}</span>
+          <span>R18 · Gamble responsibly · 0800 654 655</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 · THE TIP -->
+    <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;gap:36px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE PICK</div>
+        <div style="color:#6B7A72;font-size:24px;letter-spacing:2px;">{{ market }}</div>
+      </div>
+
+      <div style="flex:1;position:relative;background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:32px;padding:64px;display:flex;flex-direction:column;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:14px;color:{{ accent }};font-family:'Space Mono',monospace;font-size:24px;letter-spacing:3px;"><span style="width:12px;height:12px;border-radius:50%;background:{{ accent }};"></span>BETSLIP</div>
+          <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">1 LEG</div>
+        </div>
+
+        <div style="margin-top:52px;">
+          <div style="color:#6B7A72;font-size:22px;letter-spacing:4px;">MATCH</div>
+          <div style="color:#EAF7EF;font-size:46px;font-weight:700;margin-top:8px;">{{ matchup }}</div>
+        </div>
+
+        <div style="margin-top:44px;">
+          <div style="color:#6B7A72;font-size:22px;letter-spacing:4px;">SELECTION</div>
+          <div style="color:#EAF7EF;font-size:80px;font-weight:700;line-height:1.02;letter-spacing:-2px;margin-top:12px;">{{ selection }}</div>
+          <div style="display:inline-block;margin-top:26px;color:{{ accent }};border:1.5px solid {{ accentDim }};border-radius:999px;padding:12px 26px;font-size:26px;letter-spacing:1px;">{{ market }}</div>
+        </div>
+
+        <div style="flex:1;"></div>
+
+        <div style="position:relative;border-top:2.5px dashed rgba(255,255,255,0.16);margin:0 -64px;"></div>
+        <div style="position:absolute;left:-18px;bottom:200px;width:36px;height:36px;border-radius:50%;background:#0B0F0D;"></div>
+        <div style="position:absolute;right:-18px;bottom:200px;width:36px;height:36px;border-radius:50%;background:#0B0F0D;"></div>
+
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:44px;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="color:#6B7A72;font-size:22px;letter-spacing:4px;">DECIMAL ODDS</div>
+            <div style="color:#8FA69A;font-size:24px;">{{ oddsNote }}</div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:118px;line-height:0.8;letter-spacing:-3px;">{{ odds }}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;color:#6B7A72;font-size:23px;">
+        <span>{{ insight }}</span>
+        <span>R18</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 · THE BREAKDOWN -->
+    <div style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;gap:36px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE BREAKDOWN</div>
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ confidenceLabel }} RISK</div>
+      </div>
+
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <sc-for list="{{ riskChips }}" as="chip" hint-placeholder-count="3">
+          <div style="border:1.5px solid {{ accentDim }};color:{{ accent }};font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;padding:10px 20px;border-radius:999px;">{{ chip.label }}</div>
+        </sc-for>
+      </div>
+
+      <div style="background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:28px;padding:48px;display:flex;flex-direction:column;gap:30px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:3px;">{{ competition }}</div>
+            <div style="color:#EAF7EF;font-size:42px;font-weight:700;">{{ matchup }}</div>
+          </div>
+          <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:20px;letter-spacing:2px;padding:8px 18px;border-radius:999px;flex:none;">{{ sportTag }}</div>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.1);"></div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="color:#EAF7EF;font-size:56px;font-weight:700;letter-spacing:-1px;">{{ selection }}</div>
+            <div style="display:flex;align-items:center;gap:20px;">
+              <span style="color:{{ accent }};font-family:'Space Mono',monospace;font-weight:700;font-size:44px;">{{ odds }}</span>
+              <div style="display:flex;gap:12px;">
+                <sc-for list="{{ confidenceDots }}" as="dot" hint-placeholder-count="5">
+                  <div style="width:24px;height:24px;border-radius:50%;background:{{ dot.bg }};"></div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;gap:16px;">
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:3px;">THE READ</div>
+        <div style="color:#C7D6CE;font-size:33px;line-height:1.45;">{{ analysis }}</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div style="height:1px;background:rgba(255,255,255,0.12);"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:18px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:{{ accent }};display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg viewBox="0 0 120 120" width="30" height="30"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="#0B0F0D" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="color:#EAF7EF;font-size:40px;font-weight:700;letter-spacing:1px;">Follow {{ handle }}</div>
+          </div>
+          <div style="color:{{ accent }};font-family:'Space Mono',monospace;font-size:26px;letter-spacing:2px;">DAILY EDGE →</div>
+        </div>
+        <div style="color:#6B7A72;font-size:23px;">R18 · Think of the odds, not the outcome. Gamble responsibly · 0800 654 655 · gamblinghelpline.co.nz</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: {&quot;width&quot;: 1400, &quot;height&quot;: 750},
+  &quot;coverTheme&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;Tip of the Week&quot;, &quot;options&quot;: [&quot;Tip of the Week&quot;, &quot;Multi Monday&quot;, &quot;Daily Pick&quot;, &quot;Banker of the Day&quot;, &quot;Value Alert&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Cover&quot;},
+  &quot;matchup&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NZ Warriors v Stormers&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;sportTag&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NRL&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;market&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Anytime Try Scorer&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;selection&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Darren Watene Zelezniak&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;odds&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;$3.00&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;oddsNote&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Best value on the board&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;insight&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Return to form — the book's outsider is the game's insider.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;handle&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;@puntmatenz&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Pick&quot;},
+  &quot;competition&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NRL · Round 18&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;analysis&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Watene Zelezniak has crossed in three of his past four and shifts back to his preferred right edge against a Stormers side conceding tries out wide. At $3.00 the market is overpricing an in-form finisher — genuine value with statistical backing.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;confidence&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 4, &quot;min&quot;: 1, &quot;max&quot;: 5, &quot;step&quot;: 1, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;confidenceLabel&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;LOW&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;riskTagline&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Low risk · Steady returns · Long game&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;palette&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;green&quot;, &quot;options&quot;: [&quot;green&quot;, &quot;blue&quot;, &quot;amber&quot;, &quot;pink&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Style&quot;}
+}">
+class Component extends DCLogic {
+  hexToRgba(hex, alpha) {
+    const h = hex.replace('#', '');
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  renderVals() {
+    const palettes = {
+      green: '#35E07E',
+      blue: '#3DB2FF',
+      amber: '#FFC145',
+      pink: '#FF4FA3'
+    };
+    const key = this.props.palette ?? 'green';
+    const accent = palettes[key] ?? palettes.green;
+
+    const themes = {
+      'Tip of the Week':   { kicker: 'TIP OF THE WEEK',       l1: 'BEST',  l2: 'VALUE',  l3: 'BET.' },
+      'Multi Monday':      { kicker: 'MULTI MONDAY',          l1: 'THE',   l2: 'MULTI',  l3: 'IS ON.' },
+      'Daily Pick':        { kicker: "PUNTMATE'S DAILY PICK", l1: 'DAILY', l2: 'PICK',   l3: 'LOCKED' },
+      'Banker of the Day': { kicker: 'BANKER OF THE DAY',     l1: 'THE',   l2: 'BANKER', l3: 'IS IN.' },
+      'Value Alert':       { kicker: 'VALUE ALERT',           l1: 'VALUE', l2: 'ALERT',  l3: 'LIVE.' }
+    };
+    const theme = themes[this.props.coverTheme] ?? themes['Tip of the Week'];
+
+    const confidence = Math.max(1, Math.min(5, parseInt(this.props.confidence ?? 4, 10) || 4));
+    const labels = { 5: 'MINIMAL', 4: 'LOW', 3: 'MODERATE', 2: 'HIGHER', 1: 'SPECULATIVE' };
+    const confidenceLabel = this.props.confidenceLabel ?? labels[confidence];
+    const confidenceDots = [1, 2, 3, 4, 5].map(n => ({ bg: n <= confidence ? accent : 'rgba(255,255,255,0.14)' }));
+
+    const riskTagline = this.props.riskTagline ?? 'Low risk · Steady returns · Long game';
+    const riskChips = riskTagline.split(/[·.]/).map(s => s.trim()).filter(Boolean).map(l => ({ label: l.toUpperCase() }));
+
+    return {
+      matchup: this.props.matchup ?? 'NZ Warriors v Stormers',
+      sportTag: this.props.sportTag ?? 'NRL',
+      market: this.props.market ?? 'Anytime Try Scorer',
+      selection: this.props.selection ?? 'Darren Watene Zelezniak',
+      odds: this.props.odds ?? '$3.00',
+      oddsNote: this.props.oddsNote ?? 'Best value on the board',
+      insight: this.props.insight ?? "Return to form — the book's outsider is the game's insider.",
+      handle: this.props.handle ?? '@puntmatenz',
+      coverKicker: theme.kicker,
+      coverL1: theme.l1,
+      coverL2: theme.l2,
+      coverL3: theme.l3,
+      competition: this.props.competition ?? 'NRL · Round 18',
+      analysis: this.props.analysis ?? "Watene Zelezniak has crossed in three of his past four and shifts back to his preferred right edge against a Stormers side conceding tries out wide. At $3.00 the market is overpricing an in-form finisher — genuine value with statistical backing.",
+      confidence,
+      confidenceLabel,
+      confidenceDots,
+      riskChips,
+      accent: accent,
+      accentGlow: this.hexToRgba(accent, 0.6),
+      accentDim: this.hexToRgba(accent, 0.35)
+    };
+  }
+}
+
+</script>
+</body>
+</html>

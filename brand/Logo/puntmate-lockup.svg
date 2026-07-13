@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" width="720" height="200">
+  
+  <circle cx="100" cy="100" r="94" fill="#111815" stroke="rgba(53,224,126,0.35)" stroke-width="4"></circle>
+  <path d="M58 133 L82 109 L98 125 L128 93 M104 93 L128 93 L128 117" fill="none" stroke="#35E07E" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"></path>
+  <text x="220" y="128" class="word" fill="#EAF7EF">PUNT<tspan fill="#35E07E">MATE</tspan></text>
+</svg>
