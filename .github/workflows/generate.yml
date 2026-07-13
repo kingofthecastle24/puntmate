@@ -102,19 +102,31 @@ jobs:
         id: render_selftest
         continue-on-error: true
         run: |
-          mkdir -p /tmp/render_selftest
+          mkdir -p data/cards/_selftest
           cd scripts
-          python render_brand_templates.py --test-portugal-spain --out-dir /tmp/render_selftest
-          python render_brand_templates.py --test-overflow --out-dir /tmp/render_selftest
+          python render_brand_templates.py --test-portugal-spain --out-dir ../data/cards/_selftest
+          python render_brand_templates.py --test-overflow --out-dir ../data/cards/_selftest
 
       - name: Upload renderer self-test artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: puntmate-render-selftest-${{ github.run_id }}
-          path: /tmp/render_selftest
+          path: data/cards/_selftest
           retention-days: 14
           if-no-files-found: warn
+
+      # Also commit the self-test renders (small, ~750KB) so they're viewable
+      # via raw.githubusercontent.com as a quick "does the renderer still
+      # look right" reference — overwritten every run, not part of pick history.
+      - name: Commit renderer self-test images
+        if: always()
+        run: |
+          git config user.name  "PuntMate Bot"
+          git config user.email "puntmatenz@gmail.com"
+          git add data/cards/_selftest/
+          git diff --staged --quiet || git commit -m "chore: update renderer self-test reference images [skip ci]"
+          git push || echo "::warning::Could not push self-test images (non-fatal, artifact upload above already has them)"
 
       - name: Log picks to ledger
         if: hashFiles('data/latest_run.json') != ''
