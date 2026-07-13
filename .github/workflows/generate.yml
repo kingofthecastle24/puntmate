@@ -93,6 +93,29 @@ jobs:
           cd scripts
           python main.py
 
+      # Always renders the two fixed test fixtures (Portugal v Spain + a
+      # deliberately-long-name overflow case) regardless of whether today
+      # produced a real pick — catches renderer/template breakage on its own,
+      # independent of odds availability. Cheap (~10s once Chromium's warm)
+      # and never touches production data/cards or gets committed.
+      - name: Self-test renderer (fixtures)
+        id: render_selftest
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/render_selftest
+          cd scripts
+          python render_brand_templates.py --test-portugal-spain --out-dir /tmp/render_selftest
+          python render_brand_templates.py --test-overflow --out-dir /tmp/render_selftest
+
+      - name: Upload renderer self-test artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: puntmate-render-selftest-${{ github.run_id }}
+          path: /tmp/render_selftest
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Log picks to ledger
         if: hashFiles('data/latest_run.json') != ''
         env:
