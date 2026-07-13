@@ -116,12 +116,20 @@ def build_caption(picks, date_str=None):
     return "\n".join(lines)
 
 
-def post_carousel_to_instagram(slide_paths, caption=None, picks=None):
+def post_carousel_to_instagram(slide_paths, caption=None, picks=None, slide_urls=None):
     """
     Post a carousel to Instagram.
-    slide_paths: list of local image file paths (cover, tip, breakdown)
+    slide_paths: list of local image file paths (cover, tip, breakdown) — only
+        used to build filenames for logging, and as the Imgur upload source
+        when slide_urls isn't supplied.
     caption: pre-built caption string (optional — built from picks if not provided)
     picks: list of pick dicts (used to build caption if caption not provided)
+    slide_urls: optional list of already-public image URLs (e.g. the
+        raw.githubusercontent.com URLs generate.yml commits and hosts). When
+        given, skips the Imgur upload entirely and posts these URLs directly —
+        this is the path the automated pipeline uses, since the images are
+        already public once committed. Falls back to Imgur upload from
+        slide_paths only when slide_urls isn't provided (manual/legacy use).
     """
     if not IG_USER_ID or not IG_TOKEN:
         print("  ⚠️  IG credentials not set — skipping carousel")
@@ -130,15 +138,18 @@ def post_carousel_to_instagram(slide_paths, caption=None, picks=None):
     if caption is None:
         caption = build_caption(picks or [])
 
-    # 1. Upload each slide to Imgur
-    print(f"  → Uploading {len(slide_paths)} slides to Imgur...")
-    slide_urls = []
-    for path in slide_paths:
-        url = _upload_to_imgur(path)
-        if not url:
-            print(f"  ❌ Imgur upload failed for {path}")
-            return False
-        slide_urls.append(url)
+    if slide_urls:
+        print(f"  → Using {len(slide_urls)} pre-hosted slide URLs (no Imgur upload needed)")
+    else:
+        # 1. Upload each slide to Imgur
+        print(f"  → Uploading {len(slide_paths)} slides to Imgur...")
+        slide_urls = []
+        for path in slide_paths:
+            url = _upload_to_imgur(path)
+            if not url:
+                print(f"  ❌ Imgur upload failed for {path}")
+                return False
+            slide_urls.append(url)
 
     # 2. Create a media container per slide (carousel items)
     print("  → Creating carousel item containers...")

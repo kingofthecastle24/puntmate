@@ -1,15 +1,24 @@
 """
-main.py — PuntMate NZ daily picks pipeline
-Runs via GitHub Actions on schedule.
+main.py — PuntMate NZ daily picks pipeline (PREPARE stage only)
 
 Flow:
   1. Fetch odds (The Odds API)
-  2. Value analysis → 1–2 picks above edge threshold
-  3. Generate carousel PNGs (Betslip Night or Matchday Print)
-  4. Post to Telegram (full analysis)
-  5. Post carousel to Instagram (first slide for social discovery)
-  6. Post to Facebook (optional)
-  7. Log pick for weekly results tracking
+  2. Value analysis → 1-2 picks above edge threshold
+  3. Render carousel + Story PNGs for the picks (Playwright brand-kit
+     renderer, falls back to the legacy Pillow renderer if that fails)
+  4. Save data/latest_run.json
+
+IMPORTANT: this script no longer posts anything to Telegram, Instagram or
+Facebook. Publishing was moved behind the approval gate — see
+scripts/publish_pick.py, which .github/workflows/generate.yml's "publish"
+job runs only after a human approves the rendered preview. That's a
+deliberate change: this used to post to Telegram immediately, before any
+review, which meant Telegram had no approval step at all while Instagram/
+Facebook did. Now all platforms wait for the same approval.
+
+If no matches or no value picks are found, this script exits cleanly
+without writing latest_run.json — the workflow checks for that and skips
+straight to "nothing to publish today" rather than proceeding.
 """
 
 import sys
@@ -21,13 +30,10 @@ REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
 CARDS_DIR = os.path.join(REPO_ROOT, 'data', 'cards')
 
-# Optional integrations — only activated if secrets are set
-FB_ENABLED = bool(os.environ.get('FACEBOOK_PAGE_TOKEN') and os.environ.get('FACEBOOK_PAGE_ID'))
-IG_ENABLED = bool(os.environ.get('INSTAGRAM_ACCESS_TOKEN') and os.environ.get('INSTAGRAM_USER_ID'))
-
 
 def save_latest_run(matches, picks):
-    """Persist enriched picks to data/latest_run.json for results tracking."""
+    """Persist enriched picks to data/latest_run.json for results tracking
+    and for the renderer/publish stages to read."""
     match_lookup = {m['match']: m for m in matches}
     enriched = []
     for pick in picks:
@@ -51,135 +57,110 @@ def save_latest_run(matches, picks):
         json.dump(run_data, f, indent=2)
 
     print(f"  Saved {len(enriched)} pick(s) to data/latest_run.json")
+    return run_data
 
 
-def _format_telegram_pick(pick):
-    """Format a single pick as a Telegram message (standard Markdown)."""
-    tier_emoji = {"investor": "📊", "punter": "🎯", "gambler": "🎰"}.get(pick.get("tier", "punter"), "🎯")
-    dots = "●" * pick.get("confidence", 3) + "○" * (5 - pick.get("confidence", 3))
-    edge = pick.get("edge_pct", "")
-    edge_str = f"+{edge}%" if edge else ""
+def render_cards(picks):
+    """Render carousel + Story PNGs for each pick. Tries the Playwright
+    brand-kit renderer first (scripts/render_brand_templates.py); falls back
+    to the legacy Pillow renderer (generate_picks_image.py) per-pick if that
+    raises. Returns a list of dicts, one per pick, each either
+    {"cover":..., "tip":..., "breakdown":..., "story":..., "renderer": "playwright"}
+    or the Pillow 3-slide list under "renderer": "pillow" (no story slide —
+    the Pillow path never produced one), or {} if both failed.
+    """
+    os.makedirs(CARDS_DIR, exist_ok=True)
+    from render_brand_templates import render_pick as render_pick_playwright
 
-    lines = [
-        f"*{tier_emoji} PUNTMATE NZ — {pick.get('sport_label', '')}*",
-        "",
-        f"🏟 {pick.get('match', '')}",
-        "",
-        f"*PICK:* {pick.get('selection', '')}",
-        f"*ODDS:* {pick.get('odds', '')} ({pick.get('market', '')})",
-        "",
-        f"_{pick.get('analysis', '')}_",
-        "",
-        f"Confidence: {dots} {pick.get('confidenceLabel', '')}",
-        f"Edge: {edge_str}",
-        "",
-        "──────────────────",
-        "📲 Join Telegram for daily picks",
-        "R18 · Gamble responsibly · 0800 654 655",
-    ]
-    return "\n".join(lines)
+    results = []
+    for pick in picks:
+        try:
+            result = render_pick_playwright(pick, out_dir=CARDS_DIR)
+            print(f"  ✓ {pick.get('match', '')} [{result['theme']}] → playwright renderer, "
+                  f"{len(result['warnings'])} warning(s)")
+            results.append({**result["files"], "renderer": "playwright", "warnings": result["warnings"]})
+            continue
+        except Exception as e:
+            print(f"  ⚠️  Playwright renderer failed for {pick.get('match', '')}: {e}")
+            print("     Falling back to legacy Pillow renderer...")
+
+        try:
+            from generate_picks_image import generate_carousel
+            card_paths = generate_carousel(pick, CARDS_DIR)
+            look = "Matchday Print" if pick.get("big_game") else "Betslip Night"
+            print(f"  ✓ {pick.get('match', '')} [{look}] → Pillow fallback, {len(card_paths)} slides")
+            results.append({
+                "cover": card_paths[0] if len(card_paths) > 0 else None,
+                "tip": card_paths[1] if len(card_paths) > 1 else None,
+                "breakdown": card_paths[2] if len(card_paths) > 2 else None,
+                "story": None,
+                "renderer": "pillow",
+                "warnings": ["Pillow fallback used — no Story image produced"],
+            })
+        except Exception as e:
+            print(f"  ✗ Both renderers failed for {pick.get('match', '')}: {e}")
+            results.append({})
+
+    return results
 
 
 def run():
     from fetch_odds import fetch_upcoming_odds
     from generate_pick import generate_picks_for_matches
-    from generate_picks_image import generate_carousel
-    from post_telegram import post_text, send_picks_card, post_no_picks
-    from post_instagram import post_carousel_to_instagram
 
     print("=" * 55)
-    print("PuntMate NZ — Daily Picks Pipeline")
+    print("PuntMate NZ — Daily Picks Pipeline (prepare stage)")
     print(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'))
     print("=" * 55)
 
-    # ── 1. Fetch odds ──────────────────────────────────────────────────────────
-    print("\n[1/4] Fetching upcoming match odds...")
+    # -- 1. Fetch odds --------------------------------------------------------
+    print("\n[1/3] Fetching upcoming match odds...")
     matches = fetch_upcoming_odds()
 
     if not matches:
-        print("  No matches today — posting hold message")
-        post_no_picks()
-        return
+        print("  No matches today — nothing to prepare")
+        return None
 
-    # ── 2. Value analysis ──────────────────────────────────────────────────────
-    print(f"\n[2/4] Running value analysis on {len(matches)} matches...")
+    # -- 2. Value analysis -----------------------------------------------------
+    print(f"\n[2/3] Running value analysis on {len(matches)} matches...")
     picks = generate_picks_for_matches(matches)
 
     if not picks:
         print("  No value picks found today — staying silent (quality > quantity)")
-        # Only post if there's genuinely nothing worth betting on
-        # Don't post just to post; silence is fine
-        return
+        return None
 
-    print(f"  → {len(picks)} value pick(s) selected")
+    print(f"  -> {len(picks)} value pick(s) selected")
 
-    # ── 3. Generate carousel images ────────────────────────────────────────────
-    print(f"\n[3/4] Generating carousel cards...")
-    os.makedirs(CARDS_DIR, exist_ok=True)
+    # Enrich + save first so the renderer gets sport_key/home_team/away_team
+    # (added during enrichment) rather than the raw generate_pick.py output.
+    run_data = save_latest_run(matches, picks)
 
-    all_card_sets = []  # list of [cover, tip, breakdown] per pick
-    for pick in picks:
-        try:
-            card_paths = generate_carousel(pick, CARDS_DIR)
-            all_card_sets.append(card_paths)
-            look = "Matchday Print" if pick.get("big_game") else "Betslip Night"
-            print(f"  ✓ {pick.get('match', '')} [{look}] → {len(card_paths)} slides")
-        except Exception as e:
-            print(f"  ✗ Image generation failed for {pick.get('match', '')}: {e}")
-            all_card_sets.append([])
+    # -- 3. Render carousel + Story images --------------------------------------
+    print(f"\n[3/3] Rendering carousel + Story cards...")
+    card_sets = render_cards(run_data["picks"])
+    run_data["card_sets"] = card_sets
 
-    # ── 4. Post to Telegram ────────────────────────────────────────────────────
-    print(f"\n[4/4] Posting to channels...")
+    # card_sets isn't part of the on-disk schema (paths would go stale) —
+    # persist picks/run metadata only; card_sets is returned in-memory for
+    # build_social_post.py to consume within the same job.
+    with open(LATEST_RUN_PATH, 'w') as f:
+        json.dump({k: v for k, v in run_data.items() if k != "card_sets"}, f, indent=2)
 
-    for i, pick in enumerate(picks):
-        msg = _format_telegram_pick(pick)
-        card_set = all_card_sets[i] if i < len(all_card_sets) else []
-
-        # Send pick slide image with full explanation as caption (one post, not two)
-        # Use slide 2 (tip slide) if available — it shows the actual pick/odds
-        if card_set:
-            slide = card_set[1] if len(card_set) > 1 else card_set[0]
-            send_picks_card(slide, caption=msg)
-        else:
-            # Fallback: text only if image generation failed
-            post_text(msg)
-
-    # ── 5. Instagram (carousel — all 3 slides for first pick) ─────────────────
-    if IG_ENABLED and all_card_sets and all_card_sets[0]:
-        print("  → Instagram")
-        try:
-            post_carousel_to_instagram(slide_paths=all_card_sets[0], picks=picks)
-        except Exception as e:
-            print(f"  ✗ Instagram error: {e}")
-    else:
-        print("  → Instagram (skipped — not configured)")
-
-    # ── 6. Facebook ────────────────────────────────────────────────────────────
-    if FB_ENABLED:
-        print("  → Facebook")
-        try:
-            from post_facebook import post_pick_to_facebook
-            for i, pick in enumerate(picks):
-                card_set = all_card_sets[i] if i < len(all_card_sets) else []
-                img = card_set[0] if card_set else None
-                post_pick_to_facebook(pick, img)
-        except Exception as e:
-            print(f"  ✗ Facebook error: {e}")
-    else:
-        print("  → Facebook (skipped — not configured)")
-
-    # ── 7. Log for results ─────────────────────────────────────────────────────
-    save_latest_run(matches, picks)
-
-    print("\n✅ Pipeline complete")
+    print("\nPrepare stage complete — nothing has been posted yet.")
     print("=" * 55)
+    return run_data
 
 
 if __name__ == "__main__":
-    required = ['ANTHROPIC_API_KEY', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHANNEL_ID', 'ODDS_API_KEY']
+    required = ['ANTHROPIC_API_KEY', 'ODDS_API_KEY']
     missing = [v for v in required if not os.environ.get(v)]
     if missing:
         print(f"ERROR: Missing env vars: {', '.join(missing)}")
         sys.exit(1)
 
-    run()
+    result = run()
+    # Exit code 0 either way — "nothing to publish today" is a normal outcome,
+    # not a pipeline failure. The workflow checks data/latest_run.json's
+    # freshness (via the has_picks output) to decide whether to continue to
+    # render/approve/publish or stop here.
+    sys.exit(0)
