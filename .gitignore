@@ -1,9 +1,6 @@
 # Fonts (auto-downloaded at runtime)
 .fonts/
 
-# Generated card images
-data/cards/
-
 # Python cache
 __pycache__/
 *.pyc
