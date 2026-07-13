@@ -133,6 +133,14 @@ def build_props(pick, handle="@puntmatenz"):
     selection = (pick.get("pick") or "").upper()
     market = (pick.get("market") or "").upper()
 
+    # Matchday Print's slide 2 renders `selection` at font-size:150px with no
+    # auto-shrink — the overflow-test fixture (deliberately absurd team names)
+    # showed it running off the bottom of the canvas past ~45 chars. Real
+    # picks are always short (team/player names, "Over 220.5", etc.) so this
+    # is a safety net, not something expected to trigger in production.
+    if len(selection) > 45:
+        selection = selection[:44].rstrip() + "…"
+
     try:
         odds_val = float(pick.get("odds", 0))
         odds_str = f"{odds_val:.2f}"
@@ -248,7 +256,11 @@ def capture_exports(page, export_ids, expected_sizes, out_paths, warnings):
                 f"{export_id}: rendered {w}x{h}, expected {expected_size[0]}x{expected_size[1]}"
             )
 
-        el.screenshot(path=out_path)
+        # Clip to the exact expected size rather than trusting the element's
+        # own (occasionally 1px-off, sub-pixel-rounded) bounding box — this is
+        # what was producing 1080x1921 Story images instead of 1080x1920.
+        clip = {"x": box["x"], "y": box["y"], "width": expected_size[0], "height": expected_size[1]}
+        page.screenshot(path=out_path, clip=clip)
 
 
 def wait_for_dc_boot(page, timeout_ms=15000):
