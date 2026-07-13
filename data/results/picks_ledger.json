@@ -1,0 +1,64 @@
+{
+  "picks": [
+    {
+      "id": "R19-001",
+      "date_posted": "2026-07-06",
+      "match": "Melbourne Storm vs Gold Coast Titans",
+      "selection": "Storm to Win",
+      "market": "Head to Head",
+      "approx_odds": 1.40,
+      "type": "INVESTOR",
+      "sport": "NRL",
+      "round": "R19",
+      "result": "WIN",
+      "profit_loss": 4.00,
+      "stake": 10,
+      "notes": "Storm survived a scare, won 22-18 at AAMI Park (12 Jul 2026)."
+    },
+    {
+      "id": "WC2026-001",
+      "date_posted": "2026-07-07",
+      "match": "Argentina vs Egypt",
+      "selection": "Argentina to Win",
+      "market": "Head to Head",
+      "approx_odds": 1.40,
+      "type": "INVESTOR",
+      "sport": "FIFA World Cup 2026",
+      "round": "Round of 16",
+      "result": "WIN",
+      "profit_loss": 4.00,
+      "stake": 10,
+      "notes": "Argentina came back from 2-0 down to win 3-2, Enzo Fernandez winner in stoppage time."
+    },
+    {
+      "id": "UFC329-001",
+      "date_posted": "2026-07-12",
+      "match": "McGregor vs Holloway 2",
+      "selection": "Max Holloway to Win",
+      "market": "Fight Winner",
+      "approx_odds": 1.38,
+      "type": "PUNTER",
+      "sport": "UFC",
+      "round": "UFC 329",
+      "result": "WIN",
+      "profit_loss": 3.80,
+      "stake": 10,
+      "notes": "McGregor injured his knee on an opening jumping kick; Holloway TKO round 1."
+    },
+    {
+      "id": "R19-MULTI-001",
+      "date_posted": "2026-07-06",
+      "match": "Storm vs Titans + Tigers vs Warriors + Dolphins vs Sharks",
+      "selection": "Home Treble (Storm / Warriors / Dolphins)",
+      "market": "Multi (3-leg H2H)",
+      "approx_odds": 2.98,
+      "type": "MULTI",
+      "sport": "NRL",
+      "round": "R19",
+      "result": "LOSS",
+      "profit_loss": -10.00,
+      "stake": 10,
+      "notes": "Storm WON (22-18) and Warriors WON (32-6), but Dolphins LOST to Sharks 12-24 - multi fails on that leg. Not counted in tier win% (multis are tracked separately, matching PuntMate convention)."
+    }
+  ]
+}
