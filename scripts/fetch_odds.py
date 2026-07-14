@@ -75,7 +75,7 @@ def fetch_upcoming_odds():
                 hours_away = (kickoff - now).total_seconds() / 3600
 
                 # Only today's matches (next 24 hours) for pre-game picks
-                if 0 < hours_away < 48:  # TEMP: widened from 24h for one test run, see commit msg
+                if 0 < hours_away < 24:
                     best_odds = extract_best_odds(match)
                     if not best_odds:
                         continue
