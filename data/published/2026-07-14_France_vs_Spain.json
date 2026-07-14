@@ -1,0 +1,68 @@
+{
+  "pick_id": "2026-07-14_France_vs_Spain",
+  "platforms": {
+    "telegram": {
+      "ok": true,
+      "detail": {
+        "ok": true,
+        "result": {
+          "message_id": 123,
+          "sender_chat": {
+            "id": -1004413052011,
+            "title": "PuntMate NZ",
+            "username": "puntmatenz",
+            "type": "channel"
+          },
+          "chat": {
+            "id": -1004413052011,
+            "title": "PuntMate NZ",
+            "username": "puntmatenz",
+            "type": "channel"
+          },
+          "date": 1784047843,
+          "text": "\ud83d\udcca PUNTMATE NZ \u2014 FIFA World Cup 2026\n\n\ud83c\udfdf France vs Spain\n\nPICK: France\nODDS: 2.58 (Head to Head)\n\nNo pick meets my criteria today. France at 2.58 is the closest option available, but it sits well outside my preferred 1.40\u20132.20 range, and the available news snippets relate to rugby league \u2014 not football \u2014 providing zero usable intelligence on form, injuries or squad depth. Without credible match-specific data, I cannot justify placing capital on any outcome here. Discipline means sitting this one out.\n\nConfidence: Low\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+          "entities": [
+            {
+              "offset": 0,
+              "length": 36,
+              "type": "bold"
+            },
+            {
+              "offset": 58,
+              "length": 5,
+              "type": "bold"
+            },
+            {
+              "offset": 71,
+              "length": 5,
+              "type": "bold"
+            },
+            {
+              "offset": 98,
+              "length": 407,
+              "type": "italic"
+            }
+          ]
+        }
+      }
+    },
+    "instagram_feed": {
+      "ok": false
+    },
+    "instagram_story": {
+      "ok": true,
+      "media_id": "18346176037169221"
+    },
+    "facebook": {
+      "ok": false,
+      "detail": {
+        "error": {
+          "message": "(#200) The permission(s) publish_actions are not available. It has been deprecated. If you want to provide a way for your app users to share content to Facebook, we encourage you to use our Sharing products instead.",
+          "type": "OAuthException",
+          "code": 200,
+          "fbtrace_id": "AIq74JyrddTVgVJM4GgO5aC"
+        }
+      }
+    }
+  }
+}
