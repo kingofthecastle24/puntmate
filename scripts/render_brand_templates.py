@@ -126,11 +126,19 @@ def confidence_to_dots(label):
 
 def build_props(pick, handle="@puntmatenz"):
     """Map a pipeline pick dict (data/latest_run.json entry) into the props
-    schema shared by the Betslip Night / Matchday Print / Social templates."""
+    schema shared by the Betslip Night / Matchday Print / Social templates.
+
+    NOTE on bet-type/risk: neither template has a dedicated "bet type" field
+    (confirmed by inspecting both .dc.html files' data-props schemas), and
+    the spec is explicit that no staking/unit fields should be added. Rather
+    than modifying the approved templates, this reuses the EXISTING
+    `riskTagline` prop — which already renders as a row of pill/chip labels
+    split on "·" — to carry "Bet type: X · [Standard|Risky] pick ·
+    [confidence] confidence" as three chips. Zero template changes required."""
     match = pick.get("match") or f"{pick.get('home_team', '')} vs {pick.get('away_team', '')}"
-    sport_key = pick.get("sport_key", "")
-    sport_label = SPORT_LABELS.get(sport_key, (pick.get("sport") or sport_key or "").upper())
-    selection = (pick.get("pick") or "").upper()
+    sport_key = pick.get("sport") or pick.get("sport_key", "")
+    sport_label = pick.get("sport_label") or SPORT_LABELS.get(sport_key, (sport_key or "").upper())
+    selection = (pick.get("selection") or pick.get("pick") or "").upper()
     market = (pick.get("market") or "").upper()
 
     # Matchday Print's slide 2 renders `selection` at font-size:150px with no
@@ -147,8 +155,22 @@ def build_props(pick, handle="@puntmatenz"):
     except (TypeError, ValueError):
         odds_str = str(pick.get("odds", ""))
 
-    confidence_label = (pick.get("confidence") or "Medium").upper()
-    reasoning = pick.get("reasoning", "").strip()
+    confidence_label = (pick.get("confidence_label") or pick.get("confidence") or "Medium")
+    if isinstance(confidence_label, (int, float)):
+        confidence_label = "Medium"
+    confidence_label = str(confidence_label).upper()
+    insight_text = (pick.get("final_explanation") or pick.get("bet_type_reason") or pick.get("reasoning") or "").strip()
+
+    bet_type = pick.get("bet_type", "")
+    risk = pick.get("risk", "")
+    risk_label = risk.replace("_", " ").title() if risk else ""
+    bet_type_short = bet_type.replace("_BET", "").title() if bet_type else ""
+    risk_tagline_parts = [p for p in (
+        f"Bet type: {bet_type_short}" if bet_type_short else "",
+        risk_label,
+        f"{confidence_label.title()} confidence",
+    ) if p]
+    risk_tagline = " · ".join(risk_tagline_parts) or "Low risk · Steady returns · Long game"
 
     props = {
         "matchup": match,
@@ -158,11 +180,12 @@ def build_props(pick, handle="@puntmatenz"):
         "selectionShort": selection.split()[-1] if selection else selection,
         "odds": odds_str,
         "oddsNote": "Best value on the board",
-        "insight": (reasoning[:140] + "…") if len(reasoning) > 140 else reasoning,
+        "insight": (insight_text[:140] + "…") if len(insight_text) > 140 else insight_text,
         "competition": sport_label,
-        "analysis": reasoning,
+        "analysis": insight_text,
         "confidence": confidence_to_dots(confidence_label),
         "confidenceLabel": confidence_label,
+        "riskTagline": risk_tagline,
         "handle": handle,
         "coverTheme": "Daily Pick",
     }
@@ -428,7 +451,12 @@ def main():
     elif args.pick_file:
         with open(args.pick_file) as f:
             data = json.load(f)
-        pick = data["picks"][args.pick_index] if isinstance(data, dict) and "picks" in data else data
+        if isinstance(data, dict) and "pick" in data:
+            pick = data["pick"]            # current schema: data/latest_run.json -> {"pick": {...}}
+        elif isinstance(data, dict) and "picks" in data:
+            pick = data["picks"][args.pick_index]   # legacy multi-pick schema, kept for old fixture files
+        else:
+            pick = data
     else:
         ap.error("one of --pick-file / --pick-json / --test-portugal-spain / --test-overflow is required")
 

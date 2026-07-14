@@ -1,22 +1,47 @@
 # .github/workflows/generate.yml
 #
-# PuntMate NZ — Social: Generate, Approve & Publish
+# PuntMate NZ — Social: Generate, Preview, Approve & Publish
 #
-# Flow (all in one workflow run, so "publish" always uses the exact artifact
-# "approve" reviewed — no cross-workflow staleness risk):
-#   1. generate  — fetch odds, pick a value bet, render carousel + Story PNGs
-#                  through the approved Brand Kit templates (Playwright),
-#                  build data/social_post.json, commit everything to main for
-#                  permanent history, and upload it all as a review artifact.
+# One official pick per run (no personalities), classified into a RISK
+# (STANDARD_PICK / RISKY_PICK / NO_BET) and a separate BET_TYPE (INVESTOR_BET
+# / PUNTER_BET / GAMBLER_BET / NO_BET) — see scripts/pick_classifier.py.
+#
+# Flow (all in one workflow run, so "publish" always uses the exact frozen
+# artifact "approve" reviewed — no cross-workflow staleness risk):
+#   1. generate  — fetch odds, fetch+validate research, select ONE pick (or
+#                  NO_BET), render carousel + Story PNGs, build the frozen
+#                  review package (data/review/<pick_id>/ — telegram-post.txt,
+#                  instagram-caption.txt, post-metadata.json, manifest.json
+#                  with SHA-256 checksums, preview.html), email the approval
+#                  request, commit + upload it all as a review artifact.
 #                  Does NOT post anything to any platform.
 #   2. approve   — pauses at the "production" environment gate. Micah reviews
-#                  the artifact (or the job summary preview) and clicks Approve.
-#   3. publish   — downloads THIS run's artifact and posts to Telegram,
-#                  Instagram (feed + Story) and Facebook, unless dry_run is
-#                  true, in which case it logs what it would have sent.
+#                  the Gmail preview (or the job summary / preview.html
+#                  artifact if email isn't configured) and clicks Approve or
+#                  Reject. Telegram, Instagram AND Facebook are all behind
+#                  this SAME single gate (deliberate phase-1 behaviour — see
+#                  publish_pick.py's module docstring for how this could
+#                  later be split per-platform without a rearchitecture).
+#   3. on_reject — if rejected/cancelled at the gate: records workflow state
+#                  REJECTED (a terminal state — nothing can publish this
+#                  pick_id afterwards, enforced in code by
+#                  scripts/workflow_state.py) and sends the rejection email.
+#   4. publish   — downloads THIS run's frozen artifact, re-verifies every
+#                  checksum against manifest.json (refuses to publish on any
+#                  mismatch), then posts to Telegram + Instagram (feed +
+#                  Story) independently — one platform failing never blocks
+#                  or rolls back another. Facebook is never posted to
+#                  directly (deprecated permission — see publish_pick.py);
+#                  it's reported as "expected via linked Instagram account".
+#                  Sends the result email. Honors DRY_RUN — logs what would
+#                  be sent without calling any API.
 #
 # Setup: Settings → Environments → production → Required reviewers → add your
-# GitHub username.
+# GitHub username. Secrets needed: see .env.example / README "Configuration"
+# section (ANTHROPIC_API_KEY, ODDS_API_KEY, TELEGRAM_BOT_TOKEN,
+# TELEGRAM_CHANNEL_ID, IG_USER_ID, META_PAGE_TOKEN, GMAIL_SENDER_EMAIL,
+# GMAIL_APP_PASSWORD, PUNTMATE_REPORT_EMAIL). Facebook's FB_PAGE_ID secret is
+# no longer used for direct posting but is harmless to leave configured.
 #
 # NOTE: daily_picks.yml is disabled legacy — leave it that way, this workflow
 # replaces it.
@@ -40,21 +65,24 @@ on:
         type: boolean
         default: true
 
+env:
+  PYTHONPATH: scripts
+
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
-  # Job 1: Generate picks, render cards, prepare social post — no posting.
+  # Job 1: Generate one pick, render cards, freeze the review package, email preview.
   # ─────────────────────────────────────────────────────────────────────────────
   generate:
-    name: Generate picks & render cards
+    name: Generate, render & freeze review package
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
-      contents: write   # needed to commit ledger/cards/social_post.json back to main
+      contents: write   # needed to commit review package/cards/state back to main
 
     outputs:
-      has_picks: ${{ steps.social_post.outputs.has_picks }}
-      dry_run:   ${{ steps.mode.outputs.dry_run }}
-      pick_id:   ${{ steps.social_post.outputs.pick_id }}
+      has_pick: ${{ steps.review_package.outputs.has_pick }}
+      dry_run:  ${{ steps.mode.outputs.dry_run }}
+      pick_id:  ${{ steps.review_package.outputs.pick_id }}
 
     steps:
       - name: Checkout repo
@@ -63,9 +91,6 @@ jobs:
       - name: Determine dry-run mode
         id: mode
         run: |
-          # Manual dispatch: honour the dry_run input (defaults true).
-          # Scheduled runs are always "live" (subject to the approval gate below) —
-          # the whole point of the schedule is to actually publish once approved.
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
           else
@@ -84,7 +109,6 @@ jobs:
       - name: Install Playwright Chromium
         run: python -m playwright install --with-deps chromium
 
-      # Fetch odds, pick a value bet, render cards. No posting happens here.
       - name: Run picks pipeline (prepare only — no posting)
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -93,11 +117,9 @@ jobs:
           cd scripts
           python main.py
 
-      # Always renders the two fixed test fixtures (Portugal v Spain + a
-      # deliberately-long-name overflow case) regardless of whether today
-      # produced a real pick — catches renderer/template breakage on its own,
-      # independent of odds availability. Cheap (~10s once Chromium's warm)
-      # and never touches production data/cards or gets committed.
+      # Always renders the two fixed test fixtures regardless of whether
+      # today produced a real pick — catches renderer/template breakage on
+      # its own, independent of odds availability.
       - name: Self-test renderer (fixtures)
         id: render_selftest
         continue-on-error: true
@@ -116,9 +138,6 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
 
-      # Also commit the self-test renders (small, ~750KB) so they're viewable
-      # via raw.githubusercontent.com as a quick "does the renderer still
-      # look right" reference — overwritten every run, not part of pick history.
       - name: Commit renderer self-test images
         if: always()
         run: |
@@ -128,36 +147,56 @@ jobs:
           git diff --staged --quiet || git commit -m "chore: update renderer self-test reference images [skip ci]"
           git push || echo "::warning::Could not push self-test images (non-fatal, artifact upload above already has them)"
 
-      - name: Log picks to ledger
+      - name: Log pick to ledger
         if: hashFiles('data/latest_run.json') != ''
-        env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: |
           cd scripts
           python log_picks.py
 
-      - name: Build social_post.json
-        id: social_post
+      - name: Build frozen review package (checksums + copy assets)
+        id: review_package
         run: |
           cd scripts
-          python build_social_post.py
+          python build_review_package.py
           cd ..
-          HAS_PICKS=$(python3 -c "import json; print(str(json.load(open('data/social_post.json')).get('has_picks', False)).lower())")
-          echo "has_picks=$HAS_PICKS" >> "$GITHUB_OUTPUT"
-          if [ "$HAS_PICKS" = "true" ]; then
-            PICK_ID=$(python3 -c "import json; print(json.load(open('data/social_post.json'))['pick_id'])")
+          if [ -f data/latest_run.json ]; then
+            HAS_PICK=$(python3 -c "import json; d=json.load(open('data/latest_run.json')); print(str(d.get('pick',{}).get('has_pick', False)).lower())")
+          else
+            HAS_PICK=false
+          fi
+          echo "has_pick=$HAS_PICK" >> "$GITHUB_OUTPUT"
+          if [ "$HAS_PICK" = "true" ]; then
+            PICK_ID=$(python3 -c "
+          import json, os, glob
+          d = json.load(open('data/latest_run.json'))
+          pick = d['pick']
+          import sys; sys.path.insert(0, 'scripts')
+          from render_brand_templates import slugify
+          print(f\"{d['run_date']}_{slugify(pick['match'])}\")
+          ")
             echo "pick_id=$PICK_ID" >> "$GITHUB_OUTPUT"
           fi
 
-      # Commit ledger + rendered cards + social_post.json to main — this is the
-      # permanent pick history, and it's also what makes data/cards/*.png
+      - name: Send approval-preview email (or No-Bet notice)
+        if: always() && hashFiles('data/latest_run.json') != ''
+        env:
+          GMAIL_SENDER_EMAIL:    ${{ secrets.GMAIL_SENDER_EMAIL }}
+          GMAIL_APP_PASSWORD:    ${{ secrets.GMAIL_APP_PASSWORD }}
+          PUNTMATE_REPORT_EMAIL: ${{ secrets.PUNTMATE_REPORT_EMAIL }}
+          PICK_ID: ${{ steps.review_package.outputs.pick_id }}
+        run: |
+          cd scripts
+          python send_preview.py
+
+      # Commit the frozen review package + ledger + state — this is the
+      # permanent pick history, and it's also what makes data/review/**/*.png
       # publicly fetchable via raw.githubusercontent.com for Meta's Graph API.
-      - name: Commit ledger, cards & social post metadata
-        if: steps.social_post.outputs.has_picks == 'true'
+      - name: Commit ledger, review package & state
+        if: steps.review_package.outputs.has_pick == 'true'
         run: |
           git config user.name  "PuntMate Bot"
           git config user.email "puntmatenz@gmail.com"
-          git add data/picks.json data/latest_run.json data/social_post.json data/cards/
+          git add data/picks.json data/latest_run.json data/review/ data/state/ data/cards/
           git diff --staged --quiet || git commit \
             -m "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
           git push
@@ -168,56 +207,54 @@ jobs:
           {
             echo "## PuntMate Social — Generate"
             echo ""
-            if [ "${{ steps.social_post.outputs.has_picks }}" != "true" ]; then
-              echo "No value pick today — nothing rendered, nothing to approve."
+            if [ "${{ steps.review_package.outputs.has_pick }}" != "true" ]; then
+              echo "No defensible pick today (NO_BET) — nothing rendered, nothing to approve."
+              if [ -f data/latest_run.json ]; then
+                python3 -c "import json; print('Reason:', json.load(open('data/latest_run.json'))['pick'].get('reasoning',''))"
+              fi
             else
-              python3 - << 'PYEOF'
+              PICK_ID="${{ steps.review_package.outputs.pick_id }}"
+              python3 - << PYEOF
           import json
-          with open('data/social_post.json') as f:
+          with open(f"data/review/${PICK_ID}/post-metadata.json") as f:
               p = json.load(f)
-          print(f"| Field | Value |")
-          print(f"|---|---|")
+          print("| Field | Value |")
+          print("|---|---|")
           print(f"| Match | {p.get('match','')} |")
           print(f"| Selection | {p.get('selection','')} |")
           print(f"| Market | {p.get('market','')} |")
           print(f"| Odds | {p.get('odds','')} |")
-          print(f"| Look | {p.get('theme','')} |")
+          print(f"| Bet type | {p.get('bet_type_label','')} |")
+          print(f"| Classification | {p.get('classification','')} |")
+          print(f"| Confidence | {p.get('confidence_label','')} |")
           print(f"| Generated at (UTC) | {p.get('generated_at','')} |")
           print(f"| Intended platforms | {', '.join(p.get('intended_platforms', []))} |")
-          print()
-          print("**Carousel:**")
-          for path in p.get('carousel_paths', []):
-              print(f"- `{path}`")
-          if p.get('story_path'):
-              print(f"- `{p['story_path']}` (Story)")
           PYEOF
               echo ""
-              echo "Full carousel + Story images + caption are in the **puntmate-review-${{ github.run_id }}** artifact above."
+              echo "Full review package (texts, images, manifest, preview.html) is in the **puntmate-review-${{ github.run_id }}** artifact above, and committed at \`data/review/${PICK_ID}/\`."
               echo ""
               echo "Dry run: \`${{ steps.mode.outputs.dry_run }}\`"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload review artifact
-        if: steps.social_post.outputs.has_picks == 'true'
+        if: steps.review_package.outputs.has_pick == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: puntmate-review-${{ github.run_id }}
           path: |
-            data/social_post.json
-            data/latest_run.json
-            data/cards/
+            data/review/${{ steps.review_package.outputs.pick_id }}/
           retention-days: 30
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # Job 2: Approval gate — blocks until Micah approves in the Actions UI.
+  # Job 2: Approval gate — blocks until Micah approves or rejects in the UI.
   # ─────────────────────────────────────────────────────────────────────────────
   approve:
     name: "⏳ Awaiting approval to publish"
     needs: generate
-    if: needs.generate.outputs.has_picks == 'true'
+    if: needs.generate.outputs.has_pick == 'true'
     runs-on: ubuntu-latest
-    environment: production   # ← this is the approval gate
+    environment: production   # ← this is the approval gate (Telegram + Instagram + Facebook all wait here)
 
     steps:
       - name: Approved — publish job will now run
@@ -227,18 +264,19 @@ jobs:
           echo "Dry run : ${{ needs.generate.outputs.dry_run }}"
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # Job 3: Publish — posts to Telegram / Instagram (feed + Story) / Facebook,
-  # using the EXACT artifact from this run. Simulates instead of posting when
-  # dry_run is true.
+  # Job 3: Rejection handling — runs only if the approval gate was rejected or
+  # cancelled (never on success, never on skip). Records REJECTED as a
+  # terminal state and sends the rejection email. The publish job's `if`
+  # below explicitly requires needs.approve.result == 'success', so a
+  # rejected run can never reach publish even if this job fails too.
   # ─────────────────────────────────────────────────────────────────────────────
-  publish:
-    name: Publish approved post
+  on_reject:
+    name: Record rejection
     needs: [generate, approve]
-    if: needs.generate.outputs.has_picks == 'true'
+    if: always() && needs.generate.outputs.has_pick == 'true' && needs.approve.result != 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     permissions:
-      contents: write   # needed to commit data/published/<pick_id>.json
+      contents: write
 
     steps:
       - name: Checkout repo (main)
@@ -246,11 +284,55 @@ jobs:
         with:
           ref: main
 
-      - name: Download this run's review artifact
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Record REJECTED state + send rejection email
+        env:
+          GMAIL_SENDER_EMAIL:    ${{ secrets.GMAIL_SENDER_EMAIL }}
+          GMAIL_APP_PASSWORD:    ${{ secrets.GMAIL_APP_PASSWORD }}
+          PUNTMATE_REPORT_EMAIL: ${{ secrets.PUNTMATE_REPORT_EMAIL }}
+          PICK_ID: ${{ needs.generate.outputs.pick_id }}
+        run: |
+          cd scripts
+          python handle_rejection.py
+
+      - name: Commit rejected state
+        run: |
+          git config user.name  "PuntMate Bot"
+          git config user.email "puntmatenz@gmail.com"
+          git add data/state/
+          git diff --staged --quiet || git commit -m "chore: record rejection for ${{ needs.generate.outputs.pick_id }} [skip ci]"
+          git push || echo "::warning::Could not push rejected state (non-fatal — REJECTED is still a terminal state enforced at publish time via manifest/state checks)"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 4: Publish — posts to Telegram / Instagram (feed + Story) using the
+  # EXACT frozen + checksum-verified artifact from this run. Facebook is
+  # reported as "via linked Instagram account", never posted to directly.
+  # Simulates instead of posting when dry_run is true.
+  # ─────────────────────────────────────────────────────────────────────────────
+  publish:
+    name: Publish approved post
+    needs: [generate, approve]
+    if: needs.generate.outputs.has_pick == 'true' && needs.approve.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write   # needed to commit data/published/<pick_id>.json + state
+
+    steps:
+      - name: Checkout repo (main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Download this run's review artifact (overwrite with the frozen copy)
         uses: actions/download-artifact@v4
         with:
           name: puntmate-review-${{ github.run_id }}
-          path: .
+          path: data/review/${{ needs.generate.outputs.pick_id }}/
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -263,23 +345,26 @@ jobs:
       - name: Publish (or simulate, if dry run)
         env:
           DRY_RUN:             ${{ needs.generate.outputs.dry_run }}
+          PICK_ID:              ${{ needs.generate.outputs.pick_id }}
           TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           INSTAGRAM_USER_ID:   ${{ secrets.IG_USER_ID }}
           IG_USER_ID:          ${{ secrets.IG_USER_ID }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
           META_PAGE_TOKEN:     ${{ secrets.META_PAGE_TOKEN }}
-          FACEBOOK_PAGE_ID:    ${{ secrets.FB_PAGE_ID }}
+          GMAIL_SENDER_EMAIL:    ${{ secrets.GMAIL_SENDER_EMAIL }}
+          GMAIL_APP_PASSWORD:    ${{ secrets.GMAIL_APP_PASSWORD }}
+          PUNTMATE_REPORT_EMAIL: ${{ secrets.PUNTMATE_REPORT_EMAIL }}
         run: |
           cd scripts
           python publish_pick.py
 
-      - name: Commit publish record
+      - name: Commit publish record + state
         if: always()
         run: |
           git config user.name  "PuntMate Bot"
           git config user.email "puntmatenz@gmail.com"
-          git add data/published/ 2>/dev/null || true
+          git add data/published/ data/state/ 2>/dev/null || true
           git diff --staged --quiet || git commit -m "chore: record publish for ${{ needs.generate.outputs.pick_id }} [skip ci]"
           git push || echo "::warning::Could not push publish record (main may have moved) — publish itself already happened; this only affects duplicate-post protection bookkeeping."
 

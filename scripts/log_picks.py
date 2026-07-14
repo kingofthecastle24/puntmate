@@ -23,9 +23,17 @@ def log_picks():
     with open(LATEST_RUN_PATH, 'r') as f:
         run_data = json.load(f)
 
-    picks_to_log = run_data.get('picks', [])
+    # Schema note: latest_run.json now holds ONE pick under "pick" (the
+    # single-official-pick model replacing the old investor/punter/gambler
+    # personalities), not a "picks" list. Still supports the legacy "picks"
+    # list shape for any old fixture/backup files.
+    single = run_data.get('pick')
+    if single and single.get('has_pick'):
+        picks_to_log = [single]
+    else:
+        picks_to_log = [p for p in run_data.get('picks', []) if p]
     if not picks_to_log:
-        print("No picks in latest_run.json — nothing to log")
+        print("No pick in latest_run.json (NO_BET or none) — nothing to log")
         return 0
 
     # Load existing picks ledger
@@ -39,20 +47,23 @@ def log_picks():
     run_date = run_data.get('run_date', datetime.now(timezone.utc).strftime('%Y-%m-%d'))
     added = 0
     for pick in picks_to_log:
-        personality = pick.get('personality', 'punter')
+        bet_type = pick.get('bet_type', pick.get('personality', 'PUNTER_BET'))
+        sport_key = pick.get('sport_key') or pick.get('sport', '')
+        selection = pick.get('selection', pick.get('pick', ''))
         entry = {
-            "id": f"{run_date}_{pick['sport_key']}_{pick['home_team'].replace(' ', '_')}_{personality}",
+            "id": f"{run_date}_{sport_key}_{pick['home_team'].replace(' ', '_')}_{bet_type}",
             "date": run_date,
-            "personality": personality,
-            "sport_key": pick['sport_key'],
-            "sport": pick['sport'],
+            "bet_type": bet_type,
+            "risk": pick.get('risk', ''),
+            "sport_key": sport_key,
+            "sport": pick.get('sport', sport_key),
             "match": pick['match'],
             "home_team": pick['home_team'],
             "away_team": pick['away_team'],
-            "pick": pick['pick'],
+            "pick": selection,
             "market": pick['market'],
             "odds": float(pick['odds']),
-            "confidence": pick['confidence'],
+            "confidence": pick.get('confidence', pick.get('confidence_label', '')),
             "result": "pending",
             "pnl": None
         }
@@ -60,7 +71,7 @@ def log_picks():
         if not any(p['id'] == entry['id'] for p in all_picks):
             all_picks.append(entry)
             added += 1
-            print(f"  Logged: {entry['match']} → {entry['pick']} @ {entry['odds']}")
+            print(f"  Logged: {entry['match']} \u2192 {entry['pick']} @ {entry['odds']}")
         else:
             print(f"  Skip (already logged): {entry['match']}")
 
