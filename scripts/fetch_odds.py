@@ -1,8 +1,10 @@
 """
 fetch_odds.py — Pulls upcoming match odds via The Odds API (free tier)
-Covers: FIFA World Cup, NRL, NBA, Super Rugby
-Free tier: 500 requests/month — we use ~2-3/day so well within limit
+Covers: FIFA World Cup 2026, NRL, Super Rugby Pacific, UFC/MMA, Wimbledon
+Free tier: 500 requests/month — uses ~2-3/day
+
 Sign up for a free key at: https://the-odds-api.com
+Set ODDS_API_KEY in GitHub Secrets.
 """
 
 import os
@@ -13,15 +15,34 @@ from datetime import datetime, timezone
 ODDS_API_KEY = os.environ.get('ODDS_API_KEY', '')
 BASE_URL = "https://api.the-odds-api.com/v4"
 
-# Sports to pull — maps to Odds API sport keys
+# Sports to pull — priority order (most popular NZ viewing first)
 SPORTS = [
-    "soccer_fifa_world_cup",   # FIFA World Cup 2026
-    "rugbyleague_nrl",         # NRL
-    "basketball_nba",          # NBA
-    "rugbyunion_super_rugby",  # Rugby
-    "tennis_atp_french_open",  # Tennis ATP
-    "tennis_wta_french_open",  # Tennis WTA
+    "soccer_fifa_world_cup",            # FIFA World Cup 2026 (live now)
+    "rugbyleague_nrl",                  # NRL — core NZ audience
+    "rugbyunion_super_rugby",           # Super Rugby Pacific
+    "mma_mixed_martial_arts",           # UFC/MMA
+    "tennis_atp_wimbledon",             # Wimbledon ATP (July)
+    "tennis_wta_wimbledon",             # Wimbledon WTA (July)
 ]
+
+# Human-readable sport labels for cards
+SPORT_LABELS = {
+    "soccer_fifa_world_cup":      "WORLD CUP",
+    "rugbyleague_nrl":            "NRL",
+    "rugbyunion_super_rugby":     "SUPER RUGBY",
+    "mma_mixed_martial_arts":     "UFC",
+    "tennis_atp_wimbledon":       "WIMBLEDON",
+    "tennis_wta_wimbledon":       "WIMBLEDON",
+    "tennis_atp_us_open":         "US OPEN",
+    "tennis_wta_us_open":         "US OPEN",
+    "tennis_atp_australian_open": "AUSTRALIAN OPEN",
+}
+
+# Events that warrant the Matchday Print (cream/red) look instead of Betslip Night
+BIG_GAME_SPORTS = {"soccer_fifa_world_cup", "mma_mixed_martial_arts"}
+BIG_GAME_KEYWORDS = ["All Blacks", "Wallabies", "Warriors", "Final", "Semi-Final",
+                     "Quarter-Final", "Grand Final", "Championship", "World Cup Final"]
+
 
 def fetch_upcoming_odds():
     """Fetch odds for all configured sports. Returns list of match dicts."""
@@ -32,70 +53,113 @@ def fetch_upcoming_odds():
             url = f"{BASE_URL}/sports/{sport}/odds"
             params = {
                 "apiKey": ODDS_API_KEY,
-                "regions": "au",        # Australian/NZ bookmakers
-                "markets": "h2h",       # Head to head
+                "regions": "au",        # Australian/NZ bookmakers (includes TAB)
+                "markets": "h2h",
                 "oddsFormat": "decimal",
                 "dateFormat": "iso",
             }
             response = requests.get(url, params=params, timeout=10)
 
             if response.status_code == 404:
-                # Sport not available or no upcoming matches
+                print(f"[{sport}] Not in season or no matches (404)")
                 continue
 
             response.raise_for_status()
             matches = response.json()
 
-            # Only take next 48hrs of matches
             now = datetime.now(timezone.utc)
-            for match in matches[:3]:  # Top 3 matches per sport
+            added = 0
+
+            for match in matches:
                 kickoff = datetime.fromisoformat(match['commence_time'].replace('Z', '+00:00'))
                 hours_away = (kickoff - now).total_seconds() / 3600
 
-                if 0 < hours_away < 48:
-                    # Find best odds from available bookmakers
+                # Only today's matches (next 24 hours) for pre-game picks
+                if 0 < hours_away < 48:  # TEMP: widened from 24h for one test run, see commit msg
                     best_odds = extract_best_odds(match)
-                    if best_odds:
-                        all_matches.append({
-                            "sport": sport,
-                            "match": f"{match['home_team']} vs {match['away_team']}",
-                            "home_team": match['home_team'],
-                            "away_team": match['away_team'],
-                            "kickoff": match['commence_time'],
-                            "odds": best_odds
-                        })
+                    if not best_odds:
+                        continue
 
-            # Log remaining quota
-            quota_remaining = response.headers.get('x-requests-remaining', 'unknown')
-            print(f"[{sport}] Found {len(matches)} matches. Quota remaining: {quota_remaining}")
+                    implied = calc_implied_probs(best_odds)
+                    sport_label = SPORT_LABELS.get(sport, sport.upper().replace('_', ' '))
 
+                    home = match['home_team']
+                    away = match['away_team']
+                    is_big_game = (
+                        sport in BIG_GAME_SPORTS or
+                        any(kw.lower() in (home + ' ' + away).lower()
+                            for kw in BIG_GAME_KEYWORDS)
+                    )
+
+                    all_matches.append({
+                        "sport":              sport,
+                        "sport_label":        sport_label,
+                        "match":              f"{home} vs {away}",
+                        "home_team":          home,
+                        "away_team":          away,
+                        "kickoff":            match['commence_time'],
+                        "hours_until_kick":   round(hours_away, 1),
+                        "odds":               best_odds,
+                        "implied_probs":      implied,
+                        "big_game":           is_big_game,
+                    })
+                    added += 1
+
+            quota = response.headers.get('x-requests-remaining', 'unknown')
+            print(f"[{sport}] {added} matches today. Quota remaining: {quota}")
+
+        except requests.exceptions.HTTPError as e:
+            print(f"[{sport}] HTTP {e.response.status_code}: {e}")
         except Exception as e:
-            print(f"[{sport}] Error fetching odds: {e}")
-            continue
+            print(f"[{sport}] Error: {e}")
 
+    all_matches.sort(key=lambda m: m['kickoff'])
+    print(f"\nTotal: {len(all_matches)} matches available for today")
     return all_matches
 
 
 def extract_best_odds(match):
-    """Extract best available odds from bookmakers."""
+    """Line-shop across all bookmakers to find the best available price."""
     if not match.get('bookmakers'):
         return None
 
-    best = {"home": 0, "away": 0, "draw": None}
+    best = {"home": 0.0, "away": 0.0, "draw": None}
+    home, away = match['home_team'], match['away_team']
 
-    for bookmaker in match['bookmakers']:
-        for market in bookmaker.get('markets', []):
-            if market['key'] == 'h2h':
-                for outcome in market['outcomes']:
-                    if outcome['name'] == match['home_team']:
-                        best['home'] = max(best['home'], outcome['price'])
-                    elif outcome['name'] == match['away_team']:
-                        best['away'] = max(best['away'], outcome['price'])
-                    elif outcome['name'] == 'Draw':
-                        if best['draw'] is None or outcome['price'] > best['draw']:
-                            best['draw'] = outcome['price']
+    for bk in match['bookmakers']:
+        for mkt in bk.get('markets', []):
+            if mkt['key'] != 'h2h':
+                continue
+            for outcome in mkt['outcomes']:
+                p = outcome['price']
+                name = outcome['name']
+                if name == home:
+                    best['home'] = max(best['home'], p)
+                elif name == away:
+                    best['away'] = max(best['away'], p)
+                elif name.lower() == 'draw':
+                    best['draw'] = max(best['draw'] or 0, p) or None
 
-    return best if best['home'] > 0 else None
+    return best if best['home'] > 0 and best['away'] > 0 else None
+
+
+def calc_implied_probs(odds):
+    """
+    Convert decimal odds to implied probabilities, removing the overround
+    so values sum to exactly 1.0.
+    """
+    if not odds:
+        return None
+
+    raw = {
+        "home": 1 / odds['home'],
+        "away": 1 / odds['away'],
+    }
+    if odds.get('draw') and odds['draw'] > 0:
+        raw['draw'] = 1 / odds['draw']
+
+    total = sum(raw.values())
+    return {k: round(v / total, 4) for k, v in raw.items()} if total > 0 else None
 
 
 if __name__ == "__main__":
