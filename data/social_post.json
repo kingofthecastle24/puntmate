@@ -1,7 +1,32 @@
 {
-    "generated_at": "2026-07-12T10:00:00.000000+00:00",
-    "post_date": "2026-07-12",
-    "image_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/puntmate_nrl_multi_story.png",
-    "caption": "NRL Round 19 Sunday Triple Multi",
-    "is_story": true
+  "has_picks": true,
+  "pick_id": "2026-07-14_France_vs_Spain",
+  "generated_at": "2026-07-14T10:28:53.416362+00:00",
+  "post_date": "2026-07-14",
+  "match": "France vs Spain",
+  "selection": "France",
+  "market": "Head to Head",
+  "odds": "2.50",
+  "theme": "print",
+  "carousel_paths": [
+    "data/cards/2026-07-14_France_vs_Spain_print_1_cover.png",
+    "data/cards/2026-07-14_France_vs_Spain_print_2_tip.png",
+    "data/cards/2026-07-14_France_vs_Spain_print_3_breakdown.png"
+  ],
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-14_France_vs_Spain_print_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-14_France_vs_Spain_print_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-14_France_vs_Spain_print_3_breakdown.png"
+  ],
+  "story_path": "data/cards/2026-07-14_France_vs_Spain_print_story.png",
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-14_France_vs_Spain_print_story.png",
+  "image_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-14_France_vs_Spain_print_1_cover.png",
+  "caption": "\ud83c\udfc6 TODAY'S VALUE PICKS \u2014 2026-07-14\n\n\ud83d\udcca FIFA World Cup 2026 | France @ 2.50\n   With only one match available, France at 2.50 is the most defensible selection \u2014 home nation advantage in a World Cup semifinal context carr\n\n\ud83c\udfaf FIFA World Cup 2026 | France @ 2.50\n   France at home turf energy in a World Cup semi, nah that's value right there. Spain are class but France in knockout footy with Mbapp\u00e9 and t\n\n\ud83c\udfb0 FIFA World Cup 2026 | Spain @ 3.3\n   Lamine Yamal himself said he's NOT afraid \u2014 and when a generational talent talks like that on the biggest stage, you LISTEN. Spain's tiki-ta\n\nSwipe for full breakdown \ud83d\udc46\nFollow for daily value picks \u2192 @puntmatenz\n\nProblem Gambling Foundation NZ: 0800 664 262",
+  "telegram_message": "*\ud83d\udcca PUNTMATE NZ \u2014 FIFA World Cup 2026*\n\n\ud83c\udfdf France vs Spain\n\n*PICK:* France\n*ODDS:* 2.50 (Head to Head)\n\n_With only one match available, France at 2.50 is the most defensible selection \u2014 home nation advantage in a World Cup semifinal context carries significant weight, and France's tournament pedigree in high-stakes knockout football is well-documented. However, I must note these odds sit outside my preferred 1.40\u20132.20 range, which elevates risk; the pick is made pragmatically given no alternatives exist. Stake conservatively._\n\nConfidence: Low\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story",
+    "facebook"
+  ]
 }

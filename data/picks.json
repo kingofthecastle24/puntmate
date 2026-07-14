@@ -622,5 +622,53 @@
     "confidence": "Medium",
     "result": "win",
     "pnl": 14.8
+  },
+  {
+    "id": "2026-07-14_soccer_fifa_world_cup_France_investor",
+    "date": "2026-07-14",
+    "personality": "investor",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "France vs Spain",
+    "home_team": "France",
+    "away_team": "Spain",
+    "pick": "France",
+    "market": "Head to Head",
+    "odds": 2.5,
+    "confidence": "Low",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-14_soccer_fifa_world_cup_France_punter",
+    "date": "2026-07-14",
+    "personality": "punter",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "France vs Spain",
+    "home_team": "France",
+    "away_team": "Spain",
+    "pick": "France",
+    "market": "Head to Head",
+    "odds": 2.5,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
+  },
+  {
+    "id": "2026-07-14_soccer_fifa_world_cup_France_gambler",
+    "date": "2026-07-14",
+    "personality": "gambler",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "FIFA World Cup 2026",
+    "match": "France vs Spain",
+    "home_team": "France",
+    "away_team": "Spain",
+    "pick": "Spain",
+    "market": "Head to Head",
+    "odds": 3.3,
+    "confidence": "Medium",
+    "result": "pending",
+    "pnl": null
   }
 ]

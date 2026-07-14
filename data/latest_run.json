@@ -1,48 +1,51 @@
 {
-  "run_date": "2026-07-05",
-  "run_ts": "2026-07-05T23:44:42.278514+00:00",
+  "run_date": "2026-07-14",
+  "run_ts": "2026-07-14T10:28:41.013322+00:00",
   "picks": [
     {
-      "match": "Portugal vs Spain",
+      "match": "France vs Spain",
       "sport": "FIFA World Cup 2026",
       "personality": "investor",
-      "pick": "Spain",
+      "pick": "France",
       "market": "Head to Head",
-      "odds": "1.97",
-      "reasoning": "Spain sit at 1.97 \u2014 the only option across all three matches that falls within our target range. They arrive at this World Cup as one of the most cohesive tactical units in international football, with a deep squad and a proven system under De la Fuente. Portugal have the individual quality but historically struggle for consistency in knockout formats against top-tier opposition, and Spain's recent H2H record supports the lean.",
-      "confidence": "Medium",
-      "emoji": "\ud83c\udfaf",
-      "home_team": "Portugal",
+      "odds": "2.50",
+      "reasoning": "With only one match available, France at 2.50 is the most defensible selection \u2014 home nation advantage in a World Cup semifinal context carries significant weight, and France's tournament pedigree in high-stakes knockout football is well-documented. However, I must note these odds sit outside my preferred 1.40\u20132.20 range, which elevates risk; the pick is made pragmatically given no alternatives exist. Stake conservatively.",
+      "confidence": "Low",
+      "emoji": "\u26a0\ufe0f",
+      "home_team": "France",
       "away_team": "Spain",
-      "sport_key": "soccer_fifa_world_cup"
+      "sport_key": "soccer_fifa_world_cup",
+      "result": "PENDING"
     },
     {
-      "match": "Mexico vs England",
+      "match": "France vs Spain",
       "sport": "FIFA World Cup 2026",
       "personality": "punter",
-      "pick": "Mexico",
+      "pick": "France",
       "market": "Head to Head",
-      "odds": "3.15",
-      "reasoning": "Mexico at home soil vibes with the crowd going mental trying to keep England up all night \u2014 that's a real factor bro. England always look shaky in knockout rounds and the weather delay chaos suits the underdogs. Value at 3.15 is too good to ignore when Mexico have every reason to cause an upset.",
+      "odds": "2.50",
+      "reasoning": "France at home turf energy in a World Cup semi, nah that's value right there. Spain are class but France in knockout footy with Mbapp\u00e9 and the boys under the pump? They turn up. Yamal talking big game but France have seen it all before.",
       "confidence": "Medium",
-      "emoji": "\ud83c\udf2e",
-      "home_team": "Mexico",
-      "away_team": "England",
-      "sport_key": "soccer_fifa_world_cup"
+      "emoji": "\ud83c\uddeb\ud83c\uddf7",
+      "home_team": "France",
+      "away_team": "Spain",
+      "sport_key": "soccer_fifa_world_cup",
+      "result": "PENDING"
     },
     {
-      "match": "Portugal vs Spain",
+      "match": "France vs Spain",
       "sport": "FIFA World Cup 2026",
       "personality": "gambler",
-      "pick": "Portugal",
+      "pick": "Spain",
       "market": "Head to Head",
-      "odds": "4.3",
-      "reasoning": "Portugal at 4.30 in a World Cup knockout derby?! Cristiano and the boys are playing on home continent soil with a point to prove, and Iberian derbies are NEVER straightforward \u2014 Spain might be favorites but this fixture has upset written all over it. The bookies are handing us free money and I am absolutely taking it with both hands!",
+      "odds": "3.3",
+      "reasoning": "Lamine Yamal himself said he's NOT afraid \u2014 and when a generational talent talks like that on the biggest stage, you LISTEN. Spain's tiki-taka machine has been dismantling teams all tournament, and France without peak form is vulnerable to their press. Give me La Roja at 3.3 and let the kid write his legend.",
       "confidence": "Medium",
-      "emoji": "\ud83d\ude80",
-      "home_team": "Portugal",
+      "emoji": "\ud83d\udd25",
+      "home_team": "France",
       "away_team": "Spain",
-      "sport_key": "soccer_fifa_world_cup"
+      "sport_key": "soccer_fifa_world_cup",
+      "result": "PENDING"
     }
   ]
 }
