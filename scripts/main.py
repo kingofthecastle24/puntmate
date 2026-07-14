@@ -136,8 +136,18 @@ def run():
     run_data = save_latest_run(matches, picks)
 
     # -- 3. Render carousel + Story images --------------------------------------
-    print(f"\n[3/3] Rendering carousel + Story cards...")
-    card_sets = render_cards(run_data["picks"])
+    # Only render the FEATURED pick (picks[0] — build_social_post.py always
+    # features the first pick). Rendering all personalities' picks used to
+    # cause a real bug: when two personalities land on the same match
+    # (e.g. investor/punter pick France, gambler picks Spain on the same
+    # France v Spain match), every render shares the same filename
+    # (date_match_theme_*), so whichever pick rendered last silently
+    # overwrote the featured pick's images on disk — caption said "France",
+    # card showed "Spain". Rendering only the featured pick removes the
+    # collision entirely and skips wasted renders for picks nobody publishes.
+    print(f"\n[3/3] Rendering carousel + Story cards for the featured pick...")
+    featured_pick = run_data["picks"][0]
+    card_sets = render_cards([featured_pick])
     run_data["card_sets"] = card_sets
 
     # card_sets isn't part of the on-disk schema (paths would go stale) —
