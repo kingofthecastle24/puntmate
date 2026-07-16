@@ -670,5 +670,22 @@
     "confidence": "Medium",
     "result": "win",
     "pnl": 23.0
+  },
+  {
+    "id": "2026-07-16_rugbyleague_nrl_Warriors_INVESTOR_BET",
+    "date": "2026-07-16",
+    "bet_type": "INVESTOR_BET",
+    "risk": "STANDARD_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Warriors vs Storm",
+    "home_team": "Warriors",
+    "away_team": "Storm",
+    "pick": "WARRIORS",
+    "market": "Head to Head",
+    "odds": 2.1,
+    "confidence": "HIGH",
+    "result": "pending",
+    "pnl": null
   }
 ]
