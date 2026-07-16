@@ -64,6 +64,10 @@ on:
         description: 'Dry run — render + prepare everything but do not post to any platform'
         type: boolean
         default: true
+      force_test_pick:
+        description: 'TEST ONLY — inject a synthetic pick instead of running real odds/research/Claude, to verify rendering/freeze/approval-email without waiting for a real qualifying match. Never used on schedule, never skips DRY_RUN or the approval gate.'
+        type: boolean
+        default: false
 
 env:
   PYTHONPATH: scripts
@@ -93,8 +97,10 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
+            echo "force_test_pick=${{ inputs.force_test_pick }}" >> "$GITHUB_OUTPUT"
           else
             echo "dry_run=false" >> "$GITHUB_OUTPUT"
+            echo "force_test_pick=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Set up Python 3.11
@@ -110,12 +116,25 @@ jobs:
         run: python -m playwright install --with-deps chromium
 
       - name: Run picks pipeline (prepare only — no posting)
+        if: steps.mode.outputs.force_test_pick != 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ODDS_API_KEY:      ${{ secrets.ODDS_API_KEY }}
         run: |
           cd scripts
           python main.py
+
+      # TEST ONLY (force_test_pick=true) — skips real odds/research/Claude and
+      # writes a synthetic pick instead, then renders it through the exact
+      # same Playwright renderer as production. Everything downstream
+      # (freeze/checksums/email/approval gate/publish) is completely
+      # unmodified — this only replaces "find a real pick today".
+      - name: Inject synthetic TEST pick
+        if: steps.mode.outputs.force_test_pick == 'true'
+        run: |
+          cd scripts
+          python inject_test_pick.py
+          python render_latest_pick.py
 
       # Always renders the two fixed test fixtures regardless of whether
       # today produced a real pick — catches renderer/template breakage on
