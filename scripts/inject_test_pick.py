@@ -38,13 +38,18 @@ verdict = classify(evidence)
 reasoning_sentence = ("Warriors have won four of their last five at home and Storm are missing "
                        "two regular starters in the forward pack.")
 
+# Vary the match per run (suffix with the GitHub run id, or a timestamp
+# locally) so repeated test triggers on the same day get distinct pick_ids —
+# otherwise workflow_state.py correctly (and deliberately) refuses to reuse a
+# pick_id that was already REJECTED or PUBLISHED earlier that day.
+run_tag = os.environ.get("GITHUB_RUN_ID") or datetime.now(timezone.utc).strftime("%H%M%S")
 pick = {
     "has_pick": True,
-    "match": "Warriors vs Storm",
+    "match": f"Warriors vs Storm (test {run_tag})",
     "sport": "rugbyleague_nrl",
     "sport_label": "NRL",
     "home_team": "Warriors",
-    "away_team": "Storm",
+    "away_team": f"Storm (test {run_tag})",
     "kickoff": datetime.now(timezone.utc).isoformat(),
     "selection": "WARRIORS",
     "market": "Head to Head",
