@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-16_Warriors_vs_Storm_test_29481942825",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-16T08:02:09.382348+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-16T08:02:09.382529+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-16T08:02:09.382726+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
