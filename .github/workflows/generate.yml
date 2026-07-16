@@ -160,11 +160,8 @@ jobs:
       - name: Commit renderer self-test images
         if: always()
         run: |
-          git config user.name  "PuntMate Bot"
-          git config user.email "puntmatenz@gmail.com"
           git add data/cards/_selftest/
-          git diff --staged --quiet || git commit -m "chore: update renderer self-test reference images [skip ci]"
-          git push || echo "::warning::Could not push self-test images (non-fatal, artifact upload above already has them)"
+          bash scripts/git_push_retry.sh "chore: update renderer self-test reference images [skip ci]" --soft
 
       - name: Log pick to ledger
         if: hashFiles('data/latest_run.json') != ''
@@ -213,12 +210,8 @@ jobs:
       - name: Commit ledger, review package & state
         if: steps.review_package.outputs.has_pick == 'true'
         run: |
-          git config user.name  "PuntMate Bot"
-          git config user.email "puntmatenz@gmail.com"
           git add data/picks.json data/latest_run.json data/review/ data/state/ data/cards/
-          git diff --staged --quiet || git commit \
-            -m "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
-          git push
+          bash scripts/git_push_retry.sh "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
 
       - name: Write job summary
         if: always()
@@ -320,11 +313,8 @@ jobs:
 
       - name: Commit rejected state
         run: |
-          git config user.name  "PuntMate Bot"
-          git config user.email "puntmatenz@gmail.com"
           git add data/state/
-          git diff --staged --quiet || git commit -m "chore: record rejection for ${{ needs.generate.outputs.pick_id }} [skip ci]"
-          git push || echo "::warning::Could not push rejected state (non-fatal — REJECTED is still a terminal state enforced at publish time via manifest/state checks)"
+          bash scripts/git_push_retry.sh "chore: record rejection for ${{ needs.generate.outputs.pick_id }} [skip ci]" --soft
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Job 4: Publish — posts to Telegram / Instagram (feed + Story) using the
@@ -381,11 +371,8 @@ jobs:
       - name: Commit publish record + state
         if: always()
         run: |
-          git config user.name  "PuntMate Bot"
-          git config user.email "puntmatenz@gmail.com"
           git add data/published/ data/state/ 2>/dev/null || true
-          git diff --staged --quiet || git commit -m "chore: record publish for ${{ needs.generate.outputs.pick_id }} [skip ci]"
-          git push || echo "::warning::Could not push publish record (main may have moved) — publish itself already happened; this only affects duplicate-post protection bookkeeping."
+          bash scripts/git_push_retry.sh "chore: record publish for ${{ needs.generate.outputs.pick_id }} [skip ci]" --soft
 
       - name: Summary
         if: always()
