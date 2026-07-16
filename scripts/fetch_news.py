@@ -4,17 +4,23 @@ through research_validator before handing anything back to the pick engine.
 
 FIXED BUG (root cause of the France/Spain contradiction): the old Google News
 RSS fallback fired whenever ESPN returned nothing, and it hardcoded the query
-as "{team} NRL 2025" regardless of the match's actual sport. For a FIFA World
-Cup fixture between France and Spain, that meant searching for NRL content
-about "France" and "Spain" — literally rugby league headlines — and treating
-whatever came back as relevant research. That contaminated research is very
-likely what led the LLM to write reasoning that contradicted its own pick.
-
-Now: the RSS query is sport-aware (built from a sport keyword, not a fixed
-"NRL 2025" string), and everything returned — from ESPN or RSS — is passed
+as "{team} NRL 2025" regardless of the match's actual sport. Now the RSS
+query is sport-aware, and everything returned — from ESPN or RSS — is passed
 through research_validator.validate_snippets() before use. Rejected sources
 are recorded as warnings (visible internally, never in public copy) and never
 reach the LLM prompt.
+
+Phase 1 (research depth widening): previously ESPN was only ever tried for
+the World Cup, and RSS was only used as a fallback when ESPN returned
+nothing — meaning NRL/rugby/MMA/tennis relied on a thin 1-2-headline scrape
+in practice. Now: ESPN is attempted for every sport that has a plausible
+ESPN site-API path (best-effort — ESPN's site API isn't officially
+documented, so these paths are educated guesses; any that are wrong just
+return nothing via the existing try/except, same as before), AND RSS always
+runs too (not just as a fallback) so results are combined rather than
+either/or. A match-level query (both team names together) is added alongside
+the existing per-team queries, since preview/analysis articles that discuss
+both sides tend to be more relevant than generic single-team news.
 """
 
 import requests
@@ -26,13 +32,21 @@ from research_validator import validate_snippets, assess_evidence_strength
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports"
 
+# Best-effort ESPN site-API sport/league paths. Unverifiable from this
+# sandbox (ESPN is network-blocked here) — if any path is wrong it will 404
+# or return an empty article list, which _espn_news() already treats as "no
+# results" and falls through to RSS, so a wrong guess costs nothing. Worth
+# confirming against real traffic on the next GitHub Actions run.
 ESPN_SPORT_MAP = {
-    "soccer_fifa_world_cup": "soccer/fifa.world",
+    "soccer_fifa_world_cup":  "soccer/fifa.world",
+    "rugbyleague_nrl":        "rugby-league/nrl",
+    "rugbyunion_super_rugby": "rugby/super-rugby-pacific",
+    "mma_mixed_martial_arts": "mma/ufc",
+    "tennis_atp_wimbledon":   "tennis/atp",
+    "tennis_wta_wimbledon":   "tennis/wta",
 }
 
-# Sport-aware search keyword used to build the Google News RSS query. This
-# replaces the old hardcoded "NRL 2025" suffix — every sport now searches for
-# its own competition, not rugby league.
+# Sport-aware search keyword used to build the Google News RSS query.
 RSS_SPORT_KEYWORD = {
     "soccer_fifa_world_cup": "FIFA World Cup 2026 football",
     "rugbyleague_nrl": "NRL 2026",
@@ -99,15 +113,21 @@ def fetch_news(match):
 
     raw_snippets = []
 
+    # ESPN, if this sport has a mapped path — tried for every sport now, not
+    # just the World Cup.
     espn_path = ESPN_SPORT_MAP.get(sport_key)
     if espn_path:
         for team in [home, away]:
             raw_snippets.extend(_espn_news(espn_path, team))
 
-    if not raw_snippets:
-        rss_keyword = RSS_SPORT_KEYWORD.get(sport_key, sport_key.replace("_", " "))
-        for team in [home, away]:
-            raw_snippets.extend(_google_rss_news(f"{team} {rss_keyword}")[:2])
+    # RSS always runs too (combined with ESPN, not fallback-only) — per-team
+    # queries plus one match-level query for preview/analysis articles that
+    # mention both sides.
+    rss_keyword = RSS_SPORT_KEYWORD.get(sport_key, sport_key.replace("_", " "))
+    for team in [home, away]:
+        raw_snippets.extend(_google_rss_news(f"{team} {rss_keyword}")[:2])
+    if home and away:
+        raw_snippets.extend(_google_rss_news(f"{home} {away} {rss_keyword}")[:2])
 
     # Dedupe before validation.
     seen = set()

@@ -29,8 +29,11 @@ class ResearchValidatorTests(unittest.TestCase):
         self.assertEqual(len(accepted), 1)
 
     def test_confidence_ceiling_zero_sources(self):
+        # Phase 1: zero validated news no longer caps at LOW — Claude is now
+        # allowed to use general team/competition knowledge as supporting
+        # context, so zero fresh snippets isn't "zero evidence" anymore.
         ceiling, warnings = assess_evidence_strength([])
-        self.assertEqual(ceiling, "LOW")
+        self.assertEqual(ceiling, "MODERATE")
 
     def test_confidence_ceiling_full_sources(self):
         ceiling, warnings = assess_evidence_strength(["a", "b", "c"], requested_count=3)

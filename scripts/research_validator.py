@@ -109,13 +109,24 @@ def validate_snippets(snippets, sport, home_team, away_team, competition=None, f
 
 
 def assess_evidence_strength(accepted_snippets, requested_count=3):
-    """Returns a confidence ceiling ('HIGH'/'MODERATE'/'LOW') based purely on
-    how much *validated* research was actually available. This is a ceiling —
-    the pick-generation step may only assess confidence at or below this, it
-    can't claim HIGH confidence off zero validated sources."""
+    """Returns a confidence ceiling ('HIGH'/'MODERATE'/'LOW') based on how
+    much *validated* research was actually available. This is a ceiling —
+    the pick-generation step may only assess confidence at or below this.
+
+    Phase 1 change: zero validated news sources now caps at MODERATE, not
+    LOW. Previously this reflected "we have literally nothing" — but
+    generate_pick.py's system prompt now explicitly allows Claude to use its
+    general knowledge of the teams/competition (form, typical strength,
+    home-ground advantage) as legitimate supporting context even when no
+    fresh news snippet was found. That's a real, if weaker, evidence basis —
+    LOW is now reserved for genuinely no-basis situations, which the model
+    itself still self-reports via evidence_sufficient=false when neither
+    validated news nor a real general-knowledge basis exists for a pick.
+    HIGH still requires real validated current sources — general knowledge
+    alone is never enough for a HIGH confidence ceiling."""
     n = len(accepted_snippets)
     if n == 0:
-        return "LOW", ["no validated research sources — confidence capped at LOW"]
+        return "MODERATE", ["no validated news sources — confidence capped at MODERATE (general knowledge may still apply)"]
     if n < requested_count:
         return "MODERATE", [f"only {n} validated source(s) — confidence capped at MODERATE"]
     return "HIGH", []
