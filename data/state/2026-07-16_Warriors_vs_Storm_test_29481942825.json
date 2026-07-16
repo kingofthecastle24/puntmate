@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-16_Warriors_vs_Storm_test_29481942825",
-  "state": "AWAITING_APPROVAL",
+  "state": "REJECTED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,11 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-16T08:02:09.382726+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "REJECTED",
+      "at": "2026-07-16T08:05:25.473030+00:00",
+      "note": "GitHub environment approval rejected/cancelled"
     }
   ]
 }
