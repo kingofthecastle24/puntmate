@@ -21,6 +21,15 @@ Being outside the "preferred" odds range for a bet type does NOT by itself
 force NO_BET — odds only ever push a pick toward RISKY_PICK or toward a
 different bet-type bucket. Only insufficient evidence or an edge below the
 minimum threshold produces NO_BET.
+
+Phase 3: below the standard edge bar there is now a second, lower floor
+(RISKY_MIN_EDGE_PCT). An edge that clears the lower floor but not the
+standard one is a genuine, if shakier, angle -- it gets RISKY_PICK (with the
+"keep this light" caution copy) rather than being thrown out as NO_BET. An
+edge below the lower floor, or evidence the model itself flagged as
+insufficient, still means no genuine case exists -- that is still NO_BET.
+This is a threshold nuance, not a removal of NO_BET: on a day with truly
+nothing defensible, NO_BET is still exactly what comes out.
 """
 
 from dataclasses import dataclass, field
@@ -43,9 +52,18 @@ VALID_BET_TYPE = {BET_INVESTOR, BET_PUNTER, BET_GAMBLER, BET_NO_BET}
 CONFIDENCE_LEVELS = ("HIGH", "MODERATE", "LOW")
 
 # Minimum edge (our estimated probability minus the bookmaker's implied
-# probability, in percentage points) before a selection is worth backing at
-# all. Below this, there is no genuine value case regardless of confidence.
+# probability, in percentage points) before a selection is a full-confidence
+# defensible pick.
 MIN_EDGE_PCT = 5.0
+
+# Phase 3: a second, lower floor. An edge at or above this but below
+# MIN_EDGE_PCT is still a genuine case -- just a shakier one -- and gets
+# RISKY_PICK instead of NO_BET. Below this floor there is no real value case
+# at all, regardless of confidence, and it stays NO_BET. Deliberately set
+# well below MIN_EDGE_PCT (roughly half) so this is a real threshold nuance
+# for edges that are honestly borderline, not a back door that waves through
+# everything.
+RISKY_MIN_EDGE_PCT = 2.5
 
 # Odds thresholds used only to help pick a BET-TYPE bucket (tone), and as one
 # of several signals feeding the RISK decision below. They are guidance, not
@@ -95,12 +113,21 @@ def classify_risk(evidence: Evidence) -> tuple:
     if not evidence.evidence_sufficient:
         return RISK_NO_BET, ["insufficient evidence to support any selection"]
 
-    if evidence.edge_pct < MIN_EDGE_PCT:
-        return RISK_NO_BET, [f"edge {evidence.edge_pct:.1f}% is below the {MIN_EDGE_PCT:.0f}% minimum"]
+    if evidence.edge_pct < RISKY_MIN_EDGE_PCT:
+        return RISK_NO_BET, [f"edge {evidence.edge_pct:.1f}% is below even the {RISKY_MIN_EDGE_PCT:.1f}% shaky-angle floor — no genuine case"]
 
-    # From here, evidence is sufficient AND the edge clears the bar — this is
-    # always at least a defensible pick. Whether it's STANDARD or RISKY comes
-    # down to how much uncertainty is layered on top.
+    if evidence.edge_pct < MIN_EDGE_PCT:
+        # Phase 3: below the standard bar but above the shaky-angle floor --
+        # a real, if lighter, case. RISKY_PICK (with the "keep this light"
+        # caution), not NO_BET.
+        return RISK_RISKY, [
+            f"edge {evidence.edge_pct:.1f}% is below the standard {MIN_EDGE_PCT:.0f}% bar but clears the "
+            f"{RISKY_MIN_EDGE_PCT:.1f}% shaky-angle floor — genuine but light, classified risky rather than no-bet"
+        ]
+
+    # From here, evidence is sufficient AND the edge clears the full bar —
+    # this is always at least a defensible pick. Whether it's STANDARD or
+    # RISKY comes down to how much uncertainty is layered on top.
     riskier_signals = 0
 
     if evidence.confidence == "LOW":

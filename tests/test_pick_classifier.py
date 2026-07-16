@@ -2,7 +2,8 @@ import os, sys, unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from pick_classifier import Evidence, classify, classify_risk, classify_bet_type, \
-    RISK_STANDARD, RISK_RISKY, RISK_NO_BET, BET_INVESTOR, BET_PUNTER, BET_GAMBLER, BET_NO_BET
+    RISK_STANDARD, RISK_RISKY, RISK_NO_BET, BET_INVESTOR, BET_PUNTER, BET_GAMBLER, BET_NO_BET, \
+    MIN_EDGE_PCT, RISKY_MIN_EDGE_PCT
 
 
 class RiskClassificationTests(unittest.TestCase):
@@ -12,7 +13,42 @@ class RiskClassificationTests(unittest.TestCase):
         self.assertEqual(risk, RISK_NO_BET)
 
     def test_edge_below_minimum_is_no_bet(self):
+        # edge here is 2.0%, below RISKY_MIN_EDGE_PCT (2.5%) too -- genuinely
+        # nothing here, still NO_BET even after the Phase 3 threshold nuance.
         e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=52, implied_probability=50, confidence="HIGH")
+        risk, _ = classify_risk(e)
+        self.assertEqual(risk, RISK_NO_BET)
+
+    def test_shaky_edge_above_lower_floor_is_risky_not_no_bet(self):
+        # Phase 3: edge of 3.0% clears RISKY_MIN_EDGE_PCT (2.5%) but not the
+        # standard MIN_EDGE_PCT (5.0%) -- a genuine, if lighter, angle. This
+        # used to be an automatic NO_BET; it should now be RISKY_PICK.
+        self.assertTrue(RISKY_MIN_EDGE_PCT < 3.0 < MIN_EDGE_PCT)
+        e = Evidence(evidence_sufficient=True, odds=2.20, our_probability=53, implied_probability=50, confidence="MODERATE")
+        risk, reasons = classify_risk(e)
+        self.assertEqual(risk, RISK_RISKY)
+        self.assertTrue(any("shaky-angle floor" in r for r in reasons))
+
+    def test_edge_right_at_lower_floor_is_risky(self):
+        # Exactly at RISKY_MIN_EDGE_PCT should clear it (>=), not be excluded.
+        e = Evidence(evidence_sufficient=True, odds=2.20, our_probability=52.5, implied_probability=50, confidence="MODERATE")
+        risk, _ = classify_risk(e)
+        self.assertEqual(risk, RISK_RISKY)
+
+    def test_edge_just_below_lower_floor_is_still_no_bet(self):
+        # Phase 3 narrows the gap but does not remove NO_BET -- truly thin
+        # edges (below even the shaky floor) must remain NO_BET.
+        e = Evidence(evidence_sufficient=True, odds=2.20, our_probability=52.0, implied_probability=50, confidence="MODERATE")
+        risk, reasons = classify_risk(e)
+        self.assertEqual(risk, RISK_NO_BET)
+        self.assertTrue(any("no genuine case" in r for r in reasons))
+
+    def test_evidence_insufficient_still_no_bet_even_with_large_edge(self):
+        # Phase 3's threshold nuance only applies to the edge gate -- it must
+        # never bypass the evidence_sufficient gate. A model self-reporting
+        # insufficient evidence is still an automatic NO_BET regardless of
+        # how large the nominal edge looks.
+        e = Evidence(evidence_sufficient=False, odds=2.0, our_probability=80, implied_probability=40, confidence="HIGH")
         risk, _ = classify_risk(e)
         self.assertEqual(risk, RISK_NO_BET)
 

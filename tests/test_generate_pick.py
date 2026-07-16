@@ -451,5 +451,73 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
         self.assertEqual(pick["risk"], "NO_BET")
 
 
+
+class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
+    """Phase 3: a candidate whose edge is below the standard bar but still
+    above the shaky-angle floor should come through as a RISKY_PICK with
+    honest "keep this light" caution copy, not silently become NO_BET --
+    and the copy validator must still block any NO_BET-only phrasing on it
+    (guards against reopening the original pick/copy contradiction bug)."""
+
+    def setUp(self):
+        os.environ["ANTHROPIC_API_KEY"] = "test-key"
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_shaky_but_genuine_edge_produces_risky_pick_with_caution_copy(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        # our_probability 53 vs implied ~50 (odds 2.00) -> edge ~3.0%, below
+        # the 5% standard bar but above the 2.5% shaky-angle floor.
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "market_type": "h2h",
+                "selection": "France",
+                "line": None,
+                "market": "Head to Head",
+                "our_probability": 43,
+                "evidence_sufficient": True,
+                "confidence": "MODERATE",
+                "uncertainty_flags": ["squad rotation possible"],
+                "reasoning": "It's a lighter case, but France's away form gives a genuine if shaky angle here.",
+            }],
+        })
+        match_news = {"France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"}}
+        pick = generate_pick.generate_pick_for_matches(_mock_matches(), match_news)
+        self.assertTrue(pick["has_pick"])
+        self.assertEqual(pick["risk"], "RISKY_PICK")
+        self.assertIsNotNone(pick["public_caution"])
+        self.assertIn("keep this", pick["public_caution"].lower())
+        # No NO_BET-only contradiction language leaked into the real copy.
+        for text in (pick["bet_type_reason"], pick["final_explanation"]):
+            self.assertNotIn("sitting this one out", text.lower())
+            self.assertNotIn("no pick meets", text.lower())
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_truly_thin_edge_below_shaky_floor_is_still_no_bet(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        # our_probability 41 vs implied 40 -> edge ~1%, below even the 2.5%
+        # shaky floor -- genuinely nothing here, must remain NO_BET.
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "market_type": "h2h",
+                "selection": "France",
+                "line": None,
+                "market": "Head to Head",
+                "our_probability": 41,
+                "evidence_sufficient": True,
+                "confidence": "LOW",
+                "uncertainty_flags": [],
+                "reasoning": "Coin flip at best, nothing genuinely defensible.",
+            }],
+        })
+        pick = generate_pick.generate_pick_for_matches(_mock_matches(), {})
+        self.assertFalse(pick["has_pick"])
+        self.assertEqual(pick["risk"], "NO_BET")
+
 if __name__ == "__main__":
     unittest.main()
