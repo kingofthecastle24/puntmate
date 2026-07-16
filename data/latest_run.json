@@ -1,32 +1,44 @@
 {
   "run_date": "2026-07-16",
-  "run_ts": "2026-07-16T08:01:59.120844+00:00",
+  "run_ts": "2026-07-16T21:44:56.578403+00:00",
   "pick": {
     "has_pick": true,
-    "match": "Warriors vs Storm (test 29481942825)",
+    "match": "Sydney Roosters vs Melbourne Storm",
     "sport": "rugbyleague_nrl",
     "sport_label": "NRL",
-    "home_team": "Warriors",
-    "away_team": "Storm (test 29481942825)",
-    "kickoff": "2026-07-16T08:01:59.120801+00:00",
-    "selection": "WARRIORS",
+    "home_team": "Sydney Roosters",
+    "away_team": "Melbourne Storm",
+    "kickoff": "2026-07-17T10:00:00Z",
+    "market_type": "h2h",
+    "line": null,
+    "selection": "MELBOURNE STORM",
     "market": "Head to Head",
-    "odds": "2.10",
-    "our_probability": 58,
-    "implied_probability": 47.6,
-    "edge_pct": 10.4,
-    "risk": "STANDARD_PICK",
-    "bet_type": "INVESTOR_BET",
-    "bet_type_label": "BET TYPE: INVESTOR",
-    "bet_type_reason": "This one's about as close to a sure thing as sport gets \u2014 the numbers stack up and the price still pays. Warriors have won four of their last five at home and Storm are missing two regular starters in the forward pack.",
-    "final_explanation": "Warriors have won four of their last five at home and Storm are missing two regular starters in the forward pack.",
-    "confidence": "HIGH",
-    "confidence_label": "HIGH",
-    "uncertainty_flags": [],
-    "public_caution": null,
-    "research_warnings": [
-      "TEST RUN \u2014 this pick is synthetic (scripts/inject_test_pick.py), injected via the force_test_pick workflow input to verify the approval-email flow. Not a real match assessment."
+    "odds": "4.10",
+    "our_probability": 30.0,
+    "implied_probability": 23.8,
+    "edge_pct": 6.21,
+    "risk": "RISKY_PICK",
+    "bet_type": "GAMBLER_BET",
+    "bet_type_label": "BET TYPE: GAMBLER",
+    "bet_type_reason": "Bold call at a big price \u2014 this is a swing, not a certainty, but the upside is real. The Storm getting 4.1 is spicy. Yes, the news snippet suggests they dropped a game to Penrith recently, but Melbourne are historically the hardest team to\u2026",
+    "final_explanation": "The Storm getting 4.1 is spicy. Yes, the news snippet suggests they dropped a game to Penrith recently, but Melbourne are historically the hardest team to\u2026 Worth knowing: Storm appear to have lost to Penrith recently suggesting they're not at their peak; Roosters at home with a reshuffled fullback spot adds uncertainty both ways.",
+    "confidence": "LOW",
+    "confidence_label": "LOW",
+    "uncertainty_flags": [
+      "Storm appear to have lost to Penrith recently suggesting they're not at their peak",
+      "Roosters at home with a reshuffled fullback spot adds uncertainty both ways",
+      "4.1 is a longshot price for Melbourne who are usually competitive"
     ],
-    "big_game": false
+    "public_caution": "Keep this one light \u2014 the value's there but so is the uncertainty.",
+    "research_warnings": [
+      "rejected source (no relevance to fixture): \"Why \u2018risky\u2019 calls could open door for another Queensland team - Nine.com.au\"",
+      "rejected source (team-name-only match, no sport context): \"Senior Rep Team Lists | Round 20 & Round 6 - Newcastle Knights\"",
+      "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+      "rejected source (no relevance to fixture): \"Why \u2018risky\u2019 calls could open door for another Queensland team - Nine.com.au\"",
+      "classifier [Cronulla Sutherland Sharks vs Newcastle Knights / h2h]: edge 2.7% is below the 5% minimum",
+      "classifier [Cronulla Sutherland Sharks vs Newcastle Knights / spread]: edge 2.9% is below the 5% minimum"
+    ],
+    "big_game": false,
+    "other_defensible_candidates": 2
   }
 }

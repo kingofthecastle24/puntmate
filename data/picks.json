@@ -687,5 +687,22 @@
     "confidence": "HIGH",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-16_rugbyleague_nrl_Sydney_Roosters_GAMBLER_BET",
+    "date": "2026-07-16",
+    "bet_type": "GAMBLER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Sydney Roosters vs Melbourne Storm",
+    "home_team": "Sydney Roosters",
+    "away_team": "Melbourne Storm",
+    "pick": "MELBOURNE STORM",
+    "market": "Head to Head",
+    "odds": 4.1,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]
