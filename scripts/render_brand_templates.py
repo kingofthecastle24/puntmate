@@ -357,6 +357,34 @@ def render_pick(pick, date_str=None, out_dir=CARDS_DIR, theme_override=None):
                     page.goto(f"http://127.0.0.1:{server.port}/{os.path.basename(template_path)}", wait_until="load")
                     wait_for_dc_boot(page)
                     set_props_and_settle(page, props)
+
+                    # The three feed slides are laid out as a horizontal filmstrip
+                    # in the template's own DOM (cover, then tip, then breakdown,
+                    # side by side) — "breakdown" is the 3rd slide, so its
+                    # bounding box sits roughly 3x FEED_SLIDE_SIZE[0] to the right
+                    # of the origin. The initial 2400px-wide viewport above is
+                    # wide enough for cover+tip but NOT for breakdown, so
+                    # Chromium never paints/allocates that far right and
+                    # page.screenshot(clip=...) silently returns a truncated
+                    # (empty-looking, ~72px-wide) image instead of erroring —
+                    # this was a real, pre-existing bug (present before today's
+                    # changes, confirmed via the Portugal/Spain self-test
+                    # fixture too). Fixed by widening the viewport to fit the
+                    # actual rightmost export element before capturing.
+                    required_width = page.evaluate(
+                        """() => {
+                            let maxRight = 0;
+                            document.querySelectorAll('[data-export-id]').forEach(el => {
+                                const r = el.getBoundingClientRect();
+                                maxRight = Math.max(maxRight, r.right);
+                            });
+                            return Math.ceil(maxRight);
+                        }"""
+                    )
+                    if required_width and required_width > 2400:
+                        page.set_viewport_size({"width": required_width, "height": 2400})
+                        page.wait_for_timeout(100)  # let layout settle at the new viewport size
+
                     slide_paths = [
                         os.path.join(out_dir, f"{base}_1_cover.png"),
                         os.path.join(out_dir, f"{base}_2_tip.png"),
