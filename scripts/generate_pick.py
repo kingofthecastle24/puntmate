@@ -10,22 +10,31 @@ as if it were a live recommendation, because nothing checked the copy against
 the classification before it went out.
 
 Flow:
-  1. Claude proposes ONE candidate match + market + raw evidence (no tone, no
-     verdict — just probability estimate, confidence, uncertainty flags).
-     Phase 1: Claude can now evaluate head-to-head, spreads (handicap) and
-     totals (over/under) where available, and may draw on general knowledge
-     of the teams/competition as supporting context — not just the literal
-     scraped news snippets — but may NOT invent specific, checkable facts
-     (exact injuries, exact recent scores, roster news) that weren't given.
+  1. Claude proposes EVERY genuinely defensible match+market it can find (0,
+     1, or several candidates — no ranking, no tone, no verdict from Claude,
+     just probability estimate, confidence, uncertainty flags per candidate).
+     Phase 1: Claude can evaluate head-to-head, spreads (handicap) and totals
+     (over/under) where available, and may draw on general knowledge of the
+     teams/competition as supporting context — not just literal scraped news
+     snippets — but may NOT invent specific, checkable facts (exact injuries,
+     exact recent scores, roster news) that weren't given.
   2. pick_classifier.classify() deterministically decides RISK
      (STANDARD_PICK / RISKY_PICK / NO_BET) and BET_TYPE (INVESTOR_BET /
-     PUNTER_BET / GAMBLER_BET / NO_BET) from that evidence — Claude's own
-     opinion of its confidence is capped by how much validated research
-     actually backed it (see research_validator.assess_evidence_strength).
-  3. Copy (bet-type reason, final explanation, Telegram text, Instagram
+     PUNTER_BET / GAMBLER_BET / NO_BET) for EACH candidate from its evidence
+     — Claude's own opinion of its confidence is capped by how much
+     validated research actually backed it (see
+     research_validator.assess_evidence_strength).
+  3. Phase 2: if more than one candidate survives classification (i.e. is
+     not NO_BET), the featured pick is chosen deterministically by bet-type
+     preference — INVESTOR_BET > PUNTER_BET > GAMBLER_BET, ties broken by
+     STANDARD_PICK over RISKY_PICK, then by edge_pct. This is a tie-break
+     among genuinely defensible candidates, not a quota: if only a
+     Gambler-tier candidate clears the bar today, that is what gets
+     featured — nothing is upgraded or invented to fill an Investor slot.
+  4. Copy (bet-type reason, final explanation, Telegram text, Instagram
      caption) is generated from fixed tone templates + a cleaned one-line
-     excerpt of Claude's reasoning, then run through copy_validator before
-     anything is accepted.
+     excerpt of Claude's reasoning for the featured candidate only, then run
+     through copy_validator before anything is accepted.
 
 If nothing clears the bar, this returns a NO_BET result — never three
 fallback picks, never a contradiction between the verdict and the copy.
@@ -36,7 +45,7 @@ import json
 import os
 import re
 
-from pick_classifier import Evidence, classify, RISK_NO_BET, BET_NO_BET
+from pick_classifier import Evidence, classify, RISK_NO_BET, RISK_STANDARD, BET_NO_BET
 from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES
 
 SPORT_LABELS = {
@@ -50,6 +59,14 @@ SPORT_LABELS = {
 
 CONFIDENCE_RANK = {"LOW": 0, "MODERATE": 1, "HIGH": 2}
 
+# Phase 2: featured-pick preference order when multiple genuinely defensible
+# candidates exist on the same day. Lower number = preferred. This is only a
+# tie-break among candidates that ALREADY cleared the classifier's bar on
+# their own merits — it never changes what tier a candidate is classified
+# into, and never manufactures a candidate that doesn't otherwise exist.
+BET_TYPE_PRIORITY = {"INVESTOR_BET": 0, "PUNTER_BET": 1, "GAMBLER_BET": 2}
+RISK_PRIORITY = {RISK_STANDARD: 0, "RISKY_PICK": 1}
+
 SYSTEM_PROMPT = """You are PuntMate NZ — a mate who knows sport, not a financial analyst.
 You talk like someone who actually watches the games and has a read on form, not
 someone reading off a spreadsheet. Plain NZ English, honest about uncertainty,
@@ -58,7 +75,9 @@ never corporate or robotic.
 You will be shown today's matches with bookmaker odds — head-to-head, and
 where available, spreads (handicap) and totals (over/under) — plus any
 validated recent news/form snippets. Your job is ONLY to assess the evidence
-— you do NOT decide risk level or bet type, that's calculated separately.
+for EVERY match and market shown — you do NOT decide risk level or bet type,
+that's calculated separately, and you do NOT rank or choose a "best" one —
+a separate deterministic step does that after you're done.
 
 You may draw on your general knowledge of these teams, players and this
 competition as SUPPORTING CONTEXT — typical squad strength, recent
@@ -126,32 +145,37 @@ def _build_prompt(matches, match_news):
 {matches_text}
 
 Assess every match across every market shown (head-to-head, and spread/total
-where listed). If — and only if — one selection on one match has a genuinely
-defensible edge (the evidence actually supports it beating the bookmaker's
-implied probability), return that ONE selection. If nothing is defensible,
-say so.
+where listed). List EVERY selection that has a genuinely defensible edge (the
+evidence actually supports it beating the bookmaker's implied probability) —
+there may be zero, one, or several across today's matches. Don't rank them
+and don't try to pick a "best" one — just report each one honestly on its
+own merits, including ones you'd only call a longshot swing. A separate
+deterministic step decides which one gets featured. Do NOT stretch a
+marginal case just to lengthen the list — only include ones you'd genuinely
+defend.
 
 Return this exact JSON:
 {{
-  "has_selection": true,
-  "match": "exact match name from above",
-  "sport": "sport key matching the match",
-  "market_type": "h2h, spread, or total",
-  "selection": "TEAM NAME / DRAW for h2h; TEAM NAME for spread; Over or Under for total",
-  "line": null for h2h, or the handicap/total number for spread/total (e.g. -6.5 or 42.5),
-  "market": "Head to Head, Handicap, or Total — human-readable label",
-  "our_probability": 58,
-  "evidence_sufficient": true,
-  "confidence": "HIGH or MODERATE or LOW — how strong is the evidence you actually have (validated news AND/OR genuine general knowledge), not how you feel about the team",
-  "uncertainty_flags": ["short phrase", "short phrase"],
-  "reasoning": "2-3 sentences, plain NZ English, mate-to-mate tone"
+  "candidates": [
+    {{
+      "match": "exact match name from above",
+      "sport": "sport key matching the match",
+      "market_type": "h2h, spread, or total",
+      "selection": "TEAM NAME / DRAW for h2h; TEAM NAME for spread; Over or Under for total",
+      "line": null for h2h, or the handicap/total number for spread/total (e.g. -6.5 or 42.5),
+      "market": "Head to Head, Handicap, or Total — human-readable label",
+      "our_probability": 58,
+      "evidence_sufficient": true,
+      "confidence": "HIGH or MODERATE or LOW — how strong is the evidence you actually have (validated news AND/OR genuine general knowledge), not how you feel about the team",
+      "uncertainty_flags": ["short phrase", "short phrase"],
+      "reasoning": "2-3 sentences, plain NZ English, mate-to-mate tone"
+    }}
+  ],
+  "reasoning": "1-2 sentences on today overall — only used if candidates is empty"
 }}
 
-Or, if nothing is defensible today:
-{{
-  "has_selection": false,
-  "reasoning": "1-2 sentences, plain language, on why nothing clears the bar today"
-}}"""
+If nothing today is defensible, return "candidates": [] with the top-level
+"reasoning" explaining why."""
 
 
 def _extract_json(text):
@@ -216,10 +240,10 @@ def build_final_explanation(reasoning_sentence, risk, uncertainty_flags):
 
 
 def _resolve_selection_odds(match_meta, market_type, selection, line):
-    """Resolve (odds_val, implied_pct) for the model's chosen selection,
+    """Resolve (odds_val, implied_pct) for a candidate's chosen selection,
     across h2h, spread and total markets. Returns (None, None) if it can't
     be resolved (unknown market/selection/missing line data) — the caller
-    treats that as NO_BET rather than guessing."""
+    drops that candidate rather than guessing."""
     home = match_meta["home_team"]
     away = match_meta["away_team"]
     selection_upper = (selection or "").upper()
@@ -277,6 +301,74 @@ def _display_selection(market_type, selection, line):
     return selection_upper
 
 
+def _classify_candidate(raw, matches, match_news, warnings):
+    """Resolve + deterministically classify a single raw candidate dict from
+    the model. Returns None (and appends an explanatory warning) if the
+    candidate can't be trusted or classified; otherwise returns a dict
+    bundling the classified verdict with everything needed to build the
+    final pick if this candidate ends up featured."""
+    match_meta = next((m for m in matches if m["match"] == raw.get("match")), None)
+    if not match_meta:
+        warnings.append(f"model hallucinated a match not in the candidate list: {raw.get('match')!r}")
+        return None
+
+    market_type = (raw.get("market_type") or "h2h").strip().lower()
+    if market_type not in ("h2h", "spread", "total"):
+        market_type = "h2h"
+    line = raw.get("line")
+    odds_val, implied_pct = _resolve_selection_odds(match_meta, market_type, raw.get("selection"), line)
+
+    if not odds_val or implied_pct is None:
+        warnings.append(f"[{raw.get('match')}] could not resolve odds for candidate selection/market/line — dropped")
+        return None
+
+    news_entry = match_news.get(match_meta["match"], {})
+    ceiling = news_entry.get("confidence_ceiling", "MODERATE")
+    model_confidence = (raw.get("confidence") or "LOW").upper()
+    confidence = model_confidence if CONFIDENCE_RANK.get(model_confidence, 0) <= CONFIDENCE_RANK.get(ceiling, 0) else ceiling
+
+    evidence = Evidence(
+        evidence_sufficient=bool(raw.get("evidence_sufficient", False)),
+        odds=float(odds_val),
+        our_probability=float(raw.get("our_probability", 0)),
+        implied_probability=implied_pct,
+        confidence=confidence,
+        uncertainty_flags=raw.get("uncertainty_flags", []),
+    )
+    verdict = classify(evidence)
+
+    return {
+        "raw": raw,
+        "match_meta": match_meta,
+        "market_type": market_type,
+        "line": line,
+        "odds_val": odds_val,
+        "confidence": confidence,
+        "evidence": evidence,
+        "verdict": verdict,
+    }
+
+
+def _select_featured(classified):
+    """Phase 2: among candidates that actually cleared the classifier's bar
+    (risk != NO_BET), pick the one to feature this run — preferring
+    INVESTOR_BET > PUNTER_BET > GAMBLER_BET, then STANDARD_PICK over
+    RISKY_PICK, then higher edge. This never reclassifies or upgrades a
+    candidate; it only orders candidates that already independently earned
+    their tier."""
+    eligible = [c for c in classified if c["verdict"].risk != RISK_NO_BET]
+    if not eligible:
+        return None
+    eligible.sort(
+        key=lambda c: (
+            BET_TYPE_PRIORITY.get(c["verdict"].bet_type, 99),
+            RISK_PRIORITY.get(c["verdict"].risk, 99),
+            -c["evidence"].edge_pct,
+        )
+    )
+    return eligible[0]
+
+
 def generate_pick_for_matches(matches, match_news):
     """
     matches: list of match dicts from fetch_odds.fetch_upcoming_odds()
@@ -288,13 +380,17 @@ def generate_pick_for_matches(matches, match_news):
       risk, bet_type, bet_type_reason, final_explanation, confidence,
       confidence_label, uncertainty_flags, research_warnings
     or {"has_pick": False, "reasoning": "..."} when nothing clears the bar.
+
+    Phase 2: when multiple candidates clear the bar on the same day, the
+    featured one is chosen by bet-type preference (Investor > Punter >
+    Gambler) — see _select_featured.
     """
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
     prompt = _build_prompt(matches, match_news)
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=800,
+        max_tokens=1500,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": prompt}],
     )
@@ -304,7 +400,8 @@ def generate_pick_for_matches(matches, match_news):
     for m in matches:
         research_warnings += match_news.get(m["match"], {}).get("warnings", [])
 
-    if not result.get("has_selection"):
+    raw_candidates = result.get("candidates") or []
+    if not raw_candidates:
         return {
             "has_pick": False,
             "risk": RISK_NO_BET,
@@ -313,59 +410,51 @@ def generate_pick_for_matches(matches, match_news):
             "research_warnings": research_warnings,
         }
 
-    match_meta = next((m for m in matches if m["match"] == result.get("match")), {})
-    if not match_meta:
-        # Model named a match that wasn't in the candidate list at all —
-        # can't trust it, treat as NO_BET rather than guessing.
+    classify_warnings = []
+    classified = []
+    for raw in raw_candidates:
+        c = _classify_candidate(raw, matches, match_news, classify_warnings)
+        if c is not None:
+            classified.append(c)
+    research_warnings += classify_warnings
+
+    if not classified:
         return {
             "has_pick": False,
             "risk": RISK_NO_BET,
             "bet_type": BET_NO_BET,
-            "reasoning": "Model returned a selection that didn't match any candidate fixture — treated as no bet.",
-            "research_warnings": research_warnings + ["model hallucinated a match not in the candidate list"],
-        }
-
-    market_type = (result.get("market_type") or "h2h").strip().lower()
-    if market_type not in ("h2h", "spread", "total"):
-        market_type = "h2h"
-    line = result.get("line")
-    odds_val, implied_pct = _resolve_selection_odds(match_meta, market_type, result.get("selection"), line)
-
-    if not odds_val or implied_pct is None:
-        return {
-            "has_pick": False,
-            "risk": RISK_NO_BET,
-            "bet_type": BET_NO_BET,
-            "reasoning": "Could not resolve odds for the model's selection/market/line — treated as no bet.",
+            "reasoning": "None of the model's proposed candidates could be resolved to real odds — treated as no bet.",
             "research_warnings": research_warnings,
         }
 
-    # Cap confidence at what the validated research actually supports.
-    news_entry = match_news.get(match_meta["match"], {})
-    ceiling = news_entry.get("confidence_ceiling", "MODERATE")
-    model_confidence = (result.get("confidence") or "LOW").upper()
-    confidence = model_confidence if CONFIDENCE_RANK.get(model_confidence, 0) <= CONFIDENCE_RANK.get(ceiling, 0) else ceiling
+    for c in classified:
+        if c["verdict"].risk == RISK_NO_BET:
+            research_warnings += [f"classifier [{c['match_meta']['match']} / {c['market_type']}]: {r}" for r in c["verdict"].reasons]
 
-    evidence = Evidence(
-        evidence_sufficient=bool(result.get("evidence_sufficient", False)),
-        odds=float(odds_val),
-        our_probability=float(result.get("our_probability", 0)),
-        implied_probability=implied_pct,
-        confidence=confidence,
-        uncertainty_flags=result.get("uncertainty_flags", []),
-    )
-    verdict = classify(evidence)
+    featured = _select_featured(classified)
 
-    if verdict.risk == RISK_NO_BET:
+    if featured is None:
+        # Every candidate the model proposed was independently classified as
+        # NO_BET on its own merits (thin edge, insufficient evidence, etc).
+        best_reasoning = sanitize_reasoning(classified[0]["raw"].get("reasoning", ""))
         return {
             "has_pick": False,
             "risk": RISK_NO_BET,
             "bet_type": BET_NO_BET,
-            "reasoning": sanitize_reasoning(result.get("reasoning", "")) or "; ".join(verdict.reasons),
-            "research_warnings": research_warnings + [f"classifier: {r}" for r in verdict.reasons],
+            "reasoning": best_reasoning or "No candidate cleared the bar for a defensible pick today.",
+            "research_warnings": research_warnings,
         }
 
-    reasoning_sentence = _one_sentence(sanitize_reasoning(result.get("reasoning", "")))
+    match_meta = featured["match_meta"]
+    market_type = featured["market_type"]
+    line = featured["line"]
+    odds_val = featured["odds_val"]
+    confidence = featured["confidence"]
+    evidence = featured["evidence"]
+    verdict = featured["verdict"]
+    raw = featured["raw"]
+
+    reasoning_sentence = _one_sentence(sanitize_reasoning(raw.get("reasoning", "")))
     bet_type_reason = build_bet_type_reason(verdict.bet_type, reasoning_sentence)
     final_explanation = build_final_explanation(reasoning_sentence, verdict.risk, evidence.uncertainty_flags)
 
@@ -374,8 +463,10 @@ def generate_pick_for_matches(matches, match_news):
     for text in (bet_type_reason, final_explanation):
         validate_text(text, risk=verdict.risk, bet_type=verdict.bet_type, public=False)
 
-    selection_display = _display_selection(market_type, result.get("selection"), line)
-    market_label = result.get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[market_type]
+    selection_display = _display_selection(market_type, raw.get("selection"), line)
+    market_label = raw.get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[market_type]
+
+    other_defensible = len(classified) - 1
 
     return {
         "has_pick": True,
@@ -391,7 +482,7 @@ def generate_pick_for_matches(matches, match_news):
         "market": market_label,
         "odds": f"{float(odds_val):.2f}",
         "our_probability": evidence.our_probability,
-        "implied_probability": round(implied_pct, 1),
+        "implied_probability": round(evidence.implied_probability, 1),
         "edge_pct": evidence.edge_pct,
         "risk": verdict.risk,
         "bet_type": verdict.bet_type,
@@ -404,4 +495,5 @@ def generate_pick_for_matches(matches, match_news):
         "public_caution": RISK_PUBLIC_CAUTION.get(verdict.risk),
         "research_warnings": research_warnings,
         "big_game": match_meta.get("big_game", False),
+        "other_defensible_candidates": other_defensible,
     }

@@ -41,6 +41,36 @@ def _mock_matches_with_extra_markets():
     }]
 
 
+def _mock_two_matches_investor_and_gambler():
+    """Two independent matches: one where a genuinely Investor-grade
+    candidate exists (short odds, HIGH confidence, clears edge), and one
+    where only a Gambler-grade candidate exists (long odds, MODERATE
+    confidence, clears edge but with a risky-signal). Used to test Phase 2's
+    Investor-first tie-break when both are genuinely defensible same day."""
+    return [
+        {
+            "sport": "rugbyleague_nrl",
+            "match": "Warriors vs Broncos",
+            "home_team": "Warriors",
+            "away_team": "Broncos",
+            "kickoff": "2026-07-18T08:00:00Z",
+            "odds": {"home": 1.80, "away": 2.05, "draw": None},
+            "implied_probs": {"home": 0.5556, "away": 0.4444, "draw": 0},
+            "big_game": False,
+        },
+        {
+            "sport": "soccer_fifa_world_cup",
+            "match": "France vs Spain",
+            "home_team": "France",
+            "away_team": "Spain",
+            "kickoff": "2026-07-15T19:00:00Z",
+            "odds": {"home": 2.50, "away": 3.50, "draw": 3.20},
+            "implied_probs": {"home": 0.40, "away": 0.2857, "draw": 0.3125},
+            "big_game": True,
+        },
+    ]
+
+
 def _mock_anthropic_response(payload):
     resp = MagicMock()
     block = MagicMock()
@@ -58,16 +88,17 @@ class GeneratePickTests(unittest.TestCase):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
-            "has_selection": True,
-            "match": "France vs Spain",
-            "sport": "soccer_fifa_world_cup",
-            "selection": "France",
-            "market": "Head to Head",
-            "our_probability": 55,
-            "evidence_sufficient": True,
-            "confidence": "HIGH",
-            "uncertainty_flags": [],
-            "reasoning": "France have won four of their last five and Spain are missing a key defender.",
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "selection": "France",
+                "market": "Head to Head",
+                "our_probability": 55,
+                "evidence_sufficient": True,
+                "confidence": "HIGH",
+                "uncertainty_flags": [],
+                "reasoning": "France have won four of their last five and Spain are missing a key defender.",
+            }],
         })
         match_news = {"France vs Spain": {
             "text": "- France football squad update ahead of World Cup match",
@@ -83,11 +114,11 @@ class GeneratePickTests(unittest.TestCase):
             self.assertNotIn("no pick meets", text.lower())
 
     @patch("generate_pick.anthropic.Anthropic")
-    def test_model_says_no_selection_returns_no_bet_not_a_pick(self, mock_anthropic_cls):
+    def test_model_returns_no_candidates_is_no_bet_not_a_pick(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
-            "has_selection": False,
+            "candidates": [],
             "reasoning": "Nothing here clears the bar today.",
         })
         pick = generate_pick.generate_pick_for_matches(_mock_matches(), {})
@@ -108,16 +139,17 @@ class GeneratePickTests(unittest.TestCase):
         # which (given no other uncertainty flags) should push this to RISKY
         # rather than being taken at face value as a HIGH-confidence STANDARD pick.
         mock_client.messages.create.return_value = _mock_anthropic_response({
-            "has_selection": True,
-            "match": "France vs Spain",
-            "sport": "soccer_fifa_world_cup",
-            "selection": "France",
-            "market": "Head to Head",
-            "our_probability": 55,
-            "evidence_sufficient": True,
-            "confidence": "HIGH",
-            "uncertainty_flags": [],
-            "reasoning": "France look sharp.",
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "selection": "France",
+                "market": "Head to Head",
+                "our_probability": 55,
+                "evidence_sufficient": True,
+                "confidence": "HIGH",
+                "uncertainty_flags": [],
+                "reasoning": "France look sharp.",
+            }],
         })
         match_news = {"France vs Spain": {"text": "", "accepted_count": 0, "warnings": ["all sources rejected"], "confidence_ceiling": "LOW"}}
         pick = generate_pick.generate_pick_for_matches(_mock_matches(), match_news)
@@ -130,38 +162,39 @@ class GeneratePickTests(unittest.TestCase):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
-            "has_selection": True,
-            "match": "Some Other Match Not In List",
-            "sport": "soccer_fifa_world_cup",
-            "selection": "Team X",
-            "market": "Head to Head",
-            "our_probability": 60,
-            "evidence_sufficient": True,
-            "confidence": "HIGH",
-            "uncertainty_flags": [],
-            "reasoning": "n/a",
+            "candidates": [{
+                "match": "Some Other Match Not In List",
+                "sport": "soccer_fifa_world_cup",
+                "selection": "Team X",
+                "market": "Head to Head",
+                "our_probability": 60,
+                "evidence_sufficient": True,
+                "confidence": "HIGH",
+                "uncertainty_flags": [],
+                "reasoning": "n/a",
+            }],
         })
         pick = generate_pick.generate_pick_for_matches(_mock_matches(), {})
         self.assertFalse(pick["has_pick"])
-
 
     @patch("generate_pick.anthropic.Anthropic")
     def test_spread_market_selection_resolves_correct_odds_and_line(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
-            "has_selection": True,
-            "match": "Warriors vs Broncos",
-            "sport": "rugbyleague_nrl",
-            "market_type": "spread",
-            "selection": "Warriors",
-            "line": -6.5,
-            "market": "Handicap",
-            "our_probability": 58,
-            "evidence_sufficient": True,
-            "confidence": "MODERATE",
-            "uncertainty_flags": [],
-            "reasoning": "Warriors have covered this line at home all season and Broncos are missing forwards.",
+            "candidates": [{
+                "match": "Warriors vs Broncos",
+                "sport": "rugbyleague_nrl",
+                "market_type": "spread",
+                "selection": "Warriors",
+                "line": -6.5,
+                "market": "Handicap",
+                "our_probability": 58,
+                "evidence_sufficient": True,
+                "confidence": "MODERATE",
+                "uncertainty_flags": [],
+                "reasoning": "Warriors have covered this line at home all season and Broncos are missing forwards.",
+            }],
         })
         match_news = {"Warriors vs Broncos": {
             "text": "- Warriors named full-strength side", "accepted_count": 2,
@@ -179,18 +212,19 @@ class GeneratePickTests(unittest.TestCase):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
-            "has_selection": True,
-            "match": "Warriors vs Broncos",
-            "sport": "rugbyleague_nrl",
-            "market_type": "total",
-            "selection": "Over",
-            "line": 42.5,
-            "market": "Total",
-            "our_probability": 56,
-            "evidence_sufficient": True,
-            "confidence": "MODERATE",
-            "uncertainty_flags": [],
-            "reasoning": "Both sides have leaked points defensively the last month and this is an attacking track.",
+            "candidates": [{
+                "match": "Warriors vs Broncos",
+                "sport": "rugbyleague_nrl",
+                "market_type": "total",
+                "selection": "Over",
+                "line": 42.5,
+                "market": "Total",
+                "our_probability": 56,
+                "evidence_sufficient": True,
+                "confidence": "MODERATE",
+                "uncertainty_flags": [],
+                "reasoning": "Both sides have leaked points defensively the last month and this is an attacking track.",
+            }],
         })
         match_news = {"Warriors vs Broncos": {
             "text": "- both teams conceding heavily in recent form", "accepted_count": 2,
@@ -207,22 +241,23 @@ class GeneratePickTests(unittest.TestCase):
     def test_spread_wrong_line_from_model_cannot_be_resolved_is_no_bet(self, mock_anthropic_cls):
         # Model names a line that doesn't match what was actually quoted --
         # must not silently resolve to the wrong price, must be treated as
-        # unresolvable / NO_BET rather than guessing.
+        # unresolvable / dropped rather than guessing.
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
-            "has_selection": True,
-            "match": "Warriors vs Broncos",
-            "sport": "rugbyleague_nrl",
-            "market_type": "spread",
-            "selection": "Warriors",
-            "line": -9.5,
-            "market": "Handicap",
-            "our_probability": 58,
-            "evidence_sufficient": True,
-            "confidence": "MODERATE",
-            "uncertainty_flags": [],
-            "reasoning": "n/a",
+            "candidates": [{
+                "match": "Warriors vs Broncos",
+                "sport": "rugbyleague_nrl",
+                "market_type": "spread",
+                "selection": "Warriors",
+                "line": -9.5,
+                "market": "Handicap",
+                "our_probability": 58,
+                "evidence_sufficient": True,
+                "confidence": "MODERATE",
+                "uncertainty_flags": [],
+                "reasoning": "n/a",
+            }],
         })
         pick = generate_pick.generate_pick_for_matches(_mock_matches_with_extra_markets(), {})
         self.assertFalse(pick["has_pick"])
@@ -235,18 +270,19 @@ class GeneratePickTests(unittest.TestCase):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
-            "has_selection": True,
-            "match": "France vs Spain",
-            "sport": "soccer_fifa_world_cup",
-            "market_type": "h2h",
-            "selection": "France",
-            "line": None,
-            "market": "Head to Head",
-            "our_probability": 46,
-            "evidence_sufficient": True,
-            "confidence": "MODERATE",
-            "uncertainty_flags": ["no fresh news found, relying on general squad strength"],
-            "reasoning": "No fresh headlines either way, but France's squad depth is a genuine edge here based on general form.",
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "market_type": "h2h",
+                "selection": "France",
+                "line": None,
+                "market": "Head to Head",
+                "our_probability": 46,
+                "evidence_sufficient": True,
+                "confidence": "MODERATE",
+                "uncertainty_flags": ["no fresh news found, relying on general squad strength"],
+                "reasoning": "No fresh headlines either way, but France's squad depth is a genuine edge here based on general form.",
+            }],
         })
         match_news = {"France vs Spain": {
             "text": "", "accepted_count": 0,
@@ -257,6 +293,162 @@ class GeneratePickTests(unittest.TestCase):
         self.assertTrue(pick["has_pick"])
         self.assertEqual(pick["confidence"], "MODERATE")
 
+
+class Phase2InvestorPreferenceTests(unittest.TestCase):
+    """Phase 2: when multiple candidates are genuinely defensible on the same
+    day, the featured pick should be biased toward Investor > Punter >
+    Gambler -- but only among candidates that independently cleared the
+    classifier's bar on their own merits. Never a quota, never an upgrade."""
+
+    def setUp(self):
+        os.environ["ANTHROPIC_API_KEY"] = "test-key"
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_investor_grade_candidate_preferred_over_gambler_grade_same_day(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [
+                # Listed FIRST but should NOT win -- Gambler-tier: long odds,
+                # moderate confidence, still clears the edge bar.
+                {
+                    "match": "France vs Spain",
+                    "sport": "soccer_fifa_world_cup",
+                    "market_type": "h2h",
+                    "selection": "Spain",
+                    "line": None,
+                    "market": "Head to Head",
+                    "our_probability": 40,
+                    "evidence_sufficient": True,
+                    "confidence": "MODERATE",
+                    "uncertainty_flags": [],
+                    "reasoning": "Spain at a big price have a live path through this bracket.",
+                },
+                # Listed SECOND but SHOULD win -- Investor-tier: short odds,
+                # high confidence, clears the edge bar.
+                {
+                    "match": "Warriors vs Broncos",
+                    "sport": "rugbyleague_nrl",
+                    "market_type": "h2h",
+                    "selection": "Warriors",
+                    "line": None,
+                    "market": "Head to Head",
+                    "our_probability": 65,
+                    "evidence_sufficient": True,
+                    "confidence": "HIGH",
+                    "uncertainty_flags": [],
+                    "reasoning": "Warriors are at full strength at home against a Broncos side missing several forwards.",
+                },
+            ],
+        })
+        match_news = {
+            "France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"},
+            "Warriors vs Broncos": {"text": "- squad news", "accepted_count": 3, "warnings": [], "confidence_ceiling": "HIGH"},
+        }
+        pick = generate_pick.generate_pick_for_matches(_mock_two_matches_investor_and_gambler(), match_news)
+        self.assertTrue(pick["has_pick"])
+        self.assertEqual(pick["bet_type"], "INVESTOR_BET")
+        self.assertEqual(pick["match"], "Warriors vs Broncos")
+        # The Gambler-tier candidate genuinely existed too -- confirm it was
+        # tracked as a real alternative, not silently discarded.
+        self.assertEqual(pick["other_defensible_candidates"], 1)
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_gambler_only_day_is_not_upgraded_to_investor(self, mock_anthropic_cls):
+        # Only a Gambler-grade candidate exists today -- must be featured
+        # as-is, never manufactured into a fake Investor pick.
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "market_type": "h2h",
+                "selection": "Spain",
+                "line": None,
+                "market": "Head to Head",
+                "our_probability": 40,
+                "evidence_sufficient": True,
+                "confidence": "MODERATE",
+                "uncertainty_flags": [],
+                "reasoning": "Spain at a big price have a live path through this bracket.",
+            }],
+        })
+        match_news = {"France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"}}
+        pick = generate_pick.generate_pick_for_matches(_mock_two_matches_investor_and_gambler(), match_news)
+        self.assertTrue(pick["has_pick"])
+        self.assertEqual(pick["bet_type"], "GAMBLER_BET")
+        self.assertEqual(pick["other_defensible_candidates"], 0)
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_no_bet_candidate_does_not_block_a_genuinely_defensible_one(self, mock_anthropic_cls):
+        # One proposed candidate has insufficient evidence (classifies as
+        # NO_BET on its own), the other genuinely clears the bar -- the run
+        # should still produce the real pick, not fall back to NO_BET just
+        # because one of several proposals didn't hold up.
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [
+                {
+                    "match": "Warriors vs Broncos",
+                    "sport": "rugbyleague_nrl",
+                    "market_type": "h2h",
+                    "selection": "Warriors",
+                    "line": None,
+                    "market": "Head to Head",
+                    "our_probability": 56,
+                    "evidence_sufficient": False,
+                    "confidence": "LOW",
+                    "uncertainty_flags": ["thin evidence"],
+                    "reasoning": "Not much to go on here.",
+                },
+                {
+                    "match": "France vs Spain",
+                    "sport": "soccer_fifa_world_cup",
+                    "market_type": "h2h",
+                    "selection": "Spain",
+                    "line": None,
+                    "market": "Head to Head",
+                    "our_probability": 40,
+                    "evidence_sufficient": True,
+                    "confidence": "MODERATE",
+                    "uncertainty_flags": [],
+                    "reasoning": "Spain at a big price have a live path through this bracket.",
+                },
+            ],
+        })
+        match_news = {
+            "Warriors vs Broncos": {"text": "", "accepted_count": 0, "warnings": [], "confidence_ceiling": "LOW"},
+            "France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"},
+        }
+        pick = generate_pick.generate_pick_for_matches(_mock_two_matches_investor_and_gambler(), match_news)
+        self.assertTrue(pick["has_pick"])
+        self.assertEqual(pick["match"], "France vs Spain")
+        self.assertEqual(pick["bet_type"], "GAMBLER_BET")
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_all_candidates_classified_no_bet_yields_no_bet(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [{
+                "match": "Warriors vs Broncos",
+                "sport": "rugbyleague_nrl",
+                "market_type": "h2h",
+                "selection": "Warriors",
+                "line": None,
+                "market": "Head to Head",
+                "our_probability": 56,
+                "evidence_sufficient": False,
+                "confidence": "LOW",
+                "uncertainty_flags": ["thin evidence"],
+                "reasoning": "Not much to go on here.",
+            }],
+        })
+        pick = generate_pick.generate_pick_for_matches(_mock_two_matches_investor_and_gambler(), {})
+        self.assertFalse(pick["has_pick"])
+        self.assertEqual(pick["risk"], "NO_BET")
 
 
 if __name__ == "__main__":
