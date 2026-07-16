@@ -1,51 +1,32 @@
 {
-  "run_date": "2026-07-14",
-  "run_ts": "2026-07-14T16:43:26.973056+00:00",
-  "picks": [
-    {
-      "match": "France vs Spain",
-      "sport": "FIFA World Cup 2026",
-      "personality": "investor",
-      "pick": "France",
-      "market": "Head to Head",
-      "odds": "2.58",
-      "reasoning": "No pick meets my criteria today. France at 2.58 is the closest option available, but it sits well outside my preferred 1.40\u20132.20 range, and the available news snippets relate to rugby league \u2014 not football \u2014 providing zero usable intelligence on form, injuries or squad depth. Without credible match-specific data, I cannot justify placing capital on any outcome here. Discipline means sitting this one out.",
-      "confidence": "Low",
-      "emoji": "\ud83d\udeab",
-      "home_team": "France",
-      "away_team": "Spain",
-      "sport_key": "soccer_fifa_world_cup",
-      "result": "PENDING"
-    },
-    {
-      "match": "France vs Spain",
-      "sport": "FIFA World Cup 2026",
-      "personality": "punter",
-      "pick": "France",
-      "market": "Head to Head",
-      "odds": "2.58",
-      "reasoning": "France at home soil advantage in a World Cup knockout scenario \u2014 you back Les Bleus all day at 2.58. Spain are quality but France have the firepower to hurt anyone and that price is too good to ignore. Gut says France, value says France, done.",
-      "confidence": "Medium",
-      "emoji": "\ud83c\uddeb\ud83c\uddf7",
-      "home_team": "France",
-      "away_team": "Spain",
-      "sport_key": "soccer_fifa_world_cup",
-      "result": "PENDING"
-    },
-    {
-      "match": "France vs Spain",
-      "sport": "FIFA World Cup 2026",
-      "personality": "gambler",
-      "pick": "Spain",
-      "market": "Head to Head",
-      "odds": "3.3",
-      "reasoning": "Spain are the reigning world champions with a golden generation still in full bloom \u2014 La Roja don't just beat France, they dismantle them with style. France are carrying injury concerns and squad uncertainty, while Spain's tiki-taka machine has been unstoppable. At 3.3 we're getting world champions at a massive price? I'm loading up the cart!",
-      "confidence": "Medium",
-      "emoji": "\ud83d\udd25",
-      "home_team": "France",
-      "away_team": "Spain",
-      "sport_key": "soccer_fifa_world_cup",
-      "result": "PENDING"
-    }
-  ]
+  "run_date": "2026-07-16",
+  "run_ts": "2026-07-16T07:49:23.357063+00:00",
+  "pick": {
+    "has_pick": true,
+    "match": "Warriors vs Storm",
+    "sport": "rugbyleague_nrl",
+    "sport_label": "NRL",
+    "home_team": "Warriors",
+    "away_team": "Storm",
+    "kickoff": "2026-07-16T07:49:23.357013+00:00",
+    "selection": "WARRIORS",
+    "market": "Head to Head",
+    "odds": "2.10",
+    "our_probability": 58,
+    "implied_probability": 47.6,
+    "edge_pct": 10.4,
+    "risk": "STANDARD_PICK",
+    "bet_type": "INVESTOR_BET",
+    "bet_type_label": "BET TYPE: INVESTOR",
+    "bet_type_reason": "This one's about as close to a sure thing as sport gets \u2014 the numbers stack up and the price still pays. Warriors have won four of their last five at home and Storm are missing two regular starters in the forward pack.",
+    "final_explanation": "Warriors have won four of their last five at home and Storm are missing two regular starters in the forward pack.",
+    "confidence": "HIGH",
+    "confidence_label": "HIGH",
+    "uncertainty_flags": [],
+    "public_caution": null,
+    "research_warnings": [
+      "TEST RUN \u2014 this pick is synthetic (scripts/inject_test_pick.py), injected via the force_test_pick workflow input to verify the approval-email flow. Not a real match assessment."
+    ],
+    "big_game": false
+  }
 }

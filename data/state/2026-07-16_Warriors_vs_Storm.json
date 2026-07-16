@@ -1,0 +1,26 @@
+{
+  "pick_id": "2026-07-16_Warriors_vs_Storm",
+  "state": "REJECTED",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-16T07:49:33.008139+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-16T07:49:33.008375+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-16T07:49:33.008568+00:00",
+      "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "REJECTED",
+      "at": "2026-07-16T07:55:48.255040+00:00",
+      "note": "GitHub environment approval rejected/cancelled"
+    }
+  ]
+}
