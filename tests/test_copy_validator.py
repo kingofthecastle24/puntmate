@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 from copy_validator import (
     validate_text, validate_post, CopyValidationError,
     check_no_bet_contradiction, check_gambler_rg, check_staking_language, check_tone,
+    check_internal_leak,
 )
 
 
@@ -71,6 +72,55 @@ class FullPostValidationTests(unittest.TestCase):
     def test_clean_post_passes(self):
         meta = {"risk": "STANDARD_PICK", "bet_type": "PUNTER_BET"}
         self.assertTrue(validate_post(meta, "Solid touch tonight, the value's real.", "Solid touch tonight, the value's real."))
+
+
+class IncidentInternalLeakTests(unittest.TestCase):
+    """Regression coverage for the 2026-07-17 incident: a real live Telegram
+    post shipped reading 'Worth knowing: Warriors news snippet references
+    Cowboys not Dragons — possible copy-paste from different week; Dragons
+    form unknown beyond general knowledge.' The old INTERNAL_ONLY_PHRASES
+    list didn't contain anything matching this wording, so check_internal_leak
+    found nothing and it went out live. These tests prove the exact leaked
+    text (and closely related phrasing) is now caught, while genuine
+    punter-facing caveats still pass clean."""
+
+    def test_exact_leaked_sentence_is_rejected(self):
+        leaked = (
+            "Worth knowing: Warriors news snippet references Cowboys not Dragons — "
+            "possible copy-paste from different week; Dragons form unknown beyond general knowledge."
+        )
+        hits = check_internal_leak(leaked)
+        self.assertTrue(len(hits) > 0, "the exact incident sentence must be caught")
+
+    def test_exact_leaked_sentence_fails_full_validation(self):
+        meta = {"risk": "RISKY_PICK", "bet_type": "INVESTOR_BET"}
+        leaked_telegram_text = (
+            "The market has Warriors at 83% but honestly this feels light. "
+            "Worth knowing: Warriors news snippet references Cowboys not Dragons — "
+            "possible copy-paste from different week; Dragons form unknown beyond general knowledge."
+        )
+        with self.assertRaises(CopyValidationError):
+            validate_post(meta, leaked_telegram_text, "clean caption")
+
+    def test_related_source_mixup_phrasing_also_caught(self):
+        variants = [
+            "Worth knowing: this news article might be about a different fixture entirely.",
+            "Worth knowing: couldn't verify this snippet, might be a mismatched source.",
+            "Worth knowing: possible mix-up, the report references the wrong team.",
+        ]
+        for text in variants:
+            with self.subTest(text=text):
+                self.assertTrue(len(check_internal_leak(text)) > 0)
+
+    def test_genuine_punter_facing_caveats_still_pass_clean(self):
+        legit = [
+            "Worth knowing: star fullback is a late fitness doubt; wet weather forecast for kickoff.",
+            "Worth knowing: the Dragons have lost their last four on the road.",
+            "Keep this one light — the value's there but so is the uncertainty.",
+        ]
+        for text in legit:
+            with self.subTest(text=text):
+                self.assertEqual(check_internal_leak(text), [])
 
 
 if __name__ == "__main__":

@@ -67,6 +67,23 @@ NO_BET_ONLY_PHRASES = [
 # Internal research/debug language that must never leak into a PUBLIC post
 # (Telegram message text or Instagram caption). It's fine in Gmail/Dispatch/
 # metadata — those are internal review surfaces.
+#
+# INCIDENT (2026-07-17): a real live Telegram post shipped with "Worth
+# knowing: Warriors news snippet references Cowboys not Dragons — possible
+# copy-paste from different week; Dragons form unknown beyond general
+# knowledge." This is Claude's own self-referential commentary about the
+# quality/provenance of ITS OWN research inputs, written into the
+# model-generated "uncertainty_flags" field (intended for genuine
+# punter-facing risk caveats like "star player is a doubt") and then
+# surfaced verbatim under a "Worth knowing:" prefix. The literal phrase list
+# below didn't contain anything resembling that wording, so it sailed
+# through check_internal_leak() uncaught. Fixed two ways: (1) this list is
+# now much broader, and (2) INTERNAL_LEAK_PATTERNS below adds regex
+# heuristics for the general CLASS of "commentary about my own sources"
+# language, since a fixed phrase list can never fully anticipate a
+# generative model's phrasing. See generate_pick.py's build_final_explanation
+# for the matching upstream fix (each uncertainty_flag is now run through
+# check_internal_leak individually before it's allowed into public copy).
 INTERNAL_ONLY_PHRASES = [
     "research warning",
     "source_relevance",
@@ -74,6 +91,56 @@ INTERNAL_ONLY_PHRASES = [
     "evidence_sufficient",
     "validator rejected",
     "irrelevant sport",
+    "rejected source",
+    "no relevance to fixture",
+    "validated source",
+    "confidence capped",
+    "team-name-only match",
+    "no sport context",
+    "news snippet",
+    "news article",
+    "copy-paste",
+    "copy paste",
+    "copied from",
+    "different week",
+    "beyond general knowledge",
+    "form unknown",
+    "unknown beyond",
+    "could not verify",
+    "couldn't verify",
+    "cannot verify",
+    "can't verify",
+    "unable to verify",
+    "no information found",
+    "not enough information",
+    "insufficient information",
+    "data quality",
+    "unreliable source",
+    "mismatched source",
+    "wrong fixture",
+    "wrong match",
+    "wrong team",
+    "possible mix-up",
+    "possible mixup",
+    "may not be accurate",
+    "unclear if this refers",
+    "not sure if this is about",
+    "general knowledge only",
+    "general knowledge basis",
+]
+
+# Regex heuristics for self-referential commentary about the model's OWN
+# research process or source material — phrased in ways a fixed phrase list
+# can't fully anticipate. Deliberately broad: a false positive here just
+# means a legitimate caveat gets rejected and suppressed from public copy
+# (fail-closed, the correct behaviour), whereas a false negative means an
+# internal QA note reaches real subscribers, which is what happened on
+# 2026-07-17 and must not happen again.
+INTERNAL_LEAK_PATTERNS = [
+    re.compile(r"\bnews\s+(snippet|article|report|source)s?\b", re.IGNORECASE),
+    re.compile(r"\breferences?\s+\w[\w\s]*?\bnot\b\s+\w+", re.IGNORECASE),  # "references Cowboys not Dragons"
+    re.compile(r"\b(source|snippet|article)s?\s+(may|might|could)\s+(be|not)\b", re.IGNORECASE),
+    re.compile(r"\bpossible\s+(copy[\s-]?paste|mix[\s-]?up|mismatch)\b", re.IGNORECASE),
 ]
 
 # Responsible-gambling: GAMBLER_BET copy must never chase, promise, or imply
@@ -127,7 +194,12 @@ def check_no_bet_has_no_selection(post_metadata):
 
 def check_internal_leak(public_text):
     hits = _contains_any(public_text, INTERNAL_ONLY_PHRASES)
-    return [f"internal/debug phrase leaked into public copy: '{p}'" for p in hits]
+    violations = [f"internal/debug phrase leaked into public copy: '{p}'" for p in hits]
+    for pattern in INTERNAL_LEAK_PATTERNS:
+        match = pattern.search(public_text)
+        if match:
+            violations.append(f"internal/debug phrasing pattern leaked into public copy: '{match.group(0)}'")
+    return violations
 
 
 def check_gambler_rg(text, bet_type):

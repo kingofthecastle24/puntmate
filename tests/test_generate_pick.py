@@ -519,5 +519,93 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
         self.assertFalse(pick["has_pick"])
         self.assertEqual(pick["risk"], "NO_BET")
 
+
+class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
+    """Regression coverage for the 2026-07-17 incident: a live Telegram post
+    shipped with 'Worth knowing: Warriors news snippet references Cowboys
+    not Dragons — possible copy-paste from different week; Dragons form
+    unknown beyond general knowledge.' — Claude wrote internal
+    research-quality commentary directly into uncertainty_flags, and
+    build_final_explanation joined it straight into public copy unfiltered.
+    build_final_explanation now runs each flag through
+    copy_validator.check_internal_leak before allowing it into the public
+    'Worth knowing:' line."""
+
+    def test_internal_sounding_flag_is_dropped_and_redirected_to_research_warnings(self):
+        research_warnings = []
+        text = generate_pick.build_final_explanation(
+            "The market has Warriors at 83% but honestly this feels light.",
+            "RISKY_PICK",
+            ["Warriors news snippet references Cowboys not Dragons — possible copy-paste from different week",
+             "Dragons form unknown beyond general knowledge"],
+            research_warnings,
+        )
+        self.assertNotIn("news snippet", text.lower())
+        self.assertNotIn("copy-paste", text.lower())
+        self.assertNotIn("beyond general knowledge", text.lower())
+        self.assertNotIn("Worth knowing", text)  # both flags were bad -> no caveat line at all
+        self.assertTrue(any("suppressed" in w for w in research_warnings))
+
+    def test_genuine_flag_still_reaches_public_copy(self):
+        research_warnings = []
+        text = generate_pick.build_final_explanation(
+            "Solid touch here, the numbers back it.",
+            "RISKY_PICK",
+            ["star fullback is a late fitness doubt"],
+            research_warnings,
+        )
+        self.assertIn("Worth knowing: star fullback is a late fitness doubt.", text)
+        self.assertEqual(research_warnings, [])
+
+    def test_mixed_flags_keeps_genuine_drops_internal(self):
+        research_warnings = []
+        text = generate_pick.build_final_explanation(
+            "Solid touch here.",
+            "RISKY_PICK",
+            ["wet weather forecast for kickoff", "couldn't verify this snippet, possible mix-up"],
+            research_warnings,
+        )
+        self.assertIn("wet weather forecast for kickoff", text)
+        self.assertNotIn("mix-up", text)
+        self.assertNotIn("verify", text)
+        self.assertTrue(any("suppressed" in w for w in research_warnings))
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_end_to_end_leaked_incident_phrase_never_reaches_final_explanation(self, mock_anthropic_cls):
+        """Full generate_pick_for_matches path with a mocked Claude response
+        that reproduces the exact incident candidate — proves the pipeline
+        as a whole (not just the helper function in isolation) no longer
+        lets this through, and still produces a usable pick rather than
+        failing the whole run."""
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "market_type": "h2h",
+                "selection": "France",
+                "line": None,
+                "market": "Head to Head",
+                "our_probability": 43,
+                "evidence_sufficient": True,
+                "confidence": "HIGH",
+                "uncertainty_flags": [
+                    "Warriors news snippet references Cowboys not Dragons — possible copy-paste from different week",
+                    "Dragons form unknown beyond general knowledge",
+                ],
+                "reasoning": "France's away record and Spain's missing regulars make this a genuine, if shaky, angle.",
+            }],
+        })
+        match_news = {"France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"}}
+        pick = generate_pick.generate_pick_for_matches(_mock_matches(), match_news)
+        self.assertTrue(pick["has_pick"])
+        for text in (pick["bet_type_reason"], pick["final_explanation"]):
+            self.assertNotIn("news snippet", text.lower())
+            self.assertNotIn("copy-paste", text.lower())
+            self.assertNotIn("beyond general knowledge", text.lower())
+        self.assertTrue(any("suppressed" in w for w in pick["research_warnings"]))
+
+
 if __name__ == "__main__":
     unittest.main()

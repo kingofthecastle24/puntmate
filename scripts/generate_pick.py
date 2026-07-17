@@ -46,7 +46,7 @@ import os
 import re
 
 from pick_classifier import Evidence, classify, RISK_NO_BET, RISK_STANDARD, BET_NO_BET
-from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES
+from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES, check_internal_leak
 
 SPORT_LABELS = {
     "soccer_fifa_world_cup": "FIFA World Cup 2026",
@@ -95,6 +95,22 @@ a specific fact you're inventing, treat it as the latter and leave it out.
 
 Never mention stake sizes, units, dollar amounts to bet, or bankroll
 percentages — that is not your job and must never appear in your reasoning.
+
+"uncertainty_flags" must ONLY be genuine punter-facing risk factors about the
+MATCH or TEAMS — e.g. "star fullback is a late fitness doubt", "wet weather
+forecast for kickoff", "opponent missing two regular starters". They must
+NEVER be commentary about your own research process, sources, or note-taking
+— never mention snippets, articles, sources, "copy-paste", "different week",
+"beyond general knowledge", whether something is verified, or anything else
+about where your information came from or how much you trust it. That kind
+of doubt belongs in your confidence rating, not in a flag that gets shown to
+real punters. (This is not hypothetical: a real live post once went out
+reading "Worth knowing: Warriors news snippet references Cowboys not
+Dragons — possible copy-paste from different week" — that sentence is about
+your own source material, not about the match, and must never be written
+into uncertainty_flags or reasoning again.) If your source material seems
+mismatched or unreliable, just don't rely on it and say so honestly in
+plain terms about your confidence — don't narrate the mismatch itself.
 
 Return ONLY valid JSON, no markdown, no extra text."""
 
@@ -232,10 +248,36 @@ def build_bet_type_reason(bet_type, reasoning_sentence):
     return f"{opener} {reasoning_sentence}".strip()
 
 
-def build_final_explanation(reasoning_sentence, risk, uncertainty_flags):
+def build_final_explanation(reasoning_sentence, risk, uncertainty_flags, research_warnings=None):
+    """Builds the public final_explanation. For RISKY_PICK, appends up to 2
+    uncertainty_flags as a "Worth knowing:" caveat for the reader.
+
+    INCIDENT (2026-07-17): this used to join uncertainty_flags into public
+    copy unconditionally, trusting the system prompt alone to keep the model
+    from writing anything internal-sounding into that field. It didn't —
+    "Worth knowing: Warriors news snippet references Cowboys not Dragons —
+    possible copy-paste from different week; Dragons form unknown beyond
+    general knowledge" shipped to real Telegram subscribers. Each flag is
+    now independently checked with copy_validator.check_internal_leak
+    before being allowed into public copy — this is a second, code-level
+    layer that doesn't depend on the model following instructions. Any flag
+    that fails is dropped from the public line and, if a research_warnings
+    list is provided, recorded there instead (internal-only) so the signal
+    isn't just silently lost.
+    """
     parts = [reasoning_sentence]
     if risk == "RISKY_PICK" and uncertainty_flags:
-        parts.append("Worth knowing: " + "; ".join(uncertainty_flags[:2]) + ".")
+        safe_flags = []
+        for flag in uncertainty_flags:
+            if check_internal_leak(flag):
+                if research_warnings is not None:
+                    research_warnings.append(
+                        f"uncertainty_flag suppressed from public copy (internal-sounding research/source commentary): {flag!r}"
+                    )
+                continue
+            safe_flags.append(flag)
+        if safe_flags:
+            parts.append("Worth knowing: " + "; ".join(safe_flags[:2]) + ".")
     return " ".join(parts).strip()
 
 
@@ -456,12 +498,15 @@ def generate_pick_for_matches(matches, match_news):
 
     reasoning_sentence = _one_sentence(sanitize_reasoning(raw.get("reasoning", "")))
     bet_type_reason = build_bet_type_reason(verdict.bet_type, reasoning_sentence)
-    final_explanation = build_final_explanation(reasoning_sentence, verdict.risk, evidence.uncertainty_flags)
+    final_explanation = build_final_explanation(reasoning_sentence, verdict.risk, evidence.uncertainty_flags, research_warnings)
 
     # Validate before returning — if this ever fails, the caller must treat
-    # the run as NO_BET rather than publish unsafe copy.
+    # the run as NO_BET rather than publish unsafe copy. public=True because
+    # bet_type_reason/final_explanation ARE what becomes the public Telegram/
+    # Instagram copy (see build_review_package.py) — there is no reason for
+    # this check to be more lenient than the real one it's standing in for.
     for text in (bet_type_reason, final_explanation):
-        validate_text(text, risk=verdict.risk, bet_type=verdict.bet_type, public=False)
+        validate_text(text, risk=verdict.risk, bet_type=verdict.bet_type, public=True)
 
     selection_display = _display_selection(market_type, raw.get("selection"), line)
     market_label = raw.get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[market_type]
