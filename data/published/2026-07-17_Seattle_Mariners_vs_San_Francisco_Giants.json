@@ -1,0 +1,100 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 128,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784327111,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgGpaq8elQMZCZW19TSFCw2n5AAHWsAACpwxrG_yg2EYjMz9sh7tW3gEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADpwxrG_yg2EZ4",
+            "file_size": 951,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgGpaq8elQMZCZW19TSFCw2n5AAHWsAACpwxrG_yg2EYjMz9sh7tW3gEAAwIAA20AAz0E",
+            "file_unique_id": "AQADpwxrG_yg2EZy",
+            "file_size": 9400,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgGpaq8elQMZCZW19TSFCw2n5AAHWsAACpwxrG_yg2EYjMz9sh7tW3gEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADpwxrG_yg2EZ9",
+            "file_size": 39082,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgGpaq8elQMZCZW19TSFCw2n5AAHWsAACpwxrG_yg2EYjMz9sh7tW3gEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADpwxrG_yg2EZ8",
+            "file_size": 71362,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgGpaq8elQMZCZW19TSFCw2n5AAHWsAACpwxrG_yg2EYjMz9sh7tW3gEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADpwxrG_yg2EZ-",
+            "file_size": 72263,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 MLB\n\n\ud83c\udfdf Seattle Mariners vs San Francisco Giants\n\nPICK: UNDER 7\nODDS: 2.00 (Total)\nBET TYPE: PUNTER\n\nA total of 7.0 is already low, but this is exactly the kind of matchup where it can happen \u2014 Seattle's pitching culture and T-Mobile Park have historically\u2026 Worth knowing: no confirmed pitching matchup info; T-Mobile Park conditions unknown.\n\nKeep this one light \u2014 the value's there but so is the uncertainty.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 67,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 81,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 100,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 118,
+            "length": 241,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "17872788042547488"
+  },
+  "facebook": {
+    "status": "via_linked_instagram",
+    "note": "Facebook: expected via linked Instagram account (direct Page posting is disabled \u2014 publish_actions permission is deprecated)."
+  }
+}
