@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "079ff91c9f496db687d7060cd12c911a3921f577b194c33f8741d747e8b0d132",
+      "bytes": 725
+    },
+    "instagram-caption.txt": {
+      "sha256": "465f56367701cec7c43639ea98f383330267aee292665e200f57d01a52f6ed0f",
+      "bytes": 601
+    },
+    "post-metadata.json": {
+      "sha256": "9457b97d863accf38ad9d6ed42ea6db646e57ea9d0fce2d3f7f9d518492042ad",
+      "bytes": 3418
+    },
+    "preview.html": {
+      "sha256": "183d263dfb18e03fe06e01f51b93dcb17989cd555c6bd8f143c358a293857611",
+      "bytes": 7843
+    },
+    "cover.png": {
+      "sha256": "9ac3bb27c5e399d47361d87ba32e461976de993b5559230e6882e3684e4b7662",
+      "bytes": 76822
+    },
+    "tip.png": {
+      "sha256": "3bdcd30c901d5bb3c3f38436471b3c512277ed126a4267478d8f7a169178e2ea",
+      "bytes": 99413
+    },
+    "breakdown.png": {
+      "sha256": "37904398661bae1538f7a210b53601b2d23cbfa4f5c28fbde9aa5c28d1492f0b",
+      "bytes": 171782
+    },
+    "story.png": {
+      "sha256": "030f49bd5a211687e7e6ccd9684ffbce690ddf7dd19ff6011717d43fed399cdf",
+      "bytes": 88719
+    }
+  },
+  "pick_id": "2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons",
+  "created_at": "2026-07-17T11:11:04.553716+00:00"
+}

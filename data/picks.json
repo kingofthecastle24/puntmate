@@ -721,5 +721,22 @@
     "confidence": "MODERATE",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-17_rugbyleague_nrl_New_Zealand_Warriors_INVESTOR_BET",
+    "date": "2026-07-17",
+    "bet_type": "INVESTOR_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "New Zealand Warriors vs St George Illawarra Dragons",
+    "home_team": "New Zealand Warriors",
+    "away_team": "St George Illawarra Dragons",
+    "pick": "NEW ZEALAND WARRIORS",
+    "market": "Head to Head",
+    "odds": 1.2,
+    "confidence": "HIGH",
+    "result": "pending",
+    "pnl": null
   }
 ]

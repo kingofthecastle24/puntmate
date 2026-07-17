@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-17T11:11:04.786993+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-17T11:11:04.787186+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-17T11:11:04.787378+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "has_pick": true,
+  "pick_id": "2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons",
+  "run_id": "29575927009",
+  "generated_at": "2026-07-17T11:11:04.553280+00:00",
+  "post_date": "2026-07-17",
+  "match": "New Zealand Warriors vs St George Illawarra Dragons",
+  "sport": "rugbyleague_nrl",
+  "sport_label": "NRL",
+  "market": "Head to Head",
+  "selection": "NEW ZEALAND WARRIORS",
+  "odds": "1.20",
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "BET TYPE: INVESTOR",
+  "bet_type_reason": "This one's about as close to a sure thing as sport gets \u2014 the numbers stack up and the price still pays. The market has Warriors at 83% but honestly this feels light \u2014 the Dragons have been one of the competition's worst sides for a couple of seasons running, and\u2026",
+  "classification": "RISKY_PICK",
+  "risk": "RISKY_PICK",
+  "confidence": "HIGH",
+  "confidence_label": "HIGH",
+  "final_explanation": "The market has Warriors at 83% but honestly this feels light \u2014 the Dragons have been one of the competition's worst sides for a couple of seasons running, and\u2026 Worth knowing: Warriors news snippet references Cowboys not Dragons \u2014 possible copy-paste from different week; Dragons form unknown beyond general knowledge.",
+  "public_caution": "Keep this one light \u2014 the value's there but so is the uncertainty.",
+  "research_warnings": [
+    "rejected source (no relevance to fixture): \"\u2018Let me speak to Wayne\u2019: How Bennett phone call from other side of the world spa\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (no relevance to fixture): \"GWM Game Day Guide: Women in League Round at home - Warriors\"",
+    "rejected source (team-name-only match, no sport context): \"St George Illawarra Dragons to compete in NSW Women\u2019s Premiership from 2027 - St\"",
+    "rejected source (no relevance to fixture): \"Why \u2018risky\u2019 calls could open door for another Queensland team - Nine.com.au\"",
+    "rejected source (team-name-only match, no sport context): \"Should Wests Tigers fans be worried they might lose Benji? - SMH.com.au\""
+  ],
+  "theme": "night",
+  "carousel_paths": [
+    "data/review/2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons/cover.png",
+    "data/review/2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons/tip.png",
+    "data/review/2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons/breakdown.png"
+  ],
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons_night_3_breakdown.png"
+  ],
+  "story_path": "data/review/2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons/story.png",
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons_night_story.png",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story",
+    "facebook"
+  ],
+  "workflow_state": "GENERATED"
+}
