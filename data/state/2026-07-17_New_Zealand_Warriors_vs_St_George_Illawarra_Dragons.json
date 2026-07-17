@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-17_New_Zealand_Warriors_vs_St_George_Illawarra_Dragons",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-17T11:11:04.787378+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-07-17T12:15:37.032776+00:00",
+      "note": "approval confirmed, entering publish"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-07-17T12:15:37.033034+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-07-17T12:16:08.851551+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": true, \"instagram_story\": true, \"facebook\": \"via_linked_instagram\"}"
     }
   ]
 }

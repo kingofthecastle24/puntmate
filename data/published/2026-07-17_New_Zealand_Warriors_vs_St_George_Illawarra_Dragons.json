@@ -1,0 +1,100 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 126,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784290539,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADfmpaHOqEHDRR_AFXLb65VOM4AguZAAK0DGsb_KDQRq9SU_Xb4jbUAQADAgADcwADPQQ",
+            "file_unique_id": "AQADtAxrG_yg0EZ4",
+            "file_size": 1122,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADfmpaHOqEHDRR_AFXLb65VOM4AguZAAK0DGsb_KDQRq9SU_Xb4jbUAQADAgADbQADPQQ",
+            "file_unique_id": "AQADtAxrG_yg0EZy",
+            "file_size": 12239,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADfmpaHOqEHDRR_AFXLb65VOM4AguZAAK0DGsb_KDQRq9SU_Xb4jbUAQADAgADeAADPQQ",
+            "file_unique_id": "AQADtAxrG_yg0EZ9",
+            "file_size": 50161,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADfmpaHOqEHDRR_AFXLb65VOM4AguZAAK0DGsb_KDQRq9SU_Xb4jbUAQADAgADdwADPQQ",
+            "file_unique_id": "AQADtAxrG_yg0EZ8",
+            "file_size": 90934,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADfmpaHOqEHDRR_AFXLb65VOM4AguZAAK0DGsb_KDQRq9SU_Xb4jbUAQADAgADeQADPQQ",
+            "file_unique_id": "AQADtAxrG_yg0EZ-",
+            "file_size": 91027,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf New Zealand Warriors vs St George Illawarra Dragons\n\nPICK: NEW ZEALAND WARRIORS\nODDS: 1.20 (Head to Head)\nBET TYPE: INVESTOR\n\nThe market has Warriors at 83% but honestly this feels light \u2014 the Dragons have been one of the competition's worst sides for a couple of seasons running, and\u2026 Worth knowing: Warriors news snippet references Cowboys not Dragons \u2014 possible copy-paste from different week; Dragons form unknown beyond general knowledge.\n\nKeep this one light \u2014 the value's there but so is the uncertainty.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 78,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 105,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 131,
+            "length": 18,
+            "type": "bold"
+          },
+          {
+            "offset": 151,
+            "length": 317,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18195949957373225"
+  },
+  "facebook": {
+    "status": "via_linked_instagram",
+    "note": "Facebook: expected via linked Instagram account (direct Page posting is disabled \u2014 publish_actions permission is deprecated)."
+  }
+}
