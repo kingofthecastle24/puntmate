@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-17_Sydney_Roosters_vs_Melbourne_Storm",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-17T04:53:28.142485+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-17T04:53:28.142726+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-17T04:53:28.142951+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

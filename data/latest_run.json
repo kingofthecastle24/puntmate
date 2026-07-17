@@ -1,6 +1,6 @@
 {
-  "run_date": "2026-07-16",
-  "run_ts": "2026-07-16T21:44:56.578403+00:00",
+  "run_date": "2026-07-17",
+  "run_ts": "2026-07-17T04:53:16.286833+00:00",
   "pick": {
     "has_pick": true,
     "match": "Sydney Roosters vs Melbourne Storm",
@@ -9,36 +9,34 @@
     "home_team": "Sydney Roosters",
     "away_team": "Melbourne Storm",
     "kickoff": "2026-07-17T10:00:00Z",
-    "market_type": "h2h",
-    "line": null,
-    "selection": "MELBOURNE STORM",
-    "market": "Head to Head",
-    "odds": "4.10",
-    "our_probability": 30.0,
-    "implied_probability": 23.8,
-    "edge_pct": 6.21,
+    "market_type": "spread",
+    "line": 11.5,
+    "selection": "MELBOURNE STORM +11.5",
+    "market": "Handicap",
+    "odds": "1.95",
+    "our_probability": 55.0,
+    "implied_probability": 49.4,
+    "edge_pct": 5.65,
     "risk": "RISKY_PICK",
-    "bet_type": "GAMBLER_BET",
-    "bet_type_label": "BET TYPE: GAMBLER",
-    "bet_type_reason": "Bold call at a big price \u2014 this is a swing, not a certainty, but the upside is real. The Storm getting 4.1 is spicy. Yes, the news snippet suggests they dropped a game to Penrith recently, but Melbourne are historically the hardest team to\u2026",
-    "final_explanation": "The Storm getting 4.1 is spicy. Yes, the news snippet suggests they dropped a game to Penrith recently, but Melbourne are historically the hardest team to\u2026 Worth knowing: Storm appear to have lost to Penrith recently suggesting they're not at their peak; Roosters at home with a reshuffled fullback spot adds uncertainty both ways.",
-    "confidence": "LOW",
-    "confidence_label": "LOW",
+    "bet_type": "PUNTER_BET",
+    "bet_type_label": "BET TYPE: PUNTER",
+    "bet_type_reason": "Solid touch here. Not a lock, but the value's real and the form backs it up. Eleven and a half points is a hefty line even for a strong Roosters outfit, and Melbourne \u2014 whatever their current form \u2014 are the kind of team that almost\u2026",
+    "final_explanation": "Eleven and a half points is a hefty line even for a strong Roosters outfit, and Melbourne \u2014 whatever their current form \u2014 are the kind of team that almost\u2026 Worth knowing: Roosters' lineup change flagged (Ramsey/Wishart news suggests positional shifts); Melbourne's recent form unknown from validated news.",
+    "confidence": "MODERATE",
+    "confidence_label": "MODERATE",
     "uncertainty_flags": [
-      "Storm appear to have lost to Penrith recently suggesting they're not at their peak",
-      "Roosters at home with a reshuffled fullback spot adds uncertainty both ways",
-      "4.1 is a longshot price for Melbourne who are usually competitive"
+      "Roosters' lineup change flagged (Ramsey/Wishart news suggests positional shifts)",
+      "Melbourne's recent form unknown from validated news",
+      "11.5 is a big ask to cover"
     ],
     "public_caution": "Keep this one light \u2014 the value's there but so is the uncertainty.",
     "research_warnings": [
       "rejected source (no relevance to fixture): \"Why \u2018risky\u2019 calls could open door for another Queensland team - Nine.com.au\"",
-      "rejected source (team-name-only match, no sport context): \"Senior Rep Team Lists | Round 20 & Round 6 - Newcastle Knights\"",
+      "rejected source (team-name-only match, no sport context): \"24 Hour Update | Round 20 - Newcastle Knights\"",
       "only 2 validated source(s) \u2014 confidence capped at MODERATE",
-      "rejected source (no relevance to fixture): \"Why \u2018risky\u2019 calls could open door for another Queensland team - Nine.com.au\"",
-      "classifier [Cronulla Sutherland Sharks vs Newcastle Knights / h2h]: edge 2.7% is below the 5% minimum",
-      "classifier [Cronulla Sutherland Sharks vs Newcastle Knights / spread]: edge 2.9% is below the 5% minimum"
+      "classifier [Cronulla Sutherland Sharks vs Newcastle Knights / h2h]: edge 1.2% is below even the 2.5% shaky-angle floor \u2014 no genuine case"
     ],
     "big_game": false,
-    "other_defensible_candidates": 2
+    "other_defensible_candidates": 3
   }
 }

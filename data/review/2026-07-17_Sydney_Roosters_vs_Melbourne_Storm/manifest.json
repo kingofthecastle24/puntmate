@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "2732d187375888b6b139d82fb6caa1842fc32c904ccf644f402c5dd7737bba47",
+      "bytes": 691
+    },
+    "instagram-caption.txt": {
+      "sha256": "a614b6737fb1e8c253adeeebe4fdd0c9a022b22e19d547dfbb7088f5fda49165",
+      "bytes": 547
+    },
+    "post-metadata.json": {
+      "sha256": "53d733023c6191af95975a2c209c57226054008e1b5c9e6ceae88249d7eac2f5",
+      "bytes": 2913
+    },
+    "preview.html": {
+      "sha256": "d772dc16966257dfc27d91c3aae1ad240893529b15eadfe87759cc264e46dbd9",
+      "bytes": 7213
+    },
+    "cover.png": {
+      "sha256": "9ac3bb27c5e399d47361d87ba32e461976de993b5559230e6882e3684e4b7662",
+      "bytes": 76822
+    },
+    "tip.png": {
+      "sha256": "97e89ed124ec19aec6ce47be9c5153b50dc910f027d7063e050c099405d9e7e2",
+      "bytes": 85853
+    },
+    "breakdown.png": {
+      "sha256": "808fc9cf03cbc141e20d1bf0718f8d7f233a66fd18804f7d6d2d3b56a8f9c292",
+      "bytes": 156896
+    },
+    "story.png": {
+      "sha256": "3b11294013ded32396f334f52018280e863e1bef988300d5c5c8fffe1ebbd1f3",
+      "bytes": 80987
+    }
+  },
+  "pick_id": "2026-07-17_Sydney_Roosters_vs_Melbourne_Storm",
+  "created_at": "2026-07-17T04:53:27.890947+00:00"
+}
