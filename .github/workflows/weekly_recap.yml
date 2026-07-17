@@ -1,0 +1,55 @@
+# .github/workflows/weekly_recap.yml
+#
+# PuntMate NZ — Weekly Recap (Phase 6)
+# Posts the week's strike rate broken down by bet type (Investor/Punter/
+# Gambler), pending picks, and No-Bet day count to Telegram, and appends the
+# permanent record to RECAP.md.
+#
+# Runs Sunday 6pm NZT (06:00 UTC Sunday) — after check_results.yml has had
+# all week to settle picks. Manual dispatch supports dry_run for testing.
+
+name: PuntMate Weekly Recap
+
+on:
+  schedule:
+    - cron: '0 6 * * 0'   # Sunday 6pm NZT (NZST, UTC+12)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — print the recap instead of posting it'
+        type: boolean
+        default: true
+
+jobs:
+  recap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Build + post weekly recap
+        env:
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: |
+          cd scripts
+          python weekly_recap.py
+
+      - name: Commit RECAP.md
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: |
+          git add RECAP.md
+          bash scripts/git_push_retry.sh "chore: weekly recap $(date -u +%Y-%m-%d) [skip ci]" --soft

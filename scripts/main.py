@@ -102,10 +102,23 @@ def run():
 
     if not pick.get("has_pick"):
         print(f"  NO_BET — {pick.get('reasoning', '')}")
+        # Phase 4: on a genuine NO_BET day, prepare a lightweight Watchlist —
+        # the day's most interesting fixtures (sport-priority order, same
+        # ordering fetch_upcoming_odds returns), with NO selections and NO
+        # odds framed as advice. This gives followers honest content on a
+        # no-bet day without manufacturing a pick.
+        run_data["watchlist"] = [
+            {
+                "match": m["match"],
+                "sport_label": m.get("sport_label") or m.get("sport", ""),
+                "kickoff": m.get("kickoff", ""),
+            }
+            for m in matches[:5]
+        ]
         os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
         with open(LATEST_RUN_PATH, 'w') as f:
             json.dump(run_data, f, indent=2)
-        print("  Saved NO_BET result to data/latest_run.json (no cards rendered).")
+        print(f"  Saved NO_BET result + {len(run_data['watchlist'])}-fixture watchlist to data/latest_run.json (no cards rendered).")
         return
 
     print(f"  -> {pick['match']} | {pick['selection']} @ {pick['odds']} | "

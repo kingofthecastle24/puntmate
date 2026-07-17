@@ -89,6 +89,7 @@ jobs:
 
     outputs:
       has_pick: ${{ steps.review_package.outputs.has_pick }}
+      has_watchlist: ${{ steps.review_package.outputs.has_watchlist }}
       dry_run:  ${{ steps.mode.outputs.dry_run }}
       pick_id:  ${{ steps.review_package.outputs.pick_id }}
       auto_publish: ${{ steps.mode.outputs.auto_publish }}
@@ -204,15 +205,24 @@ jobs:
             HAS_PICK=false
           fi
           echo "has_pick=$HAS_PICK" >> "$GITHUB_OUTPUT"
-          if [ "$HAS_PICK" = "true" ]; then
+          if [ -f data/latest_run.json ]; then
+            HAS_WATCHLIST=$(python3 -c "import json; d=json.load(open('data/latest_run.json')); print(str(bool(d.get('watchlist'))).lower())")
+          else
+            HAS_WATCHLIST=false
+          fi
+          echo "has_watchlist=$HAS_WATCHLIST" >> "$GITHUB_OUTPUT"
+          if [ "$HAS_PICK" = "true" ] || [ "$HAS_WATCHLIST" = "true" ]; then
             PICK_ID=$(python3 -c "
           import json, os, glob, sys
           d = json.load(open('data/latest_run.json'))
-          pick = d['pick']
+          pick = d.get('pick') or {}
           sys.path.insert(0, 'scripts')
           from render_brand_templates import slugify
           from build_review_package import _pick_id_suffix
-          print(f\"{d['run_date']}_{slugify(pick['match'])}{_pick_id_suffix()}\")
+          if pick.get('has_pick'):
+              print(f\"{d['run_date']}_{slugify(pick['match'])}{_pick_id_suffix()}\")
+          else:
+              print(f\"{d['run_date']}_no-bet{_pick_id_suffix()}\")
           ")
             echo "pick_id=$PICK_ID" >> "$GITHUB_OUTPUT"
           fi
@@ -232,7 +242,7 @@ jobs:
       # permanent pick history, and it's also what makes data/review/**/*.png
       # publicly fetchable via raw.githubusercontent.com for Meta's Graph API.
       - name: Commit ledger, review package & state
-        if: steps.review_package.outputs.has_pick == 'true'
+        if: steps.review_package.outputs.has_pick == 'true' || steps.review_package.outputs.has_watchlist == 'true'
         run: |
           git add data/picks.json data/latest_run.json data/review/ data/state/ data/cards/
           bash scripts/git_push_retry.sh "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
@@ -274,7 +284,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload review artifact
-        if: steps.review_package.outputs.has_pick == 'true'
+        if: steps.review_package.outputs.has_pick == 'true' || steps.review_package.outputs.has_watchlist == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: puntmate-review-${{ github.run_id }}
@@ -288,7 +298,7 @@ jobs:
   approve:
     name: "⏳ Awaiting approval to publish"
     needs: generate
-    if: needs.generate.outputs.has_pick == 'true' && needs.generate.outputs.auto_publish != 'true'
+    if: (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true'
     runs-on: ubuntu-latest
     environment: production   # ← this is the approval gate (Telegram + Instagram + Facebook all wait here)
 
@@ -309,7 +319,7 @@ jobs:
   on_reject:
     name: Record rejection
     needs: [generate, approve]
-    if: always() && needs.generate.outputs.has_pick == 'true' && needs.generate.outputs.auto_publish != 'true' && needs.approve.result != 'success'
+    if: always() && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true' && needs.approve.result != 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -349,7 +359,7 @@ jobs:
   publish:
     name: Publish approved post
     needs: [generate, approve]
-    if: always() && needs.generate.outputs.has_pick == 'true' && (needs.approve.result == 'success' || needs.generate.outputs.auto_publish == 'true')
+    if: always() && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && (needs.approve.result == 'success' || needs.generate.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -391,7 +401,12 @@ jobs:
           PUNTMATE_REPORT_EMAIL: ${{ secrets.PUNTMATE_REPORT_EMAIL }}
         run: |
           cd scripts
-          python publish_pick.py
+          if [ "${{ needs.generate.outputs.has_pick }}" = "true" ]; then
+            python publish_pick.py
+          else
+            # Phase 4: No-Bet day with a watchlist — Telegram-only text post.
+            python publish_watchlist.py
+          fi
 
       - name: Commit publish record + state
         if: always()

@@ -45,7 +45,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(__file__))
 from render_brand_templates import slugify, choose_theme
 from manifest import build_manifest, write_manifest
-from copy_validator import validate_post, CopyValidationError
+from copy_validator import validate_post, validate_text, CopyValidationError
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, "data", "latest_run.json")
@@ -137,6 +137,74 @@ def build_preview_html(pick, metadata, image_files):
 </body></html>"""
 
 
+def _fmt_kickoff_nzt(iso_ts):
+    """Best-effort kickoff formatting in NZT; falls back to raw string."""
+    try:
+        from datetime import datetime, timedelta
+        dt = datetime.fromisoformat(str(iso_ts).replace("Z", "+00:00"))
+        nzt = dt + timedelta(hours=12)  # NZST; close enough for a watchlist line year-round
+        return nzt.strftime("%a %I:%M%p NZT").replace(" 0", " ")
+    except Exception:
+        return str(iso_ts)
+
+
+def build_watchlist_text(watchlist, post_date):
+    """Phase 4 — the public Telegram text for a No-Bet-day Watchlist post.
+    Deliberately: no selections, no odds, no anything framed as advice. The
+    honest message IS the product: nothing cleared the bar today."""
+    lines = [
+        "*🔍 PUNTMATE NZ — NO BET TODAY*",
+        "",
+        "_Nothing cleared the bar today — no pick meets my criteria, so we're sitting this one out. "
+        "A no-bet day protects the strike rate; forcing a pick never does._",
+        "",
+        "*On the watchlist today:*",
+    ]
+    for w in watchlist:
+        lines.append(f"• {w.get('sport_label','')}: {w.get('match','')} — {_fmt_kickoff_nzt(w.get('kickoff',''))}")
+    lines += [
+        "",
+        "Back tomorrow with the numbers.",
+        "",
+        "──────────────────",
+        "📲 Join Telegram for daily picks",
+        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+    ]
+    return "\n".join(lines)
+
+
+def build_multi_text(pick):
+    """Phase 5 — rare Gambler-tier multi as a SECONDARY Telegram post.
+    Only called when generate_pick produced 3 genuine, independently
+    defensible legs on distinct matches (see multi_legs logic there)."""
+    legs = pick["multi_legs"]
+    combined = 1.0
+    for leg in legs:
+        combined *= float(leg["odds"])
+    lines = [
+        "*🎰 PUNTMATE NZ — THE MULTI*",
+        "",
+        "_Rare one: today produced three selections that each stand on their own. "
+        "Rolled together as a multi they pay big — but every leg has to land, "
+        "so treat this strictly as a Gambler-tier swing, not the day's real pick "
+        "(that's the post above)._",
+        "",
+    ]
+    for i, leg in enumerate(legs, 1):
+        lines.append(f"*Leg {i}:* {leg['match']} — {leg['selection']} @ {leg['odds']} ({leg['market']})")
+    lines += [
+        "",
+        f"*Combined: {combined:.2f}*",
+        "*BET TYPE: GAMBLER*",
+        "",
+        "One leg fails, the lot fails. Small stakes territory.",
+        "",
+        "──────────────────",
+        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+    ]
+    return "\n".join(lines)
+
+
 def build_no_bet_metadata(reasoning, research_warnings, run_id, post_date, dry_run=None):
     return {
         "has_pick": False,
@@ -172,9 +240,34 @@ def main():
         metadata = build_no_bet_metadata(reasoning, warnings, run_id, post_date, DRY_RUN)
         review_dir = os.path.join(REVIEW_ROOT, metadata["pick_id"])
         os.makedirs(review_dir, exist_ok=True)
+
+        # Phase 4: watchlist post on genuine No-Bet days (main.py only writes
+        # a watchlist when fixtures existed but nothing cleared the bar).
+        watchlist = run_data.get("watchlist") or []
+        manifest_files = ["post-metadata.json"]
+        if watchlist:
+            watchlist_text = build_watchlist_text(watchlist, post_date)
+            # Same hard validation gate as real picks. risk=NO_BET so the
+            # no-bet phrasing is allowed; internal-leak + tone checks apply.
+            validate_text(watchlist_text, risk="NO_BET", public=True)
+            with open(os.path.join(review_dir, "watchlist-post.txt"), "w") as f:
+                f.write(watchlist_text)
+            metadata["has_watchlist"] = True
+            metadata["watchlist"] = watchlist
+            metadata["intended_platforms"] = ["telegram"]
+            manifest_files.append("watchlist-post.txt")
+
         with open(os.path.join(review_dir, "post-metadata.json"), "w") as f:
             json.dump(metadata, f, indent=2)
-        print(f"NO_BET today — wrote {metadata['pick_id']}/post-metadata.json (no approval/publish needed).")
+        manifest = build_manifest(review_dir, manifest_files, extra={
+            "pick_id": metadata["pick_id"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        })
+        write_manifest(manifest, os.path.join(review_dir, "manifest.json"))
+        if watchlist:
+            print(f"NO_BET today — built watchlist post ({len(watchlist)} fixtures) at {metadata['pick_id']}/ (goes through the same gate).")
+        else:
+            print(f"NO_BET today — wrote {metadata['pick_id']}/post-metadata.json (no fixtures at all; staying silent).")
         return metadata
 
     repo = os.environ.get("GITHUB_REPOSITORY", "kingofthecastle24/puntmate")
@@ -272,6 +365,17 @@ def main():
     # Manifest covers every file that publish_pick.py will actually read —
     # texts, metadata, images, preview. Written LAST, after everything else exists.
     manifest_files = ["telegram-post.txt", "instagram-caption.txt", "post-metadata.json", "preview.html"] + list(review_image_names.values())
+
+    # Phase 5: rare Gambler-tier multi (secondary Telegram post). Frozen and
+    # checksummed with everything else; validated under GAMBLER_BET rules so
+    # chasing/guarantee language can never ship.
+    if len(pick.get("multi_legs") or []) >= 3:
+        multi_text = build_multi_text(pick)
+        validate_text(multi_text, risk=pick["risk"], bet_type="GAMBLER_BET", public=True)
+        with open(os.path.join(review_dir, "multi-post.txt"), "w") as f:
+            f.write(multi_text)
+        manifest_files.append("multi-post.txt")
+        metadata["has_multi"] = True
     manifest = build_manifest(review_dir, manifest_files, extra={
         "pick_id": pick_id,
         "created_at": datetime.now(timezone.utc).isoformat(),

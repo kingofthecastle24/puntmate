@@ -556,6 +556,38 @@ def generate_pick_for_matches(matches, match_news):
 
     other_defensible = len(classified) - 1
 
+    # Phase 5: rare Gambler-tier multi. Only when THREE OR MORE candidates
+    # each cleared the classifier's bar on their own merits, on distinct
+    # matches, does a multi become eligible — the featured single stays the
+    # headline pick, the multi is a clearly-disclaimed secondary post. Legs
+    # are ordered by the same deterministic sort as the featured pick. This
+    # is deliberately rare: no candidate is ever stretched to make up a leg.
+    multi_legs = []
+    seen_matches = set()
+    for c in sorted(
+        (c for c in classified if c["verdict"].risk != RISK_NO_BET),
+        key=lambda c: (
+            BET_TYPE_PRIORITY.get(c["verdict"].bet_type, 9),
+            RISK_PRIORITY.get(c["verdict"].risk, 9),
+            -c["evidence"].edge_pct,
+        ),
+    ):
+        m = c["match_meta"]["match"]
+        if m in seen_matches:
+            continue
+        seen_matches.add(m)
+        multi_legs.append({
+            "match": m,
+            "sport_label": SPORT_LABELS.get(c["match_meta"]["sport"], c["match_meta"]["sport"]),
+            "selection": _display_selection(c["market_type"], c["raw"].get("selection"), c["line"]),
+            "market": c["raw"].get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[c["market_type"]],
+            "odds": f"{float(c['odds_val']):.2f}",
+        })
+        if len(multi_legs) == 3:
+            break
+    if len(multi_legs) < 3:
+        multi_legs = []  # fewer than 3 genuine legs -> no multi today
+
     return {
         "has_pick": True,
         "match": match_meta["match"],
@@ -584,4 +616,5 @@ def generate_pick_for_matches(matches, match_news):
         "research_warnings": research_warnings,
         "big_game": match_meta.get("big_game", False),
         "other_defensible_candidates": other_defensible,
+        "multi_legs": multi_legs,
     }

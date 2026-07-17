@@ -79,6 +79,21 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
             results["telegram"] = {"ok": False, "error": str(e)}
             print(f"  Telegram error: {e}")
 
+    # Phase 5: rare Gambler-tier multi — secondary Telegram text post, sent
+    # only after the main pick post and only if the frozen multi file exists.
+    # Failure here never blocks or rolls back anything else.
+    multi_path = os.path.join(review_dir, "multi-post.txt")
+    if "telegram" in platforms and os.path.exists(multi_path):
+        try:
+            from post_telegram import post_text
+            with open(multi_path) as f:
+                multi_text = f.read()
+            r = post_text(multi_text)
+            results["telegram_multi"] = {"ok": bool(r and r.get("ok", True)), "detail": r}
+        except Exception as e:
+            results["telegram_multi"] = {"ok": False, "error": str(e)}
+            print(f"  Telegram multi error: {e}")
+
     if "instagram_feed" in platforms:
         try:
             from post_instagram import post_carousel_to_instagram

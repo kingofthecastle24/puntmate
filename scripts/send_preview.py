@@ -46,9 +46,18 @@ def main():
     transition(REPO_ROOT, pick_id, GENERATED, note="review package built")
 
     if not metadata.get("has_pick"):
-        transition(REPO_ROOT, pick_id, PREVIEW_READY, note="no_bet")
-        email_service.send_no_bet_email(metadata)
-        print(f"NO_BET — notice sent, no approval gate entered for {pick_id}.")
+        if metadata.get("has_watchlist"):
+            # Phase 4: a No-Bet day WITH a watchlist post goes through the
+            # same gate as a real pick (human approval, or the auto-publish
+            # trial when enabled) — it's still a public post.
+            transition(REPO_ROOT, pick_id, PREVIEW_READY, note="no_bet + watchlist post frozen")
+            transition(REPO_ROOT, pick_id, AWAITING_APPROVAL, note="watchlist post entering approval gate")
+            email_service.send_no_bet_email(metadata)
+            print(f"NO_BET + watchlist — post frozen and awaiting gate for {pick_id}.")
+        else:
+            transition(REPO_ROOT, pick_id, PREVIEW_READY, note="no_bet")
+            email_service.send_no_bet_email(metadata)
+            print(f"NO_BET — notice sent, no approval gate entered for {pick_id}.")
         return
 
     transition(REPO_ROOT, pick_id, PREVIEW_READY, note="review package frozen")
