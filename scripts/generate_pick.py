@@ -65,6 +65,9 @@ SPORT_LABELS = {
 
 CONFIDENCE_RANK = {"LOW": 0, "MODERATE": 1, "HIGH": 2}
 
+# Hard cap on fixtures shown to Claude in one prompt (see generate_pick_for_matches).
+MAX_MATCHES_IN_PROMPT = 25
+
 # Phase 2: featured-pick preference order when multiple genuinely defensible
 # candidates exist on the same day. Lower number = preferred. This is only a
 # tie-break among candidates that ALREADY cleared the classifier's bar on
@@ -435,18 +438,52 @@ def generate_pick_for_matches(matches, match_news):
     """
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-    prompt = _build_prompt(matches, match_news)
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1500,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    result = _extract_json(message.content[0].text)
-
     research_warnings = []
     for m in matches:
         research_warnings += match_news.get(m["match"], {}).get("warnings", [])
+
+    # Widened coverage (2026-07-18) can put 50+ fixtures in front of Claude on
+    # a busy day. Cap what goes in the prompt: SPORTS is already in NZ-audience
+    # priority order and fetch_upcoming_odds() returns matches in that order,
+    # so keeping the first N preserves the intended priority. Without this, a
+    # big slate both bloats the prompt and invites a long candidates array.
+    if len(matches) > MAX_MATCHES_IN_PROMPT:
+        research_warnings.append(
+            f"{len(matches)} fixtures available today — only the first {MAX_MATCHES_IN_PROMPT} "
+            f"(by sport priority) were assessed"
+        )
+        matches = matches[:MAX_MATCHES_IN_PROMPT]
+
+    prompt = _build_prompt(matches, match_news)
+    message = client.messages.create(
+        model="claude-sonnet-4-6",
+        # 1500 was enough for the original 1-6 fixture slate but a widened
+        # slate can produce a long candidates array; run #49 (2026-07-17,
+        # 59 fixtures) hit the cap and the truncated JSON crashed the run.
+        max_tokens=8000,
+        system=SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw_text = message.content[0].text
+    try:
+        result = _extract_json(raw_text)
+    except (json.JSONDecodeError, ValueError) as e:
+        # FAIL-SAFE (added after run #49 crashed here): an unparseable model
+        # response must degrade to an honest NO_BET, never crash the run.
+        # Most likely cause is output truncation (check stop_reason).
+        stop_reason = getattr(message, "stop_reason", None)
+        research_warnings.append(
+            f"model response could not be parsed as JSON ({e}; stop_reason={stop_reason}) — "
+            f"failing safe to NO_BET rather than guessing"
+        )
+        print(f"::warning::generate_pick: unparseable model JSON ({e}; stop_reason={stop_reason}) — NO_BET fail-safe")
+        return {
+            "has_pick": False,
+            "risk": RISK_NO_BET,
+            "bet_type": BET_NO_BET,
+            "reasoning": "Couldn't complete today's assessment cleanly — no pick rather than a rushed one.",
+            "research_warnings": research_warnings,
+        }
 
     raw_candidates = result.get("candidates") or []
     if not raw_candidates:

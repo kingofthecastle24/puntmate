@@ -607,5 +607,48 @@ class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
         self.assertTrue(any("suppressed" in w for w in pick["research_warnings"]))
 
 
+class TruncatedModelResponseFailSafeTests(unittest.TestCase):
+    """Run #49 (2026-07-17) crashed with JSONDecodeError when a 59-fixture
+    slate pushed Claude's candidates array past max_tokens and the JSON came
+    back truncated. Unparseable model output must degrade to NO_BET, never
+    crash the run."""
+
+    def setUp(self):
+        os.environ["ANTHROPIC_API_KEY"] = "test-key"
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_truncated_json_fails_safe_to_no_bet(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        response = MagicMock()
+        response.content = [MagicMock(text='{"candidates": [{"match": "France vs Spain", "sport": "soccer_fifa_world_cup", "market_type": "h2h", "selection": "Fran')]
+        response.stop_reason = "max_tokens"
+        mock_client.messages.create.return_value = response
+
+        pick = generate_pick.generate_pick_for_matches(_mock_matches(), {})
+        self.assertFalse(pick["has_pick"])
+        self.assertEqual(pick["risk"], "NO_BET")
+        self.assertTrue(any("could not be parsed" in w for w in pick["research_warnings"]))
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_oversized_slate_is_capped_before_prompting(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": [], "reasoning": "nothing today"})
+
+        base = _mock_matches()[0]
+        many = []
+        for i in range(40):
+            m = dict(base)
+            m["match"] = f"Team{i} vs Team{i+100}"
+            m["home_team"], m["away_team"] = f"Team{i}", f"Team{i+100}"
+            many.append(m)
+        pick = generate_pick.generate_pick_for_matches(many, {})
+        prompt_sent = mock_client.messages.create.call_args.kwargs["messages"][0]["content"]
+        self.assertIn("Team0 vs Team100", prompt_sent)
+        self.assertNotIn("Team39 vs Team139", prompt_sent)
+        self.assertTrue(any("only the first" in w for w in pick["research_warnings"]))
+
+
 if __name__ == "__main__":
     unittest.main()
