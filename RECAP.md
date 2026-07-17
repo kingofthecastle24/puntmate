@@ -38,3 +38,26 @@ Building this recap surfaced a few things worth fixing in the pipeline:
 2. **`data/results/picks_ledger.json` only had 1 of the 4 real picks logged** (Storm, still marked PENDING). I've added the other 3 and marked all 4 as settled — see the updated file.
 3. **I found and excluded one likely test/demo pick: "Warriors vs Panthers" @ 2.40.** There's no real NRL fixture between Warriors and Panthers on or near 6 July 2026 (their real 2026 meetings are Round 13, 31 May, and Round 23, 7 Aug) — and the exact same "Warriors to Win 2.40" line shows up in a `data/cards/2026-07-06_results_2_card.png` mockup alongside three fully fictional bets (Broncos, Raiders/Roosters, Eels) that don't exist anywhere else in the data. That card set looks like template-testing content, not a real placed pick, so it's left out of the win % above. Worth a quick look to confirm and clean up those files if they're not needed.
 4. **Going forward:** every time a pick settles, run `python3 scripts/update_result.py <pick_id> WIN|LOSS|VOID` (existing script) to update the ledger, then `python3 scripts/recap_report.py --markdown` to regenerate this recap's numbers. No new tooling to learn — just wire the ledger updates in as picks settle and this file stays current.
+
+
+## Week 2026-07-11 → 2026-07-17 (auto-generated)
+
+```
+*📈 PUNTMATE NZ — WEEKLY RECAP*
+_11 Jul – 17 Jul 2026_
+
+*Overall: 1W – 3L  ·  Strike rate 25%*
+
+📊 Investor: 0W – 0L  (—)
+🎯 Punter: 0W – 0L  (—)
+🎰 Gambler: 0W – 1L  (0%)
+📁 Pre-rebuild picks: 1W – 2L (counted in overall)
+
+⏳ 4 pick(s) still to settle — counted next week, never guessed.
+
+Every result on the record, wins and losses alike.
+
+──────────────────
+📲 Join Telegram for daily picks
+R18 · Gamble responsibly · Problem Gambling Foundation NZ: 0800 664 262
+```
