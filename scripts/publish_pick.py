@@ -172,7 +172,12 @@ def main():
     # passed, so AWAITING_APPROVAL -> APPROVED is safe here. Checksum
     # verification happens INSIDE the PUBLISHING state — a mismatch is a
     # publish-time failure (PUBLISHING -> PUBLISH_FAILED), not a rejection.
-    transition(REPO_ROOT, pick_id, APPROVED, note="approval confirmed, entering publish")
+    auto_mode = os.environ.get("AUTO_PUBLISH", "").strip().lower() == "true"
+    approval_note = (
+        "AUTO-PUBLISH TRIAL — no human gate; copy validator (hard-fail at freeze) was the only gate"
+        if auto_mode else "approval confirmed, entering publish"
+    )
+    transition(REPO_ROOT, pick_id, APPROVED, note=approval_note)
     transition(REPO_ROOT, pick_id, PUBLISHING)
 
     # ── Freeze verification — the whole point of the manifest system ──────

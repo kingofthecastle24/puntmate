@@ -22,7 +22,13 @@ from datetime import datetime, timezone
 ODDS_API_KEY = os.environ.get('ODDS_API_KEY', '')
 BASE_URL = "https://api.the-odds-api.com/v4"
 
-# Sports to pull — priority order (most popular NZ viewing first)
+# Sports to pull — priority order (most popular NZ viewing first).
+# Widened 2026-07-18: aim is to cover everything a TAB NZ / Betcha punter can
+# actually bet day-to-day, so genuinely empty days (NO_BET with no watchlist)
+# become rare. Sports with no fixtures on a given day cost one cheap API call
+# and return empty — that's fine. Note: The Odds API is the data source here;
+# it can't literally read tab.co.nz/betcha.co.nz, but its AU-region
+# bookmakers carry effectively the same fixture set NZ TAB prices up.
 SPORTS = [
     "soccer_fifa_world_cup",            # FIFA World Cup 2026 (live now)
     "rugbyleague_nrl",                  # NRL — core NZ audience
@@ -30,6 +36,12 @@ SPORTS = [
     "mma_mixed_martial_arts",           # UFC/MMA
     "tennis_atp_wimbledon",             # Wimbledon ATP (July)
     "tennis_wta_wimbledon",             # Wimbledon WTA (July)
+    "aussierules_afl",                  # AFL — big TAB NZ market
+    "baseball_mlb",                     # MLB — daily fixtures, fills quiet days
+    "basketball_nba",                   # NBA (off-season now, active Oct-Jun)
+    "soccer_epl",                       # Premier League (from Aug)
+    "cricket_international_t20",        # International T20s
+    "boxing_boxing",                    # Boxing cards
 ]
 
 # Human-readable sport labels for cards
@@ -43,6 +55,12 @@ SPORT_LABELS = {
     "tennis_atp_us_open":         "US OPEN",
     "tennis_wta_us_open":         "US OPEN",
     "tennis_atp_australian_open": "AUSTRALIAN OPEN",
+    "aussierules_afl":            "AFL",
+    "baseball_mlb":               "MLB",
+    "basketball_nba":             "NBA",
+    "soccer_epl":                 "PREMIER LEAGUE",
+    "cricket_international_t20":  "T20 CRICKET",
+    "boxing_boxing":              "BOXING",
 }
 
 # Events that warrant the Matchday Print (cream/red) look instead of Betslip Night
@@ -50,14 +68,24 @@ BIG_GAME_SPORTS = {"soccer_fifa_world_cup", "mma_mixed_martial_arts"}
 BIG_GAME_KEYWORDS = ["All Blacks", "Wallabies", "Warriors", "Final", "Semi-Final",
                      "Quarter-Final", "Grand Final", "Championship", "World Cup Final"]
 
-# Phase 1 — sports that get spreads/totals in addition to head-to-head.
-# Deliberately scoped to NRL, tennis and football per the brief (not Super
-# Rugby or MMA, which aren't part of this round of work).
+# Sports that get spreads (handicap/line) + totals in addition to
+# head-to-head. Widened 2026-07-18 to every team sport in SPORTS — handicap
+# and totals are core TAB NZ markets and more markets means more chances of
+# a genuine edge (the honest route to fewer NO_BET days). MMA/boxing stay
+# h2h-only (no meaningful spread market). Note "margin" betting in the NRL
+# band sense (e.g. 1-12) isn't offered by The Odds API — handicap (spreads)
+# is the closest equivalent and IS covered.
 EXPANDED_MARKET_SPORTS = {
     "rugbyleague_nrl",
+    "rugbyunion_super_rugby",
     "tennis_atp_wimbledon",
     "tennis_wta_wimbledon",
     "soccer_fifa_world_cup",
+    "aussierules_afl",
+    "baseball_mlb",
+    "basketball_nba",
+    "soccer_epl",
+    "cricket_international_t20",
 }
 
 

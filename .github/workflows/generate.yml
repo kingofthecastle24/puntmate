@@ -68,6 +68,10 @@ on:
         description: 'TEST ONLY — inject a synthetic pick instead of running real odds/research/Claude, to verify rendering/freeze/approval-email without waiting for a real qualifying match. Never used on schedule, never skips DRY_RUN or the approval gate.'
         type: boolean
         default: false
+      auto_publish:
+        description: 'TRIAL — skip the human approval gate and publish directly after the copy validator passes. Scheduled runs read config/auto_publish instead of this input.'
+        type: boolean
+        default: false
 
 env:
   PYTHONPATH: scripts
@@ -87,6 +91,7 @@ jobs:
       has_pick: ${{ steps.review_package.outputs.has_pick }}
       dry_run:  ${{ steps.mode.outputs.dry_run }}
       pick_id:  ${{ steps.review_package.outputs.pick_id }}
+      auto_publish: ${{ steps.mode.outputs.auto_publish }}
 
     steps:
       - name: Checkout repo
@@ -98,9 +103,20 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
             echo "force_test_pick=${{ inputs.force_test_pick }}" >> "$GITHUB_OUTPUT"
+            echo "auto_publish=${{ inputs.auto_publish }}" >> "$GITHUB_OUTPUT"
           else
             echo "dry_run=false" >> "$GITHUB_OUTPUT"
             echo "force_test_pick=false" >> "$GITHUB_OUTPUT"
+            # TRIAL MODE: scheduled runs consult config/auto_publish. "true"
+            # skips the human approval gate — the deterministic copy
+            # validator (hard-fails the generate job on any violation, so
+            # nothing downstream ever runs) is then the only gate. See
+            # config/README.md; flip that file to "false" to end the trial.
+            if [ "$(cat config/auto_publish 2>/dev/null | tr -d '[:space:]')" = "true" ]; then
+              echo "auto_publish=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "auto_publish=false" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - name: Set up Python 3.11
@@ -272,7 +288,7 @@ jobs:
   approve:
     name: "⏳ Awaiting approval to publish"
     needs: generate
-    if: needs.generate.outputs.has_pick == 'true'
+    if: needs.generate.outputs.has_pick == 'true' && needs.generate.outputs.auto_publish != 'true'
     runs-on: ubuntu-latest
     environment: production   # ← this is the approval gate (Telegram + Instagram + Facebook all wait here)
 
@@ -293,7 +309,7 @@ jobs:
   on_reject:
     name: Record rejection
     needs: [generate, approve]
-    if: always() && needs.generate.outputs.has_pick == 'true' && needs.approve.result != 'success'
+    if: always() && needs.generate.outputs.has_pick == 'true' && needs.generate.outputs.auto_publish != 'true' && needs.approve.result != 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -333,7 +349,7 @@ jobs:
   publish:
     name: Publish approved post
     needs: [generate, approve]
-    if: needs.generate.outputs.has_pick == 'true' && needs.approve.result == 'success'
+    if: always() && needs.generate.outputs.has_pick == 'true' && (needs.approve.result == 'success' || needs.generate.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -362,6 +378,7 @@ jobs:
       - name: Publish (or simulate, if dry run)
         env:
           DRY_RUN:             ${{ needs.generate.outputs.dry_run }}
+          AUTO_PUBLISH:        ${{ needs.generate.outputs.auto_publish }}
           PICK_ID:              ${{ needs.generate.outputs.pick_id }}
           TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}

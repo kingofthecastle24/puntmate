@@ -55,6 +55,12 @@ SPORT_LABELS = {
     "mma_mixed_martial_arts": "UFC",
     "tennis_atp_wimbledon": "Wimbledon",
     "tennis_wta_wimbledon": "Wimbledon",
+    "aussierules_afl": "AFL",
+    "baseball_mlb": "MLB",
+    "basketball_nba": "NBA",
+    "soccer_epl": "Premier League",
+    "cricket_international_t20": "T20 Cricket",
+    "boxing_boxing": "Boxing",
 }
 
 CONFIDENCE_RANK = {"LOW": 0, "MODERATE": 1, "HIGH": 2}
