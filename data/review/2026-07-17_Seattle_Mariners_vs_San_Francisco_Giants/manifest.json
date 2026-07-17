@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "c6b3fe08d06134785f11a4dd63d4bbf358d54eeedecb7c1fa053a2545f44e84c",
+      "bytes": 614
+    },
+    "instagram-caption.txt": {
+      "sha256": "8f8c91e1c6171dbdba51018f9c7f10035f71eebab80c636050d617f80163ca6a",
+      "bytes": 535
+    },
+    "post-metadata.json": {
+      "sha256": "94e68180abb81ce0815751e09066d75122bbbe66287ec857cfd16364e1307323",
+      "bytes": 36076
+    },
+    "preview.html": {
+      "sha256": "5da63daa1787677d5431d84ec1664d1e50041fed8b122918f90b3dd47832a145",
+      "bytes": 42213
+    },
+    "cover.png": {
+      "sha256": "518b72a199ad357bdefdb243e1dc3f541813b70429c5894439499864bffe6ee8",
+      "bytes": 76935
+    },
+    "tip.png": {
+      "sha256": "01004441b8978006b8e139e1d7bc1817230f95de3c06cd344a8318e20232dff3",
+      "bytes": 76314
+    },
+    "breakdown.png": {
+      "sha256": "8c736eeb876dce2967cd96ed706c53f5f93c9ae2827f296444253afe85a14005",
+      "bytes": 133653
+    },
+    "story.png": {
+      "sha256": "bb779bb4cce51cde82f1477225fd550cc6156d7d294509bde98512b93e59ec70",
+      "bytes": 69922
+    }
+  },
+  "pick_id": "2026-07-17_Seattle_Mariners_vs_San_Francisco_Giants",
+  "created_at": "2026-07-17T22:24:56.610085+00:00"
+}

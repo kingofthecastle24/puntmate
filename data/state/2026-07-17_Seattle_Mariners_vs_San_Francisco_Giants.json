@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-17_Seattle_Mariners_vs_San_Francisco_Giants",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-17T22:24:56.837844+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-17T22:24:56.838051+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-17T22:24:56.838236+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

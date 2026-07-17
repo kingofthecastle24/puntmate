@@ -738,5 +738,22 @@
     "confidence": "HIGH",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-17_baseball_mlb_Seattle_Mariners_PUNTER_BET",
+    "date": "2026-07-17",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "baseball_mlb",
+    "sport": "baseball_mlb",
+    "match": "Seattle Mariners vs San Francisco Giants",
+    "home_team": "Seattle Mariners",
+    "away_team": "San Francisco Giants",
+    "pick": "UNDER 7",
+    "market": "Total",
+    "odds": 2.0,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]
