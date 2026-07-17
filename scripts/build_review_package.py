@@ -5,6 +5,17 @@ after generate_pick.py has produced a verdict and render_brand_templates.py
 has rendered the cards (or after a NO_BET verdict, in which case no cards
 exist and no publish step will ever run for this pick_id).
 
+pick_id namespace: dry-run runs (DRY_RUN=true, the workflow_dispatch default)
+get a "_dryrun" suffix appended to pick_id, e.g.
+"2026-07-17_Sydney_Roosters_vs_Melbourne_Storm_dryrun". This keeps manual
+testing/preview runs in their own workflow_state.py + data/review/ namespace
+so they can never collide with — or terminally block — a same-day live
+(DRY_RUN=false) run on the same fixture. Before this, pick_id was date+match
+only, so a dry-run test parked a match's pick_id at AWAITING_APPROVAL (or
+later REJECTED/PUBLISHED) for the rest of that day, and any subsequent real
+run on the same match hard-failed with workflow_state.InvalidTransitionError.
+Live pick_ids are unchanged (no suffix) — this is purely additive.
+
 Writes to data/review/<pick_id>/:
   telegram-post.txt        — exact, final Telegram message text
   instagram-caption.txt    — exact, final Instagram caption (+ hashtags)
@@ -42,6 +53,18 @@ CARDS_DIR = os.path.join(REPO_ROOT, "data", "cards")
 REVIEW_ROOT = os.path.join(REPO_ROOT, "data", "review")
 
 RESPONSIBLE_LINE = "Problem Gambling Foundation NZ: 0800 664 262"
+
+# Same parsing convention as publish_pick.py's DRY_RUN, so "true"/"false"
+# (the workflow_dispatch input's literal string form) and unset (defaults to
+# dry-run, the safer assumption for local/manual invocation) both behave
+# correctly.
+DRY_RUN = os.environ.get("DRY_RUN", "true").strip().lower() not in ("false", "0", "no")
+
+
+def _pick_id_suffix(dry_run=None):
+    """The pick_id namespace suffix for the given dry-run mode (module-level
+    DRY_RUN if not overridden). See module docstring for why this exists."""
+    return "_dryrun" if (DRY_RUN if dry_run is None else dry_run) else ""
 
 
 def raw_url(repo, filename):
@@ -114,10 +137,10 @@ def build_preview_html(pick, metadata, image_files):
 </body></html>"""
 
 
-def build_no_bet_metadata(reasoning, research_warnings, run_id, post_date):
+def build_no_bet_metadata(reasoning, research_warnings, run_id, post_date, dry_run=None):
     return {
         "has_pick": False,
-        "pick_id": f"{post_date}_no-bet",
+        "pick_id": f"{post_date}_no-bet{_pick_id_suffix(dry_run)}",
         "run_id": run_id,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "post_date": post_date,
@@ -146,7 +169,7 @@ def main():
     if not pick or not pick.get("has_pick"):
         reasoning = (pick or {}).get("reasoning", "No matches available today.")
         warnings = (pick or {}).get("research_warnings", [])
-        metadata = build_no_bet_metadata(reasoning, warnings, run_id, post_date)
+        metadata = build_no_bet_metadata(reasoning, warnings, run_id, post_date, DRY_RUN)
         review_dir = os.path.join(REVIEW_ROOT, metadata["pick_id"])
         os.makedirs(review_dir, exist_ok=True)
         with open(os.path.join(review_dir, "post-metadata.json"), "w") as f:
@@ -158,7 +181,7 @@ def main():
     theme = choose_theme(pick)
     match_slug = slugify(pick["match"])
     base = f"{post_date}_{match_slug}_{theme}"
-    pick_id = f"{post_date}_{match_slug}"
+    pick_id = f"{post_date}_{match_slug}{_pick_id_suffix()}"
 
     filenames = {
         "cover": f"{base}_1_cover.png",

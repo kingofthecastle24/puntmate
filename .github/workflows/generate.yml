@@ -171,6 +171,13 @@ jobs:
 
       - name: Build frozen review package (checksums + copy assets)
         id: review_package
+        env:
+          # Threaded through so build_review_package.py AND the inline PICK_ID
+          # computation below derive the identical dry-run pick_id suffix from
+          # one source of truth (build_review_package._pick_id_suffix) —
+          # see that module's docstring for why dry-run runs need their own
+          # pick_id namespace (must never collide with a same-day live run).
+          DRY_RUN: ${{ steps.mode.outputs.dry_run }}
         run: |
           cd scripts
           python build_review_package.py
@@ -183,12 +190,13 @@ jobs:
           echo "has_pick=$HAS_PICK" >> "$GITHUB_OUTPUT"
           if [ "$HAS_PICK" = "true" ]; then
             PICK_ID=$(python3 -c "
-          import json, os, glob
+          import json, os, glob, sys
           d = json.load(open('data/latest_run.json'))
           pick = d['pick']
-          import sys; sys.path.insert(0, 'scripts')
+          sys.path.insert(0, 'scripts')
           from render_brand_templates import slugify
-          print(f\"{d['run_date']}_{slugify(pick['match'])}\")
+          from build_review_package import _pick_id_suffix
+          print(f\"{d['run_date']}_{slugify(pick['match'])}{_pick_id_suffix()}\")
           ")
             echo "pick_id=$PICK_ID" >> "$GITHUB_OUTPUT"
           fi
