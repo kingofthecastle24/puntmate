@@ -52,6 +52,13 @@ SPORT_LABELS = {
     "soccer_fifa_world_cup": "FIFA World Cup 2026",
     "rugbyleague_nrl": "NRL",
     "rugbyunion_super_rugby": "Super Rugby",
+    "rugbyunion_international": "Test Rugby",  # added 2026-07-18 dry-run: fetch_odds.py
+    # gained this sport key the same day (commit 63fb7e4) but this dict was never
+    # updated, so any real pick on a Test match would have shown "PUNTMATE NZ —
+    # rugbyunion_international" (the raw API sport key) in the live Telegram/IG
+    # copy instead of a readable label. Found via the weekend-multi dry run
+    # (2026-07-18) against the real All Blacks v Ireland fixture -- see also
+    # fetch_odds.py's SPORT_LABELS, which had the same gap.
     "mma_mixed_martial_arts": "UFC",
     "tennis_atp_wimbledon": "Wimbledon",
     "tennis_wta_wimbledon": "Wimbledon",

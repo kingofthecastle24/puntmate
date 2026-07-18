@@ -87,3 +87,26 @@ class ImpliedProbTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SportLabelSyncTests(unittest.TestCase):
+    """Regression test for the 2026-07-18 weekend-multi dry run: fetch_odds.py
+    and generate_pick.py each keep their own SPORT_LABELS dict, and
+    "rugbyunion_international" was added to fetch_odds.SPORTS (commit
+    63fb7e4) without updating generate_pick.py's copy. That gap meant a real
+    pick on a Test match would show the raw API sport key
+    ("rugbyunion_international") instead of a readable label in the actual
+    Telegram/Instagram copy. This asserts every sport fetch_odds.py can
+    return has a real label in BOTH dicts, so the two can't drift apart
+    again unnoticed."""
+
+    def test_every_fetchable_sport_has_a_label_in_both_modules(self):
+        import fetch_odds
+        import generate_pick
+
+        for sport in fetch_odds.SPORTS:
+            self.assertIn(sport, fetch_odds.SPORT_LABELS,
+                          f"{sport} is fetched but has no fetch_odds.SPORT_LABELS entry")
+            self.assertIn(sport, generate_pick.SPORT_LABELS,
+                          f"{sport} is fetched but has no generate_pick.SPORT_LABELS entry "
+                          f"— a real pick on this sport would show the raw API key in public copy")
