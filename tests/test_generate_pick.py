@@ -823,5 +823,54 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
         self.assertIsNone(pick["multi_promo_hint"])
 
 
+class TruncationRegressionTests(unittest.TestCase):
+    """BUG (reported 2026-07-18 by Micah, France vs England / FIFA World
+    Cup / UNDER 3.5 / PUNTER — a real live post, not hypothetical): the
+    Telegram post read '...Getting four or… Worth knowing: ...' — the main
+    reasoning sentence was hard-cut at a fixed 160-char length before the
+    uncertainty-flag caveat was appended, slicing the thought off
+    mid-sentence with no natural break. Root cause was
+    generate_pick._one_sentence()'s naive character truncation. Fixed by
+    routing through text_format.truncate_at_sentence, which only cuts at a
+    complete sentence boundary (or, failing that, a whole-word boundary)."""
+
+    def test_long_reasoning_is_not_cut_mid_sentence_before_worth_knowing(self):
+        raw_reasoning = (
+            "This is a third-place playoff — teams are emotionally drained, "
+            "motivations are mixed, and sides in these situations often play "
+            "conservatively. Getting four or more goals in a dead rubber like "
+            "this is unlikely given how both sides typically approach these "
+            "fixtures."
+        )
+        reasoning_sentence = generate_pick._one_sentence(
+            generate_pick.sanitize_reasoning(raw_reasoning)
+        )
+        final = generate_pick.build_final_explanation(
+            reasoning_sentence,
+            "RISKY_PICK",
+            ["third-place playoffs can occasionally produce high-scoring "
+             "open games; both teams have attacking quality that can click "
+             "on the day"],
+        )
+
+        self.assertNotIn("Getting four or…", final)
+        self.assertNotIn("or… Worth knowing", final)
+        self.assertIn("Getting four or more goals in a dead rubber like this "
+                      "is unlikely given how both sides typically approach "
+                      "these fixtures.", final)
+        self.assertIn("Worth knowing:", final)
+
+    def test_one_sentence_leaves_short_reasoning_untouched(self):
+        text = "Warriors have won four straight at home."
+        self.assertEqual(generate_pick._one_sentence(text), text)
+
+    def test_one_sentence_only_truncates_pathological_run_ons(self):
+        run_on = "word " * 200
+        result = generate_pick._one_sentence(run_on.strip(), max_len=50)
+        self.assertLessEqual(len(result), 52)
+        self.assertTrue(result.endswith("…"))
+        self.assertNotIn("wor…", result)
+
+
 if __name__ == "__main__":
     unittest.main()

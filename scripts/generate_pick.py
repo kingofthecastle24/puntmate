@@ -47,6 +47,7 @@ import re
 
 from pick_classifier import Evidence, classify, RISK_NO_BET, RISK_STANDARD, BET_NO_BET
 from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES, check_internal_leak
+from text_format import truncate_at_sentence
 
 SPORT_LABELS = {
     "soccer_fifa_world_cup": "FIFA World Cup 2026",
@@ -290,12 +291,14 @@ def sanitize_reasoning(text):
     return cleaned
 
 
-def _one_sentence(text, max_len=160):
-    text = text.strip()
-    if len(text) <= max_len:
-        return text
-    cut = text[:max_len].rsplit(" ", 1)[0]
-    return cut.rstrip(",.;") + "…"
+def _one_sentence(text, max_len=400):
+    """Reduce model reasoning down to its first complete sentence(s) for use
+    in public copy. max_len is a safety net against a pathological run-on
+    from the model, not a real Telegram/Instagram constraint (both platforms
+    allow far more than this) — see text_format.truncate_at_sentence for why
+    a fixed 160-char slice used to cut posts off mid-sentence.
+    """
+    return truncate_at_sentence(text, max_len)
 
 
 BET_TYPE_OPENERS = {

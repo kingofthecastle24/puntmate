@@ -35,6 +35,8 @@ import http.server
 import json
 import os
 import re
+
+from text_format import truncate_at_sentence
 import shutil
 import sys
 import tempfile
@@ -204,7 +206,7 @@ def build_props(pick, handle="@puntmatenz"):
         "selectionShort": selection.split()[-1] if selection else selection,
         "odds": odds_str,
         "oddsNote": odds_note,
-        "insight": (insight_text[:140] + "…") if len(insight_text) > 140 else insight_text,
+        "insight": truncate_at_sentence(insight_text, 140),
         "competition": sport_label,
         "analysis": insight_text,
         "confidence": confidence_to_dots(confidence_label),

@@ -51,5 +51,27 @@ class BuildPropsTests(unittest.TestCase):
         self.assertEqual(props["selection"], "TEAM A")
 
 
+    def test_long_insight_truncates_at_sentence_boundary_not_mid_word(self):
+        """Same class of bug as the France vs England Telegram post (see
+        test_generate_pick.py's TruncationRegressionTests): the card's
+        'insight' prop used to naive-slice at exactly 140 chars with no
+        word-boundary handling at all. Now it goes through the same shared
+        text_format.truncate_at_sentence used for the public post text."""
+        long_explanation = (
+            "Warriors have won four straight at home. Their forward pack has "
+            "been dominant in the middle third all season and Broncos have "
+            "struggled defensively on the road."
+        )
+        props = build_props(_pick(final_explanation=long_explanation))
+        insight = props["insight"]
+        self.assertLessEqual(len(insight), 141)
+        self.assertTrue(insight.endswith(".") or insight.endswith("…"))
+
+    def test_short_insight_left_untouched(self):
+        short = "Warriors have won four straight at home."
+        props = build_props(_pick(final_explanation=short))
+        self.assertEqual(props["insight"], short)
+
+
 if __name__ == "__main__":
     unittest.main()
