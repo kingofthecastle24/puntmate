@@ -350,6 +350,28 @@ def main():
         "workflow_state": "GENERATED",
     }
 
+    # Phase 5: rare Gambler-tier multi (secondary Telegram post). Frozen and
+    # checksummed with everything else; validated under GAMBLER_BET rules so
+    # chasing/guarantee language can never ship. Computed BEFORE
+    # post-metadata.json/preview.html are written (bug fixed 2026-07-18:
+    # this used to run AFTER those writes, so has_multi/multi_promo_hint
+    # never actually reached the frozen metadata, the Gmail preview, or the
+    # job summary -- Micah would never have seen "there's a multi attached"
+    # anywhere except by noticing the extra file in the artifact).
+    multi_manifest_extra = []
+    if len(pick.get("multi_legs") or []) >= 3:
+        multi_text = build_multi_text(pick)
+        validate_text(multi_text, risk=pick["risk"], bet_type="GAMBLER_BET", public=True)
+        with open(os.path.join(review_dir, "multi-post.txt"), "w") as f:
+            f.write(multi_text)
+        multi_manifest_extra.append("multi-post.txt")
+        metadata["has_multi"] = True
+        if pick.get("multi_promo_hint"):
+            # Internal-only reference for Micah/the Gmail preview -- e.g.
+            # "all 4 legs are MLB, TAB's US-sports 4+ leg promo may apply,
+            # check current T&Cs". Never written into multi-post.txt itself.
+            metadata["multi_promo_hint"] = pick["multi_promo_hint"]
+
     with open(os.path.join(review_dir, "telegram-post.txt"), "w") as f:
         f.write(telegram_text)
     with open(os.path.join(review_dir, "instagram-caption.txt"), "w") as f:
@@ -365,23 +387,7 @@ def main():
 
     # Manifest covers every file that publish_pick.py will actually read —
     # texts, metadata, images, preview. Written LAST, after everything else exists.
-    manifest_files = ["telegram-post.txt", "instagram-caption.txt", "post-metadata.json", "preview.html"] + list(review_image_names.values())
-
-    # Phase 5: rare Gambler-tier multi (secondary Telegram post). Frozen and
-    # checksummed with everything else; validated under GAMBLER_BET rules so
-    # chasing/guarantee language can never ship.
-    if len(pick.get("multi_legs") or []) >= 3:
-        multi_text = build_multi_text(pick)
-        validate_text(multi_text, risk=pick["risk"], bet_type="GAMBLER_BET", public=True)
-        with open(os.path.join(review_dir, "multi-post.txt"), "w") as f:
-            f.write(multi_text)
-        manifest_files.append("multi-post.txt")
-        metadata["has_multi"] = True
-        if pick.get("multi_promo_hint"):
-            # Internal-only reference for Micah/the Gmail preview -- e.g.
-            # "all 4 legs are MLB, TAB's US-sports 4+ leg promo may apply,
-            # check current T&Cs". Never written into multi-post.txt itself.
-            metadata["multi_promo_hint"] = pick["multi_promo_hint"]
+    manifest_files = ["telegram-post.txt", "instagram-caption.txt", "post-metadata.json", "preview.html"] + list(review_image_names.values()) + multi_manifest_extra
     manifest = build_manifest(review_dir, manifest_files, extra={
         "pick_id": pick_id,
         "created_at": datetime.now(timezone.utc).isoformat(),
