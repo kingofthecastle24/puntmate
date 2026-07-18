@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-18_New_Zealand_vs_Ireland_dryrun",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-18T07:33:43.536020+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-18T07:33:43.537198+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-18T07:33:43.538025+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

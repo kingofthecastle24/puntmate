@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "23cb575f7c523896818b992a8a60cfc95beb5722b99ac1fea28906c655d2a7af",
+      "bytes": 640
+    },
+    "instagram-caption.txt": {
+      "sha256": "a4eaefd5e7f7c4e367e427de7e3d1f17662f4a379fd8fd6645a8a016cbf87690",
+      "bytes": 543
+    },
+    "post-metadata.json": {
+      "sha256": "6ec98bfb739b46ef5a05bb279da116d1a3f022322b08ce4f5f157e3c525ffce8",
+      "bytes": 2726
+    },
+    "preview.html": {
+      "sha256": "06bca50900e125c9f217216c1ff52f313f55a3e52600b85ba700436b524d4fd5",
+      "bytes": 6918
+    },
+    "cover.png": {
+      "sha256": "b055834378e4fba539cee5a7af844ff6dd5700d310d70111571982ce40a275e6",
+      "bytes": 155000
+    },
+    "tip.png": {
+      "sha256": "e9db38e01dd014eb83cdb6b11e65480e08bc96abb62bd75937a5669b19935e37",
+      "bytes": 157242
+    },
+    "breakdown.png": {
+      "sha256": "68aee873180871af957a8020e7ab124b1de808a7ef7b832e199b6fe5a4131629",
+      "bytes": 287016
+    },
+    "multi-post.txt": {
+      "sha256": "b5eab01764a459ddee52a8b5e00dc5082d14983a330f7cdd28aecd7e733bd568",
+      "bytes": 750
+    }
+  },
+  "pick_id": "2026-07-18_New_Zealand_vs_Ireland_dryrun",
+  "created_at": "2026-07-18T07:33:28.004529+00:00"
+}
