@@ -354,6 +354,78 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
         self.assertEqual(pick["other_defensible_candidates"], 1)
 
     @patch("generate_pick.anthropic.Anthropic")
+    def test_priority_sport_preferred_over_higher_bet_type_tier_in_fallback_sport(self, mock_anthropic_cls):
+        """2026-07-18 (Micah): NRL/Rugby/MMA/World Cup are prioritised over
+        fallback sports (MLB etc) even when the fallback candidate is a
+        stronger bet-type tier -- same mechanism/strength as owner-focus
+        fixtures. Both candidates here genuinely cleared the bar; this only
+        tests which one gets featured."""
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [
+                # Investor-tier (short odds, high confidence) but MLB --
+                # a fallback sport -- should NOT win despite the stronger tier.
+                {
+                    "match": "Yankees vs Red Sox",
+                    "sport": "baseball_mlb",
+                    "market_type": "h2h",
+                    "selection": "Yankees",
+                    "line": None,
+                    "market": "Head to Head",
+                    "our_probability": 65,
+                    "evidence_sufficient": True,
+                    "confidence": "HIGH",
+                    "uncertainty_flags": [],
+                    "reasoning": "Yankees are the clearly stronger side at home.",
+                },
+                # Gambler-tier (long odds) but NRL -- a priority sport --
+                # SHOULD win despite the weaker tier.
+                {
+                    "match": "Warriors vs Broncos",
+                    "sport": "rugbyleague_nrl",
+                    "market_type": "h2h",
+                    "selection": "Broncos",
+                    "line": None,
+                    "market": "Head to Head",
+                    "our_probability": 40,
+                    "evidence_sufficient": True,
+                    "confidence": "MODERATE",
+                    "uncertainty_flags": [],
+                    "reasoning": "Broncos at a big price have a live path to the upset.",
+                },
+            ],
+        })
+        matches = [
+            {
+                "sport": "baseball_mlb", "match": "Yankees vs Red Sox",
+                "home_team": "Yankees", "away_team": "Red Sox",
+                "kickoff": "2026-07-19T00:00:00Z",
+                "odds": {"home": 1.55, "away": 2.50, "draw": None},
+                "implied_probs": {"home": 0.617, "away": 0.383, "draw": 0},
+                "big_game": False,
+            },
+            {
+                "sport": "rugbyleague_nrl", "match": "Warriors vs Broncos",
+                "home_team": "Warriors", "away_team": "Broncos",
+                "kickoff": "2026-07-19T08:00:00Z",
+                "odds": {"home": 1.50, "away": 3.20, "draw": None},
+                "implied_probs": {"home": 0.68, "away": 0.32, "draw": 0},
+                "big_game": False,
+            },
+        ]
+        match_news = {
+            "Yankees vs Red Sox": {"text": "- form", "accepted_count": 2, "warnings": [], "confidence_ceiling": "HIGH"},
+            "Warriors vs Broncos": {"text": "- form", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"},
+        }
+        pick = generate_pick.generate_pick_for_matches(matches, match_news)
+        self.assertTrue(pick["has_pick"])
+        self.assertEqual(pick["match"], "Warriors vs Broncos")
+        self.assertEqual(pick["sport"], "rugbyleague_nrl")
+        # The MLB candidate genuinely existed too -- tracked, not discarded.
+        self.assertEqual(pick["other_defensible_candidates"], 1)
+
+    @patch("generate_pick.anthropic.Anthropic")
     def test_gambler_only_day_is_not_upgraded_to_investor(self, mock_anthropic_cls):
         # Only a Gambler-grade candidate exists today -- must be featured
         # as-is, never manufactured into a fake Investor pick.

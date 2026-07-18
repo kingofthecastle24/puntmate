@@ -463,16 +463,37 @@ def _classify_candidate(raw, matches, match_news, warnings):
     }
 
 
+# 2026-07-18 (Micah): cater to a NZ/Australian audience -- prioritise
+# whatever generates the most buzz there day to day: the FIFA World Cup,
+# NRL, both rugby codes (Super Rugby + Test matches), and MMA/UFC -- ahead
+# of everything else. "Dive into other sports" (MLB, AFL, cricket, boxing,
+# etc.) only when nothing genuine clears the bar in these first -- MLB
+# etc. are acceptable fallback content, not excluded, just not the first
+# port of call. Same mechanism as owner-focus fixtures: this is a
+# PREFERENCE among candidates that already independently cleared the
+# classifier's bar on their own merits -- it can never promote a NO_BET
+# candidate or invent a priority-sport pick that isn't genuinely there. On
+# a day with only a defensible MLB candidate and nothing in the priority
+# sports, the MLB pick still runs -- "then dive into other sports" means
+# exactly that, not "never".
+PRIORITY_SPORTS = {
+    "soccer_fifa_world_cup", "rugbyleague_nrl", "rugbyunion_super_rugby",
+    "rugbyunion_international", "mma_mixed_martial_arts",
+}
+
+
 def _select_featured(classified, focus_keywords=None):
     """Phase 2: among candidates that actually cleared the classifier's bar
-    (risk != NO_BET), pick the one to feature this run. Owner-focus fixtures
-    (config/focus_matches.txt) win first, then INVESTOR_BET > PUNTER_BET >
-    GAMBLER_BET, then STANDARD_PICK over RISKY_PICK, then higher edge. This
-    never reclassifies or upgrades a candidate; it only orders candidates
-    that already independently earned their tier — focus can promote a
-    genuine Gambler-tier candidate over a non-focus Investor one (that's the
-    owner's editorial call), but it can never conjure a candidate that
-    didn't clear the bar."""
+    (risk != NO_BET), pick the one to feature this run. Ordering, strongest
+    signal first: (1) owner-focus fixtures (config/focus_matches.txt), (2)
+    priority sports NZ punters actually bet on (NRL/Rugby/MMA — see
+    PRIORITY_SPORTS), (3) INVESTOR_BET > PUNTER_BET > GAMBLER_BET, (4)
+    STANDARD_PICK over RISKY_PICK, (5) higher edge. This never reclassifies
+    or upgrades a candidate; it only orders candidates that already
+    independently earned their tier — focus or priority-sport can promote a
+    genuine Gambler-tier candidate over a non-focus/non-priority Investor
+    one (that's the owner's editorial call), but neither can ever conjure a
+    candidate that didn't clear the bar."""
     eligible = [c for c in classified if c["verdict"].risk != RISK_NO_BET]
     if not eligible:
         return None
@@ -480,6 +501,7 @@ def _select_featured(classified, focus_keywords=None):
     eligible.sort(
         key=lambda c: (
             0 if _is_focus_match(c["match_meta"].get("match", ""), focus_keywords) else 1,
+            0 if c["match_meta"].get("sport") in PRIORITY_SPORTS else 1,
             BET_TYPE_PRIORITY.get(c["verdict"].bet_type, 99),
             RISK_PRIORITY.get(c["verdict"].risk, 99),
             -c["evidence"].edge_pct,

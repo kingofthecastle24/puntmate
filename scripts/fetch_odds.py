@@ -29,25 +29,35 @@ BASE_URL = "https://api.the-odds-api.com/v4"
 # and return empty — that's fine. Note: The Odds API is the data source here;
 # it can't literally read tab.co.nz/betcha.co.nz, but its AU-region
 # bookmakers carry effectively the same fixture set NZ TAB prices up.
+# 2026-07-18 (Micah): cater to a NZ/Australian audience — prioritise
+# whatever generates the most buzz there: the FIFA World Cup, NRL, both
+# rugby codes (Super Rugby + Test matches), and MMA/UFC, listed first here
+# and given the same priority in generate_pick.py's featured-pick
+# selection (see PRIORITY_SPORTS there — must match this list's priority
+# sports, see the sync test in tests/test_fetch_odds_markets.py).
+# Everything below is genuine fallback coverage ("dive into other sports"
+# when nothing clears the bar in these first) — MLB etc. are acceptable
+# content, just not first port of call.
+PRIORITY_SPORTS = {
+    "soccer_fifa_world_cup", "rugbyleague_nrl", "rugbyunion_super_rugby",
+    "rugbyunion_international", "mma_mixed_martial_arts",
+}
 SPORTS = [
-    "soccer_fifa_world_cup",            # FIFA World Cup 2026 (live now)
-    "rugbyleague_nrl",                  # NRL — core NZ audience
-    "rugbyunion_super_rugby",           # Super Rugby Pacific
-    "mma_mixed_martial_arts",           # UFC/MMA
+    "soccer_fifa_world_cup",            # FIFA World Cup 2026 — priority
+    "rugbyleague_nrl",                  # NRL — priority
+    "rugbyunion_super_rugby",           # Super Rugby Pacific — priority
+    "rugbyunion_international",         # Test rugby (All Blacks etc) — priority
+    "mma_mixed_martial_arts",           # UFC/MMA — priority
+    # Everything below is fallback coverage, not priority.
+    "aussierules_afl",                  # AFL — big TAB NZ market
     "tennis_atp_wimbledon",             # Wimbledon ATP (July)
     "tennis_wta_wimbledon",             # Wimbledon WTA (July)
-    "aussierules_afl",                  # AFL — big TAB NZ market
     "baseball_mlb",                     # MLB — daily fixtures, fills quiet days
     "basketball_nba",                   # NBA (off-season now, active Oct-Jun)
     "soccer_epl",                       # Premier League (from Aug)
     "cricket_international_t20",        # International T20s
     "boxing_boxing",                    # Boxing cards
-    # July test-window internationals (All Blacks etc). If The Odds API
-    # doesn't recognise a key it 4xxs for that sport only — the per-sport
-    # try/except logs it and the run continues, so an invalid key is
-    # harmless. Check the run log's per-sport lines to confirm coverage.
-    "rugbyunion_international",
-    "icehockey_nhl",                    # NHL — off-season in July (Oct-Jun), added 2026-07-18
+    "icehockey_nhl",                    # NHL — off-season in July (Oct-Jun)
     # for parity with TAB's "US Basketball, NHL and MLB" multi promo category;
     # harmless empty result until the season's back.
 ]
@@ -182,7 +192,17 @@ def fetch_upcoming_odds():
         except Exception as e:
             print(f"[{sport}] Error: {e}")
 
-    all_matches.sort(key=lambda m: m['kickoff'])
+    # 2026-07-18 (Micah): sort priority-sports-first (World Cup/NRL/Rugby/
+    # MMA), kickoff time as the tie-break within each group. Previously this
+    # sorted by kickoff time ALONE, which silently undid the whole point of
+    # SPORTS being priority-ordered above -- on a busy day, a same-day MLB
+    # game kicking off slightly earlier than a later NRL game would bump the
+    # NRL game out of the prompt cap (generate_pick.MAX_MATCHES_IN_PROMPT)
+    # and the NO_BET watchlist's top-5 (main.py), even though NRL should
+    # never lose that spot to MLB. Within a priority tier, still earliest
+    # kickoff first -- this only reorders ACROSS priority vs fallback, not
+    # within either group.
+    all_matches.sort(key=lambda m: (0 if m['sport'] in PRIORITY_SPORTS else 1, m['kickoff']))
     print(f"\nTotal: {len(all_matches)} matches available for today")
     return all_matches
 

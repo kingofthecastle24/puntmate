@@ -1,4 +1,5 @@
 import os, sys, unittest
+from unittest.mock import patch, MagicMock
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from fetch_odds import extract_spread_odds, extract_totals_odds, calc_two_way_implied_probs
@@ -110,3 +111,67 @@ class SportLabelSyncTests(unittest.TestCase):
             self.assertIn(sport, generate_pick.SPORT_LABELS,
                           f"{sport} is fetched but has no generate_pick.SPORT_LABELS entry "
                           f"— a real pick on this sport would show the raw API key in public copy")
+
+    def test_priority_sports_match_between_fetch_odds_and_generate_pick(self):
+        """fetch_odds.py and generate_pick.py each keep their own
+        PRIORITY_SPORTS set (one drives fetch ordering + the final sort,
+        the other drives featured-pick selection) -- they must name exactly
+        the same sports or the two stages of "prioritise NRL/Rugby/MMA/
+        World Cup" would silently disagree with each other."""
+        import fetch_odds
+        import generate_pick
+        self.assertEqual(fetch_odds.PRIORITY_SPORTS, generate_pick.PRIORITY_SPORTS)
+
+
+class PrioritySportOrderingTests(unittest.TestCase):
+    """2026-07-18 (Micah): cater to a NZ/Australian audience -- prioritise
+    the FIFA World Cup, NRL, both rugby codes, and MMA over everything
+    else. fetch_upcoming_odds() previously sorted the final list by
+    kickoff time ALONE, which silently undid SPORTS being priority-ordered:
+    a same-day fallback-sport match (e.g. MLB) kicking off earlier than a
+    priority-sport match (e.g. NRL) would bump the NRL match out of
+    generate_pick.MAX_MATCHES_IN_PROMPT and main.py's NO_BET watchlist
+    top-5, even though NRL should never lose that spot to MLB."""
+
+    def _mock_match(self, home, away, kickoff, sport_price=1.80):
+        return [{
+            "commence_time": kickoff,
+            "home_team": home,
+            "away_team": away,
+            "bookmakers": [{"markets": [{"key": "h2h", "outcomes": [
+                {"name": home, "price": sport_price},
+                {"name": away, "price": 2.10},
+            ]}]}],
+        }]
+
+    def test_priority_sport_sorted_ahead_of_earlier_fallback_sport_match(self):
+        import fetch_odds
+        from datetime import datetime, timezone, timedelta
+
+        now = datetime.now(timezone.utc)
+        earlier = (now + timedelta(hours=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        later = (now + timedelta(hours=10)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        def fake_get(url, params=None, timeout=None):
+            resp = MagicMock()
+            resp.status_code = 200
+            resp.headers = {}
+            if "baseball_mlb" in url:
+                resp.json.return_value = self._mock_match("Yankees", "Red Sox", earlier)
+            elif "rugbyleague_nrl" in url:
+                resp.json.return_value = self._mock_match("Warriors", "Storm", later)
+            else:
+                resp.json.return_value = []
+            resp.raise_for_status = lambda: None
+            return resp
+
+        with patch.object(fetch_odds.requests, "get", side_effect=fake_get):
+            matches = fetch_odds.fetch_upcoming_odds()
+
+        sports_in_order = [m["sport"] for m in matches]
+        # NRL match kicks off LATER than the MLB match but must still sort first.
+        self.assertLess(sports_in_order.index("rugbyleague_nrl"), sports_in_order.index("baseball_mlb"))
+
+
+if __name__ == "__main__":
+    unittest.main()
