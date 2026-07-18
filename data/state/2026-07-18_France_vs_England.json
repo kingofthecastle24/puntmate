@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-18_France_vs_England",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-18T10:50:08.800002+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-07-18T10:51:10.866802+00:00",
+      "note": "approval confirmed, entering publish"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-07-18T10:51:10.867070+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-07-18T10:51:48.792678+00:00",
+      "note": "{\"telegram\": true, \"telegram_multi\": true, \"instagram_feed\": true, \"instagram_story\": true, \"facebook\": \"via_linked_instagram\"}"
     }
   ]
 }

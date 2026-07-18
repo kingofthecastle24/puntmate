@@ -1,0 +1,165 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 130,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784371873,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgmpbWqDpciqp0HAfvcYiHBkDvX_oAAKJDGsb_KDgRtjBvn6EJqrKAQADAgADcwADPQQ",
+            "file_unique_id": "AQADiQxrG_yg4EZ4",
+            "file_size": 859,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgmpbWqDpciqp0HAfvcYiHBkDvX_oAAKJDGsb_KDgRtjBvn6EJqrKAQADAgADbQADPQQ",
+            "file_unique_id": "AQADiQxrG_yg4EZy",
+            "file_size": 7855,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgmpbWqDpciqp0HAfvcYiHBkDvX_oAAKJDGsb_KDgRtjBvn6EJqrKAQADAgADeAADPQQ",
+            "file_unique_id": "AQADiQxrG_yg4EZ9",
+            "file_size": 34123,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgmpbWqDpciqp0HAfvcYiHBkDvX_oAAKJDGsb_KDgRtjBvn6EJqrKAQADAgADeQADPQQ",
+            "file_unique_id": "AQADiQxrG_yg4EZ-",
+            "file_size": 62838,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADgmpbWqDpciqp0HAfvcYiHBkDvX_oAAKJDGsb_KDgRtjBvn6EJqrKAQADAgADdwADPQQ",
+            "file_unique_id": "AQADiQxrG_yg4EZ8",
+            "file_size": 63116,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 FIFA World Cup 2026\n\n\ud83c\udfdf France vs England\n\nPICK: UNDER 3.5\nODDS: 1.70 (Total)\nBET TYPE: PUNTER\n\nThis is a third-place playoff \u2014 teams are emotionally drained, motivations are mixed, and sides in these situations often play conservatively. Getting four or\u2026 Worth knowing: third-place playoffs can occasionally produce high-scoring open games; both teams have attacking quality that can click on the day.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 36,
+            "type": "bold"
+          },
+          {
+            "offset": 60,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 76,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 95,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 113,
+            "length": 306,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "telegram_multi": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 131,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784371873,
+        "text": "\ud83c\udfb0 PUNTMATE NZ \u2014 THE MULTI\n\nRare one: today produced three selections that each stand on their own. Rolled together as a multi they pay big \u2014 but every leg has to land, so treat this strictly as a Gambler-tier swing, not the day's real pick (that's the post above).\n\nLeg 1: France vs England \u2014 UNDER 3.5 @ 1.70 (Total)\nLeg 2: Levi Rodrigues vs Felipe Franco \u2014 LEVI RODRIGUES @ 1.71 (Head to Head)\nLeg 3: Rafa\u0142 Haratyk vs Bartosz Le\u015bko \u2014 RAFA\u0141 HARATYK @ 1.62 (Head to Head)\nLeg 4: Laura Grzyb vs Rayla Nascimento \u2014 LAURA GRZYB @ 1.40 (Head to Head)\n\nCombined: 6.59\nBET TYPE: GAMBLER\n\nOne leg fails, the lot fails. Small stakes territory.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 26,
+            "type": "bold"
+          },
+          {
+            "offset": 28,
+            "length": 237,
+            "type": "italic"
+          },
+          {
+            "offset": 267,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 319,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 397,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 473,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 549,
+            "length": 14,
+            "type": "bold"
+          },
+          {
+            "offset": 564,
+            "length": 17,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18108854327076914"
+  },
+  "facebook": {
+    "status": "via_linked_instagram",
+    "note": "Facebook: expected via linked Instagram account (direct Page posting is disabled \u2014 publish_actions permission is deprecated)."
+  }
+}
