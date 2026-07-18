@@ -12,13 +12,27 @@ job summary + preview.html + uploaded artifact are an equally complete
 review surface (per spec: "Gmail preview failure must not allow blind
 approval unless Dispatch/GitHub has an equally complete visual preview" —
 that's exactly what the job summary table + preview.html give Micah).
+
+Incident note (run #51, 2026-07-18): a same-day re-run selected the same
+fixture an earlier run that day had already carried to a live pick_id
+(same date + same slugified match = same pick_id, since live pick_ids have
+no per-run suffix). transition(pick_id, GENERATED) is only valid when a
+pick_id has NO existing state, so this raised workflow_state.
+InvalidTransitionError, uncaught, and crashed the whole generate job with
+exit code 1 — which then cascaded into the publish job failing too (it
+tried to download a review artifact that was never produced). The primary
+fix is upstream in main.py (never select an already-actioned fixture again
+today), but every transition() call here is now also wrapped so a
+collision degrades to a loud warning + graceful no-op instead of an
+uncaught crash, in case the upstream guard is ever bypassed (force_test_pick,
+a future manual dispatch race, etc).
 """
 import json
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from workflow_state import transition, GENERATED, PREVIEW_READY, AWAITING_APPROVAL
+from workflow_state import transition, InvalidTransitionError, GENERATED, PREVIEW_READY, AWAITING_APPROVAL
 import email_service
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -32,6 +46,20 @@ def approval_url():
     return f"{server}/{repo}/actions/runs/{run_id}" if repo and run_id else ""
 
 
+def _safe_transition(pick_id, new_state, note=None):
+    """transition() but a collision (pick_id already actioned earlier today)
+    degrades to a warning instead of an uncaught crash. Returns True if the
+    transition succeeded, False if it was skipped due to a collision."""
+    try:
+        transition(REPO_ROOT, pick_id, new_state, note=note)
+        return True
+    except InvalidTransitionError as e:
+        print(f"::warning::Skipping duplicate pipeline state for {pick_id}: {e}. "
+              f"This fixture already has a state recorded today — not re-entering "
+              f"the approval gate or resending a preview for it.")
+        return False
+
+
 def main():
     pick_id = os.environ.get("PICK_ID", "").strip()
     if not pick_id:
@@ -43,25 +71,31 @@ def main():
     with open(meta_path) as f:
         metadata = json.load(f)
 
-    transition(REPO_ROOT, pick_id, GENERATED, note="review package built")
+    if not _safe_transition(pick_id, GENERATED, note="review package built"):
+        return
 
     if not metadata.get("has_pick"):
         if metadata.get("has_watchlist"):
             # Phase 4: a No-Bet day WITH a watchlist post goes through the
             # same gate as a real pick (human approval, or the auto-publish
             # trial when enabled) — it's still a public post.
-            transition(REPO_ROOT, pick_id, PREVIEW_READY, note="no_bet + watchlist post frozen")
-            transition(REPO_ROOT, pick_id, AWAITING_APPROVAL, note="watchlist post entering approval gate")
+            if not _safe_transition(pick_id, PREVIEW_READY, note="no_bet + watchlist post frozen"):
+                return
+            if not _safe_transition(pick_id, AWAITING_APPROVAL, note="watchlist post entering approval gate"):
+                return
             email_service.send_no_bet_email(metadata)
             print(f"NO_BET + watchlist — post frozen and awaiting gate for {pick_id}.")
         else:
-            transition(REPO_ROOT, pick_id, PREVIEW_READY, note="no_bet")
+            if not _safe_transition(pick_id, PREVIEW_READY, note="no_bet"):
+                return
             email_service.send_no_bet_email(metadata)
             print(f"NO_BET — notice sent, no approval gate entered for {pick_id}.")
         return
 
-    transition(REPO_ROOT, pick_id, PREVIEW_READY, note="review package frozen")
-    transition(REPO_ROOT, pick_id, AWAITING_APPROVAL, note="entering GitHub environment approval gate")
+    if not _safe_transition(pick_id, PREVIEW_READY, note="review package frozen"):
+        return
+    if not _safe_transition(pick_id, AWAITING_APPROVAL, note="entering GitHub environment approval gate"):
+        return
 
     with open(os.path.join(review_dir, "telegram-post.txt")) as f:
         telegram_text = f.read()

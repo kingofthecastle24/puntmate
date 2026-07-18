@@ -61,6 +61,43 @@ def render_card(pick):
         return {"ok": True, "files": {"carousel": paths}, "warnings": ["used legacy Pillow fallback"]}
 
 
+def _already_actioned_today(match_name, run_date):
+    """Guards against the run #51 crash (2026-07-18): a same-day re-run
+    (manual or scheduled) can independently select the SAME fixture a
+    previous run already turned into a live pick_id today. pick_id is
+    date+slugified-match only for live (non-dry-run) picks, so the second
+    run computes an identical pick_id to one that's already GENERATED (or
+    further along: AWAITING_APPROVAL/APPROVED/PUBLISHED/REJECTED/etc).
+    send_preview.py's very first call is
+    workflow_state.transition(pick_id, GENERATED, ...), and GENERATED is
+    only a valid target when the pick_id has NO existing state yet — so
+    transitioning an already-actioned pick_id back to GENERATED always
+    raises InvalidTransitionError, uncaught, crashing the generate job
+    with exit code 1 (exactly what happened on run #51: run #50 published
+    a live pick for a fixture 12 minutes earlier in the same odds window,
+    and the following scheduled run picked the same fixture again).
+
+    This existed for dry-run-vs-live collisions already (see
+    build_review_package.py's "_dryrun" suffix, commit 7dcfbc7) but never
+    for live-vs-live collisions within the same calendar day — this closes
+    that gap at the source, before a pick_id is ever computed, instead of
+    letting a downstream script crash on it.
+
+    Returns the existing state dict if this match already has ANY state
+    recorded for today's date, else None.
+    """
+    try:
+        from render_brand_templates import slugify
+        from workflow_state import load_state
+    except Exception as e:
+        # Never let a defensive check itself crash the pipeline.
+        print(f"  ::warning:: dedupe check failed to import ({e}) — proceeding without it.")
+        return None
+
+    live_pick_id = f"{run_date}_{slugify(match_name)}"
+    return load_state(REPO_ROOT, live_pick_id)
+
+
 def run():
     from fetch_odds import fetch_upcoming_odds
     from fetch_news import fetch_news
@@ -94,8 +131,27 @@ def run():
     print(f"\n[3/3] Selecting one official pick...")
     pick = generate_pick_for_matches(matches, match_news)
 
+    run_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
+    if pick.get("has_pick"):
+        existing_state = _already_actioned_today(pick["match"], run_date)
+        if existing_state is not None:
+            print(f"  ::warning:: {pick['match']} already has a pipeline state today "
+                  f"(state={existing_state.get('state')}) — a fixture can only produce "
+                  f"one live pick_id per calendar day. Converting this run to NO_BET "
+                  f"instead of re-entering the gate or crashing on a duplicate.")
+            pick = {
+                "has_pick": False,
+                "reasoning": (
+                    f"{pick['match']} already went through today's pipeline earlier "
+                    f"(state: {existing_state.get('state')}) — skipping to avoid a "
+                    f"duplicate post or a workflow-state collision."
+                ),
+                "research_warnings": pick.get("research_warnings", []),
+            }
+
     run_data = {
-        "run_date": datetime.now(timezone.utc).strftime('%Y-%m-%d'),
+        "run_date": run_date,
         "run_ts": datetime.now(timezone.utc).isoformat(),
         "pick": pick,
     }
