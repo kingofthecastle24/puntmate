@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_dryrun",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-18T10:00:27.673038+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-18T10:00:27.673274+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-18T10:00:27.674033+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

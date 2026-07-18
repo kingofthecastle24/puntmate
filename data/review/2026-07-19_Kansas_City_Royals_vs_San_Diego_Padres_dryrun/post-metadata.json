@@ -1,0 +1,54 @@
+{
+  "has_pick": true,
+  "pick_id": "2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_dryrun",
+  "run_id": "sunday-multi-test",
+  "generated_at": "2026-07-18T09:59:17.100451+00:00",
+  "post_date": "2026-07-19",
+  "match": "Kansas City Royals vs San Diego Padres",
+  "sport": "baseball_mlb",
+  "sport_label": "MLB",
+  "market": "Head to Head",
+  "selection": "SAN DIEGO PADRES",
+  "odds": "1.84",
+  "bet_type": "PUNTER_BET",
+  "bet_type_label": "BET TYPE: PUNTER",
+  "bet_type_reason": "Solid touch here. Not a lock, but the value's real and the form backs it up. Padres are a .500 team; Royals are well under .400 this season -- that's a real, meaningful gap the market isn't fully pricing given how tight the moneyline is.",
+  "classification": "RISKY_PICK",
+  "risk": "RISKY_PICK",
+  "confidence": "LOW",
+  "confidence_label": "LOW",
+  "final_explanation": "Padres are a .500 team; Royals are well under .400 this season -- that's a real, meaningful gap the market isn't fully pricing given how tight the moneyline is. Worth knowing: Market's only pricing about a 4-point gap despite a much bigger season-long form gap.",
+  "public_caution": "Keep this one light \u2014 the value's there but so is the uncertainty.",
+  "research_warnings": [
+    "research fetch unreachable from this test environment for Gold Coast Titans vs Manly Sea Eagles",
+    "research fetch unreachable from this test environment for Dolphins vs North Queensland Cowboys",
+    "research fetch unreachable from this test environment for Chicago Cubs vs Minnesota Twins",
+    "research fetch unreachable from this test environment for Houston Astros vs Baltimore Orioles",
+    "research fetch unreachable from this test environment for Milwaukee Brewers vs Miami Marlins",
+    "research fetch unreachable from this test environment for Cleveland Guardians vs Pittsburgh Pirates",
+    "research fetch unreachable from this test environment for Kansas City Royals vs San Diego Padres",
+    "classifier [Dolphins vs North Queensland Cowboys / h2h]: insufficient evidence to support any selection",
+    "classifier [Chicago Cubs vs Minnesota Twins / h2h]: insufficient evidence to support any selection",
+    "classifier [Houston Astros vs Baltimore Orioles / h2h]: insufficient evidence to support any selection",
+    "classifier [Cleveland Guardians vs Pittsburgh Pirates / h2h]: insufficient evidence to support any selection"
+  ],
+  "theme": "night",
+  "carousel_paths": [
+    "data/review/2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_dryrun/cover.png",
+    "data/review/2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_dryrun/tip.png",
+    "data/review/2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_dryrun/breakdown.png"
+  ],
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_night_3_breakdown.png"
+  ],
+  "story_path": null,
+  "story_url": null,
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "facebook"
+  ],
+  "workflow_state": "GENERATED"
+}

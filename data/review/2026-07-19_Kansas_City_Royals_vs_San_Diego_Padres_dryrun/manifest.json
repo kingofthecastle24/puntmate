@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "2c9ede6d6b830199717c7dc2166a48fad251c47092c6fce2ffbf0cc8ef7623b7",
+      "bytes": 574
+    },
+    "instagram-caption.txt": {
+      "sha256": "c5b13134767fbcfd23ebab082d8a9385c0a46f7beaf35a6b37605452aea993b6",
+      "bytes": 479
+    },
+    "post-metadata.json": {
+      "sha256": "70581b45d62e32404f962e95c12f867de2f879551d132e9ba3550a3853eac6a7",
+      "bytes": 3354
+    },
+    "preview.html": {
+      "sha256": "c06c11a50baa9a14e5e69a536b603737a9938cb8ad38751b83e773cd83e6279e",
+      "bytes": 7443
+    },
+    "cover.png": {
+      "sha256": "c1d6fba39acc6e5dc0c82156915decd2387d5ca5f42d8241df6255df6ea6d94e",
+      "bytes": 146915
+    },
+    "tip.png": {
+      "sha256": "c0f868a1a79d9a1ae451325c3f7321ed127ba1314422c349751c133c1322d57f",
+      "bytes": 158420
+    },
+    "breakdown.png": {
+      "sha256": "dab1b1cf1215a865ddad97d9f1b876678bc969d4e365ca5c22edc384f04643cc",
+      "bytes": 280468
+    },
+    "multi-post.txt": {
+      "sha256": "cb17170d23fe79e7c60101805f326af32fc5e43fd96cc18c0b16b03301352a80",
+      "bytes": 768
+    }
+  },
+  "pick_id": "2026-07-19_Kansas_City_Royals_vs_San_Diego_Padres_dryrun",
+  "created_at": "2026-07-18T09:59:17.101228+00:00"
+}
