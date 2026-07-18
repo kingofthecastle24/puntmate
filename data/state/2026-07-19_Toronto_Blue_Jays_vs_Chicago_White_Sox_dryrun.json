@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-19_Toronto_Blue_Jays_vs_Chicago_White_Sox_dryrun",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-18T10:11:12.078131+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-18T10:11:12.078417+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-18T10:11:12.078722+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "827f26da59842ea23c22a5568279ef95c1f81d19b2e7c48a81f9bef22e1ef3c0",
+      "bytes": 473
+    },
+    "instagram-caption.txt": {
+      "sha256": "d1a7fce34c3ac1c561893319fef5cdcbf660c3d3c8e5c589841ca2ba3791c0ed",
+      "bytes": 479
+    },
+    "post-metadata.json": {
+      "sha256": "1c74df4442d1818efa92399a98981d3ee9f0bef0ceb6045fd9bb316816c24be8",
+      "bytes": 3425
+    },
+    "preview.html": {
+      "sha256": "3a9fd79f8e179b21c8620cf5e1e88df726fe3965eb2aa6d9a0c4565f90177429",
+      "bytes": 7550
+    },
+    "cover.png": {
+      "sha256": "c1d6fba39acc6e5dc0c82156915decd2387d5ca5f42d8241df6255df6ea6d94e",
+      "bytes": 146915
+    },
+    "tip.png": {
+      "sha256": "3f4fd6f5b8cba371ba3391332e0e0f0fee8a9216fe8930e4cf1e992aa341afd4",
+      "bytes": 154502
+    },
+    "breakdown.png": {
+      "sha256": "8d0debe893b37130e38645e42cd7e69a45ae73342ba11acfb5f69435b7d398b2",
+      "bytes": 238071
+    },
+    "multi-post.txt": {
+      "sha256": "f1ac30f9aa9bc6911c8dee83a2ac8c0abf9049a2b0a2a34b34c7103a173eaf16",
+      "bytes": 857
+    }
+  },
+  "pick_id": "2026-07-19_Toronto_Blue_Jays_vs_Chicago_White_Sox_dryrun",
+  "created_at": "2026-07-18T10:11:06.036724+00:00"
+}
