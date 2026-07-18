@@ -377,6 +377,11 @@ def main():
             f.write(multi_text)
         manifest_files.append("multi-post.txt")
         metadata["has_multi"] = True
+        if pick.get("multi_promo_hint"):
+            # Internal-only reference for Micah/the Gmail preview -- e.g.
+            # "all 4 legs are MLB, TAB's US-sports 4+ leg promo may apply,
+            # check current T&Cs". Never written into multi-post.txt itself.
+            metadata["multi_promo_hint"] = pick["multi_promo_hint"]
     manifest = build_manifest(review_dir, manifest_files, extra={
         "pick_id": pick_id,
         "created_at": datetime.now(timezone.utc).isoformat(),

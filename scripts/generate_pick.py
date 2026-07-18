@@ -68,7 +68,46 @@ SPORT_LABELS = {
     "soccer_epl": "Premier League",
     "cricket_international_t20": "T20 Cricket",
     "boxing_boxing": "Boxing",
+    "icehockey_nhl": "NHL",
 }
+
+# TAB NZ runs rotating "multi insurance" promos grouped by sport category —
+# e.g. "4+ Leg Multi on any AFL, Rugby Union, or Rugby League game: 1 leg
+# fails, get up to $50 back" or "...on Men & Women Professional US
+# Basketball, NHL and MLB". These rotate and the exact leg-count/refund
+# amount changes, so this is NOT used to pick selections or change what
+# clears the classifier's bar — it ONLY flags, informationally, whether the
+# multi as genuinely constructed happens to sit entirely within one such
+# category at 4+ legs, so Micah can check the live TAB/Betcha T&Cs and
+# decide whether to mention it. Never forces a leg count or swaps a
+# genuinely-clearing leg for a same-category one just to chase a promo.
+TAB_MULTI_PROMO_CATEGORIES = {
+    "rugby_codes": {"rugbyleague_nrl", "rugbyunion_super_rugby", "rugbyunion_international", "aussierules_afl"},
+    "us_team_sports": {"baseball_mlb", "basketball_nba", "icehockey_nhl"},
+    "football": {"soccer_fifa_world_cup", "soccer_epl"},
+    "mma": {"mma_mixed_martial_arts"},
+}
+TAB_MULTI_PROMO_MIN_LEGS = 4  # the AFL/Rugby, US-sports and Football promos are all "4+ legs" as of 2026-07-18
+
+
+def _tab_multi_promo_hint_from_sports(sport_keys):
+    """Returns a short, internal-only string describing which TAB
+    multi-insurance promo category this multi sits entirely within (if any,
+    and if it meets that category's leg-count floor), else None. See the
+    module comment on TAB_MULTI_PROMO_CATEGORIES above — this never
+    influences which legs get selected."""
+    if len(sport_keys) < TAB_MULTI_PROMO_MIN_LEGS:
+        return None
+    unique_sports = set(sport_keys)
+    for category, sports_in_category in TAB_MULTI_PROMO_CATEGORIES.items():
+        if unique_sports <= sports_in_category:
+            return (
+                f"All {len(sport_keys)} legs fall within TAB's '{category.replace('_', ' ')}' "
+                f"multi-insurance category (4+ legs, e.g. bonus cash back if one leg fails) — "
+                f"check the current live T&Cs/refund amount on tab.co.nz before mentioning this "
+                f"publicly, these rotate."
+            )
+    return None
 
 CONFIDENCE_RANK = {"LOW": 0, "MODERATE": 1, "HIGH": 2}
 
@@ -615,6 +654,7 @@ def generate_pick_for_matches(matches, match_news):
     # is still impossible: every leg here already independently cleared
     # pick_classifier's bar on its own merits, same as the featured single.
     multi_legs = []
+    multi_leg_sports = []
     seen_matches = set()
     for c in sorted(
         (c for c in classified if c["verdict"].risk != RISK_NO_BET),
@@ -635,8 +675,12 @@ def generate_pick_for_matches(matches, match_news):
             "market": c["raw"].get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[c["market_type"]],
             "odds": f"{float(c['odds_val']):.2f}",
         })
+        multi_leg_sports.append(c["match_meta"]["sport"])
     if len(multi_legs) < 3:
         multi_legs = []  # fewer than 3 genuine legs -> no multi today
+        multi_leg_sports = []
+
+    multi_promo_hint = _tab_multi_promo_hint_from_sports(multi_leg_sports) if multi_legs else None
 
     return {
         "has_pick": True,
@@ -667,4 +711,5 @@ def generate_pick_for_matches(matches, match_news):
         "big_game": match_meta.get("big_game", False),
         "other_defensible_candidates": other_defensible,
         "multi_legs": multi_legs,
+        "multi_promo_hint": multi_promo_hint,  # internal only -- never surfaced in public copy
     }

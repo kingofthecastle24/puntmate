@@ -47,6 +47,9 @@ SPORTS = [
     # try/except logs it and the run continues, so an invalid key is
     # harmless. Check the run log's per-sport lines to confirm coverage.
     "rugbyunion_international",
+    "icehockey_nhl",                    # NHL — off-season in July (Oct-Jun), added 2026-07-18
+    # for parity with TAB's "US Basketball, NHL and MLB" multi promo category;
+    # harmless empty result until the season's back.
 ]
 
 # Human-readable sport labels for cards
@@ -67,6 +70,7 @@ SPORT_LABELS = {
     "cricket_international_t20":  "T20 CRICKET",
     "boxing_boxing":              "BOXING",
     "rugbyunion_international":   "TEST RUGBY",
+    "icehockey_nhl":              "NHL",
 }
 
 # Events that warrant the Matchday Print (cream/red) look instead of Betslip Night

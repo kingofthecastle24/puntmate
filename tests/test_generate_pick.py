@@ -689,6 +689,66 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
             {leg["match"] for leg in pick["multi_legs"]},
             {m["match"] for m in matches},
         )
+        # All 6 legs are rugbyleague_nrl -> should hint at the TAB
+        # AFL/Rugby-codes 4+ leg promo category.
+        self.assertIsNotNone(pick["multi_promo_hint"])
+        self.assertIn("rugby codes", pick["multi_promo_hint"])
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_multi_promo_hint_none_when_legs_are_mixed_sports(self, mock_anthropic_cls):
+        """A 3-leg multi mixing NRL + MLB doesn't sit entirely within any
+        single TAB promo category, so no hint should be attached (never
+        guess/half-match — either it cleanly qualifies or it doesn't)."""
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+
+        matches = [
+            {
+                "sport": "rugbyleague_nrl", "match": "Team1A vs Team1B",
+                "home_team": "Team1A", "away_team": "Team1B",
+                "kickoff": "2026-07-19T06:00:00Z",
+                "odds": {"home": 1.60, "away": 2.30, "draw": None},
+                "implied_probs": {"home": 0.59, "away": 0.41, "draw": 0},
+                "big_game": False,
+            },
+            {
+                "sport": "rugbyleague_nrl", "match": "Team2A vs Team2B",
+                "home_team": "Team2A", "away_team": "Team2B",
+                "kickoff": "2026-07-19T18:00:00Z",
+                "odds": {"home": 1.60, "away": 2.30, "draw": None},
+                "implied_probs": {"home": 0.59, "away": 0.41, "draw": 0},
+                "big_game": False,
+            },
+            {
+                "sport": "baseball_mlb", "match": "Team3A vs Team3B",
+                "home_team": "Team3A", "away_team": "Team3B",
+                "kickoff": "2026-07-19T19:00:00Z",
+                "odds": {"home": 1.60, "away": 2.30, "draw": None},
+                "implied_probs": {"home": 0.59, "away": 0.41, "draw": 0},
+                "big_game": False,
+            },
+            {
+                "sport": "baseball_mlb", "match": "Team4A vs Team4B",
+                "home_team": "Team4A", "away_team": "Team4B",
+                "kickoff": "2026-07-19T20:00:00Z",
+                "odds": {"home": 1.60, "away": 2.30, "draw": None},
+                "implied_probs": {"home": 0.59, "away": 0.41, "draw": 0},
+                "big_game": False,
+            },
+        ]
+        candidates = [{
+            "match": m["match"], "sport": m["sport"], "market_type": "h2h",
+            "selection": m["home_team"], "line": None, "market": "Head to Head",
+            "our_probability": 68, "evidence_sufficient": True, "confidence": "MODERATE",
+            "uncertainty_flags": [], "reasoning": "Genuine, independent edge on its own merits.",
+        } for m in matches]
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+        pick = generate_pick.generate_pick_for_matches(matches, news)
+
+        self.assertEqual(len(pick["multi_legs"]), 4)
+        self.assertIsNone(pick["multi_promo_hint"])
 
 
 if __name__ == "__main__":
