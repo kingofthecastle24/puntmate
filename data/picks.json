@@ -736,8 +736,8 @@
     "market": "Head to Head",
     "odds": 1.2,
     "confidence": "HIGH",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 2.0
   },
   {
     "id": "2026-07-17_baseball_mlb_Seattle_Mariners_PUNTER_BET",
@@ -753,8 +753,8 @@
     "market": "Total",
     "odds": 2.0,
     "confidence": "LOW",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-18_soccer_fifa_world_cup_France_PUNTER_BET",
