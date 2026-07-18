@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "b1b9ed191039c442ecd916444acd06162b68846932dc534bbfaf0aa9bbfa51a2",
+      "bytes": 798
+    },
+    "instagram-caption.txt": {
+      "sha256": "9699594082ed37e5d05a421e3c9ac3f03e9eb6ac17e258ec57c6ff5def710bdf",
+      "bytes": 655
+    },
+    "post-metadata.json": {
+      "sha256": "adcd9ed7cf095416206707b2a9165c9c687b455a57cf9200a3a7d47ea7188f55",
+      "bytes": 28823
+    },
+    "preview.html": {
+      "sha256": "bd2b7c26a4a334513bf2ec4769d11d8ad5da89a6394628b07e1ccd2811577e4d",
+      "bytes": 34655
+    },
+    "cover.png": {
+      "sha256": "9154c24f82d920fe289889084e03ad7e2efd788d34b165912852bc6d82e1f789",
+      "bytes": 79063
+    },
+    "tip.png": {
+      "sha256": "f27398661d3ae3300d5b1a1adcda829255a64415ffc5ded981a2ef0ff113a5de",
+      "bytes": 74391
+    },
+    "breakdown.png": {
+      "sha256": "c5d3ea8da92cb3e33bec419b86cabe1dbd30228e9412ff100b0faf0a47623431",
+      "bytes": 190586
+    },
+    "story.png": {
+      "sha256": "b1b399e4dfd66f7cf32b54cb5ff9a5a81f26b3bd7ce0056162defff96d2c28da",
+      "bytes": 74991
+    }
+  },
+  "pick_id": "2026-07-18_Dolphins_vs_North_Queensland_Cowboys",
+  "created_at": "2026-07-18T22:36:46.346278+00:00"
+}

@@ -772,5 +772,22 @@
     "confidence": "MODERATE",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-18_rugbyleague_nrl_Dolphins_PUNTER_BET",
+    "date": "2026-07-18",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Dolphins vs North Queensland Cowboys",
+    "home_team": "Dolphins",
+    "away_team": "North Queensland Cowboys",
+    "pick": "UNDER 49.5",
+    "market": "Total",
+    "odds": 2.0,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

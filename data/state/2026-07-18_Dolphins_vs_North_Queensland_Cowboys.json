@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-18_Dolphins_vs_North_Queensland_Cowboys",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-18T22:36:46.613112+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-18T22:36:46.613362+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-18T22:36:46.613581+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
