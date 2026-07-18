@@ -1,0 +1,100 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 133,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784414667,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADhWpcActQxmRL2WkAAZKCJi1-te871gACzAxrG7BR4UbXe-ZJ9HIAAd8BAAMCAANzAAM9BA",
+            "file_unique_id": "AQADzAxrG7BR4UZ4",
+            "file_size": 913,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADhWpcActQxmRL2WkAAZKCJi1-te871gACzAxrG7BR4UbXe-ZJ9HIAAd8BAAMCAANtAAM9BA",
+            "file_unique_id": "AQADzAxrG7BR4UZy",
+            "file_size": 9542,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADhWpcActQxmRL2WkAAZKCJi1-te871gACzAxrG7BR4UbXe-ZJ9HIAAd8BAAMCAAN4AAM9BA",
+            "file_unique_id": "AQADzAxrG7BR4UZ9",
+            "file_size": 37410,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADhWpcActQxmRL2WkAAZKCJi1-te871gACzAxrG7BR4UbXe-ZJ9HIAAd8BAAMCAAN3AAM9BA",
+            "file_unique_id": "AQADzAxrG7BR4UZ8",
+            "file_size": 65412,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADhWpcActQxmRL2WkAAZKCJi1-te871gACzAxrG7BR4UbXe-ZJ9HIAAd8BAAMCAAN5AAM9BA",
+            "file_unique_id": "AQADzAxrG7BR4UZ-",
+            "file_size": 68380,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Dolphins vs North Queensland Cowboys\n\nPICK: UNDER 49.5\nODDS: 2.00 (Total)\nBET TYPE: PUNTER\n\n49.5 points is a chunky total and both teams would need to be firing on all cylinders. The Under is priced at 2.00 here which gives you a bit of value if you think this stays tighter. Mid-season NRL games between play-off hopefuls can be cagey, and the market seems to be leaning Over \u2014 which means there might be a touch of value on the other side. Worth knowing: NRL totals can swing wildly depending on handling errors and penalties; 49.5 is a relatively high line \u2014 weather could be a factor.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 63,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 80,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 99,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 117,
+            "length": 496,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18088851107119106"
+  },
+  "facebook": {
+    "status": "via_linked_instagram",
+    "note": "Facebook: expected via linked Instagram account (direct Page posting is disabled \u2014 publish_actions permission is deprecated)."
+  }
+}

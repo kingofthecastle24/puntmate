@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-18_Dolphins_vs_North_Queensland_Cowboys",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-18T22:36:46.613581+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-07-18T22:44:25.736734+00:00",
+      "note": "approval confirmed, entering publish"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-07-18T22:44:25.736921+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-07-18T22:44:59.401331+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": true, \"instagram_story\": true, \"facebook\": \"via_linked_instagram\"}"
     }
   ]
 }
