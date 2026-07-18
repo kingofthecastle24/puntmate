@@ -68,6 +68,23 @@ CONFIDENCE_RANK = {"LOW": 0, "MODERATE": 1, "HIGH": 2}
 # Hard cap on fixtures shown to Claude in one prompt (see generate_pick_for_matches).
 MAX_MATCHES_IN_PROMPT = 25
 
+FOCUS_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "..", "config", "focus_matches.txt")
+
+
+def _load_focus_keywords():
+    """Owner focus list (config/focus_matches.txt) — keywords, one per line,
+    # comments allowed. Missing file = no focus."""
+    try:
+        with open(FOCUS_CONFIG_PATH) as f:
+            return [ln.strip() for ln in f if ln.strip() and not ln.strip().startswith("#")]
+    except OSError:
+        return []
+
+
+def _is_focus_match(match_name, keywords):
+    low = (match_name or "").lower()
+    return any(k.lower() in low for k in keywords)
+
 # Phase 2: featured-pick preference order when multiple genuinely defensible
 # candidates exist on the same day. Lower number = preferred. This is only a
 # tie-break among candidates that ALREADY cleared the classifier's bar on
@@ -400,18 +417,23 @@ def _classify_candidate(raw, matches, match_news, warnings):
     }
 
 
-def _select_featured(classified):
+def _select_featured(classified, focus_keywords=None):
     """Phase 2: among candidates that actually cleared the classifier's bar
-    (risk != NO_BET), pick the one to feature this run — preferring
-    INVESTOR_BET > PUNTER_BET > GAMBLER_BET, then STANDARD_PICK over
-    RISKY_PICK, then higher edge. This never reclassifies or upgrades a
-    candidate; it only orders candidates that already independently earned
-    their tier."""
+    (risk != NO_BET), pick the one to feature this run. Owner-focus fixtures
+    (config/focus_matches.txt) win first, then INVESTOR_BET > PUNTER_BET >
+    GAMBLER_BET, then STANDARD_PICK over RISKY_PICK, then higher edge. This
+    never reclassifies or upgrades a candidate; it only orders candidates
+    that already independently earned their tier — focus can promote a
+    genuine Gambler-tier candidate over a non-focus Investor one (that's the
+    owner's editorial call), but it can never conjure a candidate that
+    didn't clear the bar."""
     eligible = [c for c in classified if c["verdict"].risk != RISK_NO_BET]
     if not eligible:
         return None
+    focus_keywords = focus_keywords or []
     eligible.sort(
         key=lambda c: (
+            0 if _is_focus_match(c["match_meta"].get("match", ""), focus_keywords) else 1,
             BET_TYPE_PRIORITY.get(c["verdict"].bet_type, 99),
             RISK_PRIORITY.get(c["verdict"].risk, 99),
             -c["evidence"].edge_pct,
@@ -447,14 +469,30 @@ def generate_pick_for_matches(matches, match_news):
     # priority order and fetch_upcoming_odds() returns matches in that order,
     # so keeping the first N preserves the intended priority. Without this, a
     # big slate both bloats the prompt and invites a long candidates array.
+    # Owner focus list: focus fixtures are hoisted to the front so the prompt
+    # cap can never drop them, and they're flagged to the model below. Focus
+    # biases ATTENTION and tie-breaks — never verdicts (a focus game with no
+    # genuine edge is still no bet on that game).
+    focus_keywords = _load_focus_keywords()
+    if focus_keywords:
+        matches = sorted(matches, key=lambda m: 0 if _is_focus_match(m.get("match", ""), focus_keywords) else 1)
     if len(matches) > MAX_MATCHES_IN_PROMPT:
         research_warnings.append(
             f"{len(matches)} fixtures available today — only the first {MAX_MATCHES_IN_PROMPT} "
-            f"(by sport priority) were assessed"
+            f"(owner-focus fixtures first, then sport priority) were assessed"
         )
         matches = matches[:MAX_MATCHES_IN_PROMPT]
 
     prompt = _build_prompt(matches, match_news)
+    if focus_keywords:
+        focused = [m["match"] for m in matches if _is_focus_match(m.get("match", ""), focus_keywords)]
+        if focused:
+            prompt += (
+                "\n\nOWNER FOCUS: give particular attention to assessing these fixtures: "
+                + "; ".join(focused)
+                + ". Same evidence standards apply — if there is no genuine edge in a focus "
+                "fixture, say so honestly rather than stretching to produce a candidate for it."
+            )
     message = client.messages.create(
         model="claude-sonnet-4-6",
         # 1500 was enough for the original 1-6 fixture slate but a widened
@@ -516,7 +554,7 @@ def generate_pick_for_matches(matches, match_news):
         if c["verdict"].risk == RISK_NO_BET:
             research_warnings += [f"classifier [{c['match_meta']['match']} / {c['market_type']}]: {r}" for r in c["verdict"].reasons]
 
-    featured = _select_featured(classified)
+    featured = _select_featured(classified, focus_keywords)
 
     if featured is None:
         # Every candidate the model proposed was independently classified as

@@ -1,0 +1,10 @@
+# PuntMate — owner focus list.
+# One keyword per line (case-insensitive, matched against fixture names).
+# Fixtures matching any line get PRIORITY: never dropped by the prompt cap,
+# flagged to the model for extra attention, and win featured-pick ties among
+# candidates that ALREADY cleared the classifier's bar on their own merits.
+# Focus never manufactures a pick — a focus game with no genuine edge is
+# still no bet on that game.
+# Edit this file + commit (or ask Claude to) — next run picks it up.
+All Blacks
+Ireland

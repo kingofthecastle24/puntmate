@@ -42,6 +42,11 @@ SPORTS = [
     "soccer_epl",                       # Premier League (from Aug)
     "cricket_international_t20",        # International T20s
     "boxing_boxing",                    # Boxing cards
+    # July test-window internationals (All Blacks etc). If The Odds API
+    # doesn't recognise a key it 4xxs for that sport only — the per-sport
+    # try/except logs it and the run continues, so an invalid key is
+    # harmless. Check the run log's per-sport lines to confirm coverage.
+    "rugbyunion_international",
 ]
 
 # Human-readable sport labels for cards
@@ -61,6 +66,7 @@ SPORT_LABELS = {
     "soccer_epl":                 "PREMIER LEAGUE",
     "cricket_international_t20":  "T20 CRICKET",
     "boxing_boxing":              "BOXING",
+    "rugbyunion_international":   "TEST RUGBY",
 }
 
 # Events that warrant the Matchday Print (cream/red) look instead of Betslip Night
@@ -86,6 +92,7 @@ EXPANDED_MARKET_SPORTS = {
     "basketball_nba",
     "soccer_epl",
     "cricket_international_t20",
+    "rugbyunion_international",
 }
 
 

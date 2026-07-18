@@ -146,3 +146,49 @@ class Phase6WeeklyRecapTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FocusAndDateTests(unittest.TestCase):
+    """Owner focus list + card date display (2026-07-18 requests)."""
+
+    def test_focus_wins_tiebreak_only_among_qualified(self):
+        import generate_pick as gp
+
+        def cand(match, bet_type, risk, edge):
+            v = type("V", (), {"bet_type": bet_type, "risk": risk})()
+            e = type("E", (), {"edge_pct": edge})()
+            return {"match_meta": {"match": match}, "verdict": v, "evidence": e}
+
+        investor = cand("France vs Spain", "INVESTOR_BET", "STANDARD_PICK", 8.0)
+        focus_gambler = cand("All Blacks vs Ireland", "GAMBLER_BET", "RISKY_PICK", 6.0)
+        # Without focus: investor wins.
+        self.assertEqual(gp._select_featured([investor, focus_gambler], [])["match_meta"]["match"], "France vs Spain")
+        # With focus: the qualified focus candidate wins.
+        self.assertEqual(
+            gp._select_featured([investor, focus_gambler], ["All Blacks"])["match_meta"]["match"],
+            "All Blacks vs Ireland",
+        )
+        # Focus can never resurrect a NO_BET candidate.
+        no_bet_focus = cand("All Blacks vs Ireland", "NO_BET", "NO_BET", 1.0)
+        self.assertEqual(gp._select_featured([investor, no_bet_focus], ["All Blacks"])["match_meta"]["match"], "France vs Spain")
+
+    def test_card_props_carry_game_date(self):
+        from render_brand_templates import build_props
+        pick = {
+            "match": "All Blacks vs Ireland", "sport": "rugbyunion_international",
+            "sport_label": "TEST RUGBY", "selection": "ALL BLACKS", "market": "Head to Head",
+            "odds": "1.55", "kickoff": "2026-07-18T07:05:00Z",
+            "confidence": "HIGH", "bet_type": "INVESTOR_BET", "risk": "STANDARD_PICK",
+            "final_explanation": "x",
+        }
+        props = build_props(pick)
+        self.assertIn("SAT 18 JUL", props["sportTag"])       # 07:05Z + 12h = Sat 18 Jul NZT
+        self.assertTrue(props["oddsNote"].startswith("Kickoff:"))
+        self.assertIn("NZT", props["oddsNote"])
+
+    def test_card_props_fall_back_cleanly_without_kickoff(self):
+        from render_brand_templates import build_props
+        props = build_props({"match": "A vs B", "sport_label": "NRL", "selection": "A",
+                             "market": "H2H", "odds": "1.90", "confidence": "HIGH"})
+        self.assertEqual(props["sportTag"], "NRL")
+        self.assertEqual(props["oddsNote"], "Best value on the board")

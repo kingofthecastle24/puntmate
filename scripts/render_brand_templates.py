@@ -124,6 +124,21 @@ def confidence_to_dots(label):
     return {"low": 2, "medium": 3, "high": 5}.get((label or "medium").lower(), 3)
 
 
+def kickoff_display(kickoff_iso):
+    """'2026-07-18T07:05:00Z' -> ('SAT 18 JUL', 'Sat 18 Jul, 7:05pm NZT').
+    Returns (None, None) when the kickoff is missing/unparseable — callers
+    fall back to existing defaults rather than showing a wrong date."""
+    from datetime import datetime, timedelta
+    try:
+        dt = datetime.fromisoformat(str(kickoff_iso).replace("Z", "+00:00"))
+        nzt = dt + timedelta(hours=12)  # NZST — matches convention used elsewhere
+        short = nzt.strftime("%a %d %b").upper()
+        long = nzt.strftime("%a %d %b, %I:%M%p").replace(" 0", " ").replace("AM", "am").replace("PM", "pm") + " NZT"
+        return short, long
+    except (ValueError, TypeError):
+        return None, None
+
+
 def build_props(pick, handle="@puntmatenz"):
     """Map a pipeline pick dict (data/latest_run.json entry) into the props
     schema shared by the Betslip Night / Matchday Print / Social templates.
@@ -172,14 +187,23 @@ def build_props(pick, handle="@puntmatenz"):
     ) if p]
     risk_tagline = " · ".join(risk_tagline_parts) or "Low risk · Steady returns · Long game"
 
+    # Game date on the cards (owner request 2026-07-18): the approved
+    # templates have no dedicated date field, so — same approach as bet-type
+    # in riskTagline — the date rides on existing text props: appended to the
+    # sportTag chip ("NRL · SAT 18 JUL") and oddsNote becomes the kickoff
+    # line. Zero template changes; falls back cleanly when kickoff is absent.
+    date_short, kickoff_long = kickoff_display(pick.get("kickoff"))
+    sport_tag = f"{sport_label} · {date_short}" if date_short else sport_label
+    odds_note = f"Kickoff: {kickoff_long}" if kickoff_long else "Best value on the board"
+
     props = {
         "matchup": match,
-        "sportTag": sport_label,
+        "sportTag": sport_tag,
         "market": market,
         "selection": selection,
         "selectionShort": selection.split()[-1] if selection else selection,
         "odds": odds_str,
-        "oddsNote": "Best value on the board",
+        "oddsNote": odds_note,
         "insight": (insight_text[:140] + "…") if len(insight_text) > 140 else insight_text,
         "competition": sport_label,
         "analysis": insight_text,
