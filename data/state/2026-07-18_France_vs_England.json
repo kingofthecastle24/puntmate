@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-18_France_vs_England",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-18T10:50:08.799550+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-18T10:50:08.799796+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-18T10:50:08.800002+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

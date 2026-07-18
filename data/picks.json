@@ -755,5 +755,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-07-18_soccer_fifa_world_cup_France_PUNTER_BET",
+    "date": "2026-07-18",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "soccer_fifa_world_cup",
+    "sport": "soccer_fifa_world_cup",
+    "match": "France vs England",
+    "home_team": "France",
+    "away_team": "England",
+    "pick": "UNDER 3.5",
+    "market": "Total",
+    "odds": 1.7,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

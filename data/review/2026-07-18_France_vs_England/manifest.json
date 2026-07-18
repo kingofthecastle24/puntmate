@@ -1,0 +1,42 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "11d6f4b10ed521f58b0b27e6def250f7155e3563416613fc1446749a410763f9",
+      "bytes": 604
+    },
+    "instagram-caption.txt": {
+      "sha256": "b54c72b212c8a3f794fed3148779a2a0cbb536938ec114004202f8f17b04209d",
+      "bytes": 476
+    },
+    "post-metadata.json": {
+      "sha256": "81bd155c1b85c868d6556edb25f7ff024aece9cccf1fd7a1a17d5a5c0b6b4e7c",
+      "bytes": 37506
+    },
+    "preview.html": {
+      "sha256": "5a85135b3b8336ca66f767514c22f7a0df0dabf533699a211c69ca37eef78672",
+      "bytes": 43756
+    },
+    "cover.png": {
+      "sha256": "f21461c6a38c1e1857656a4353e1430a29f659e5ce7807d1935deb0dabca89a8",
+      "bytes": 82946
+    },
+    "tip.png": {
+      "sha256": "fa5c3ee0ba64de16d1536c6bbd2a6352ea4b39dc2747b87d9fe8c5b047294059",
+      "bytes": 70751
+    },
+    "breakdown.png": {
+      "sha256": "c16571b93b6d6d38862e8ceec1a9eb0bc19ac9576b8430cd9f9d780c315c7f09",
+      "bytes": 148594
+    },
+    "story.png": {
+      "sha256": "2803c19276230432d7673908635c297d6f70cc986c13c1aced43488f2c086daf",
+      "bytes": 63992
+    },
+    "multi-post.txt": {
+      "sha256": "b865ef4c7426b8f78e52ba4b194797edf3307cad4f9fde3bafba646868008227",
+      "bytes": 799
+    }
+  },
+  "pick_id": "2026-07-18_France_vs_England",
+  "created_at": "2026-07-18T10:50:08.538719+00:00"
+}
