@@ -607,6 +607,13 @@ def generate_pick_for_matches(matches, match_news):
     # headline pick, the multi is a clearly-disclaimed secondary post. Legs
     # are ordered by the same deterministic sort as the featured pick. This
     # is deliberately rare: no candidate is ever stretched to make up a leg.
+    #
+    # 2026-07-18 (Micah): a multi is NOT capped at 3 legs — it includes
+    # EVERY genuinely defensible candidate on a distinct match that day,
+    # whether that's 3, 6, or 8. The only hard floor is 3 (below that it
+    # isn't a "multi" worth calling out) — there is no ceiling. Padding
+    # is still impossible: every leg here already independently cleared
+    # pick_classifier's bar on its own merits, same as the featured single.
     multi_legs = []
     seen_matches = set()
     for c in sorted(
@@ -628,8 +635,6 @@ def generate_pick_for_matches(matches, match_news):
             "market": c["raw"].get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[c["market_type"]],
             "odds": f"{float(c['odds_val']):.2f}",
         })
-        if len(multi_legs) == 3:
-            break
     if len(multi_legs) < 3:
         multi_legs = []  # fewer than 3 genuine legs -> no multi today
 

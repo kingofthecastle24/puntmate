@@ -649,6 +649,47 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
         self.assertNotIn("Team39 vs Team139", prompt_sent)
         self.assertTrue(any("only the first" in w for w in pick["research_warnings"]))
 
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_multi_is_not_capped_at_three_legs(self, mock_anthropic_cls):
+        """2026-07-18 (Micah): a multi can be as long as the genuine
+        candidates support -- 6, 8, whatever clears the bar on distinct
+        matches. This was previously hard-capped at exactly 3 legs; this
+        test locks in that six independently-clearing candidates produce
+        a six-leg multi, not a truncated three-leg one."""
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+
+        matches = []
+        candidates = []
+        for i in range(6):
+            m = {
+                "sport": "rugbyleague_nrl",
+                "match": f"Team{i}A vs Team{i}B",
+                "home_team": f"Team{i}A", "away_team": f"Team{i}B",
+                "kickoff": "2026-07-19T06:00:00Z",
+                "odds": {"home": 1.60, "away": 2.30, "draw": None},
+                "implied_probs": {"home": 0.59, "away": 0.41, "draw": 0},
+                "big_game": False,
+            }
+            matches.append(m)
+            candidates.append({
+                "match": m["match"], "sport": "rugbyleague_nrl", "market_type": "h2h",
+                "selection": f"Team{i}A", "line": None, "market": "Head to Head",
+                "our_probability": 68, "evidence_sufficient": True, "confidence": "MODERATE",
+                "uncertainty_flags": [], "reasoning": "Genuine, independent edge on its own merits.",
+            })
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+        pick = generate_pick.generate_pick_for_matches(matches, news)
+
+        self.assertTrue(pick["has_pick"])
+        self.assertEqual(len(pick["multi_legs"]), 6)
+        self.assertEqual(
+            {leg["match"] for leg in pick["multi_legs"]},
+            {m["match"] for m in matches},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

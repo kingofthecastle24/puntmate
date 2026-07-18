@@ -84,6 +84,21 @@ class Phase5MultiTests(unittest.TestCase):
         # (build_review_package only writes multi-post.txt when >=3.)
         self.assertTrue(True)
 
+    def test_multi_text_handles_more_than_three_legs(self):
+        """2026-07-18 (Micah): no upper cap on multi size. six legs must
+        render as six legs (Leg 1..Leg 6), not truncate to three."""
+        legs = [
+            {"match": f"Team{i}A vs Team{i}B", "sport_label": "NRL",
+             "selection": f"Team{i}A", "market": "Head to Head", "odds": "1.60"}
+            for i in range(6)
+        ]
+        pick = {"multi_legs": legs, "risk": "STANDARD_PICK"}
+        text = brp.build_multi_text(pick)
+        for i in range(1, 7):
+            self.assertIn(f"Leg {i}:", text)
+        self.assertIn(f"Combined: {1.60**6:.2f}", text)
+        validate_text(text, risk="RISKY_PICK", bet_type="GAMBLER_BET", public=True)
+
 
 class Phase6WeeklyRecapTests(unittest.TestCase):
     def setUp(self):

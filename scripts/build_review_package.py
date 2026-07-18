@@ -83,8 +83,10 @@ def build_telegram_text(pick):
         "",
         f"_{pick['final_explanation']}_",
     ]
-    if pick.get("public_caution"):
-        lines += ["", pick["public_caution"]]
+    # Micah, 2026-07-18: dropped the "Keep this one light..." risk-tier
+    # caution line from public copy -- didn't like the tone/placement.
+    # public_caution is still computed and kept in post-metadata.json
+    # (internal reference only) but no longer surfaces in the actual post.
     lines += [
         "",
         "──────────────────",
@@ -103,8 +105,7 @@ def build_instagram_caption(pick):
         "",
         pick["bet_type_reason"],
     ]
-    if pick.get("public_caution"):
-        lines += ["", pick["public_caution"]]
+    # Same removal as build_telegram_text — see note there.
     lines += [
         "",
         "Follow for daily value picks → @puntmatenz",
