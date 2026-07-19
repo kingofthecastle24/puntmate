@@ -125,19 +125,46 @@ class Phase5MultiTests(unittest.TestCase):
 class Phase6WeeklyRecapTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
-        self._orig = (wr.PICKS_PATH, wr.STATE_DIR, wr.RECAP_PATH)
+        self._orig = (wr.PICKS_PATH, wr.STATE_DIR, wr.RECAP_PATH, wr.RECORD_START_PATH)
         wr.PICKS_PATH = os.path.join(self.tmp, "picks.json")
         wr.STATE_DIR = os.path.join(self.tmp, "state")
         wr.RECAP_PATH = os.path.join(self.tmp, "RECAP.md")
+        # absent by default -> no cutoff; individual tests write it to test the fresh-record reset
+        wr.RECORD_START_PATH = os.path.join(self.tmp, "record_start_date")
         os.makedirs(wr.STATE_DIR, exist_ok=True)
 
     def tearDown(self):
-        wr.PICKS_PATH, wr.STATE_DIR, wr.RECAP_PATH = self._orig
+        wr.PICKS_PATH, wr.STATE_DIR, wr.RECAP_PATH, wr.RECORD_START_PATH = self._orig
         shutil.rmtree(self.tmp, ignore_errors=True)
 
     def _write_picks(self, picks):
         with open(wr.PICKS_PATH, "w") as f:
             json.dump(picks, f)
+
+    def test_record_start_date_excludes_older_picks_from_public_stats(self):
+        """Fresh-record reset (Micah, 2026-07-19): picks dated before
+        config/record_start_date must never appear in recap stats — the old
+        ledger stays on disk for history/settlement but the public record
+        starts clean."""
+        today = datetime.now(timezone.utc).date()
+        d = today.strftime("%Y-%m-%d")
+        with open(wr.RECORD_START_PATH, "w") as f:
+            f.write(d)
+        self._write_picks([
+            {"date": "2026-07-01", "bet_type": "PUNTER_BET", "result": "loss"},
+            {"date": "2026-07-14", "bet_type": "INVESTOR_BET", "result": "loss"},
+            {"date": d, "bet_type": "PUNTER_BET", "result": "win"},
+        ])
+        start, end = wr.week_window()
+        # widen the window so the ONLY thing excluding old picks is the cutoff
+        stats, overall = wr.build_stats(wr.load_picks(), start.replace(year=2020), end)
+        self.assertEqual(overall, {"wins": 1, "losses": 0, "pending": 0})
+
+    def test_missing_record_start_file_means_no_cutoff(self):
+        self._write_picks([
+            {"date": "2026-07-01", "bet_type": "PUNTER_BET", "result": "loss"},
+        ])
+        self.assertEqual(len(wr.load_picks()), 1)
 
     def test_strike_rate_by_bet_type(self):
         today = datetime.now(timezone.utc).date()

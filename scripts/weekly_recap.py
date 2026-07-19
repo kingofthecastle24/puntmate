@@ -45,11 +45,31 @@ def week_window(today=None):
     return start, today
 
 
+RECORD_START_PATH = os.path.join(REPO_ROOT, "config", "record_start_date")
+
+
+def record_start_date():
+    """Fresh-record cutoff (Micah, 2026-07-19): the public record counts
+    from this date onward — everything earlier (pre-rebuild three-personality
+    picks + the rebuild's shakedown week) stays in data/picks.json for
+    history/settlement but is excluded from every public stat. Returns None
+    (no cutoff) if the config file is absent."""
+    if not os.path.exists(RECORD_START_PATH):
+        return None
+    with open(RECORD_START_PATH) as f:
+        value = f.read().strip()
+    return value or None
+
+
 def load_picks():
     if not os.path.exists(PICKS_PATH):
         return []
     with open(PICKS_PATH) as f:
-        return json.load(f)
+        picks = json.load(f)
+    cutoff = record_start_date()
+    if cutoff:
+        picks = [p for p in picks if p.get("date", "") >= cutoff]
+    return picks
 
 
 def build_stats(picks, start, end):
