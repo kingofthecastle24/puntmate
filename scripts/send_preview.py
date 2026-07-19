@@ -74,6 +74,39 @@ def main():
     if not _safe_transition(pick_id, GENERATED, note="review package built"):
         return
 
+    # 2026-07-19: a weekend multi post (is_weekend_multi) has has_pick=False
+    # (no single featured selection) but IS a real public post if either
+    # tier cleared the bar -- it needs the SAME approval gate as any other
+    # post, just its own preview email shape (no single telegram-post.txt/
+    # instagram-caption.txt to show).
+    if metadata.get("is_weekend_multi"):
+        if not (metadata.get("has_punter_multi") or metadata.get("has_gambler_multi")):
+            if not _safe_transition(pick_id, PREVIEW_READY, note="weekend multi: neither tier cleared the bar"):
+                return
+            print(f"Weekend multi — neither tier cleared 3 legs this weekend, nothing to approve for {pick_id}.")
+            return
+        if not _safe_transition(pick_id, PREVIEW_READY, note="weekend multi review package frozen"):
+            return
+        if not _safe_transition(pick_id, AWAITING_APPROVAL, note="weekend multi entering GitHub environment approval gate"):
+            return
+
+        def _read_if_exists(name):
+            path = os.path.join(review_dir, name)
+            if not os.path.exists(path):
+                return ""
+            with open(path) as f:
+                return f.read()
+
+        punter_text = _read_if_exists("punter-multi-post.txt")
+        gambler_text = _read_if_exists("gambler-multi-post.txt")
+        image_paths = [
+            os.path.join(review_dir, name) for name in os.listdir(review_dir)
+            if name.endswith(".png")
+        ]
+        email_service.send_weekend_multi_email(metadata, image_paths, punter_text, gambler_text, approval_url())
+        print(f"Weekend multi — preview sent, awaiting approval gate for {pick_id}.")
+        return
+
     if not metadata.get("has_pick"):
         if metadata.get("has_watchlist"):
             # Phase 4: a No-Bet day WITH a watchlist post goes through the

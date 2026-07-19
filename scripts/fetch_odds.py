@@ -110,8 +110,14 @@ EXPANDED_MARKET_SPORTS = {
 }
 
 
-def fetch_upcoming_odds():
-    """Fetch odds for all configured sports. Returns list of match dicts."""
+def fetch_upcoming_odds(hours_ahead=24):
+    """Fetch odds for all configured sports. Returns list of match dicts.
+
+    hours_ahead (2026-07-19, Micah): defaults to 24 for the ordinary daily
+    run. The weekend multi job (generate_weekend_multi.py) passes a wider
+    window (~76-84h) to pool Friday/Saturday/Sunday fixtures together into
+    one combined multi build instead of one day's slate at a time -- same
+    scanning/extraction/sort logic either way, just a wider net."""
     all_matches = []
 
     for sport in SPORTS:
@@ -143,8 +149,8 @@ def fetch_upcoming_odds():
                 kickoff = datetime.fromisoformat(match['commence_time'].replace('Z', '+00:00'))
                 hours_away = (kickoff - now).total_seconds() / 3600
 
-                # Only today's matches (next 24 hours) for pre-game picks
-                if 0 < hours_away < 24:
+                # Only matches within the configured lookahead window.
+                if 0 < hours_away < hours_ahead:
                     best_odds = extract_best_odds(match)
                     if not best_odds:
                         continue

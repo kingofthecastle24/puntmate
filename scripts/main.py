@@ -211,14 +211,13 @@ def run():
             for w in render_result["warnings"]:
                 print(f"  ::warning:: {w}")
 
-        # Punter Multi / Gambler-Degenerate Multi graphics (2026-07-19) —
-        # each only rendered if that tier actually produced 3+ legs. Never
-        # blocks the main pick: a failure here only costs that tier its
-        # Instagram graphic (see render_multi_cards docstring).
-        for tier, legs_key in (("punter", "punter_multi_legs"), ("gambler", "gambler_multi_legs")):
-            legs = pick.get(legs_key) or []
-            if len(legs) >= 3:
-                render_multi_cards(pick, tier, legs)
+        # 2026-07-19 (Micah): Punter/Gambler-Degenerate multis are no longer
+        # built from a single day's fixtures at all — generate_pick_for_matches
+        # is called here with build_multis defaulting to False, so
+        # pick["punter_multi_legs"]/["gambler_multi_legs"] are always empty
+        # for this daily run. Multis are now exclusively assembled from the
+        # full Fri/Sat/Sun fixture pool by the separate weekend job (see
+        # generate_weekend_multi.py, which reuses render_multi_cards below).
     except Exception as e:
         print(f"  ERROR: card rendering failed entirely: {e}")
         # Without cards there is nothing safe to publish — record as NO_BET

@@ -66,7 +66,13 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
     stop or roll back another."""
     platforms = metadata.get("intended_platforms", [])
 
-    if "telegram" in platforms:
+    # 2026-07-19: a weekend-multi-only post (is_weekend_multi) has no single
+    # featured pick at all, so there is no "main" Telegram/Instagram post to
+    # send here -- only the per-tier posts further down. Gating this whole
+    # block avoids sending a blank/empty main post for that pick_id.
+    is_weekend_multi_only = bool(metadata.get("is_weekend_multi"))
+
+    if "telegram" in platforms and not is_weekend_multi_only:
         try:
             from post_telegram import send_picks_card, post_text
             tip_path = os.path.join(review_dir, "tip.png")
@@ -79,7 +85,7 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
             results["telegram"] = {"ok": False, "error": str(e)}
             print(f"  Telegram error: {e}")
 
-    if "instagram_feed" in platforms:
+    if "instagram_feed" in platforms and not is_weekend_multi_only:
         try:
             from post_instagram import post_carousel_to_instagram
             ok = post_carousel_to_instagram(
@@ -92,7 +98,7 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
             results["instagram_feed"] = {"ok": False, "error": str(e)}
             print(f"  Instagram feed error: {e}")
 
-    if "instagram_story" in platforms:
+    if "instagram_story" in platforms and not is_weekend_multi_only:
         try:
             from post_instagram_story import post_story_to_instagram
             media_id = post_story_to_instagram(metadata.get("story_url"))
@@ -165,7 +171,12 @@ def dry_run_report(metadata, telegram_text, instagram_caption, review_dir=None):
     print("=" * 55)
     print("DRY RUN — no platform will receive a post")
     print("=" * 55)
+    is_weekend_multi_only = bool(metadata.get("is_weekend_multi"))
+    if is_weekend_multi_only:
+        print("\n(weekend-multi-only post — no single featured pick, see tier reports below)")
     for platform in metadata.get("intended_platforms", []):
+        if is_weekend_multi_only:
+            break  # nothing "main" to report -- only the per-tier section below applies
         print(f"\n[{platform}]")
         if platform == "telegram":
             print(f"  Caption:\n{telegram_text[:400]}")
@@ -216,7 +227,12 @@ def main():
     with open(meta_path) as f:
         metadata = json.load(f)
 
-    if not metadata.get("has_pick"):
+    # 2026-07-19: a weekend multi post (is_weekend_multi) has has_pick=False
+    # (there's no single featured selection) but IS something to publish if
+    # either tier cleared the bar -- has_pick alone is no longer sufficient
+    # to decide "nothing to publish".
+    has_something_to_publish = metadata.get("has_pick") or metadata.get("has_punter_multi") or metadata.get("has_gambler_multi")
+    if not has_something_to_publish:
         print("NO_BET — nothing to publish.")
         return
 
@@ -226,10 +242,14 @@ def main():
         print(f"::notice::{pick_id} was already published — skipping to avoid a duplicate post.")
         return
 
-    with open(os.path.join(review_dir, "telegram-post.txt")) as f:
-        telegram_text = f.read()
-    with open(os.path.join(review_dir, "instagram-caption.txt")) as f:
-        instagram_caption = f.read()
+    # A weekend-multi-only post has no main telegram-post.txt/instagram-
+    # caption.txt (no single featured pick) -- these are read conditionally
+    # so main() doesn't crash, and publish() below never sends a blank
+    # "main pick" post for this pick_id (gated on is_weekend_multi).
+    telegram_path = os.path.join(review_dir, "telegram-post.txt")
+    instagram_path = os.path.join(review_dir, "instagram-caption.txt")
+    telegram_text = open(telegram_path).read() if os.path.exists(telegram_path) else ""
+    instagram_caption = open(instagram_path).read() if os.path.exists(instagram_path) else ""
 
     if DRY_RUN:
         # Dry runs (manual testing) don't move workflow state at all — only a

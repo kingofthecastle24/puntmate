@@ -172,6 +172,35 @@ class PrioritySportOrderingTests(unittest.TestCase):
         # NRL match kicks off LATER than the MLB match but must still sort first.
         self.assertLess(sports_in_order.index("rugbyleague_nrl"), sports_in_order.index("baseball_mlb"))
 
+    def test_hours_ahead_widens_the_lookahead_window(self):
+        """2026-07-19 (Micah): the weekend multi job needs a wider net than
+        the ordinary daily 24h window to pool Fri/Sat/Sun fixtures into one
+        combined build -- hours_ahead makes that a one-line call, reusing
+        every bit of extraction/sort/priority logic unchanged."""
+        import fetch_odds
+        from datetime import datetime, timezone, timedelta
+
+        now = datetime.now(timezone.utc)
+        in_30h = (now + timedelta(hours=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        def fake_get(url, params=None, timeout=None):
+            resp = MagicMock()
+            resp.status_code = 200
+            resp.headers = {}
+            if "rugbyleague_nrl" in url:
+                resp.json.return_value = self._mock_match("Warriors", "Storm", in_30h)
+            else:
+                resp.json.return_value = []
+            resp.raise_for_status = lambda: None
+            return resp
+
+        with patch.object(fetch_odds.requests, "get", side_effect=fake_get):
+            matches_default = fetch_odds.fetch_upcoming_odds()
+            matches_wide = fetch_odds.fetch_upcoming_odds(hours_ahead=76)
+
+        self.assertEqual(len(matches_default), 0)  # 30h away -> outside the default 24h window
+        self.assertEqual(len(matches_wide), 1)      # -> inside a 76h weekend window
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -753,7 +753,7 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
         mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
 
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
-        pick = generate_pick.generate_pick_for_matches(matches, news)
+        pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
         self.assertTrue(pick["has_pick"])
         self.assertEqual(len(pick["punter_multi_legs"]), 6)
@@ -818,10 +818,56 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
         mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
 
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
-        pick = generate_pick.generate_pick_for_matches(matches, news)
+        pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
         self.assertEqual(len(pick["punter_multi_legs"]), 4)
         self.assertIsNone(pick["punter_multi_promo_hint"])
+
+
+class DailyRunNeverBuildsMultisTests(unittest.TestCase):
+    """2026-07-19 (Micah): 'I don't want the gambler/degen multi to run
+    everyday because it might ruin the strike rate and reputation.' Multis
+    are now exclusively a weekend-pool feature (generate_weekend_multi.py)
+    -- the ordinary daily call (build_multis defaults to False) must NEVER
+    produce multi legs, even when the day's fixtures would otherwise easily
+    clear the 3-leg bar for one or both tiers."""
+
+    def setUp(self):
+        os.environ["ANTHROPIC_API_KEY"] = "test-key"
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_default_call_returns_no_multis_even_with_six_qualifying_legs(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+
+        matches, candidates = [], []
+        for i in range(6):
+            m = {
+                "sport": "rugbyleague_nrl", "match": f"Team{i}A vs Team{i}B",
+                "home_team": f"Team{i}A", "away_team": f"Team{i}B",
+                "kickoff": "2026-07-19T06:00:00Z",
+                "odds": {"home": 1.60, "away": 2.30, "draw": None},
+                "implied_probs": {"home": 0.59, "away": 0.41, "draw": 0},
+                "big_game": False,
+            }
+            matches.append(m)
+            candidates.append({
+                "match": m["match"], "sport": "rugbyleague_nrl", "market_type": "h2h",
+                "selection": f"Team{i}A", "line": None, "market": "Head to Head",
+                "our_probability": 68, "evidence_sufficient": True, "confidence": "MODERATE",
+                "uncertainty_flags": [], "reasoning": "Genuine, independent edge on its own merits.",
+            })
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+
+        # No build_multis kwarg at all -- exactly how main.py's daily run calls this.
+        pick = generate_pick.generate_pick_for_matches(matches, news)
+
+        self.assertTrue(pick["has_pick"])  # the featured single pick is unaffected
+        self.assertEqual(pick["punter_multi_legs"], [])
+        self.assertEqual(pick["gambler_multi_legs"], [])
+        self.assertIsNone(pick["punter_multi_promo_hint"])
+        self.assertIsNone(pick["gambler_multi_promo_hint"])
 
 
 class TwoTierMultiSplitTests(unittest.TestCase):
@@ -856,7 +902,7 @@ class TwoTierMultiSplitTests(unittest.TestCase):
             })
         mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
-        pick = generate_pick.generate_pick_for_matches(matches, news)
+        pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
         self.assertEqual(len(pick["gambler_multi_legs"]), 3)
         self.assertEqual(pick["punter_multi_legs"], [])
@@ -904,7 +950,7 @@ class TwoTierMultiSplitTests(unittest.TestCase):
             })
         mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
-        pick = generate_pick.generate_pick_for_matches(matches, news)
+        pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
         self.assertEqual(len(pick["punter_multi_legs"]), 4)
         self.assertEqual(pick["gambler_multi_legs"], [])  # only 2 -> below the 3-leg floor

@@ -122,6 +122,37 @@ def send_preview_email(metadata, image_paths, telegram_text, instagram_caption, 
     return _send(subject, body, image_paths)
 
 
+def send_weekend_multi_email(metadata, image_paths, punter_text, gambler_text, approval_url):
+    """2026-07-19: the weekend Punter Multi / Gambler-Degenerate Multi has
+    no single featured pick (has_pick is False), just one or both multi
+    tiers -- its own preview email format rather than forcing it through
+    send_preview_email's single-pick shape."""
+    subject = f"PuntMate Weekend Multi Approval Required — {metadata.get('post_date', '')}"
+
+    warnings = metadata.get("research_warnings", [])
+    warnings_html = ""
+    if warnings:
+        items = "".join(f"<li>{w}</li>" for w in warnings)
+        warnings_html = f"<h3>Internal research warning</h3><ul>{items}</ul>"
+
+    sections = []
+    if punter_text:
+        sections.append(f"<h3>Punter Multi (Telegram + Instagram)</h3><pre style=\"white-space:pre-wrap;background:#f5f5f5;padding:10px\">{punter_text}</pre>")
+    if gambler_text:
+        sections.append(f"<h3>Gambler/Degenerate Multi (Telegram + Instagram)</h3><pre style=\"white-space:pre-wrap;background:#f5f5f5;padding:10px\">{gambler_text}</pre>")
+
+    body = f"""
+    <h2>PuntMate — Weekend Multi Approval Required</h2>
+    <p><a href="{approval_url}">Open the GitHub Actions approval step →</a></p>
+    {"".join(sections)}
+    <h3>Metadata</h3>
+    {_metadata_table(metadata)}
+    {warnings_html}
+    <p>Run ID: {metadata.get('run_id','')} · pick_id: {metadata.get('pick_id','')}</p>
+    """
+    return _send(subject, body, image_paths)
+
+
 def send_no_bet_email(metadata):
     subject = f"PuntMate Post Approval Required — No Bet — {metadata.get('post_date', '')}"
     body = f"""

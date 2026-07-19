@@ -541,7 +541,7 @@ def _select_featured(classified, focus_keywords=None):
     return eligible[0]
 
 
-def generate_pick_for_matches(matches, match_news):
+def generate_pick_for_matches(matches, match_news, build_multis=False):
     """
     matches: list of match dicts from fetch_odds.fetch_upcoming_odds()
     match_news: dict {match_name: fetch_news() result dict}
@@ -556,6 +556,19 @@ def generate_pick_for_matches(matches, match_news):
     Phase 2: when multiple candidates clear the bar on the same day, the
     featured one is chosen by bet-type preference (Investor > Punter >
     Gambler) — see _select_featured.
+
+    build_multis (2026-07-19, Micah): the two multi tiers (Punter /
+    Gambler-Degenerate) are now OFF by default. The ordinary daily run never
+    builds them at all — Micah didn't want the Gambler/Degenerate multi
+    (or, per his "review the whole weekend" point, either tier) firing off
+    the back of just one day's fixtures; multis are now exclusively a
+    weekend-pool feature (see generate_weekend_multi.py), which passes
+    build_multis=True with a wider multi-day match list so the tiers are
+    assembled from the WHOLE weekend, not a single day. When False,
+    punter_multi_legs/gambler_multi_legs are always [] and their promo hints
+    are always None — build_review_package.py's _freeze_multi_tier already
+    no-ops on an empty list, so this alone guarantees no multi content ever
+    reaches a daily post.
     """
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
@@ -736,11 +749,15 @@ def generate_pick_for_matches(matches, match_news):
             return [], []  # fewer than 3 genuine legs in this tier -> no multi today
         return legs, leg_sports
 
-    punter_multi_legs, punter_multi_sports = _assemble_multi_tier(PUNTER_MULTI_BET_TYPES)
-    gambler_multi_legs, gambler_multi_sports = _assemble_multi_tier(GAMBLER_MULTI_BET_TYPES)
-
-    punter_multi_promo_hint = _tab_multi_promo_hint_from_sports(punter_multi_sports) if punter_multi_legs else None
-    gambler_multi_promo_hint = _tab_multi_promo_hint_from_sports(gambler_multi_sports) if gambler_multi_legs else None
+    if build_multis:
+        punter_multi_legs, punter_multi_sports = _assemble_multi_tier(PUNTER_MULTI_BET_TYPES)
+        gambler_multi_legs, gambler_multi_sports = _assemble_multi_tier(GAMBLER_MULTI_BET_TYPES)
+        punter_multi_promo_hint = _tab_multi_promo_hint_from_sports(punter_multi_sports) if punter_multi_legs else None
+        gambler_multi_promo_hint = _tab_multi_promo_hint_from_sports(gambler_multi_sports) if gambler_multi_legs else None
+    else:
+        # Daily runs never build multis at all (see build_multis note above).
+        punter_multi_legs, gambler_multi_legs = [], []
+        punter_multi_promo_hint, gambler_multi_promo_hint = None, None
 
     return {
         "has_pick": True,
