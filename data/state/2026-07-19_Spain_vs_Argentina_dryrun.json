@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-19_Spain_vs_Argentina_dryrun",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-19T08:26:41.051163+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-19T08:26:41.051342+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-19T08:26:41.051493+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
