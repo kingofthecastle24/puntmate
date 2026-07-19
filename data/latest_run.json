@@ -1,6 +1,6 @@
 {
   "run_date": "2026-07-19",
-  "run_ts": "2026-07-19T08:26:28.977765+00:00",
+  "run_ts": "2026-07-19T08:48:39.650196+00:00",
   "pick": {
     "has_pick": true,
     "match": "Spain vs Argentina",
@@ -20,13 +20,13 @@
     "risk": "RISKY_PICK",
     "bet_type": "PUNTER_BET",
     "bet_type_label": "BET TYPE: PUNTER",
-    "bet_type_reason": "Solid touch here. Not a lock, but the value's real and the form backs it up. World Cup finals are historically low-scoring \u2014 the average goals in finals since 1990 is well under 2.5, and both Spain and Argentina set up to be hard to break down in knockout football. Spain under Luis de la Fuente are a possession-heavy side that slows the game down and suffocates opponents, while Argentina's defensive structure in big games is tested but disciplined.",
-    "final_explanation": "World Cup finals are historically low-scoring \u2014 the average goals in finals since 1990 is well under 2.5, and both Spain and Argentina set up to be hard to break down in knockout football. Spain under Luis de la Fuente are a possession-heavy side that slows the game down and suffocates opponents, while Argentina's defensive structure in big games is tested but disciplined. Worth knowing: World Cup final pressure can produce nervy, open-ended attacks from both sides late on; Argentina's attacking firepower with Messi-era players capable of blowing games open.",
+    "bet_type_reason": "Solid touch here. Not a lock, but the value's real and the form backs it up. This is a World Cup final between Spain and Argentina \u2014 two sides who historically set up to be hard to beat rather than wide open. Spain's build-up possession style naturally limits the number of open exchanges, and Argentina under Scaloni have shown they're comfortable grinding in knockout football. In a final specifically, with so much on the line, teams are cautious with defensive discipline.",
+    "final_explanation": "This is a World Cup final between Spain and Argentina \u2014 two sides who historically set up to be hard to beat rather than wide open. Spain's build-up possession style naturally limits the number of open exchanges, and Argentina under Scaloni have shown they're comfortable grinding in knockout football. In a final specifically, with so much on the line, teams are cautious with defensive discipline.",
     "confidence": "MODERATE",
     "confidence_label": "MODERATE",
     "uncertainty_flags": [
-      "World Cup final pressure can produce nervy, open-ended attacks from both sides late on",
-      "Argentina's attacking firepower with Messi-era players capable of blowing games open"
+      "World Cup finals are high-stakes occasions where either side could push tempo if chasing a goal",
+      "Both teams have match-winners who can produce moments of brilliance from nothing"
     ],
     "public_caution": "Keep this one light \u2014 the value's there but so is the uncertainty.",
     "research_warnings": [
@@ -63,11 +63,10 @@
       "rejected source (no relevance to fixture): \"Green says Mets fully compliant on AI after report of usage - ESPN\"",
       "rejected source (team-name-only match, no sport context): \"New York Mets vs. Philadelphia Phillies: Game Highlights - ESPN\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
-      "rejected source (no relevance to fixture): \"Guardians-Pirates game postponed as MLB assesses air quality risk for several ga\"",
-      "rejected source (no relevance to fixture): \"Guardians, Pirates awaiting MLB decision on Friday\u2019s series opener amid Northeas\"",
-      "rejected source (team-name-only match, no sport context): \"Pittsburgh Pirates at Cleveland Guardians Game Story, Scores/Highlights - 07/17/\"",
-      "rejected source (team-name-only match, no sport context): \"Pittsburgh Pirates 3 - Cleveland Guardians 5: Final score, results, recap, box s\"",
       "rejected source (team-name-only match, no sport context): \"Pittsburgh Pirates 7 - Cleveland Guardians 1: Final score, results, recap, box s\"",
+      "rejected source (no relevance to fixture): \"Guardians-Pirates game postponed as MLB assesses air quality risk for several ga\"",
+      "rejected source (team-name-only match, no sport context): \"Pittsburgh Pirates 3 - Cleveland Guardians 5: Final score, results, recap, box s\"",
+      "rejected source (no relevance to fixture): \"MLB Gameday: Pirates 7, Guardians 1 Final Score (07/18/2026) - MLB.com\"",
       "rejected source (no relevance to fixture): \"Bazzana hits 2-run homer in 9th to rally Guardians to 5-3 victory over Pirates -\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
       "rejected source (no relevance to fixture): \"Orioles outlast Astros 4-2 in 11 innings for 6th consecutive victory - Lancaster\"",
@@ -79,12 +78,13 @@
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
       "rejected source (team-name-only match, no sport context): \"Official Kansas City Royals Website - MLB.com\"",
       "rejected source (team-name-only match, no sport context): \"Where to watch San Diego Padres vs Kansas City Royals: TV channel, start time, s\"",
-      "rejected source (no relevance to fixture): \"Salvador Perez and Lane Thomas hit 2-run HRs, Royals beat Padres 6-1 - The Washi\"",
       "rejected source (no relevance to fixture): \"Royals host the Padres on 4-game home win streak - FOX Sports\"",
+      "rejected source (no relevance to fixture): \"Salvador Perez and Lane Thomas hit 2-run HRs, Royals beat Padres 6-1 - The Washi\"",
+      "rejected source (no relevance to fixture): \"Royals 6-1 Padres (Jul 18, 2026) Game Recap - ESPN\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
       "rejected source (team-name-only match, no sport context): \"Milwaukee Brewers 6 - Pittsburgh Pirates 7: Final score, results, recap, box sco\"",
       "rejected source (no relevance to fixture): \"Marlins look to stop 5-game losing streak, play the Brewers - FOX Sports\"",
-      "rejected source (no relevance to fixture): \"Baseball: Stanford slugger Sasaki chooses MLB path, to join Marlins - Japan Wire\"",
+      "rejected source (no relevance to fixture): \"Brewers 8-6 Marlins (Jul 18, 2026) Game Recap - ESPN\"",
       "rejected source (team-name-only match, no sport context): \"Where to watch Miami Marlins vs Milwaukee Brewers: TV channel, start time, strea\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
       "rejected source (team-name-only match, no sport context): \"2-Year Chicago Cubs Player Cut By Current MLB Team - Yahoo Sports\"",
@@ -102,6 +102,7 @@
       "rejected source (team-name-only match, no sport context): \"Athletics pitcher J.T. Ginn working on no-hitter through 6 innings against Natio\"",
       "rejected source (team-name-only match, no sport context): \"Athletics pitcher J.T. Ginn loses no-hit bid in 7th inning against Nationals - A\"",
       "rejected source (team-name-only match, no sport context): \"Washington Nationals at Athletics Game Story, Scores/Highlights - 07/17/2026 - M\"",
+      "rejected source (no relevance to fixture): \"MLB roundup: A's snap 10-game skid with 15-1 rout of Nationals - Reuters\"",
       "rejected source (team-name-only match, no sport context): \"Where to watch Washington Nationals vs Athletics : TV channel, start time, strea\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
       "rejected source (no relevance to fixture): \"Skubal strikes out 9 in 7 innings and Torkelson homers twice in Tigers' 7-0 win \"",
@@ -117,8 +118,8 @@
       "rejected source (team-name-only match, no sport context): \"St. Louis Cardinals vs. Arizona Diamondbacks: Game Highlights - ESPN\"",
       "rejected source (no relevance to fixture): \"Nolan Arenado moves closer to 2,000 hits as D-backs beat Cards - Reuters\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+      "rejected source (no relevance to fixture): \"After Cole and Colt set up comeback, Julio caps off much-needed win - MLB.com\"",
       "rejected source (no relevance to fixture): \"Giants Mariners Baseball - chronicleonline.com\"",
-      "rejected source (no relevance to fixture): \"Mariners Reinstate OF Julio Rodr\u00edguez from the 7-Day Injured List - MLB.com\"",
       "rejected source (team-name-only match, no sport context): \"San Francisco Giants Sign Pitcher To $8 Million Deal During Mariners Series - Ya\"",
       "rejected source (no relevance to fixture): \"Giants Getting This Part of Organization Right Amid Awful Campaign - Sports Illu\"",
       "rejected source (no relevance to fixture): \"Rodriguez\u2019s walk-off sacrifice fly propels Mariners to 4-3 win against Giants in\"",
@@ -126,40 +127,13 @@
       "rejected source (team-name-only match, no sport context): \"WBC Special Preview \u2013 Shokichi Iwata vs Erik Badillo - World Boxing Council\"",
       "rejected source (team-name-only match, no sport context): \"Shokichi Iwata vs. Erik Badillo Fight Card, Odds, & Predictions - BetMGM\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
-      "classifier [Colorado Rockies vs Cincinnati Reds / total]: edge 1.2% is below even the 2.5% shaky-angle floor \u2014 no genuine case"
+      "classifier [Spain vs Argentina / spread]: edge -1.4% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
+      "uncertainty_flag (internal only, not shown publicly): 'World Cup finals are high-stakes occasions where either side could push tempo if chasing a goal'",
+      "uncertainty_flag (internal only, not shown publicly): 'Both teams have match-winners who can produce moments of brilliance from nothing'"
     ],
     "big_game": true,
     "other_defensible_candidates": 5,
-    "punter_multi_legs": [
-      {
-        "match": "Milwaukee Brewers vs Miami Marlins",
-        "sport_label": "MLB",
-        "selection": "UNDER 8",
-        "market": "Total",
-        "odds": "2.00"
-      },
-      {
-        "match": "Chicago Cubs vs Minnesota Twins",
-        "sport_label": "MLB",
-        "selection": "CHICAGO CUBS",
-        "market": "Head to Head",
-        "odds": "1.64"
-      },
-      {
-        "match": "Seattle Mariners vs San Francisco Giants",
-        "sport_label": "MLB",
-        "selection": "SEATTLE MARINERS",
-        "market": "Head to Head",
-        "odds": "1.60"
-      },
-      {
-        "match": "Spain vs Argentina",
-        "sport_label": "FIFA World Cup 2026",
-        "selection": "UNDER 2.5",
-        "market": "Total",
-        "odds": "1.60"
-      }
-    ],
+    "punter_multi_legs": [],
     "punter_multi_promo_hint": null,
     "gambler_multi_legs": [],
     "gambler_multi_promo_hint": null

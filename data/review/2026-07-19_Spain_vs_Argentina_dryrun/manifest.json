@@ -1,54 +1,38 @@
 {
   "files": {
     "telegram-post.txt": {
-      "sha256": "5a7118535509773d47d0df3f55c68e83e465e0db906ee5092efc78dd930adf49",
-      "bytes": 861
+      "sha256": "deed06aed9f719b47609868a405a4f587c58a8a7776209a3ce557688ccb57b5d",
+      "bytes": 696
     },
     "instagram-caption.txt": {
-      "sha256": "1370899d8bd49b561085dc4fa7553eb255d6f3fddf3cf3b143197cc68821d6dc",
-      "bytes": 691
+      "sha256": "9e88fd02064e65b6ab18eb133bc123719141608a8c85cde44882f2f8a06b6ce8",
+      "bytes": 715
     },
     "post-metadata.json": {
-      "sha256": "27666f0d7de549658f88a955d92ecc0f3e4628bb265a73ee6c024caabe2030d6",
-      "bytes": 16252
+      "sha256": "655ef30fe90930ccb6facc64cbe12acdb5f9ccfb2a963b618bddbfd2b89ec5e3",
+      "bytes": 15652
     },
     "preview.html": {
-      "sha256": "f6b8a37fea6ca4ec455c0eedcee00a977b71f8f5e9d029e1679b857ff0e4a9a5",
-      "bytes": 21842
+      "sha256": "7dabc165eccc661bba0d5ccd1b039cd4d557c5559de64cadc79497b3d4762ef3",
+      "bytes": 20886
     },
     "cover.png": {
       "sha256": "5b606bb1af37121df5e833c8f98bc42a67d8bc85ba1aaf1cbc655eec0adb97ea",
       "bytes": 74764
     },
     "tip.png": {
-      "sha256": "3b3a51713ccbbe8aab6a1fcb44d81e93419df79c6183331d99e32a4ecf977ab3",
-      "bytes": 74309
+      "sha256": "de6f65afe0d5f93f1d8a2919a2dfdc9d1783de5117944420999a9cd9e706ea6b",
+      "bytes": 72424
     },
     "breakdown.png": {
-      "sha256": "c39d120398f2a2d94b62e01ba76f7208713e42b118c1259b1f15b667fc0e9895",
-      "bytes": 212173
+      "sha256": "8fbf464f9c2a8e867918658fcd1190a4f7e15b692c82cdd4ae345a09de6de3ef",
+      "bytes": 170271
     },
     "story.png": {
       "sha256": "2e5f23dc75c865bc3f4f6d0c97b9be8e7a3f44870c91065a8438e5724114fc42",
       "bytes": 63265
-    },
-    "punter-multi-post.txt": {
-      "sha256": "ace1ae9f79e03851365303e487e1202cb8316e6d68cd578541b75dbee772e4d0",
-      "bytes": 811
-    },
-    "punter_multi_cover.png": {
-      "sha256": "79df80f2a768e75fcd9aef0fd73d8fe1671778a54541433c3346e5ba5b37458f",
-      "bytes": 53909
-    },
-    "punter_multi_legs.png": {
-      "sha256": "20cf38b3383eec779a3f240e662d5692005b4e3630e055404c7315d3b52c4cad",
-      "bytes": 86370
-    },
-    "punter_multi_breakdown.png": {
-      "sha256": "1a166bf0c1f47b54691f625348b25df852d68b2ec2e0b0eaebc121bf856a942a",
-      "bytes": 107374
     }
   },
   "pick_id": "2026-07-19_Spain_vs_Argentina_dryrun",
-  "created_at": "2026-07-19T08:26:40.823114+00:00"
+  "created_at": "2026-07-19T08:48:48.048418+00:00"
 }
