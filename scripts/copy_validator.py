@@ -77,13 +77,24 @@ NO_BET_ONLY_PHRASES = [
 # punter-facing risk caveats like "star player is a doubt") and then
 # surfaced verbatim under a "Worth knowing:" prefix. The literal phrase list
 # below didn't contain anything resembling that wording, so it sailed
-# through check_internal_leak() uncaught. Fixed two ways: (1) this list is
-# now much broader, and (2) INTERNAL_LEAK_PATTERNS below adds regex
-# heuristics for the general CLASS of "commentary about my own sources"
-# language, since a fixed phrase list can never fully anticipate a
-# generative model's phrasing. See generate_pick.py's build_final_explanation
-# for the matching upstream fix (each uncertainty_flag is now run through
-# check_internal_leak individually before it's allowed into public copy).
+# through check_internal_leak() uncaught. This list was broadened and
+# INTERNAL_LEAK_PATTERNS below added regex heuristics for the general CLASS
+# of "commentary about my own sources" language.
+#
+# INCIDENT #2 (2026-07-19): a real dry run proved a second, different failure
+# mode in the same "Worth knowing:" mechanism — no leaked source commentary
+# this time, but the flag argued the opposite side of the pick's own
+# reasoning ("Worth knowing: ...Argentina's attacking firepower... capable
+# of blowing games open" appended right after backing UNDER 2.5). That's a
+# contradiction-detection problem, not a leak-detection problem, and not one
+# a phrase/regex list here can reliably catch. Fixed upstream instead:
+# generate_pick.py's build_final_explanation() no longer puts any
+# uncertainty_flag into public copy at all — they're diverted to
+# research_warnings (internal-only) unconditionally. check_internal_leak and
+# this phrase list remain in place as a second, independent guard on
+# whatever public copy the model does write (reasoning/final_explanation
+# text), they just no longer need to vet uncertainty_flags specifically
+# since those never reach this far any more.
 INTERNAL_ONLY_PHRASES = [
     "research warning",
     "source_relevance",

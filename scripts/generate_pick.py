@@ -46,7 +46,7 @@ import os
 import re
 
 from pick_classifier import Evidence, classify, RISK_NO_BET, RISK_STANDARD, BET_NO_BET
-from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES, check_internal_leak
+from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES
 from text_format import truncate_at_sentence
 
 SPORT_LABELS = {
@@ -352,36 +352,44 @@ def build_bet_type_reason(bet_type, reasoning_sentence):
 
 
 def build_final_explanation(reasoning_sentence, risk, uncertainty_flags, research_warnings=None):
-    """Builds the public final_explanation. For RISKY_PICK, appends up to 2
-    uncertainty_flags as a "Worth knowing:" caveat for the reader.
+    """Builds the public final_explanation. uncertainty_flags are NEVER
+    appended to public copy any more — see below for why — they're always
+    diverted to research_warnings (internal-only, visible in the Gmail
+    preview / post-metadata.json) instead.
 
-    INCIDENT (2026-07-17): this used to join uncertainty_flags into public
-    copy unconditionally, trusting the system prompt alone to keep the model
-    from writing anything internal-sounding into that field. It didn't —
-    "Worth knowing: Warriors news snippet references Cowboys not Dragons —
-    possible copy-paste from different week; Dragons form unknown beyond
-    general knowledge" shipped to real Telegram subscribers. Each flag is
-    now independently checked with copy_validator.check_internal_leak
-    before being allowed into public copy — this is a second, code-level
-    layer that doesn't depend on the model following instructions. Any flag
-    that fails is dropped from the public line and, if a research_warnings
-    list is provided, recorded there instead (internal-only) so the signal
-    isn't just silently lost.
+    INCIDENT #1 (2026-07-17): this used to join uncertainty_flags into
+    public copy unconditionally, trusting the system prompt alone to keep
+    the model from writing anything internal-sounding into that field. It
+    didn't — "Worth knowing: Warriors news snippet references Cowboys not
+    Dragons — possible copy-paste from different week" shipped live. Fixed
+    at the time with copy_validator.check_internal_leak filtering each flag
+    before it was allowed into the public "Worth knowing:" line.
+
+    INCIDENT #2 (2026-07-19, real dry run, Spain v Argentina): the
+    check_internal_leak filter worked (nothing about sources/snippets
+    leaked), but a DIFFERENT problem in the same mechanism showed up: the
+    reasoning backed UNDER 2.5 arguing the game would be tight and
+    low-scoring, then the "Worth knowing" flag said the final "can produce
+    nervy, open-ended attacks" and Argentina's attack is "capable of
+    blowing games open" — directly arguing the OPPOSITE of the pick, in
+    public, right after making the case for it. A 2026-07-19 prompt change
+    explicitly told the model never to do this — the very next real test
+    still did it. Prompting alone is not reliable enough for this, the same
+    lesson as incident #1: a fixed instruction can't be trusted to hold on
+    every generation, only a code-level rule can guarantee it.
+
+    Rather than attempt a fragile "does this flag contradict the pick"
+    detector (a much harder, much more error-prone NLU problem than
+    detecting self-referential source commentary), the reliable fix is
+    structural: uncertainty_flags are genuinely useful for Micah's own
+    review, but not worth the reputational risk of ever again shipping
+    copy that argues both sides of its own pick in public. They now always
+    go to research_warnings instead of the public post, full stop.
     """
-    parts = [reasoning_sentence]
-    if risk == "RISKY_PICK" and uncertainty_flags:
-        safe_flags = []
+    if uncertainty_flags and research_warnings is not None:
         for flag in uncertainty_flags:
-            if check_internal_leak(flag):
-                if research_warnings is not None:
-                    research_warnings.append(
-                        f"uncertainty_flag suppressed from public copy (internal-sounding research/source commentary): {flag!r}"
-                    )
-                continue
-            safe_flags.append(flag)
-        if safe_flags:
-            parts.append("Worth knowing: " + "; ".join(safe_flags[:2]) + ".")
-    return " ".join(parts).strip()
+            research_warnings.append(f"uncertainty_flag (internal only, not shown publicly): {flag!r}")
+    return reasoning_sentence.strip()
 
 
 def _resolve_selection_odds(match_meta, market_type, selection, line):

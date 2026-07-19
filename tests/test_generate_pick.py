@@ -593,17 +593,33 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
 
 
 class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
-    """Regression coverage for the 2026-07-17 incident: a live Telegram post
-    shipped with 'Worth knowing: Warriors news snippet references Cowboys
-    not Dragons — possible copy-paste from different week; Dragons form
-    unknown beyond general knowledge.' — Claude wrote internal
-    research-quality commentary directly into uncertainty_flags, and
-    build_final_explanation joined it straight into public copy unfiltered.
-    build_final_explanation now runs each flag through
-    copy_validator.check_internal_leak before allowing it into the public
-    'Worth knowing:' line."""
+    """Regression coverage for TWO real incidents in the same mechanism,
+    both proven by live production data, not hypothetical:
 
-    def test_internal_sounding_flag_is_dropped_and_redirected_to_research_warnings(self):
+    Incident #1 (2026-07-17): a live Telegram post shipped with 'Worth
+    knowing: Warriors news snippet references Cowboys not Dragons — possible
+    copy-paste from different week; Dragons form unknown beyond general
+    knowledge.' — internal research commentary leaked into public copy via
+    uncertainty_flags.
+
+    Incident #2 (2026-07-19, real dry run, Spain v Argentina): a prompt-only
+    fix telling the model never to argue the opposite side of its own pick
+    in an uncertainty_flag was added after incident #1's pattern recurred in
+    a different form — and the very next real generation still did it:
+    reasoning backed UNDER 2.5, then 'Worth knowing: World Cup final
+    pressure can produce nervy, open-ended attacks from both sides late on;
+    Argentina's attacking firepower with Messi-era players capable of
+    blowing games open' shipped right after it, undercutting the pick.
+
+    Both incidents share one root cause: uncertainty_flags reaching public
+    copy at all is inherently risky, since neither a leak-detector nor a
+    contradiction-detector can be trusted to catch every generative
+    phrasing. The fix is structural, not another filter: uncertainty_flags
+    NEVER reach public copy any more, full stop — they always go to
+    research_warnings (internal-only, visible in the Gmail preview and
+    post-metadata.json)."""
+
+    def test_uncertainty_flags_never_appear_in_public_text_regardless_of_content(self):
         research_warnings = []
         text = generate_pick.build_final_explanation(
             "The market has Warriors at 83% but honestly this feels light.",
@@ -615,10 +631,15 @@ class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
         self.assertNotIn("news snippet", text.lower())
         self.assertNotIn("copy-paste", text.lower())
         self.assertNotIn("beyond general knowledge", text.lower())
-        self.assertNotIn("Worth knowing", text)  # both flags were bad -> no caveat line at all
-        self.assertTrue(any("suppressed" in w for w in research_warnings))
+        self.assertNotIn("Worth knowing", text)
+        self.assertEqual(len(research_warnings), 2)
 
-    def test_genuine_flag_still_reaches_public_copy(self):
+    def test_even_a_genuine_looking_flag_is_diverted_not_published(self):
+        """A flag that reads as a perfectly legitimate punter-facing caveat
+        ('star fullback is a late fitness doubt') still must not reach
+        public copy — the 2026-07-19 incident proves even 'safe-sounding'
+        flags can undercut the pick, so there is no longer any category of
+        uncertainty_flag that is allowed into public text."""
         research_warnings = []
         text = generate_pick.build_final_explanation(
             "Solid touch here, the numbers back it.",
@@ -626,29 +647,50 @@ class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
             ["star fullback is a late fitness doubt"],
             research_warnings,
         )
-        self.assertIn("Worth knowing: star fullback is a late fitness doubt.", text)
-        self.assertEqual(research_warnings, [])
+        self.assertNotIn("Worth knowing", text)
+        self.assertNotIn("fullback", text)
+        self.assertEqual(text, "Solid touch here, the numbers back it.")
+        self.assertTrue(any("fullback" in w for w in research_warnings))
 
-    def test_mixed_flags_keeps_genuine_drops_internal(self):
+    def test_real_spain_argentina_contradiction_never_reaches_public_copy(self):
+        """Regression test using the exact real copy from the 2026-07-19
+        dry run Micah triggered himself — this is the flag that shipped and
+        shouldn't have."""
         research_warnings = []
-        text = generate_pick.build_final_explanation(
-            "Solid touch here.",
-            "RISKY_PICK",
-            ["wet weather forecast for kickoff", "couldn't verify this snippet, possible mix-up"],
-            research_warnings,
+        reasoning = (
+            "World Cup finals are historically low-scoring; the average "
+            "goals in finals since 1990 is well under 2.5. Spain under Luis "
+            "de la Fuente are a possession-heavy side that slows the game "
+            "down and suffocates opponents, and Argentina's defensive "
+            "structure is disciplined."
         )
-        self.assertIn("wet weather forecast for kickoff", text)
-        self.assertNotIn("mix-up", text)
-        self.assertNotIn("verify", text)
-        self.assertTrue(any("suppressed" in w for w in research_warnings))
+        flag = (
+            "World Cup final pressure can produce nervy, open-ended attacks "
+            "from both sides late on; Argentina's attacking firepower with "
+            "Messi-era players capable of blowing games open."
+        )
+        text = generate_pick.build_final_explanation(reasoning, "RISKY_PICK", [flag], research_warnings)
+        self.assertNotIn("Worth knowing", text)
+        self.assertNotIn("blowing games open", text)
+        self.assertNotIn("open-ended attacks", text)
+        self.assertEqual(text, reasoning.strip())
+        self.assertTrue(any("blowing games open" in w for w in research_warnings))
+
+    def test_no_research_warnings_list_provided_still_never_leaks(self):
+        """If callers don't pass a research_warnings list, flags are simply
+        dropped — never silently appended to public text as a fallback."""
+        text = generate_pick.build_final_explanation(
+            "Solid touch here.", "RISKY_PICK", ["wet weather forecast for kickoff"],
+        )
+        self.assertEqual(text, "Solid touch here.")
 
     @patch("generate_pick.anthropic.Anthropic")
     def test_end_to_end_leaked_incident_phrase_never_reaches_final_explanation(self, mock_anthropic_cls):
         """Full generate_pick_for_matches path with a mocked Claude response
-        that reproduces the exact incident candidate — proves the pipeline
-        as a whole (not just the helper function in isolation) no longer
-        lets this through, and still produces a usable pick rather than
-        failing the whole run."""
+        that reproduces the exact incident #1 candidate — proves the
+        pipeline as a whole (not just the helper function in isolation) no
+        longer lets this through, and still produces a usable pick rather
+        than failing the whole run."""
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
@@ -676,7 +718,8 @@ class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
             self.assertNotIn("news snippet", text.lower())
             self.assertNotIn("copy-paste", text.lower())
             self.assertNotIn("beyond general knowledge", text.lower())
-        self.assertTrue(any("suppressed" in w for w in pick["research_warnings"]))
+            self.assertNotIn("Worth knowing", text)
+        self.assertTrue(any("news snippet" in w or "beyond general knowledge" in w for w in pick["research_warnings"]))
 
 
 class TruncatedModelResponseFailSafeTests(unittest.TestCase):
@@ -988,7 +1031,12 @@ class TruncationRegressionTests(unittest.TestCase):
     routing through text_format.truncate_at_sentence, which only cuts at a
     complete sentence boundary (or, failing that, a whole-word boundary)."""
 
-    def test_long_reasoning_is_not_cut_mid_sentence_before_worth_knowing(self):
+    def test_long_reasoning_is_not_cut_mid_sentence(self):
+        """Also doubles as a regression guard that uncertainty_flags (like
+        the one below, which itself argues the opposite side of the pick)
+        never reach the public final_explanation at all any more — see
+        IncidentUncertaintyFlagLeakTests for the dedicated coverage of that
+        fix."""
         raw_reasoning = (
             "This is a third-place playoff — teams are emotionally drained, "
             "motivations are mixed, and sides in these situations often play "
@@ -999,12 +1047,14 @@ class TruncationRegressionTests(unittest.TestCase):
         reasoning_sentence = generate_pick._one_sentence(
             generate_pick.sanitize_reasoning(raw_reasoning)
         )
+        research_warnings = []
         final = generate_pick.build_final_explanation(
             reasoning_sentence,
             "RISKY_PICK",
             ["third-place playoffs can occasionally produce high-scoring "
              "open games; both teams have attacking quality that can click "
              "on the day"],
+            research_warnings,
         )
 
         self.assertNotIn("Getting four or…", final)
@@ -1012,7 +1062,8 @@ class TruncationRegressionTests(unittest.TestCase):
         self.assertIn("Getting four or more goals in a dead rubber like this "
                       "is unlikely given how both sides typically approach "
                       "these fixtures.", final)
-        self.assertIn("Worth knowing:", final)
+        self.assertNotIn("Worth knowing:", final)
+        self.assertTrue(any("high-scoring" in w for w in research_warnings))
 
     def test_one_sentence_leaves_short_reasoning_untouched(self):
         text = "Warriors have won four straight at home."
