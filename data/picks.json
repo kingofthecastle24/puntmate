@@ -770,8 +770,8 @@
     "market": "Total",
     "odds": 1.7,
     "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-18_rugbyleague_nrl_Dolphins_PUNTER_BET",
@@ -787,8 +787,8 @@
     "market": "Total",
     "odds": 2.0,
     "confidence": "LOW",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-07-19_soccer_fifa_world_cup_Spain_PUNTER_BET",
