@@ -1,132 +1,129 @@
 """
-post_facebook.py — Posts picks to PuntMate NZ Facebook Page via Graph API.
-Requires FACEBOOK_PAGE_TOKEN and FACEBOOK_PAGE_ID environment variables.
-Same pick structure as post_telegram.py.
+post_facebook.py — Posts to the PuntMate NZ Facebook PAGE via Graph API.
+
+HISTORY / why this was rewritten (2026-07-19): the original version of this
+module was built for the retired three-personality format, and a real live
+post on 2026-07-14 failed with "(#200) The permission(s) publish_actions are
+not available. It has been deprecated." — see
+data/published/2026-07-14_France_vs_Spain.json. That error means the request
+was made with a USER access token: publish_actions (user-timeline posting)
+is indeed dead, but posting AS A PAGE never was. It needs a PAGE access
+token with the pages_manage_posts + pages_read_engagement permissions.
+After that failure, publish_pick.py stopped calling Facebook entirely and
+reported "expected via linked Instagram account" — but Meta does NOT
+auto-share API-published Instagram content to a linked Facebook Page (the
+in-app "Share to Facebook" toggle only applies to posts made in the
+Instagram app), so in practice nothing ever reached Facebook. Confirmed by
+Micah 2026-07-19: the Page is linked and still gets no posts.
+
+Required environment:
+  FACEBOOK_PAGE_ID     — the Page's numeric ID (Page → About → Page ID,
+                         or GET /me/accounts with your user token)
+  FACEBOOK_PAGE_TOKEN  — a PAGE access token (falls back to META_PAGE_TOKEN
+                         if unset, since that token may already be
+                         page-scoped from the Instagram setup)
+
+To mint a Page token: Graph API Explorer → your app → get a user token with
+pages_manage_posts + pages_read_engagement → GET /me/accounts → copy the
+page's "access_token". Exchange for a long-lived one via
+/oauth/access_token?grant_type=fb_exchange_token.
+
+All functions return the created object's id on success, None on failure —
+never raise, so one platform's failure can't take down another's publish.
 """
 
 import os
 import requests
-from datetime import datetime
 
-PAGE_TOKEN = os.environ.get('FACEBOOK_PAGE_TOKEN', '')
-PAGE_ID    = os.environ.get('FACEBOOK_PAGE_ID', '')
-GRAPH_URL  = "https://graph.facebook.com/v19.0"
-
-PERSONALITY_CONFIG = {
-    "investor": {"label": "INVESTOR 📊", "tagline": "Low risk. Steady returns. Long game."},
-    "punter":   {"label": "PUNTER 🎯",   "tagline": "Back what you know. Trust the form."},
-    "gambler":  {"label": "GAMBLER 🎰",  "tagline": "Big odds. Big dreams. No regrets."},
-}
-
-RESPONSIBLE_LINE = "⚠️ All analysis is for entertainment only. Bet responsibly — Problem Gambling Foundation NZ: 0800 664 262"
+PAGE_TOKEN = os.environ.get("FACEBOOK_PAGE_TOKEN", "") or os.environ.get("META_PAGE_TOKEN", "")
+PAGE_ID = os.environ.get("FACEBOOK_PAGE_ID", "")
+GRAPH_URL = "https://graph.facebook.com/v19.0"
 
 
-def _post(message):
-    """Post a message to the Facebook Page feed."""
-    url = f"{GRAPH_URL}/{PAGE_ID}/feed"
-    resp = requests.post(url, data={
-        "message": message,
-        "access_token": PAGE_TOKEN,
-    }, timeout=15)
-    result = resp.json()
-    if "error" in result:
-        print(f"  ❌ Facebook error: {result['error']}")
-        return None
-    print(f"  ✅ Posted to Facebook: {result.get('id')}")
-    return result.get("id")
+def is_configured():
+    """True when both a Page ID and a token are present — publish_pick uses
+    this to report Facebook as 'skipped' (not 'failed') until Micah adds the
+    FACEBOOK_PAGE_ID secret, so an unconfigured Page doesn't mark every run
+    PARTIALLY_PUBLISHED."""
+    return bool(PAGE_ID and PAGE_TOKEN)
 
 
-def post_daily_header(pick_count, date_str=None):
-    """Post the daily header."""
-    if not date_str:
-        date_str = datetime.now().strftime("%A %-d %B")
-
-    match_count = pick_count // 3 if pick_count >= 3 else pick_count
-    message = (
-        f"🎯 PUNTMATE DAILY PICKS — {date_str}\n\n"
-        f"Three personalities. Three angles. {match_count} match{'es' if match_count != 1 else ''} today.\n\n"
-        f"📊 Investor — safe, steady, value-first\n"
-        f"🎯 Punter — balanced, gut-feel, everyday\n"
-        f"🎰 Gambler — bold, long shots, big returns\n\n"
-        f"👇 See the picks below\n\n"
-        f"{RESPONSIBLE_LINE}"
-    )
-    return _post(message)
+def _configured():
+    if not PAGE_ID or not PAGE_TOKEN:
+        print(
+            "  Facebook: FACEBOOK_PAGE_ID and a page token (FACEBOOK_PAGE_TOKEN "
+            "or META_PAGE_TOKEN) are required — skipping. Add FACEBOOK_PAGE_ID "
+            "in GitHub → Settings → Secrets and variables → Actions."
+        )
+        return False
+    return True
 
 
-def post_personality_block(personality_key, picks):
-    """Post all picks for one personality as a single Facebook post."""
-    if not picks:
-        return
-
-    cfg = PERSONALITY_CONFIG.get(personality_key, {
-        "label": personality_key.upper(),
-        "tagline": "",
-    })
-
-    lines = [
-        f"{'━' * 20}",
-        f"{cfg['label']}",
-        f"{cfg['tagline']}",
-        f"{'━' * 20}",
-    ]
-
-    for pick in picks:
-        lines.append(
-            f"\n🏆 {pick['sport']}"
-            f"\n⚔️  {pick['match']}"
-            f"\n📌 Pick: {pick['pick']} @ {pick['odds']}"
-            f"\n💬 {pick['reasoning']}"
+def _explain_error(err):
+    """Print the Graph error plus, for the known permission failures, the
+    exact fix — so a failed run's log tells Micah what to do, instead of a
+    bare OAuthException."""
+    print(f"  Facebook error: {err}")
+    msg = str(err.get("message", "")).lower()
+    if "publish_actions" in msg or err.get("code") in (200, 190, 10):
+        print(
+            "  -> This means the token is a USER token or lacks Page "
+            "permissions. Facebook Page posting needs a PAGE access token "
+            "with pages_manage_posts. Get one: Graph API Explorer -> user "
+            "token with pages_manage_posts -> GET /me/accounts -> use that "
+            "page access_token as the FACEBOOK_PAGE_TOKEN secret."
         )
 
-    lines.append(f"\n#PuntMateNZ #{cfg['label'].split()[0]}")
 
-    _post("\n".join(lines))
-
-
-def post_all_picks(picks):
-    """Group picks by personality and post one block per personality."""
-    grouped = {"investor": [], "punter": [], "gambler": []}
-    for pick in picks:
-        key = pick.get("personality", "punter")
-        if key in grouped:
-            grouped[key].append(pick)
-
-    for personality_key in ["investor", "punter", "gambler"]:
-        if grouped[personality_key]:
-            post_personality_block(personality_key, grouped[personality_key])
+def _call(endpoint, data):
+    url = f"{GRAPH_URL}/{PAGE_ID}/{endpoint}"
+    try:
+        resp = requests.post(url, data={**data, "access_token": PAGE_TOKEN}, timeout=20)
+        result = resp.json()
+    except Exception as e:
+        print(f"  Facebook request failed: {e}")
+        return None
+    if "error" in result:
+        _explain_error(result["error"])
+        return None
+    return result
 
 
-def post_no_picks():
-    """Post a no-picks message."""
-    _post(
-        "📭 No standout value picks today — sometimes the best bet is no bet.\n\n"
-        "Back tomorrow with fresh picks. 🤙\n\n"
-        "#PuntMateNZ"
-    )
+def post_photo(image_url, caption):
+    """Photo post on the Page feed from a public image URL (the same
+    Imgur-hosted card URLs the Instagram publish already uses)."""
+    if not _configured():
+        return None
+    result = _call("photos", {"url": image_url, "caption": caption})
+    if result:
+        post_id = result.get("post_id") or result.get("id")
+        print(f"  Posted photo to Facebook Page: {post_id}")
+        return post_id
+    return None
 
 
-def post_results(picks_data):
-    """Post a results update with per-personality breakdown."""
-    settled = [p for p in picks_data if p['result'] in ('win', 'loss', 'push')]
-    if not settled:
-        return
+def post_text(message):
+    """Plain text post on the Page feed — fallback when no card URL exists."""
+    if not _configured():
+        return None
+    result = _call("feed", {"message": message})
+    if result:
+        print(f"  Posted to Facebook Page feed: {result.get('id')}")
+        return result.get("id")
+    return None
 
-    recent = sorted(settled, key=lambda p: p['date'], reverse=True)[:6]
-    lines = ["📊 PUNTMATE RESULTS UPDATE", "━" * 20, ""]
 
-    for p in recent:
-        icon = "✅" if p['result'] == 'win' else "❌"
-        cfg = PERSONALITY_CONFIG.get(p.get('personality', 'punter'), {"label": ""})
-        pnl_str = f"${p['pnl']:+.2f}" if p['pnl'] is not None else ""
-        lines.append(f"{icon} {p['match']}\n   ↳ {p['pick']} @ {p['odds']} {pnl_str}")
-
-    lines.append(f"\n{'━' * 20}")
-    total_pnl = sum(p['pnl'] for p in settled if p['pnl'] is not None)
-    wins = sum(1 for p in settled if p['result'] == 'win')
-    losses = sum(1 for p in settled if p['result'] == 'loss')
-    sign = "📈" if total_pnl >= 0 else "📉"
-    lines.append(f"All-time: {wins}W / {losses}L  {sign} ${total_pnl:+.2f} ($10 flat stake)")
-    lines.append(f"\n{RESPONSIBLE_LINE}")
-
-    _post("\n".join(lines))
+def post_story(photo_url):
+    """Page Story from a public image URL. Two-step: upload the photo
+    unpublished, then attach it to a story."""
+    if not _configured():
+        return None
+    upload = _call("photos", {"url": photo_url, "published": "false"})
+    if not upload or not upload.get("id"):
+        return None
+    story = _call("photo_stories", {"photo_id": upload["id"]})
+    if story:
+        story_id = story.get("post_id") or story.get("id")
+        print(f"  Posted Story to Facebook Page: {story_id}")
+        return story_id
+    return None

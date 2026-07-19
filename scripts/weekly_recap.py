@@ -129,6 +129,20 @@ def build_recap_text(stats, overall, no_bet_days, start, end):
     if no_bet_days:
         lines.append("")
         lines.append(f"🔍 {no_bet_days} no-bet day(s) this week — nothing cleared the bar, so nothing was forced.")
+    # Phase 2 growth: the $100 -> $1,000 challenge line, only when the
+    # challenge is enabled and has actually applied at least one pick.
+    # public_line() is written to satisfy copy_validator (no staking
+    # language, no "bankroll") and the whole recap still passes through
+    # check_internal_leak below like always.
+    try:
+        from challenge_tracker import public_line
+        challenge_line = public_line()
+    except Exception as e:
+        print(f"::warning::challenge line skipped: {e}")
+        challenge_line = ""
+    if challenge_line:
+        lines += ["", challenge_line]
+
     lines += [
         "",
         "Every result on the record, wins and losses alike.",

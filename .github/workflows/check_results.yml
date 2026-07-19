@@ -35,6 +35,11 @@ jobs:
           cd scripts
           python check_results.py
 
+      - name: Update challenge ledger
+        run: |
+          cd scripts
+          python challenge_tracker.py
+
       - name: Post results to Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -45,7 +50,9 @@ jobs:
 
       - name: Commit resolved picks
         run: |
-          git add data/picks.json
+          git add data/picks.json config/challenge.json
+          # ledger only exists once the challenge has been enabled + run
+          [ -f data/challenge.json ] && git add data/challenge.json || true
           bash scripts/git_push_retry.sh "chore: resolve picks $(date -u +%Y-%m-%d) [skip ci]" --soft
 
       - name: Log run summary

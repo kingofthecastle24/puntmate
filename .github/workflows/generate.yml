@@ -416,6 +416,8 @@ jobs:
           IG_USER_ID:          ${{ secrets.IG_USER_ID }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
           META_PAGE_TOKEN:     ${{ secrets.META_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID:    ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
           GMAIL_SENDER_EMAIL:    ${{ secrets.GMAIL_SENDER_EMAIL }}
           GMAIL_APP_PASSWORD:    ${{ secrets.GMAIL_APP_PASSWORD }}
           PUNTMATE_REPORT_EMAIL: ${{ secrets.PUNTMATE_REPORT_EMAIL }}
@@ -655,6 +657,8 @@ jobs:
           IG_USER_ID:          ${{ secrets.IG_USER_ID }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
           META_PAGE_TOKEN:     ${{ secrets.META_PAGE_TOKEN }}
+          FACEBOOK_PAGE_ID:    ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
           GMAIL_SENDER_EMAIL:    ${{ secrets.GMAIL_SENDER_EMAIL }}
           GMAIL_APP_PASSWORD:    ${{ secrets.GMAIL_APP_PASSWORD }}
           PUNTMATE_REPORT_EMAIL: ${{ secrets.PUNTMATE_REPORT_EMAIL }}

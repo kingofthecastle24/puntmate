@@ -72,9 +72,14 @@ class PublishFlowTests(unittest.TestCase):
     @patch("post_instagram_story.post_story_to_instagram")
     @patch("post_instagram.post_carousel_to_instagram")
     @patch("post_telegram.send_picks_card")
-    def test_all_platforms_succeed_marks_published_and_facebook_via_instagram(
+    def test_all_platforms_succeed_marks_published_facebook_skipped_when_unconfigured(
         self, mock_tg, mock_ig_feed, mock_ig_story, mock_email
     ):
+        """2026-07-19: the old "via_linked_instagram" assumption was removed —
+        Meta never auto-shared API-published IG content to the linked Page,
+        so Facebook is now posted to directly via post_facebook. In this
+        test the FB secrets are unset, so Facebook reports skipped (not
+        failed) and the run still lands on PUBLISHED."""
         pp.DRY_RUN = False
         metadata = _make_review_package(self.review_dir)
         self._seed_state_through_approval(metadata["pick_id"])
@@ -87,8 +92,80 @@ class PublishFlowTests(unittest.TestCase):
         state = load_state(pp.REPO_ROOT, metadata["pick_id"])
         self.assertEqual(state["state"], PUBLISHED)
         published = json.load(open(os.path.join(pp.PUBLISHED_DIR, metadata["pick_id"] + ".json")))
-        self.assertEqual(published["facebook"]["status"], "via_linked_instagram")
+        self.assertTrue(published["facebook"]["skipped"])
         self.assertTrue(mock_email.called)
+
+    @patch("publish_pick.email_service.send_result_email")
+    @patch("post_facebook.post_story")
+    @patch("post_facebook.post_photo")
+    @patch("post_instagram_story.post_story_to_instagram")
+    @patch("post_instagram.post_carousel_to_instagram")
+    @patch("post_telegram.send_picks_card")
+    def test_facebook_posts_photo_and_story_when_configured(
+        self, mock_tg, mock_ig_feed, mock_ig_story, mock_fb_photo, mock_fb_story, mock_email
+    ):
+        import post_facebook
+        pp.DRY_RUN = False
+        metadata = _make_review_package(self.review_dir)
+        self._seed_state_through_approval(metadata["pick_id"])
+        mock_tg.return_value = {"ok": True}
+        mock_ig_feed.return_value = True
+        mock_ig_story.return_value = "media123"
+        mock_fb_photo.return_value = "fbpost_1"
+        mock_fb_story.return_value = "fbstory_1"
+
+        orig = (post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN)
+        post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN = "12345", "page-token"
+        try:
+            pp.main()
+        finally:
+            post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN = orig
+
+        state = load_state(pp.REPO_ROOT, metadata["pick_id"])
+        self.assertEqual(state["state"], PUBLISHED)
+        published = json.load(open(os.path.join(pp.PUBLISHED_DIR, metadata["pick_id"] + ".json")))
+        self.assertTrue(published["facebook"]["ok"])
+        self.assertTrue(published["facebook_story"]["ok"])
+        # Photo post uses the cover card URL + the Instagram caption
+        photo_args = mock_fb_photo.call_args[0]
+        self.assertEqual(photo_args[0], metadata["carousel_urls"][0])
+        mock_fb_story.assert_called_once_with(metadata["story_url"])
+
+    @patch("publish_pick.email_service.send_result_email")
+    @patch("post_facebook.post_story")
+    @patch("post_facebook.post_photo")
+    @patch("post_instagram_story.post_story_to_instagram")
+    @patch("post_instagram.post_carousel_to_instagram")
+    @patch("post_telegram.send_picks_card")
+    def test_facebook_failure_is_partial_publish_not_rollback(
+        self, mock_tg, mock_ig_feed, mock_ig_story, mock_fb_photo, mock_fb_story, mock_email
+    ):
+        """A configured-but-failing Facebook (e.g. bad token) marks the run
+        PARTIALLY_PUBLISHED — it does NOT roll back or block the platforms
+        that succeeded."""
+        import post_facebook
+        pp.DRY_RUN = False
+        metadata = _make_review_package(self.review_dir)
+        # No story_url -> no FB story attempt, isolate the feed failure
+        self._seed_state_through_approval(metadata["pick_id"])
+        mock_tg.return_value = {"ok": True}
+        mock_ig_feed.return_value = True
+        mock_ig_story.return_value = "media123"
+        mock_fb_photo.return_value = None  # Graph API error path returns None
+        mock_fb_story.return_value = None
+
+        orig = (post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN)
+        post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN = "12345", "bad-token"
+        try:
+            pp.main()
+        finally:
+            post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN = orig
+
+        state = load_state(pp.REPO_ROOT, metadata["pick_id"])
+        self.assertEqual(state["state"], PARTIALLY_PUBLISHED)
+        published = json.load(open(os.path.join(pp.PUBLISHED_DIR, metadata["pick_id"] + ".json")))
+        self.assertFalse(published["facebook"]["ok"])
+        self.assertTrue(published["telegram"]["ok"])
 
     @patch("publish_pick.email_service.send_result_email")
     @patch("post_instagram_story.post_story_to_instagram")

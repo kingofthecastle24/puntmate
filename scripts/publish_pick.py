@@ -6,13 +6,15 @@ approval gate, using the EXACT frozen files from data/review/<pick_id>/
 (downloaded as this run's artifact) — never regenerated, never re-read from
 whatever's newest on main.
 
-Facebook is NOT posted to directly. Facebook's Page access token lost the
-publish_actions permission (Meta deprecated it) — this was confirmed by a
-real failed live post (see data/published/2026-07-14_France_vs_Spain.json:
-"(#200) The permission(s) publish_actions are not available... deprecated").
-Since the Facebook Page is already linked to the Instagram account, Facebook
-is reported as "expected via linked Instagram account" — never claimed as a
-verified success, because it isn't independently verifiable from here.
+Facebook IS posted to directly as of 2026-07-19 (Micah confirmed the
+"linked Instagram" assumption never actually cross-posted anything — Meta
+doesn't auto-share API-published IG content to a linked Page). The
+2026-07-14 publish_actions failure was a user-token problem, not a dead
+API: Page posting works with a PAGE access token holding
+pages_manage_posts. See post_facebook.py for token setup. Requires the
+FACEBOOK_PAGE_ID secret (and ideally FACEBOOK_PAGE_TOKEN; falls back to
+META_PAGE_TOKEN). If the token still lacks permissions, the run logs the
+exact fix and Facebook fails independently — nothing else is affected.
 
 Freeze/verify: before publishing anything, this reloads manifest.json and
 re-hashes every file it lists. A single mismatch aborts the ENTIRE publish
@@ -107,12 +109,35 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
             results["instagram_story"] = {"ok": False, "error": str(e)}
             print(f"  Instagram Story error: {e}")
 
-    if "facebook" in platforms:
-        # Deliberately NOT calling the Graph API directly — see module docstring.
+    import post_facebook
+    fb_configured = post_facebook.is_configured()
+    if "facebook" in platforms and not fb_configured:
         results["facebook"] = {
-            "status": "via_linked_instagram",
-            "note": "Facebook: expected via linked Instagram account (direct Page posting is disabled — publish_actions permission is deprecated).",
+            "skipped": True,
+            "note": "FACEBOOK_PAGE_ID / page token not configured — add the GitHub secret to enable direct Page posting.",
         }
+        print("  Facebook: not configured (FACEBOOK_PAGE_ID missing) — skipped.")
+
+    if "facebook" in platforms and fb_configured and not is_weekend_multi_only:
+        try:
+            carousel_urls = metadata.get("carousel_urls") or []
+            if carousel_urls:
+                fb_id = post_facebook.post_photo(carousel_urls[0], instagram_caption or telegram_text)
+            else:
+                fb_id = post_facebook.post_text(telegram_text)
+            results["facebook"] = {"ok": fb_id is not None, "post_id": fb_id}
+        except Exception as e:
+            results["facebook"] = {"ok": False, "error": str(e)}
+            print(f"  Facebook error: {e}")
+
+        # Page Story mirrors the Instagram Story — same image URL.
+        if metadata.get("story_url"):
+            try:
+                story_id = post_facebook.post_story(metadata["story_url"])
+                results["facebook_story"] = {"ok": story_id is not None, "story_id": story_id}
+            except Exception as e:
+                results["facebook_story"] = {"ok": False, "error": str(e)}
+                print(f"  Facebook Story error: {e}")
 
     # Phase 5/6 (2026-07-19): TWO independent multi tiers — Punter Multi and
     # Gambler/Degenerate Multi — each its own secondary Telegram text post
@@ -164,6 +189,18 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
                 results[f"instagram_{tier}_multi"] = {"ok": False, "error": str(e)}
                 print(f"  Instagram {tier} multi error: {e}")
 
+        if "facebook" in platforms and fb_configured:
+            tier_urls = metadata.get(f"{tier}_multi_carousel_urls") or []
+            try:
+                if tier_urls:
+                    fb_id = post_facebook.post_photo(tier_urls[0], tier_text)
+                else:
+                    fb_id = post_facebook.post_text(tier_text)
+                results[f"facebook_{tier}_multi"] = {"ok": fb_id is not None, "post_id": fb_id}
+            except Exception as e:
+                results[f"facebook_{tier}_multi"] = {"ok": False, "error": str(e)}
+                print(f"  Facebook {tier} multi error: {e}")
+
     return results
 
 
@@ -186,7 +223,9 @@ def dry_run_report(metadata, telegram_text, instagram_caption, review_dir=None):
         elif platform == "instagram_story":
             print(f"  Would post Story: {metadata.get('story_url')}")
         elif platform == "facebook":
-            print("  Facebook: expected via linked Instagram account (no direct post attempted).")
+            print(f"  Would post photo to FB Page: {(metadata.get('carousel_urls') or ['(text-only fallback)'])[0]}")
+            if metadata.get("story_url"):
+                print(f"  Would post FB Page Story: {metadata.get('story_url')}")
 
     if review_dir:
         for tier in ("punter", "gambler"):
@@ -287,9 +326,12 @@ def main():
     publish(review_dir, metadata, telegram_text, instagram_caption, results)
 
     def _platform_ok(r):
-        return r.get("ok") is True or r.get("status") == "via_linked_instagram"
+        return r.get("ok") is True or r.get("skipped") is True
 
-    real_platforms = [p for p in results if p != "facebook"]
+    # Facebook counts as a real platform now (2026-07-19) — the only results
+    # excluded from the success calculation are explicitly skipped ones
+    # (e.g. Facebook before its secret is configured).
+    real_platforms = [p for p in results if not results[p].get("skipped")]
     all_ok = all(results[p].get("ok") for p in real_platforms) if real_platforms else False
     any_ok = any(results[p].get("ok") for p in real_platforms) if real_platforms else False
 

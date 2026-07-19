@@ -35,6 +35,22 @@ Daily pick (cards + caption, all platforms) · Watchlist on no-bet days
 Weekly recap (Telegram text + RECAP.md). Cards show game date via the sport
 chip + kickoff line.
 
+## Facebook (2026-07-19)
+Direct Page posting is live in publish_pick.py via post_facebook.py — the
+old "linked Instagram auto-shares" assumption was wrong (Meta never
+cross-posts API-published IG content). Needs the FACEBOOK_PAGE_ID GitHub
+secret (+ optionally FACEBOOK_PAGE_TOKEN — a PAGE token with
+pages_manage_posts; falls back to META_PAGE_TOKEN). Until the secret is
+added, Facebook reports "skipped" in run logs — not failed. Feed photo +
+Page Story for the daily pick, feed photo per weekend-multi tier.
+
+## The $100 -> $1,000 Challenge (built 2026-07-19, OFF by default)
+Public notional challenge following the posted daily picks — 10% of the
+challenge balance per settled pick, updated nightly by challenge_tracker.py
+in check_results.yml, surfaced in the Sunday recap. Start it by setting
+"enabled": true in config/challenge.json (start date stamps itself). Bust
+and completion both stay on the record. Ledger: data/challenge.json.
+
 ## Known limitations / watch items
 - Auto-publish trial is NEW: first unsupervised scheduled run needs a glance.
 - Watchlist + multi are unit-tested but haven't fired live yet.
