@@ -69,7 +69,7 @@ MULTI_TIER_CONFIG = {
         "multiType": "Punter Multi",
         "coverKicker": "THE PUNTER'S MULTI",
         "riskTagline": "Measured legs · Bigger return · Everything must land",
-        "stake": "$10",
+        "stake": "$20",  # 2026-07-19 (Micah): $20 Punter / $5 Gambler-Degenerate
         "confidence": 3,
         "palette": "green",
     },

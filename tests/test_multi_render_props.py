@@ -20,7 +20,7 @@ class BuildMultiPropsTests(unittest.TestCase):
     def test_punter_tier_props(self):
         props = build_multi_props(_legs(), "punter")
         self.assertEqual(props["multiType"], "Punter Multi")
-        self.assertEqual(props["stake"], "$10")
+        self.assertEqual(props["stake"], "$20")  # 2026-07-19 (Micah): $20 Punter / $5 Gambler-Degenerate
         self.assertEqual(props["palette"], "green")
         self.assertIn("A vs B | A | Head to Head | 1.80", props["legs"])
         self.assertEqual(len(props["legs"].split("\n")), 3)

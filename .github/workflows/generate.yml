@@ -56,8 +56,15 @@ on:
   schedule:
     # 8am NZT daily (NZT = UTC+12, so 20:00 UTC the day before)
     - cron: '0 20 * * *'
-    # 6pm NZT Fri/Sat/Sun for evening game coverage
-    - cron: '0 6 * * 5,6,0'
+    # 2026-07-19 (Micah): the old 6pm NZT Fri/Sat/Sun slot was too close to
+    # kickoff and outside NZ's actual morning social-media peak (general
+    # engagement data points to ~6-8am as the daily surge window — see
+    # https://sproutsocial.com/insights/best-times-to-post-on-instagram/).
+    # Moved to 7am NZT — just ahead of the main 8am daily pick, so weekend
+    # subscribers get the extra weekend content first thing, still well
+    # before any game starts, without colliding with the 8am slot.
+    # 7am NZT Fri/Sat/Sun = 19:00 UTC the day before (Thu/Fri/Sat in UTC).
+    - cron: '0 19 * * 4,5,6'
   workflow_dispatch:
     inputs:
       dry_run:
