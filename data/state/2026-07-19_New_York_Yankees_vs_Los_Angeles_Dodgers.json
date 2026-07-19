@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-19_New_York_Yankees_vs_Los_Angeles_Dodgers",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-19T22:38:25.277428+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-19T22:38:25.277656+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-19T22:38:25.277881+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

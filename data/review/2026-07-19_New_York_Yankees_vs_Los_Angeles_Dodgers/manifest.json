@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "4fedf07bafdac0c9b8ff0b4c22386f9d3349e6133b0629e5efdd6726767b84ef",
+      "bytes": 686
+    },
+    "instagram-caption.txt": {
+      "sha256": "bc19b3474fbe53f3d33a9fc1ff17c1b8a198f3871145d78cde5a8b1db3cb2b58",
+      "bytes": 692
+    },
+    "post-metadata.json": {
+      "sha256": "fe412d3a7a95396c244965d3e249730fe3ef6cb4ab641f891749d9f7746a586f",
+      "bytes": 5685
+    },
+    "preview.html": {
+      "sha256": "fc24c6a911992fb68ce31600be3332bcc72ebe4a6a2553001303f5dfb766a1bf",
+      "bytes": 10523
+    },
+    "cover.png": {
+      "sha256": "acdd415cc4c0c2f0175d964f1439ef36c2ce0d03953f43630629806370d61b89",
+      "bytes": 71006
+    },
+    "tip.png": {
+      "sha256": "4bf58a88df7a797a9c1cbd346232cc44cdc6e21a2b8bf52600ad428ae7f5561e",
+      "bytes": 91271
+    },
+    "breakdown.png": {
+      "sha256": "ab423e77a78ae218e79e34c328167acd7a9a0d5e4a803fbd3566e2eea1766f7c",
+      "bytes": 166053
+    },
+    "story.png": {
+      "sha256": "5f15ff3d1e3fc841db6a973caae4abf697ca997f12efa7647740090a87f1dca2",
+      "bytes": 75162
+    }
+  },
+  "pick_id": "2026-07-19_New_York_Yankees_vs_Los_Angeles_Dodgers",
+  "created_at": "2026-07-19T22:38:25.012800+00:00"
+}

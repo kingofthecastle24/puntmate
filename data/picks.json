@@ -789,5 +789,22 @@
     "confidence": "LOW",
     "result": "loss",
     "pnl": -10.0
+  },
+  {
+    "id": "2026-07-19_baseball_mlb_New_York_Yankees_PUNTER_BET",
+    "date": "2026-07-19",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "baseball_mlb",
+    "sport": "baseball_mlb",
+    "match": "New York Yankees vs Los Angeles Dodgers",
+    "home_team": "New York Yankees",
+    "away_team": "Los Angeles Dodgers",
+    "pick": "NEW YORK YANKEES +1.5",
+    "market": "Handicap",
+    "odds": 1.71,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]
