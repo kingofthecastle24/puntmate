@@ -61,3 +61,19 @@ Every result on the record, wins and losses alike.
 📲 Join Telegram for daily picks
 R18 · Gamble responsibly · Problem Gambling Foundation NZ: 0800 664 262
 ```
+
+
+## Week 2026-07-13 → 2026-07-19 (auto-generated)
+
+```
+*📈 PUNTMATE NZ — WEEKLY RECAP*
+_13 Jul – 19 Jul 2026_
+
+Quiet week — no picks put up. No-bet days protect the record.
+
+Every result on the record, wins and losses alike.
+
+──────────────────
+📲 Join Telegram for daily picks
+R18 · Gamble responsibly · Problem Gambling Foundation NZ: 0800 664 262
+```
