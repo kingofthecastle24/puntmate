@@ -51,9 +51,37 @@ CARDS_DIR = os.path.join(REPO_ROOT, "data", "cards")
 BETSLIP_NIGHT = os.path.join(BRAND_DIR, "PuntMate Bet Post - Betslip Night.dc.html")
 MATCHDAY_PRINT = os.path.join(BRAND_DIR, "PuntMate Bet Post - Matchday Print.dc.html")
 SOCIAL_TEMPLATES = os.path.join(BRAND_DIR, "PuntMate Social Templates.dc.html")
+MULTI_TEMPLATE = os.path.join(BRAND_DIR, "PuntMate Bet Post - Multi.dc.html")
 
 FEED_SLIDE_SIZE = (1080, 1350)
 STORY_SIZE = (1080, 1920)
+MULTI_SLIDE_SIZE = (1080, 1350)
+
+# 2026-07-19 (Micah): two independent multi tiers, each with its own tone,
+# palette and illustrative stake -- the Punter Multi is the measured side,
+# the Gambler/Degenerate Multi is the "shooting your shot" side. stake here
+# only ever drives the template's own auto-computed stakeReturn display on
+# the GRAPHIC (e.g. "$5 returns $998.42") -- it is never written into the
+# Telegram/Instagram TEXT copy, which stays on "combined odds" framing only
+# (see build_gambler_multi_text in build_review_package.py).
+MULTI_TIER_CONFIG = {
+    "punter": {
+        "multiType": "Punter Multi",
+        "coverKicker": "THE PUNTER'S MULTI",
+        "riskTagline": "Measured legs · Bigger return · Everything must land",
+        "stake": "$10",
+        "confidence": 3,
+        "palette": "green",
+    },
+    "gambler": {
+        "multiType": "Degenerate Multi",
+        "coverKicker": "SHOOTING YOUR SHOT",
+        "riskTagline": "Longshot legs · Small stake, big swing · One to dream on",
+        "stake": "$5",
+        "confidence": 1,
+        "palette": "pink",
+    },
+}
 
 REACT_CDN = [
     "https://unpkg.com/react@18/umd/react.production.min.js",
@@ -446,6 +474,123 @@ def render_pick(pick, date_str=None, out_dir=CARDS_DIR, theme_override=None):
         warnings.append("Pillow not installed — skipped file-integrity re-check (dimensions already checked via DOM bounding box)")
 
     return {"ok": True, "theme": theme, "props": props, "files": files, "warnings": warnings}
+
+
+def build_multi_props(legs, tier, handle="@puntmatenz"):
+    """Map a list of leg dicts (match/sport_label/selection/market/odds, the
+    shape generate_pick.py's _assemble_multi_tier returns) into the
+    Multi.dc.html template's props. tier is "punter" or "gambler" — see
+    MULTI_TIER_CONFIG for the tone/palette/stake that differs between them.
+    """
+    if tier not in MULTI_TIER_CONFIG:
+        raise ValueError(f"unknown multi tier: {tier!r} (expected 'punter' or 'gambler')")
+    cfg = MULTI_TIER_CONFIG[tier]
+
+    legs_text = "\n".join(
+        f"{leg['match']} | {leg['selection']} | {leg.get('market', '')} | {leg['odds']}"
+        for leg in legs
+    )
+
+    sports = sorted({leg.get("sport_label", "") for leg in legs if leg.get("sport_label")})
+    sports_str = ", ".join(sports) if sports else "today's fixtures"
+    if tier == "punter":
+        analysis = (
+            f"{len(legs)} legs across {sports_str}, each clearing our model "
+            f"independently. Rolled together for a bigger return than any "
+            f"single leg — every leg still has to land."
+        )
+    else:
+        analysis = (
+            f"{len(legs)} genuine longshot legs across {sports_str}. Rare for "
+            f"all of them to land on the same day — this is a small-stake "
+            f"swing, not a plan."
+        )
+
+    return {
+        "legs": legs_text,
+        "multiType": cfg["multiType"],
+        "coverKicker": cfg["coverKicker"],
+        "riskTagline": cfg["riskTagline"],
+        "stake": cfg["stake"],
+        "confidence": cfg["confidence"],
+        "analysis": analysis,
+        "handle": handle,
+        "palette": cfg["palette"],
+    }
+
+
+def render_multi(pick, tier, legs, date_str=None, out_dir=CARDS_DIR):
+    """Render one multi tier's 3-slide carousel (cover/legs/breakdown) via
+    the brand kit's Multi.dc.html template. Filenames follow the SAME
+    {base}_{tier}_multi_N_name.png convention build_review_package.py's
+    _freeze_multi_tier expects, where base is identical to the single
+    featured pick's own base (same date/match-slug/theme) so both live in
+    the same data/cards/ output for one run."""
+    from playwright.sync_api import sync_playwright  # imported here so --help works without playwright installed
+
+    os.makedirs(out_dir, exist_ok=True)
+    date_str = date_str or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    props = build_multi_props(legs, tier)
+    theme = choose_theme(pick)
+    match_slug = slugify(pick.get("match") or f"{pick.get('home_team','')}_{pick.get('away_team','')}")
+    base = f"{date_str}_{match_slug}_{theme}"
+
+    files = {}
+    warnings = []
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        render_wrapper_html(MULTI_TEMPLATE, tmp_dir)
+
+        with LocalServer(tmp_dir) as server:
+            with sync_playwright() as pw:
+                browser = pw.chromium.launch()
+                try:
+                    page = browser.new_page(viewport={"width": 2400, "height": 2400}, device_scale_factor=1)
+                    page.goto(f"http://127.0.0.1:{server.port}/{os.path.basename(MULTI_TEMPLATE)}", wait_until="load")
+                    wait_for_dc_boot(page)
+                    set_props_and_settle(page, props)
+
+                    required_width = page.evaluate(
+                        """() => {
+                            let maxRight = 0;
+                            document.querySelectorAll('[data-export-id]').forEach(el => {
+                                const r = el.getBoundingClientRect();
+                                maxRight = Math.max(maxRight, r.right);
+                            });
+                            return Math.ceil(maxRight);
+                        }"""
+                    )
+                    if required_width and required_width > 2400:
+                        page.set_viewport_size({"width": required_width, "height": 2400})
+                        page.wait_for_timeout(100)
+
+                    slide_paths = [
+                        os.path.join(out_dir, f"{base}_{tier}_multi_1_cover.png"),
+                        os.path.join(out_dir, f"{base}_{tier}_multi_2_legs.png"),
+                        os.path.join(out_dir, f"{base}_{tier}_multi_3_breakdown.png"),
+                    ]
+                    capture_exports(
+                        page,
+                        ["cover", "legs", "breakdown"],
+                        [MULTI_SLIDE_SIZE] * 3,
+                        slide_paths,
+                        warnings,
+                    )
+                    check_no_overlap_and_containment(page, warnings)
+                    files["cover"], files["legs"], files["breakdown"] = slide_paths
+                finally:
+                    browser.close()
+
+    try:
+        from PIL import Image
+        for key, path in files.items():
+            with Image.open(path) as im:
+                im.verify()
+    except ImportError:
+        warnings.append("Pillow not installed — skipped file-integrity re-check")
+
+    return {"ok": True, "tier": tier, "props": props, "files": files, "warnings": warnings}
 
 
 # ---------------------------------------------------------------------------

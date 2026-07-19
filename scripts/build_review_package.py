@@ -174,21 +174,60 @@ def build_watchlist_text(watchlist, post_date):
     return "\n".join(lines)
 
 
-def build_multi_text(pick):
-    """Phase 5 — rare Gambler-tier multi as a SECONDARY Telegram post.
-    Only called when generate_pick produced 3 genuine, independently
-    defensible legs on distinct matches (see multi_legs logic there)."""
-    legs = pick["multi_legs"]
+def _combined_odds(legs):
     combined = 1.0
     for leg in legs:
         combined *= float(leg["odds"])
+    return combined
+
+
+def build_punter_multi_text(pick):
+    """The measured multi — INVESTOR_BET/PUNTER_BET legs only. Secondary
+    Telegram post, only built when generate_pick produced 3+ genuine,
+    independently defensible legs in this tier on distinct matches (see
+    _assemble_multi_tier in generate_pick.py)."""
+    legs = pick["punter_multi_legs"]
+    combined = _combined_odds(legs)
     lines = [
-        "*🎰 PUNTMATE NZ — THE MULTI*",
+        "*🎯 PUNTMATE NZ — THE PUNTER'S MULTI*",
         "",
-        "_Rare one: today produced three selections that each stand on their own. "
-        "Rolled together as a multi they pay big — but every leg has to land, "
-        "so treat this strictly as a Gambler-tier swing, not the day's real pick "
-        "(that's the post above)._",
+        "_A measured one: today produced multiple selections that each stand "
+        "on their own as Investor/Punter-tier picks. Rolled together they pay "
+        "well beyond any single leg — every leg still has to land, so this is "
+        "a bigger swing than the day's single pick, not a certainty._",
+        "",
+    ]
+    for i, leg in enumerate(legs, 1):
+        lines.append(f"*Leg {i}:* {leg['match']} — {leg['selection']} @ {leg['odds']} ({leg['market']})")
+    lines += [
+        "",
+        f"*Combined: {combined:.2f}*",
+        "*BET TYPE: PUNTER*",
+        "",
+        "One leg fails, the lot fails.",
+        "",
+        "──────────────────",
+        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+    ]
+    return "\n".join(lines)
+
+
+def build_gambler_multi_text(pick):
+    """The Gambler/Degenerate multi — GAMBLER_BET legs only. Explicitly
+    framed as a small-stake, high-upside swing, not a plan. Kept deliberately
+    free of any specific stake/dollar-return example in the TEXT copy (that
+    illustration lives on the graphic card only, matching the pre-existing
+    Multi.dc.html template's stake/stakeReturn design) — copy_validator's
+    STAKE_PHRASES/RG_BANNED_FOR_GAMBLER checks still run on this text same as
+    every other public post."""
+    legs = pick["gambler_multi_legs"]
+    combined = _combined_odds(legs)
+    lines = [
+        "*🎰 PUNTMATE NZ — THE DEGENERATE MULTI*",
+        "",
+        "_Shooting your shot: today produced multiple genuine Gambler-tier "
+        "longshots. Combined odds are big — this is a small-stake, "
+        "high-upside swing, not a plan. One leg fails, the lot fails._",
         "",
     ]
     for i, leg in enumerate(legs, 1):
@@ -198,7 +237,7 @@ def build_multi_text(pick):
         f"*Combined: {combined:.2f}*",
         "*BET TYPE: GAMBLER*",
         "",
-        "One leg fails, the lot fails. Small stakes territory.",
+        "Small stakes territory. One leg fails, the lot fails.",
         "",
         "──────────────────",
         f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
@@ -350,27 +389,60 @@ def main():
         "workflow_state": "GENERATED",
     }
 
-    # Phase 5: rare Gambler-tier multi (secondary Telegram post). Frozen and
-    # checksummed with everything else; validated under GAMBLER_BET rules so
-    # chasing/guarantee language can never ship. Computed BEFORE
-    # post-metadata.json/preview.html are written (bug fixed 2026-07-18:
-    # this used to run AFTER those writes, so has_multi/multi_promo_hint
-    # never actually reached the frozen metadata, the Gmail preview, or the
-    # job summary -- Micah would never have seen "there's a multi attached"
-    # anywhere except by noticing the extra file in the artifact).
+    # Phase 5/6 (2026-07-19): TWO independent secondary posts instead of
+    # one blended multi — a Punter's Multi (measured tiers) and a
+    # Gambler/Degenerate Multi (swing-for-it tier). Both frozen and
+    # checksummed with everything else; each validated under its own
+    # bet_type so chasing/guarantee language can never ship in either.
+    # Computed BEFORE post-metadata.json/preview.html are written (bug fixed
+    # 2026-07-18: this used to run AFTER those writes, so has_multi never
+    # actually reached the frozen metadata, the Gmail preview, or the job
+    # summary — keeping that fix's ordering for both tiers here).
+    #
+    # Graphic cards for each tier (cover/legs/breakdown, via the Multi.dc.html
+    # brand template — see render_brand_templates.py) are picked up the same
+    # way the single-pick carousel is: only included if render already
+    # produced them in CARDS_DIR under the naming convention below.
     multi_manifest_extra = []
-    if len(pick.get("multi_legs") or []) >= 3:
-        multi_text = build_multi_text(pick)
-        validate_text(multi_text, risk=pick["risk"], bet_type="GAMBLER_BET", public=True)
-        with open(os.path.join(review_dir, "multi-post.txt"), "w") as f:
-            f.write(multi_text)
-        multi_manifest_extra.append("multi-post.txt")
-        metadata["has_multi"] = True
-        if pick.get("multi_promo_hint"):
+
+    def _freeze_multi_tier(tier_key, legs, promo_hint, build_text_fn, bet_type_label):
+        if len(legs or []) < 3:
+            return
+        text = build_text_fn(pick)
+        validate_text(text, risk=pick["risk"], bet_type=bet_type_label, public=True)
+        text_filename = f"{tier_key}-multi-post.txt"
+        with open(os.path.join(review_dir, text_filename), "w") as f:
+            f.write(text)
+        multi_manifest_extra.append(text_filename)
+        metadata[f"has_{tier_key}_multi"] = True
+        if promo_hint:
             # Internal-only reference for Micah/the Gmail preview -- e.g.
             # "all 4 legs are MLB, TAB's US-sports 4+ leg promo may apply,
-            # check current T&Cs". Never written into multi-post.txt itself.
-            metadata["multi_promo_hint"] = pick["multi_promo_hint"]
+            # check current T&Cs". Never written into the post text itself.
+            metadata[f"{tier_key}_multi_promo_hint"] = promo_hint
+
+        multi_filenames = {
+            "cover": f"{base}_{tier_key}_multi_1_cover.png",
+            "legs": f"{base}_{tier_key}_multi_2_legs.png",
+            "breakdown": f"{base}_{tier_key}_multi_3_breakdown.png",
+        }
+        multi_present = {k: v for k, v in multi_filenames.items() if os.path.exists(os.path.join(CARDS_DIR, v))}
+        if multi_present:
+            image_names = {}
+            for key, fname in multi_present.items():
+                dest_name = f"{tier_key}_multi_{key}.png"
+                shutil.copyfile(os.path.join(CARDS_DIR, fname), os.path.join(review_dir, dest_name))
+                image_names[key] = dest_name
+                multi_manifest_extra.append(dest_name)
+            metadata[f"{tier_key}_multi_carousel_paths"] = [
+                os.path.join("data", "review", pick_id, image_names[k]) for k in ("cover", "legs", "breakdown") if k in image_names
+            ]
+            metadata[f"{tier_key}_multi_carousel_urls"] = [raw_url(repo, multi_present[k]) for k in ("cover", "legs", "breakdown") if k in multi_present]
+
+    _freeze_multi_tier("punter", pick.get("punter_multi_legs"), pick.get("punter_multi_promo_hint"),
+                       build_punter_multi_text, "PUNTER_BET")
+    _freeze_multi_tier("gambler", pick.get("gambler_multi_legs"), pick.get("gambler_multi_promo_hint"),
+                       build_gambler_multi_text, "GAMBLER_BET")
 
     with open(os.path.join(review_dir, "telegram-post.txt"), "w") as f:
         f.write(telegram_text)

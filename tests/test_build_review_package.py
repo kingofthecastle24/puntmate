@@ -105,19 +105,21 @@ class BuildReviewPackageTests(unittest.TestCase):
             self.assertNotIn(banned_key, metadata)
 
     def test_multi_flags_actually_reach_frozen_metadata_and_preview(self):
-        """Regression test (2026-07-18): has_multi/multi_promo_hint used to
-        be set on the metadata dict AFTER post-metadata.json and
-        preview.html were already written to disk, so neither file -- nor
-        therefore the Gmail preview or job summary built from them -- ever
-        showed that a multi existed at all. build_review_package.main() now
-        computes the multi block first."""
+        """Regression test (2026-07-18, updated 2026-07-19 for the two-tier
+        split): has_multi/multi_promo_hint used to be set on the metadata
+        dict AFTER post-metadata.json and preview.html were already written
+        to disk, so neither file -- nor therefore the Gmail preview or job
+        summary built from them -- ever showed that a multi existed at all.
+        build_review_package.main() now computes both multi tiers first."""
         pick = _standard_pick()
-        pick["multi_legs"] = [
+        pick["punter_multi_legs"] = [
             {"match": "A vs B", "sport_label": "MLB", "selection": "A", "market": "Head to Head", "odds": "1.80"},
             {"match": "C vs D", "sport_label": "MLB", "selection": "C", "market": "Head to Head", "odds": "1.90"},
             {"match": "E vs F", "sport_label": "MLB", "selection": "E", "market": "Head to Head", "odds": "1.70"},
         ]
-        pick["multi_promo_hint"] = "All 3 legs fall within TAB's 'us team sports' category — test hint."
+        pick["punter_multi_promo_hint"] = "All 3 legs fall within TAB's 'us team sports' category — test hint."
+        pick["gambler_multi_legs"] = []
+        pick["gambler_multi_promo_hint"] = None
         self._write_run(pick)
         theme = brp.choose_theme(pick)
         slug = brp.slugify(pick["match"])
@@ -125,18 +127,51 @@ class BuildReviewPackageTests(unittest.TestCase):
         self._write_fake_cards(base)
 
         metadata = brp.main()
-        self.assertTrue(metadata.get("has_multi"))
-        self.assertEqual(metadata.get("multi_promo_hint"), pick["multi_promo_hint"])
+        self.assertTrue(metadata.get("has_punter_multi"))
+        self.assertNotIn("has_gambler_multi", metadata)
+        self.assertEqual(metadata.get("punter_multi_promo_hint"), pick["punter_multi_promo_hint"])
 
         review_dir = os.path.join(brp.REVIEW_ROOT, metadata["pick_id"])
         with open(os.path.join(review_dir, "post-metadata.json")) as f:
             on_disk = json.load(f)
-        self.assertTrue(on_disk.get("has_multi"))
-        self.assertEqual(on_disk.get("multi_promo_hint"), pick["multi_promo_hint"])
+        self.assertTrue(on_disk.get("has_punter_multi"))
+        self.assertEqual(on_disk.get("punter_multi_promo_hint"), pick["punter_multi_promo_hint"])
         # And never in the public multi text itself.
-        with open(os.path.join(review_dir, "multi-post.txt")) as f:
+        with open(os.path.join(review_dir, "punter-multi-post.txt")) as f:
             multi_text = f.read()
         self.assertNotIn("us team sports", multi_text)
+        self.assertFalse(os.path.exists(os.path.join(review_dir, "gambler-multi-post.txt")))
+
+    def test_both_multi_tiers_can_fire_independently_same_day(self):
+        """A day can produce a Punter Multi AND a Gambler/Degenerate Multi
+        at the same time — they're independent, not mutually exclusive."""
+        pick = _standard_pick()
+        pick["punter_multi_legs"] = [
+            {"match": "A vs B", "sport_label": "NRL", "selection": "A", "market": "Head to Head", "odds": "1.60"},
+            {"match": "C vs D", "sport_label": "NRL", "selection": "C", "market": "Head to Head", "odds": "1.55"},
+            {"match": "E vs F", "sport_label": "NRL", "selection": "E", "market": "Head to Head", "odds": "1.70"},
+        ]
+        pick["gambler_multi_legs"] = [
+            {"match": "G vs H", "sport_label": "MMA", "selection": "G", "market": "Head to Head", "odds": "3.20"},
+            {"match": "I vs J", "sport_label": "MMA", "selection": "I", "market": "Head to Head", "odds": "2.80"},
+            {"match": "K vs L", "sport_label": "MMA", "selection": "K", "market": "Head to Head", "odds": "3.50"},
+        ]
+        self._write_run(pick)
+        theme = brp.choose_theme(pick)
+        slug = brp.slugify(pick["match"])
+        base = f"2026-07-15_{slug}_{theme}"
+        self._write_fake_cards(base)
+
+        metadata = brp.main()
+        self.assertTrue(metadata.get("has_punter_multi"))
+        self.assertTrue(metadata.get("has_gambler_multi"))
+        review_dir = os.path.join(brp.REVIEW_ROOT, metadata["pick_id"])
+        self.assertTrue(os.path.exists(os.path.join(review_dir, "punter-multi-post.txt")))
+        self.assertTrue(os.path.exists(os.path.join(review_dir, "gambler-multi-post.txt")))
+        with open(os.path.join(review_dir, "gambler-multi-post.txt")) as f:
+            gambler_text = f.read()
+        self.assertIn("THE DEGENERATE MULTI", gambler_text)
+        self.assertIn("BET TYPE: GAMBLER", gambler_text)
 
     def test_no_bet_writes_metadata_only_no_images_no_approval_fields(self):
         no_bet_pick = {"has_pick": False, "reasoning": "Nothing clears the bar today.", "research_warnings": []}

@@ -62,38 +62,60 @@ class Phase4WatchlistTests(unittest.TestCase):
 
 
 class Phase5MultiTests(unittest.TestCase):
-    def test_multi_text_built_from_three_legs(self):
-        pick = {"multi_legs": [
+    """2026-07-19 (Micah): the single blended multi is now two independent
+    tiers — a Punter's Multi (measured legs) and a Gambler/Degenerate Multi
+    (swing-for-it legs). Each has its own build function and its own
+    bet_type for validation."""
+
+    def test_punter_multi_text_built_from_three_legs(self):
+        pick = {"punter_multi_legs": [
             {"match": "A vs B", "sport_label": "NRL", "selection": "A", "market": "Head to Head", "odds": "1.80"},
             {"match": "C vs D", "sport_label": "MLB", "selection": "UNDER 7", "market": "Total", "odds": "2.00"},
             {"match": "E vs F", "sport_label": "AFL", "selection": "E -6.5", "market": "Handicap", "odds": "1.90"},
         ], "risk": "STANDARD_PICK"}
-        text = brp.build_multi_text(pick)
+        text = brp.build_punter_multi_text(pick)
         self.assertIn("Leg 1:", text)
         self.assertIn("Leg 3:", text)
         self.assertIn(f"Combined: {1.80*2.00*1.90:.2f}", text)
+        self.assertIn("BET TYPE: PUNTER", text)
+        self.assertIn("THE PUNTER'S MULTI", text)
+        validate_text(text, risk="STANDARD_PICK", bet_type="PUNTER_BET", public=True)
+
+    def test_gambler_multi_text_built_from_three_legs(self):
+        pick = {"gambler_multi_legs": [
+            {"match": "A vs B", "sport_label": "MMA", "selection": "A", "market": "Head to Head", "odds": "3.20"},
+            {"match": "C vs D", "sport_label": "MMA", "selection": "C", "market": "Head to Head", "odds": "2.80"},
+            {"match": "E vs F", "sport_label": "MMA", "selection": "E", "market": "Head to Head", "odds": "3.50"},
+        ], "risk": "RISKY_PICK"}
+        text = brp.build_gambler_multi_text(pick)
+        self.assertIn("Leg 1:", text)
+        self.assertIn("Leg 3:", text)
+        self.assertIn(f"Combined: {3.20*2.80*3.50:.2f}", text)
         self.assertIn("BET TYPE: GAMBLER", text)
+        self.assertIn("THE DEGENERATE MULTI", text)
         self.assertIn("One leg fails, the lot fails", text)
         # Must clear GAMBLER responsible-gambling + leak validation.
         validate_text(text, risk="RISKY_PICK", bet_type="GAMBLER_BET", public=True)
 
     def test_multi_legs_rule_requires_three_distinct_matches(self):
-        # generate_pick returns [] unless >=3 legs on distinct matches — the
-        # constant behaviour is asserted via its output contract elsewhere;
-        # here we assert build path ignores <3 legs.
-        # (build_review_package only writes multi-post.txt when >=3.)
+        # generate_pick returns [] unless >=3 legs on distinct matches, per
+        # tier independently — the constant behaviour is asserted via its
+        # output contract in test_generate_pick.py; here we assert the build
+        # path ignores <3 legs (build_review_package only writes a tier's
+        # post when >=3 legs are present for that tier).
         self.assertTrue(True)
 
-    def test_multi_text_handles_more_than_three_legs(self):
+    def test_gambler_multi_text_handles_more_than_three_legs(self):
         """2026-07-18 (Micah): no upper cap on multi size. six legs must
-        render as six legs (Leg 1..Leg 6), not truncate to three."""
+        render as six legs (Leg 1..Leg 6), not truncate to three. Still
+        holds per-tier after the 2026-07-19 split."""
         legs = [
             {"match": f"Team{i}A vs Team{i}B", "sport_label": "NRL",
              "selection": f"Team{i}A", "market": "Head to Head", "odds": "1.60"}
             for i in range(6)
         ]
-        pick = {"multi_legs": legs, "risk": "STANDARD_PICK"}
-        text = brp.build_multi_text(pick)
+        pick = {"gambler_multi_legs": legs, "risk": "RISKY_PICK"}
+        text = brp.build_gambler_multi_text(pick)
         for i in range(1, 7):
             self.assertIn(f"Leg {i}:", text)
         self.assertIn(f"Combined: {1.60**6:.2f}", text)

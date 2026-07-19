@@ -756,15 +756,16 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
         pick = generate_pick.generate_pick_for_matches(matches, news)
 
         self.assertTrue(pick["has_pick"])
-        self.assertEqual(len(pick["multi_legs"]), 6)
+        self.assertEqual(len(pick["punter_multi_legs"]), 6)
         self.assertEqual(
-            {leg["match"] for leg in pick["multi_legs"]},
+            {leg["match"] for leg in pick["punter_multi_legs"]},
             {m["match"] for m in matches},
         )
         # All 6 legs are rugbyleague_nrl -> should hint at the TAB
         # AFL/Rugby-codes 4+ leg promo category.
-        self.assertIsNotNone(pick["multi_promo_hint"])
-        self.assertIn("rugby codes", pick["multi_promo_hint"])
+        self.assertIsNotNone(pick["punter_multi_promo_hint"])
+        self.assertIn("rugby codes", pick["punter_multi_promo_hint"])
+        self.assertEqual(pick["gambler_multi_legs"], [])
 
     @patch("generate_pick.anthropic.Anthropic")
     def test_multi_promo_hint_none_when_legs_are_mixed_sports(self, mock_anthropic_cls):
@@ -819,8 +820,94 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news)
 
-        self.assertEqual(len(pick["multi_legs"]), 4)
-        self.assertIsNone(pick["multi_promo_hint"])
+        self.assertEqual(len(pick["punter_multi_legs"]), 4)
+        self.assertIsNone(pick["punter_multi_promo_hint"])
+
+
+class TwoTierMultiSplitTests(unittest.TestCase):
+    """2026-07-19 (Micah): the multi is now two independent tiers keyed off
+    bet_type — Punter Multi (INVESTOR_BET/PUNTER_BET) and Gambler/Degenerate
+    Multi (GAMBLER_BET). A candidate can only ever land in exactly one tier,
+    and each tier independently needs 3+ legs to fire."""
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_gambler_tier_candidates_land_in_gambler_multi_only(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+
+        matches, candidates = [], []
+        for i in range(3):
+            m = {
+                "sport": "mma_mixed_martial_arts",
+                "match": f"Fighter{i}A vs Fighter{i}B",
+                "home_team": f"Fighter{i}A", "away_team": f"Fighter{i}B",
+                "kickoff": "2026-07-19T06:00:00Z",
+                # Long-priced underdog -> GAMBLER_BET (odds >= GAMBLER_ODDS_MIN).
+                "odds": {"home": 3.20, "away": 1.35, "draw": None},
+                "implied_probs": {"home": 0.30, "away": 0.70, "draw": 0},
+                "big_game": False,
+            }
+            matches.append(m)
+            candidates.append({
+                "match": m["match"], "sport": "mma_mixed_martial_arts", "market_type": "h2h",
+                "selection": f"Fighter{i}A", "line": None, "market": "Head to Head",
+                "our_probability": 45, "evidence_sufficient": True, "confidence": "MODERATE",
+                "uncertainty_flags": [], "reasoning": "Genuine, independent longshot edge.",
+            })
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+        pick = generate_pick.generate_pick_for_matches(matches, news)
+
+        self.assertEqual(len(pick["gambler_multi_legs"]), 3)
+        self.assertEqual(pick["punter_multi_legs"], [])
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_fewer_than_three_in_one_tier_produces_no_multi_for_that_tier_only(self, mock_anthropic_cls):
+        """4 measured (Punter-tier) candidates + only 2 longshot (Gambler-
+        tier) candidates -> Punter Multi fires, Gambler Multi does not.
+        Tiers are independent; a shortfall in one never blocks the other."""
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+
+        matches, candidates = [], []
+        for i in range(4):
+            m = {
+                "sport": "rugbyleague_nrl", "match": f"NRL{i}A vs NRL{i}B",
+                "home_team": f"NRL{i}A", "away_team": f"NRL{i}B",
+                "kickoff": "2026-07-19T06:00:00Z",
+                "odds": {"home": 1.60, "away": 2.30, "draw": None},
+                "implied_probs": {"home": 0.59, "away": 0.41, "draw": 0},
+                "big_game": False,
+            }
+            matches.append(m)
+            candidates.append({
+                "match": m["match"], "sport": "rugbyleague_nrl", "market_type": "h2h",
+                "selection": f"NRL{i}A", "line": None, "market": "Head to Head",
+                "our_probability": 68, "evidence_sufficient": True, "confidence": "MODERATE",
+                "uncertainty_flags": [], "reasoning": "Genuine, independent edge on its own merits.",
+            })
+        for i in range(2):
+            m = {
+                "sport": "mma_mixed_martial_arts", "match": f"MMA{i}A vs MMA{i}B",
+                "home_team": f"MMA{i}A", "away_team": f"MMA{i}B",
+                "kickoff": "2026-07-19T08:00:00Z",
+                "odds": {"home": 3.20, "away": 1.35, "draw": None},
+                "implied_probs": {"home": 0.30, "away": 0.70, "draw": 0},
+                "big_game": False,
+            }
+            matches.append(m)
+            candidates.append({
+                "match": m["match"], "sport": "mma_mixed_martial_arts", "market_type": "h2h",
+                "selection": f"MMA{i}A", "line": None, "market": "Head to Head",
+                "our_probability": 45, "evidence_sufficient": True, "confidence": "MODERATE",
+                "uncertainty_flags": [], "reasoning": "Genuine, independent longshot edge.",
+            })
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+        pick = generate_pick.generate_pick_for_matches(matches, news)
+
+        self.assertEqual(len(pick["punter_multi_legs"]), 4)
+        self.assertEqual(pick["gambler_multi_legs"], [])  # only 2 -> below the 3-leg floor
 
 
 class TruncationRegressionTests(unittest.TestCase):

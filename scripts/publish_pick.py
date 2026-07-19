@@ -79,21 +79,6 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
             results["telegram"] = {"ok": False, "error": str(e)}
             print(f"  Telegram error: {e}")
 
-    # Phase 5: rare Gambler-tier multi — secondary Telegram text post, sent
-    # only after the main pick post and only if the frozen multi file exists.
-    # Failure here never blocks or rolls back anything else.
-    multi_path = os.path.join(review_dir, "multi-post.txt")
-    if "telegram" in platforms and os.path.exists(multi_path):
-        try:
-            from post_telegram import post_text
-            with open(multi_path) as f:
-                multi_text = f.read()
-            r = post_text(multi_text)
-            results["telegram_multi"] = {"ok": bool(r and r.get("ok", True)), "detail": r}
-        except Exception as e:
-            results["telegram_multi"] = {"ok": False, "error": str(e)}
-            print(f"  Telegram multi error: {e}")
-
     if "instagram_feed" in platforms:
         try:
             from post_instagram import post_carousel_to_instagram
@@ -123,10 +108,60 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
             "note": "Facebook: expected via linked Instagram account (direct Page posting is disabled — publish_actions permission is deprecated).",
         }
 
+    # Phase 5/6 (2026-07-19): TWO independent multi tiers — Punter Multi and
+    # Gambler/Degenerate Multi — each its own secondary Telegram text post
+    # AND (new) its own Instagram feed carousel, sent only AFTER the main
+    # pick post above, and only if that tier actually cleared the bar that
+    # day. Failure in either tier, on either platform, never blocks or rolls
+    # back anything else — same independence guarantee as every other
+    # platform here. No Instagram Story for multis: the Multi.dc.html
+    # template only has a 3-slide feed carousel (cover/legs/breakdown), no
+    # story-sized slide, so that's a real, disclosed scope limit, not an
+    # oversight.
+    for tier in ("punter", "gambler"):
+        text_path = os.path.join(review_dir, f"{tier}-multi-post.txt")
+        if not os.path.exists(text_path):
+            continue  # that tier didn't clear the bar today — nothing to post
+
+        with open(text_path) as f:
+            tier_text = f.read()
+
+        if "telegram" in platforms:
+            try:
+                from post_telegram import post_text
+                r = post_text(tier_text)
+                results[f"telegram_{tier}_multi"] = {"ok": bool(r and r.get("ok", True)), "detail": r}
+            except Exception as e:
+                results[f"telegram_{tier}_multi"] = {"ok": False, "error": str(e)}
+                print(f"  Telegram {tier} multi error: {e}")
+
+        if "instagram_feed" in platforms:
+            multi_slide_paths = [
+                os.path.join(review_dir, f"{tier}_multi_{n}.png")
+                for n in ("cover", "legs", "breakdown")
+                if os.path.exists(os.path.join(review_dir, f"{tier}_multi_{n}.png"))
+            ]
+            if not multi_slide_paths:
+                # Graphic render failed or was skipped that run (see
+                # main.py's render_multi_cards) — the Telegram text above
+                # still went out; there just isn't a card to post here.
+                continue
+            try:
+                from post_instagram import post_carousel_to_instagram
+                ok = post_carousel_to_instagram(
+                    slide_paths=multi_slide_paths,
+                    caption=tier_text,
+                    slide_urls=metadata.get(f"{tier}_multi_carousel_urls"),
+                )
+                results[f"instagram_{tier}_multi"] = {"ok": bool(ok)}
+            except Exception as e:
+                results[f"instagram_{tier}_multi"] = {"ok": False, "error": str(e)}
+                print(f"  Instagram {tier} multi error: {e}")
+
     return results
 
 
-def dry_run_report(metadata, telegram_text, instagram_caption):
+def dry_run_report(metadata, telegram_text, instagram_caption, review_dir=None):
     print("=" * 55)
     print("DRY RUN — no platform will receive a post")
     print("=" * 55)
@@ -141,6 +176,27 @@ def dry_run_report(metadata, telegram_text, instagram_caption):
             print(f"  Would post Story: {metadata.get('story_url')}")
         elif platform == "facebook":
             print("  Facebook: expected via linked Instagram account (no direct post attempted).")
+
+    if review_dir:
+        for tier in ("punter", "gambler"):
+            text_path = os.path.join(review_dir, f"{tier}-multi-post.txt")
+            if not os.path.exists(text_path):
+                continue
+            with open(text_path) as f:
+                tier_text = f.read()
+            print(f"\n[{tier}_multi — telegram]")
+            print(f"  Caption:\n{tier_text[:400]}")
+            carousel_urls = metadata.get(f"{tier}_multi_carousel_urls")
+            has_graphic = any(
+                os.path.exists(os.path.join(review_dir, f"{tier}_multi_{n}.png"))
+                for n in ("cover", "legs", "breakdown")
+            )
+            print(f"\n[{tier}_multi — instagram_feed]")
+            if has_graphic:
+                print(f"  Would post carousel: {carousel_urls}")
+            else:
+                print("  No graphic rendered this run — would skip Instagram, Telegram text only.")
+
     print("\n" + "=" * 55)
     print("DRY RUN complete — nothing was actually sent.")
     print("=" * 55)
@@ -180,7 +236,7 @@ def main():
         # real approved run does.
         manifest = load_manifest(os.path.join(review_dir, "manifest.json"))
         verify_manifest(manifest, review_dir)  # surfaced in the report either way
-        dry_run_report(metadata, telegram_text, instagram_caption)
+        dry_run_report(metadata, telegram_text, instagram_caption, review_dir)
         return
 
     # This script only ever runs after the GitHub environment approval gate

@@ -665,47 +665,54 @@ def generate_pick_for_matches(matches, match_news):
 
     other_defensible = len(classified) - 1
 
-    # Phase 5: rare Gambler-tier multi. Only when THREE OR MORE candidates
-    # each cleared the classifier's bar on their own merits, on distinct
-    # matches, does a multi become eligible — the featured single stays the
-    # headline pick, the multi is a clearly-disclaimed secondary post. Legs
-    # are ordered by the same deterministic sort as the featured pick. This
-    # is deliberately rare: no candidate is ever stretched to make up a leg.
-    #
-    # 2026-07-18 (Micah): a multi is NOT capped at 3 legs — it includes
-    # EVERY genuinely defensible candidate on a distinct match that day,
-    # whether that's 3, 6, or 8. The only hard floor is 3 (below that it
-    # isn't a "multi" worth calling out) — there is no ceiling. Padding
-    # is still impossible: every leg here already independently cleared
-    # pick_classifier's bar on its own merits, same as the featured single.
-    multi_legs = []
-    multi_leg_sports = []
-    seen_matches = set()
-    for c in sorted(
-        (c for c in classified if c["verdict"].risk != RISK_NO_BET),
-        key=lambda c: (
-            BET_TYPE_PRIORITY.get(c["verdict"].bet_type, 9),
-            RISK_PRIORITY.get(c["verdict"].risk, 9),
-            -c["evidence"].edge_pct,
-        ),
-    ):
-        m = c["match_meta"]["match"]
-        if m in seen_matches:
-            continue
-        seen_matches.add(m)
-        multi_legs.append({
-            "match": m,
-            "sport_label": SPORT_LABELS.get(c["match_meta"]["sport"], c["match_meta"]["sport"]),
-            "selection": _display_selection(c["market_type"], c["raw"].get("selection"), c["line"]),
-            "market": c["raw"].get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[c["market_type"]],
-            "odds": f"{float(c['odds_val']):.2f}",
-        })
-        multi_leg_sports.append(c["match_meta"]["sport"])
-    if len(multi_legs) < 3:
-        multi_legs = []  # fewer than 3 genuine legs -> no multi today
-        multi_leg_sports = []
+    # Phase 5/6 (2026-07-19, Micah): the multi is now TWO independent,
+    # always-optional tiers instead of one blended list, so followers can
+    # pick their own risk appetite:
+    #   - Punter Multi: INVESTOR_BET/PUNTER_BET legs — the measured side.
+    #   - Gambler/Degenerate Multi: GAMBLER_BET legs — the "shooting your
+    #     shot" side, framed as a small-stake swing (see build_multi_text /
+    #     the Multi.dc.html card, which show an illustrative stake->return
+    #     figure computed purely from combined odds — never a promise).
+    # Same ground rules as before, per tier: every leg already independently
+    # cleared pick_classifier's bar on its own merits — nothing is padded or
+    # forced. Each tier needs its own 3+ legs on distinct matches to fire at
+    # all; there is no ceiling within a tier; the two tiers can't share a
+    # match (a candidate's bet_type puts it in exactly one tier).
+    PUNTER_MULTI_BET_TYPES = {"INVESTOR_BET", "PUNTER_BET"}
+    GAMBLER_MULTI_BET_TYPES = {"GAMBLER_BET"}
 
-    multi_promo_hint = _tab_multi_promo_hint_from_sports(multi_leg_sports) if multi_legs else None
+    def _assemble_multi_tier(allowed_bet_types):
+        legs, leg_sports, seen_matches = [], [], set()
+        for c in sorted(
+            (c for c in classified
+             if c["verdict"].risk != RISK_NO_BET and c["verdict"].bet_type in allowed_bet_types),
+            key=lambda c: (
+                BET_TYPE_PRIORITY.get(c["verdict"].bet_type, 9),
+                RISK_PRIORITY.get(c["verdict"].risk, 9),
+                -c["evidence"].edge_pct,
+            ),
+        ):
+            m = c["match_meta"]["match"]
+            if m in seen_matches:
+                continue
+            seen_matches.add(m)
+            legs.append({
+                "match": m,
+                "sport_label": SPORT_LABELS.get(c["match_meta"]["sport"], c["match_meta"]["sport"]),
+                "selection": _display_selection(c["market_type"], c["raw"].get("selection"), c["line"]),
+                "market": c["raw"].get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[c["market_type"]],
+                "odds": f"{float(c['odds_val']):.2f}",
+            })
+            leg_sports.append(c["match_meta"]["sport"])
+        if len(legs) < 3:
+            return [], []  # fewer than 3 genuine legs in this tier -> no multi today
+        return legs, leg_sports
+
+    punter_multi_legs, punter_multi_sports = _assemble_multi_tier(PUNTER_MULTI_BET_TYPES)
+    gambler_multi_legs, gambler_multi_sports = _assemble_multi_tier(GAMBLER_MULTI_BET_TYPES)
+
+    punter_multi_promo_hint = _tab_multi_promo_hint_from_sports(punter_multi_sports) if punter_multi_legs else None
+    gambler_multi_promo_hint = _tab_multi_promo_hint_from_sports(gambler_multi_sports) if gambler_multi_legs else None
 
     return {
         "has_pick": True,
@@ -735,6 +742,8 @@ def generate_pick_for_matches(matches, match_news):
         "research_warnings": research_warnings,
         "big_game": match_meta.get("big_game", False),
         "other_defensible_candidates": other_defensible,
-        "multi_legs": multi_legs,
-        "multi_promo_hint": multi_promo_hint,  # internal only -- never surfaced in public copy
+        "punter_multi_legs": punter_multi_legs,
+        "punter_multi_promo_hint": punter_multi_promo_hint,  # internal only -- never surfaced in public copy
+        "gambler_multi_legs": gambler_multi_legs,
+        "gambler_multi_promo_hint": gambler_multi_promo_hint,  # internal only -- never surfaced in public copy
     }

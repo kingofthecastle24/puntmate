@@ -147,5 +147,115 @@ class PublishFlowTests(unittest.TestCase):
             transition(pp.REPO_ROOT, metadata["pick_id"], PUBLISHED)
 
 
+class TwoTierMultiPublishTests(unittest.TestCase):
+    """2026-07-19 (Micah): Punter Multi + Gambler/Degenerate Multi each get
+    their own Telegram post AND, when a graphic was rendered, their own
+    Instagram feed carousel — independent per tier, never blocking anything
+    else if one tier is missing or its graphic failed to render."""
+
+    def setUp(self):
+        os.environ.setdefault("TELEGRAM_BOT_TOKEN", "test-token")
+        os.environ.setdefault("TELEGRAM_CHANNEL_ID", "test-channel")
+        self.tmp = tempfile.mkdtemp()
+        self.review_dir = os.path.join(self.tmp, "review", "2026-07-19_test-match")
+        self._orig = (pp.REPO_ROOT, pp.REVIEW_ROOT, pp.PUBLISHED_DIR, pp.DRY_RUN)
+        pp.REPO_ROOT = self.tmp
+        pp.REVIEW_ROOT = os.path.join(self.tmp, "review")
+        pp.PUBLISHED_DIR = os.path.join(self.tmp, "published")
+        os.environ["REVIEW_DIR"] = self.review_dir
+
+    def tearDown(self):
+        pp.REPO_ROOT, pp.REVIEW_ROOT, pp.PUBLISHED_DIR, pp.DRY_RUN = self._orig
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _seed_state_through_approval(self, pick_id):
+        transition(pp.REPO_ROOT, pick_id, GENERATED)
+        transition(pp.REPO_ROOT, pick_id, PREVIEW_READY)
+        transition(pp.REPO_ROOT, pick_id, AWAITING_APPROVAL)
+
+    def _make_package_with_multis(self, punter_graphic=True, gambler_graphic=False, gambler_text=True):
+        metadata = _make_review_package(self.review_dir)
+        with open(os.path.join(self.review_dir, "punter-multi-post.txt"), "w") as f:
+            f.write("PUNTER MULTI TEXT")
+        if punter_graphic:
+            for n in ("cover", "legs", "breakdown"):
+                with open(os.path.join(self.review_dir, f"punter_multi_{n}.png"), "wb") as f:
+                    f.write(b"FAKE")
+        if gambler_text:
+            with open(os.path.join(self.review_dir, "gambler-multi-post.txt"), "w") as f:
+                f.write("GAMBLER MULTI TEXT")
+        if gambler_graphic:
+            for n in ("cover", "legs", "breakdown"):
+                with open(os.path.join(self.review_dir, f"gambler_multi_{n}.png"), "wb") as f:
+                    f.write(b"FAKE")
+        return metadata
+
+    @patch("publish_pick.email_service.send_result_email")
+    @patch("post_instagram_story.post_story_to_instagram")
+    @patch("post_instagram.post_carousel_to_instagram")
+    @patch("post_telegram.post_text")
+    @patch("post_telegram.send_picks_card")
+    def test_punter_multi_posts_to_telegram_and_instagram_when_graphic_present(
+        self, mock_tg_card, mock_tg_text, mock_ig_feed, mock_ig_story, mock_email
+    ):
+        pp.DRY_RUN = False
+        mock_tg_card.return_value = {"ok": True}
+        mock_tg_text.return_value = {"ok": True}
+        mock_ig_feed.return_value = True
+        mock_ig_story.return_value = "media123"
+        metadata = self._make_package_with_multis(punter_graphic=True, gambler_text=False)
+        self._seed_state_through_approval(metadata["pick_id"])
+
+        pp.main()
+
+        mock_tg_text.assert_called_once_with("PUNTER MULTI TEXT")
+        # Instagram feed gets called twice: once for the main pick, once for the punter multi.
+        self.assertEqual(mock_ig_feed.call_count, 2)
+        multi_call = mock_ig_feed.call_args_list[-1]
+        self.assertEqual(multi_call.kwargs["caption"], "PUNTER MULTI TEXT")
+        published = json.load(open(os.path.join(pp.PUBLISHED_DIR, metadata["pick_id"] + ".json")))
+        self.assertTrue(published["telegram_punter_multi"]["ok"])
+        self.assertTrue(published["instagram_punter_multi"]["ok"])
+        self.assertNotIn("telegram_gambler_multi", published)
+
+    @patch("publish_pick.email_service.send_result_email")
+    @patch("post_instagram_story.post_story_to_instagram")
+    @patch("post_instagram.post_carousel_to_instagram")
+    @patch("post_telegram.post_text")
+    @patch("post_telegram.send_picks_card")
+    def test_tier_with_text_but_no_graphic_posts_telegram_only(
+        self, mock_tg_card, mock_tg_text, mock_ig_feed, mock_ig_story, mock_email
+    ):
+        """render_multi_cards failing (e.g. Playwright hiccup) must never
+        block that tier's Telegram post — it just has no Instagram card."""
+        pp.DRY_RUN = False
+        mock_tg_card.return_value = {"ok": True}
+        mock_tg_text.return_value = {"ok": True}
+        mock_ig_feed.return_value = True
+        mock_ig_story.return_value = "media123"
+        metadata = self._make_package_with_multis(punter_graphic=False, gambler_text=True, gambler_graphic=False)
+        self._seed_state_through_approval(metadata["pick_id"])
+
+        pp.main()
+
+        published = json.load(open(os.path.join(pp.PUBLISHED_DIR, metadata["pick_id"] + ".json")))
+        self.assertTrue(published["telegram_punter_multi"]["ok"])
+        self.assertTrue(published["telegram_gambler_multi"]["ok"])
+        self.assertNotIn("instagram_punter_multi", published)
+        self.assertNotIn("instagram_gambler_multi", published)
+        # Instagram feed only called once — for the main pick, neither multi tier.
+        self.assertEqual(mock_ig_feed.call_count, 1)
+
+    def test_dry_run_reports_both_tiers_without_calling_any_platform(self):
+        pp.DRY_RUN = True
+        metadata = self._make_package_with_multis(punter_graphic=True, gambler_text=True, gambler_graphic=False)
+        self._seed_state_through_approval(metadata["pick_id"])
+        with patch("post_telegram.send_picks_card") as mock_tg, patch("post_telegram.post_text") as mock_tg_text:
+            pp.main()
+            mock_tg.assert_not_called()
+            mock_tg_text.assert_not_called()
+        self.assertFalse(os.path.exists(os.path.join(pp.PUBLISHED_DIR, metadata["pick_id"] + ".json")))
+
+
 if __name__ == "__main__":
     unittest.main()

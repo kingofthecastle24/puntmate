@@ -61,6 +61,29 @@ def render_card(pick):
         return {"ok": True, "files": {"carousel": paths}, "warnings": ["used legacy Pillow fallback"]}
 
 
+def render_multi_cards(pick, tier, legs):
+    """Render one multi tier's graphic (cover/legs/breakdown) via the
+    Multi.dc.html brand template. Unlike the single featured pick, there is
+    no legacy Pillow fallback for multis (that renderer has no multi
+    support) — if Playwright rendering fails, the tier's TEXT post can still
+    go to Telegram; it just won't have an Instagram graphic that run, which
+    publish_pick.py handles by skipping Instagram for that tier cleanly
+    rather than failing the whole pipeline over an optional secondary post.
+    """
+    try:
+        from render_brand_templates import render_multi
+        result = render_multi(pick, tier, legs, out_dir=CARDS_DIR)
+        print(f"  Rendered {tier} multi cards: {result.get('files')}")
+        if result.get("warnings"):
+            for w in result["warnings"]:
+                print(f"  ::warning:: {w}")
+        return result
+    except Exception as e:
+        print(f"  ::warning:: {tier} multi card rendering failed ({e}) — that tier's Telegram text can "
+              f"still post, but it will have no Instagram graphic this run.")
+        return None
+
+
 def _already_actioned_today(match_name, run_date):
     """Guards against the run #51 crash (2026-07-18): a same-day re-run
     (manual or scheduled) can independently select the SAME fixture a
@@ -187,6 +210,15 @@ def run():
         if render_result.get("warnings"):
             for w in render_result["warnings"]:
                 print(f"  ::warning:: {w}")
+
+        # Punter Multi / Gambler-Degenerate Multi graphics (2026-07-19) —
+        # each only rendered if that tier actually produced 3+ legs. Never
+        # blocks the main pick: a failure here only costs that tier its
+        # Instagram graphic (see render_multi_cards docstring).
+        for tier, legs_key in (("punter", "punter_multi_legs"), ("gambler", "gambler_multi_legs")):
+            legs = pick.get(legs_key) or []
+            if len(legs) >= 3:
+                render_multi_cards(pick, tier, legs)
     except Exception as e:
         print(f"  ERROR: card rendering failed entirely: {e}")
         # Without cards there is nothing safe to publish — record as NO_BET
