@@ -202,6 +202,8 @@ jobs:
 
       - name: Log pick to ledger
         if: hashFiles('data/latest_run.json') != ''
+        env:
+          DRY_RUN: ${{ steps.mode.outputs.dry_run }}
         run: |
           cd scripts
           python log_picks.py

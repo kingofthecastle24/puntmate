@@ -78,5 +78,29 @@ class ResultsPostTests(unittest.TestCase):
         self.assertIn("Record: 2W–1L", text)  # still counted overall
 
 
+class LedgerDryRunGuardTests(unittest.TestCase):
+    """BUG (2026-07-19, real): a manual dry run wrote 'Spain vs Argentina
+    UNDER 2.5' into the public picks.json ledger — a bet no follower ever
+    saw, which check_results would then have settled into the public
+    record. log_picks must be a no-op under DRY_RUN."""
+
+    def test_dry_run_never_touches_the_ledger(self):
+        import importlib, log_picks
+        os.environ["DRY_RUN"] = "true"
+        importlib.reload(log_picks)
+        tmp = tempfile.mkdtemp()
+        try:
+            log_picks.PICKS_PATH = os.path.join(tmp, "picks.json")
+            log_picks.LATEST_RUN_PATH = os.path.join(tmp, "latest_run.json")
+            with open(log_picks.LATEST_RUN_PATH, "w") as f:
+                json.dump({"run_date": "2026-07-19", "pick": {"has_pick": True}}, f)
+            log_picks.log_picks()
+            self.assertFalse(os.path.exists(log_picks.PICKS_PATH))
+        finally:
+            os.environ.pop("DRY_RUN", None)
+            importlib.reload(log_picks)
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
 if __name__ == "__main__":
     unittest.main()

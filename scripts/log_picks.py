@@ -8,6 +8,15 @@ import json
 import os
 from datetime import datetime, timezone
 
+# BUG FIX (2026-07-20): dry runs used to log picks into the PUBLIC ledger.
+# A real example: Micah's manual dry run on 2026-07-19 wrote "Spain vs
+# Argentina UNDER 2.5" into data/picks.json as a pending bet even though it
+# was never posted anywhere — check_results would then have settled it and
+# the recap/dashboard would have counted a pick no follower ever saw. The
+# ledger is the public record; only picks that actually head to the
+# approval/publish path may enter it.
+DRY_RUN = os.environ.get("DRY_RUN", "true").strip().lower() not in ("false", "0", "no")
+
 # Paths relative to repo root
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
@@ -15,6 +24,9 @@ PICKS_PATH = os.path.join(REPO_ROOT, 'data', 'picks.json')
 
 
 def log_picks():
+    if DRY_RUN:
+        print("DRY_RUN — not logging to the public ledger (picks.json).")
+        return
     # Load today's run
     if not os.path.exists(LATEST_RUN_PATH):
         print("No latest_run.json found — skipping log")

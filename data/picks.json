@@ -789,22 +789,5 @@
     "confidence": "LOW",
     "result": "loss",
     "pnl": -10.0
-  },
-  {
-    "id": "2026-07-19_soccer_fifa_world_cup_Spain_PUNTER_BET",
-    "date": "2026-07-19",
-    "bet_type": "PUNTER_BET",
-    "risk": "RISKY_PICK",
-    "sport_key": "soccer_fifa_world_cup",
-    "sport": "soccer_fifa_world_cup",
-    "match": "Spain vs Argentina",
-    "home_team": "Spain",
-    "away_team": "Argentina",
-    "pick": "UNDER 2.5",
-    "market": "Total",
-    "odds": 1.6,
-    "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
   }
 ]
