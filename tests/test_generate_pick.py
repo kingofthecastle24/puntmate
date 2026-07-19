@@ -910,6 +910,27 @@ class TwoTierMultiSplitTests(unittest.TestCase):
         self.assertEqual(pick["gambler_multi_legs"], [])  # only 2 -> below the 3-leg floor
 
 
+class SystemPromptQualityGuardrailTests(unittest.TestCase):
+    """2026-07-19 (Micah): pick explanations were reading as generic filler
+    ('mid-season games between finals hopefuls can be cagey') instead of a
+    concrete case for the specific teams, and uncertainty_flags were
+    directly arguing the opposite side of the pick right after the
+    reasoning made its case (e.g. backing UNDER then flagging 'this could
+    be high-scoring'). Fixed in the prompt, not in deterministic code —
+    these tests just guard against the instruction silently regressing;
+    they cannot verify actual model output (no live model access in this
+    sandbox), so a real run is the only way to confirm the copy actually
+    reads better."""
+
+    def test_prompt_demands_concrete_not_generic_reasoning(self):
+        self.assertIn("SPECIFIC, CONCRETE case", generate_pick.SYSTEM_PROMPT)
+        self.assertIn("genre filler", generate_pick.SYSTEM_PROMPT)
+
+    def test_prompt_forbids_uncertainty_flags_arguing_the_opposite_side(self):
+        self.assertIn("must NEVER argue the opposite side", generate_pick.SYSTEM_PROMPT)
+        self.assertIn("France v England", generate_pick.SYSTEM_PROMPT)
+
+
 class TruncationRegressionTests(unittest.TestCase):
     """BUG (reported 2026-07-18 by Micah, France vs England / FIFA World
     Cup / UNDER 3.5 / PUNTER — a real live post, not hypothetical): the

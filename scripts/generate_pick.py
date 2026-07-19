@@ -169,6 +169,18 @@ a specific fact you're inventing, treat it as the latter and leave it out.
 Never mention stake sizes, units, dollar amounts to bet, or bankroll
 percentages — that is not your job and must never appear in your reasoning.
 
+Your "reasoning" must make a SPECIFIC, CONCRETE case for this exact
+selection — name the actual teams/players and the actual factor doing the
+work (a real form trend, a real head-to-head pattern, a specific piece of
+validated news, a genuine squad-strength read for THESE two sides). Generic
+genre filler that would apply to almost any match in this competition —
+"mid-season games between finals hopefuls can be cagey", "derbies are never
+straightforward", "anything can happen in a knockout game" — is not a reason
+and must not be the main thrust of your case. If the only thing you can
+say is generic, that's a sign the edge isn't real: lower your confidence or
+leave the candidate out rather than dress up a generic observation as
+specific analysis.
+
 "uncertainty_flags" must ONLY be genuine punter-facing risk factors about the
 MATCH or TEAMS — e.g. "star fullback is a late fitness doubt", "wet weather
 forecast for kickoff", "opponent missing two regular starters". They must
@@ -184,6 +196,22 @@ your own source material, not about the match, and must never be written
 into uncertainty_flags or reasoning again.) If your source material seems
 mismatched or unreliable, just don't rely on it and say so honestly in
 plain terms about your confidence — don't narrate the mismatch itself.
+
+Critically: an uncertainty_flag must NEVER argue the opposite side of your
+own selection. Don't back UNDER 3.5 in your reasoning and then flag "this
+game could actually be high-scoring" — that's not a risk factor, that's
+rebutting your own pick in public, and it reads as though you don't believe
+what you just wrote. (Real example that shipped and shouldn't have: reasoning
+argued France v England's third-place playoff would be cagey and low-scoring,
+then the uncertainty_flag said "third-place playoffs can occasionally
+produce high-scoring open games" — directly undercutting the pick right
+after making it.) A genuine risk factor narrows HOW CONFIDENT you are without
+contradicting WHICH SIDE you picked — e.g. "the under relies on both defenses
+holding up; a red card or two could blow the total out" is fine because it's
+about the mechanism, not a claim that the other side is just as likely. If
+your only genuine caveat directly argues the other outcome, that means your
+own confidence should be LOW (or the candidate should be left out) — don't
+paper over that by stating the contradiction as a footnote.
 
 Return ONLY valid JSON, no markdown, no extra text."""
 
