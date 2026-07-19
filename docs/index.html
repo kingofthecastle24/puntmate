@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PuntMate NZ — Admin</title>
+<style>
+  :root{
+    --bg:#0c1210; --panel:#131b18; --panel2:#182420; --line:#22322c;
+    --text:#e8f2ed; --muted:#8fa69d; --green:#22c778; --green-dim:#15503a;
+    --red:#e5534b; --amber:#e3b341; --blue:#58a6ff; --pink:#e763a8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:24px}
+  .wrap{max-width:1180px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+  h1{font-size:22px;letter-spacing:.5px}
+  h1 .tag{color:var(--green)}
+  .sub{color:var(--muted);font-size:12px}
+  button.refresh{background:var(--green-dim);color:var(--green);border:1px solid var(--green);border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer}
+  button.refresh:hover{background:var(--green);color:#06130d}
+  .grid{display:grid;gap:14px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .kpi .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+  .kpi .val{font-size:26px;font-weight:700;margin-top:4px}
+  .kpi .note{font-size:11px;color:var(--muted);margin-top:2px}
+  .cols{grid-template-columns:1fr 1fr;align-items:start;margin-bottom:14px}
+  @media(max-width:900px){.cols{grid-template-columns:1fr}}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px}
+  .steps{display:flex;gap:8px;margin-bottom:12px}
+  .step{flex:1;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);text-align:center;font-size:12px;color:var(--muted)}
+  .step.active{border-color:var(--green);color:var(--green);font-weight:700;box-shadow:0 0 0 1px var(--green) inset}
+  .step.done{border-color:var(--green-dim);color:var(--green);opacity:.65}
+  .next-actions li{margin:8px 0 8px 18px;font-size:13px}
+  .next-actions li::marker{color:var(--green)}
+  .tier{margin-bottom:14px}
+  .tier .trow{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;gap:8px;flex-wrap:wrap}
+  .bar{height:8px;background:var(--panel2);border-radius:4px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--green);border-radius:4px}
+  .tier.investor .bar i{background:var(--blue)}
+  .tier.punter .bar i{background:var(--green)}
+  .tier.gambler .bar i{background:var(--pink)}
+  .tier.band .bar i{background:var(--amber)}
+  .pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:11px;font-weight:600}
+  .pill.win{background:#12351f;color:var(--green)}
+  .pill.loss{background:#3a1a18;color:var(--red)}
+  .pill.pending{background:#332a12;color:var(--amber)}
+  .pill.push,.pill.manual{background:#1c2733;color:var(--blue)}
+  .pill.investor{background:#132a44;color:var(--blue)}
+  .pill.punter{background:#12351f;color:var(--green)}
+  .pill.gambler{background:#3a1430;color:var(--pink)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{color:var(--muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:8px;border-bottom:1px solid var(--line)}
+  td{padding:8px;border-bottom:1px solid var(--line)}
+  tr:hover td{background:var(--panel2)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .filters button{background:var(--panel2);border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:4px 14px;font-size:12px;cursor:pointer}
+  .filters button.on{border-color:var(--green);color:var(--green)}
+  .watch li{margin:8px 0 8px 18px;font-size:13px}
+  .watch li::marker{color:var(--amber)}
+  .watch .done::marker{color:var(--green)}
+  .watch .done{color:var(--muted);text-decoration:line-through}
+  .sched td:first-child{color:var(--muted);white-space:nowrap}
+  .err{background:#3a1a18;border:1px solid var(--red);color:#f0b0ab;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:none;font-size:13px}
+  .pnl-pos{color:var(--green)} .pnl-neg{color:var(--red)}
+  .footer{color:var(--muted);font-size:11px;margin-top:18px;text-align:center}
+  .dots{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 10px}
+  .dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+  .dot.w{background:#12351f;color:var(--green);border:1px solid var(--green)}
+  .dot.l{background:#3a1a18;color:var(--red);border:1px solid var(--red)}
+  .dot.p{background:#1c2733;color:var(--blue);border:1px solid var(--blue)}
+  .chartbox{width:100%;overflow:hidden}
+  .chartbox svg{width:100%;height:150px;display:block}
+  .roiline{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--line)}
+  .roiline:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🎯 PUNTMATE <span class="tag">NZ</span> — Admin</h1>
+      <div class="sub" id="lastUpdated">Loading live data from GitHub…</div>
+    </div>
+    <button class="refresh" onclick="loadAll()">↻ Refresh</button>
+  </header>
+
+  <div class="err" id="errBox"></div>
+
+  <div class="grid kpis" id="kpis"></div>
+
+  <div class="grid cols">
+    <div class="card">
+      <h2>Upcoming &amp; pending picks</h2>
+      <div id="upcoming"></div>
+    </div>
+    <div class="card">
+      <h2>Growth plan — where we are</h2>
+      <div class="steps" id="steps"></div>
+      <div id="phaseSummary" style="font-size:13px;margin-bottom:10px"></div>
+      <h2 style="margin-top:14px">Next actions</h2>
+      <ul class="next-actions" id="nextActions"></ul>
+    </div>
+  </div>
+
+  <div class="grid cols">
+    <div class="card">
+      <h2>Form — last 10 settled</h2>
+      <div class="dots" id="formDots"></div>
+      <h2 style="margin-top:10px">Strike rate by tier</h2>
+      <div id="tiers"></div>
+      <h2 style="margin-top:14px">ROI by tier (notional $10 flat)</h2>
+      <div id="roi"></div>
+    </div>
+    <div class="card">
+      <h2>Strike rate by odds band</h2>
+      <div id="oddsBands"></div>
+      <h2 style="margin-top:16px">Strike rate by sport</h2>
+      <div id="sports"></div>
+    </div>
+  </div>
+
+  <div class="grid cols">
+    <div class="card">
+      <h2>Record trend (cumulative wins − losses)</h2>
+      <div class="chartbox" id="chart"></div>
+    </div>
+    <div class="card">
+      <h2>$100 → $1,000 Challenge</h2>
+      <div id="challenge" style="font-size:13px"></div>
+      <h2 style="margin-top:16px">Automated weekly schedule (NZT)</h2>
+      <table class="sched">
+        <tr><td>Every day · 8:00am</td><td>Daily pick → Telegram, IG, FB Page + Stories</td></tr>
+        <tr><td>Fri–Sun · 7:00am</td><td>Extra morning pick</td></tr>
+        <tr><td>Friday · 7:00am</td><td>Weekend multis — Punter $20 · Gambler $5 · Degenerate (rare, 6+ legs &amp; 100x+)</td></tr>
+        <tr><td>Nightly · 11:00pm</td><td>Results auto-checked &amp; posted</td></tr>
+        <tr><td>Sunday · 6:00pm</td><td>Weekly recap</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h2>All bets</h2>
+    <div class="filters" id="filters"></div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead><tr><th>Date</th><th>Match</th><th>Pick</th><th>Odds</th><th>Tier</th><th>Result</th><th>P/L ($10 flat)</th></tr></thead>
+        <tbody id="betsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Watch items</h2>
+    <ul class="watch">
+      <li>Confirm the first live Facebook Page post lands after the next 8am run (photo + Story).</li>
+      <li>Meta access token needs refreshing around <b>early September</b> (long-lived tokens last ~60 days) — run logs will flag it.</li>
+      <li>Rotate the GitHub access token when convenient.</li>
+      <li>Two live posts from the 17 Jul incident still contain internal text — delete/edit manually when convenient.</li>
+      <li class="done">Legacy "post R19 now" launcher — quarantined &amp; disabled 19 Jul.</li>
+      <li class="done">Stale-multi republish bug — fixed &amp; regression-tested 19 Jul.</li>
+      <li class="done">Facebook cross-posting gap — direct Page posting wired 19 Jul.</li>
+      <li class="done">Fresh public record started Mon 20 Jul (old ledger archived under "show full history").</li>
+    </ul>
+  </div>
+
+  <div class="footer">PuntMate NZ admin · data pulled live from the repo · R18 · Gamble responsibly · Problem Gambling Foundation NZ: 0800 664 262</div>
+</div>
+
+<script>
+const RAW = "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/";
+let allPicks = [], picks = [], challengeCfg = null, challengeLedger = null, latestRun = null, filter = "all";
+let recordStart = null, showHistory = false;
+
+const TIER = p => {
+  const v = (p.bet_type || p.personality || "").toString().toLowerCase();
+  if (v.includes("investor")) return "investor";
+  if (v.includes("gambler")) return "gambler";
+  return "punter";
+};
+const nzToday = () => new Date(new Date().toLocaleString("en-US",{timeZone:"Pacific/Auckland"}));
+const iso = d => d.toISOString().slice(0,10);
+const settledOf = rows => rows.filter(p=>p.result==="win"||p.result==="loss");
+
+function applyRecordCutoff(){
+  picks = (recordStart && !showHistory)
+    ? allPicks.filter(p => (p.date||"") >= recordStart)
+    : [...allPicks];
+}
+function toggleHistory(){ showHistory = !showHistory; applyRecordCutoff(); render(); }
+
+async function j(path, optional){
+  const r = await fetch(RAW + path + "?t=" + Date.now());
+  if (!r.ok){ if(optional) return null; throw new Error(path + " → HTTP " + r.status); }
+  return r.json();
+}
+async function t(path, optional){
+  const r = await fetch(RAW + path + "?t=" + Date.now());
+  if (!r.ok){ if(optional) return null; throw new Error(path + " → HTTP " + r.status); }
+  return r.text();
+}
+
+function stats(rows){
+  const w = rows.filter(p=>p.result==="win").length;
+  const l = rows.filter(p=>p.result==="loss").length;
+  const pend = rows.filter(p=>p.result==="pending"||p.result==null).length;
+  const sr = (w+l) ? Math.round(100*w/(w+l)) : null;
+  const pnl = rows.reduce((s,p)=>s+(typeof p.pnl==="number"?p.pnl:0),0);
+  return {w,l,pend,sr,pnl};
+}
+
+function weekRows(){
+  const now = nzToday();
+  const day = (now.getDay()+6)%7;
+  const mon = new Date(now); mon.setDate(now.getDate()-day);
+  const from = iso(mon);
+  return picks.filter(p => (p.date||"") >= from);
+}
+
+function barRow(cls, label, right, pct){
+  return `<div class="tier ${cls}"><div class="trow"><span>${label}</span><span>${right}</span></div>
+    <div class="bar"><i style="width:${pct}%"></i></div></div>`;
+}
+
+function render(){
+  const all = stats(picks), wk = stats(weekRows());
+
+  const recNote = recordStart && !showHistory
+    ? `record since ${recordStart} · <a href="#" onclick="toggleHistory();return false" style="color:var(--blue)">show full history</a>`
+    : recordStart
+      ? `FULL history incl. pre-reset · <a href="#" onclick="toggleHistory();return false" style="color:var(--blue)">back to fresh record</a>`
+      : `${picks.length} bets on the ledger`;
+  const kpi = (label,val,note)=>`<div class="card kpi"><div class="label">${label}</div><div class="val">${val}</div><div class="note">${note||""}</div></div>`;
+  document.getElementById("kpis").innerHTML =
+    kpi("Overall record", `${all.w}W – ${all.l}L`, recNote) +
+    kpi("Overall strike rate", all.sr==null?"—":all.sr+"%", "settled bets only") +
+    kpi("This week", `${wk.w}W – ${wk.l}L`, wk.sr==null?"nothing settled yet":wk.sr+"% strike rate") +
+    kpi("Pending", all.pend, "settle at 11pm nightly") +
+    kpi("Ledger P/L", (all.pnl<0?"−":"+")+"$"+Math.abs(all.pnl).toFixed(0), "notional $10 flat per bet");
+
+  // ── Upcoming / pending ──
+  const up = document.getElementById("upcoming");
+  const pend = picks.filter(p=>p.result==="pending"||p.result==null)
+                    .sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  let upHtml = "";
+  if (latestRun && latestRun.pick && latestRun.pick.has_pick){
+    const lp = latestRun.pick;
+    const ko = lp.kickoff ? new Date(lp.kickoff).toLocaleString("en-NZ",{timeZone:"Pacific/Auckland",weekday:"short",hour:"numeric",minute:"2-digit"}) : "";
+    upHtml += `<div style="background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:10px">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Latest generated pick</div>
+      <div style="font-weight:700;margin-top:2px">${lp.match} — ${lp.selection} @ ${lp.odds}</div>
+      <div class="sub">${lp.sport_label||""}${ko?" · kicks off "+ko+" NZT":""} · ${lp.bet_type_label||""} · ${lp.confidence||""} confidence</div>
+    </div>`;
+  }
+  if (pend.length){
+    upHtml += `<table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th>Odds</th><th>Tier</th></tr></thead><tbody>` +
+      pend.map(p=>`<tr><td>${p.date||""}</td><td>${p.match||""}</td><td>${p.pick||""}</td><td>${p.odds??""}</td>
+        <td><span class="pill ${TIER(p)}">${TIER(p).toUpperCase()}</span></td></tr>`).join("") + "</tbody></table>";
+  } else {
+    upHtml += `<div class="sub">Nothing pending — next pick lands 8am NZT.</div>`;
+  }
+  up.innerHTML = upHtml;
+
+  // ── Phase ──
+  const enabled = challengeCfg && challengeCfg.enabled;
+  const status = challengeLedger ? challengeLedger.status : null;
+  let phase = 1;
+  if (enabled) phase = 2;
+  if (status === "complete") phase = 3;
+  const steps = ["Phase 1 · Prove it","Phase 2 · The Challenge","Phase 3 · The Tool"];
+  document.getElementById("steps").innerHTML = steps.map((s,i)=>{
+    const n=i+1, cls = n<phase?"step done": n===phase?"step active":"step";
+    return `<div class="${cls}">${s}</div>`;
+  }).join("");
+  const firstDate = picks.length ? picks.reduce((m,p)=>p.date<m?p.date:m, picks[0].date) : (recordStart||null);
+  const weeks = firstDate ? Math.max(0, Math.floor((nzToday()-new Date(firstDate))/(7*864e5))) : 0;
+  let summary, actions;
+  if (phase===1){
+    summary = `Building the public record — <b>week ${weeks+1}</b> of ~8–10 needed before launching the challenge. The strike rate IS the product right now.`;
+    actions = [
+      "Let the pipeline run — everything posts itself; your job is community replies.",
+      "Glance at the Sunday 6pm recap; repost it to IG as proof-of-record content.",
+      `After ~8–10 clean weeks (currently ${weeks+1}), flip <code>config/challenge.json</code> → <code>"enabled": true</code> to start Phase 2.`,
+      "Watch Telegram member growth — every IG/FB post funnels there."
+    ];
+  } else if (phase===2){
+    const bal = challengeLedger ? challengeLedger.balance.toFixed(2) : (challengeCfg.start_balance||100).toFixed(2);
+    summary = status==="busted"
+      ? `Challenge busted at $${bal} — it stays on the record. Reset config + delete data/challenge.json to restart.`
+      : `Challenge LIVE at <b>$${bal}</b> — balance updates nightly and shows in every Sunday recap.`;
+    actions = [
+      "Promote the challenge line from each Sunday recap as its own IG post.",
+      "Encourage members to post their weekend multi slips in Telegram.",
+      "Never market it as earnings — documented challenge, losses included.",
+      "When engagement is solid, start scoping the Phase 3 web app."
+    ];
+  } else {
+    summary = "Challenge completed — build the tool while the story is hot.";
+    actions = ["Scope the web app: live challenge balance, full pick history, follow-along tracker."];
+  }
+  document.getElementById("phaseSummary").innerHTML = summary;
+  document.getElementById("nextActions").innerHTML = actions.map(a=>`<li>${a}</li>`).join("");
+
+  // ── Form dots ──
+  const last10 = settledOf([...picks].sort((a,b)=>(a.date||"").localeCompare(b.date||""))).slice(-10);
+  document.getElementById("formDots").innerHTML = last10.length
+    ? last10.map(p=>`<span class="dot ${p.result==="win"?"w":"l"}" title="${p.date} ${p.match}: ${p.result}">${p.result==="win"?"W":"L"}</span>`).join("")
+    : `<span class="sub">No settled bets on the fresh record yet.</span>`;
+
+  // ── Tiers ──
+  const tierBox = document.getElementById("tiers");
+  tierBox.innerHTML = "";
+  [["investor","📊 Investor"],["punter","🎯 Punter"],["gambler","🎰 Gambler"]].forEach(([k,label])=>{
+    const a = stats(picks.filter(p=>TIER(p)===k));
+    const w = stats(weekRows().filter(p=>TIER(p)===k));
+    tierBox.insertAdjacentHTML("beforeend",
+      barRow(k, label, `${a.w}W–${a.l}L (${a.sr==null?"—":a.sr+"%"}) · wk ${w.w}W–${w.l}L`, a.sr==null?0:a.sr));
+  });
+
+  // ── ROI per tier ──
+  const roiBox = document.getElementById("roi");
+  roiBox.innerHTML = [["investor","📊 Investor"],["punter","🎯 Punter"],["gambler","🎰 Gambler"]].map(([k,label])=>{
+    const rows = settledOf(picks.filter(p=>TIER(p)===k));
+    if (!rows.length) return `<div class="roiline"><span>${label}</span><span class="sub">no settled bets</span></div>`;
+    const pnl = rows.reduce((s,p)=>s+(typeof p.pnl==="number"?p.pnl:0),0);
+    const roi = 100 * pnl / (10 * rows.length);
+    const cls = roi>=0?"pnl-pos":"pnl-neg";
+    return `<div class="roiline"><span>${label}</span><span class="${cls}">${roi>=0?"+":""}${roi.toFixed(1)}% ROI · ${pnl>=0?"+":"−"}$${Math.abs(pnl).toFixed(0)}</span></div>`;
+  }).join("");
+
+  // ── Odds bands ──
+  const bands = [["Under 1.50",0,1.5],["1.50 – 1.99",1.5,2.0],["2.00 – 2.49",2.0,2.5],["2.50+",2.5,999]];
+  document.getElementById("oddsBands").innerHTML = bands.map(([label,lo,hi])=>{
+    const rows = settledOf(picks.filter(p=>{const o=parseFloat(p.odds);return o>=lo&&o<hi;}));
+    const w = rows.filter(p=>p.result==="win").length, l = rows.length-w;
+    const sr = rows.length?Math.round(100*w/rows.length):null;
+    return barRow("band", label, rows.length?`${w}W–${l}L (${sr}%)`:"no settled bets", sr??0);
+  }).join("");
+
+  // ── Sports ──
+  const bySport = {};
+  settledOf(picks).forEach(p=>{
+    const s = (p.sport||"Other").replace(/[\u{1F300}-\u{1FAFF}☀-➿]/gu,"").trim() || "Other";
+    (bySport[s] = bySport[s]||[]).push(p);
+  });
+  const sportRows = Object.entries(bySport).sort((a,b)=>b[1].length-a[1].length).slice(0,8);
+  document.getElementById("sports").innerHTML = sportRows.length ? sportRows.map(([s,rows])=>{
+    const w = rows.filter(p=>p.result==="win").length, l = rows.length-w;
+    const sr = Math.round(100*w/rows.length);
+    return barRow("punter", s, `${w}W–${l}L (${sr}%)`, sr);
+  }).join("") : `<div class="sub">No settled bets on the fresh record yet.</div>`;
+
+  // ── Cumulative chart ──
+  const seq = settledOf([...picks].sort((a,b)=>(a.date||"").localeCompare(b.date||"")));
+  const chart = document.getElementById("chart");
+  if (seq.length < 2){
+    chart.innerHTML = `<div class="sub">The trend line starts once a couple of bets have settled.</div>`;
+  } else {
+    let cum = 0;
+    const pts = seq.map(p=>{ cum += (p.result==="win"?1:-1); return cum; });
+    const W=600,H=150,pad=10;
+    const min=Math.min(0,...pts), max=Math.max(0,...pts), span=(max-min)||1;
+    const X=i=>pad+(W-2*pad)*i/(pts.length-1), Y=v=>H-pad-(H-2*pad)*(v-min)/span;
+    const line = pts.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ");
+    const zero = Y(0).toFixed(1);
+    const last = pts[pts.length-1];
+    chart.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <line x1="${pad}" y1="${zero}" x2="${W-pad}" y2="${zero}" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 4"/>
+      <polyline points="${line}" fill="none" stroke="${last>=0?"var(--green)":"var(--red)"}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg><div class="sub" style="text-align:right">now: ${last>=0?"+":""}${last} after ${pts.length} settled bets</div>`;
+  }
+
+  // ── Challenge ──
+  const ch = document.getElementById("challenge");
+  if (!challengeCfg || !challengeCfg.enabled){
+    ch.innerHTML = `<span class="pill pending">NOT STARTED</span> &nbsp;Starts when <code>config/challenge.json</code> → <code>"enabled": true</code>. Then: 10% of balance rides each settled daily pick, tracked automatically, shown in the Sunday recap.`;
+  } else if (!challengeLedger){
+    ch.innerHTML = `<span class="pill pending">ENABLED — WAITING</span> &nbsp;First settled pick after the next 11pm results check opens the ledger at $${(challengeCfg.start_balance||100).toFixed(2)}.`;
+  } else {
+    const led = challengeLedger, pct = Math.min(100, Math.round(100*led.balance/led.goal));
+    const pill = led.status==="complete" ? `<span class="pill win">COMPLETE</span>` : led.status==="busted" ? `<span class="pill loss">BUSTED</span>` : `<span class="pill win">RUNNING</span>`;
+    ch.innerHTML = `${pill} &nbsp;<b>$${led.balance.toFixed(2)}</b> of $${led.goal.toFixed(0)} after ${led.picks_applied} picks
+      <div class="bar" style="margin-top:8px"><i style="width:${pct}%"></i></div>`;
+  }
+
+  renderTable();
+  document.getElementById("lastUpdated").textContent =
+    "Live from github.com/kingofthecastle24/puntmate · refreshed " + new Date().toLocaleTimeString("en-NZ",{timeZone:"Pacific/Auckland"}) + " NZT";
+}
+
+function renderTable(){
+  const filters = [["all","All"],["pending","Pending"],["win","Wins"],["loss","Losses"],["week","This week"]];
+  document.getElementById("filters").innerHTML = filters.map(([k,l])=>
+    `<button class="${filter===k?"on":""}" onclick="filter='${k}';renderTable()">${l}</button>`).join("");
+  const wkFrom = (()=>{const n=nzToday(),d=(n.getDay()+6)%7,m=new Date(n);m.setDate(n.getDate()-d);return iso(m)})();
+  let rows = [...picks].sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  if (filter==="pending") rows = rows.filter(p=>p.result==="pending"||p.result==null);
+  else if (filter==="win"||filter==="loss") rows = rows.filter(p=>p.result===filter);
+  else if (filter==="week") rows = rows.filter(p=>(p.date||"")>=wkFrom);
+  document.getElementById("betsBody").innerHTML = rows.map(p=>{
+    const tier = TIER(p), res = p.result||"pending";
+    const pnl = typeof p.pnl==="number" ? `<span class="${p.pnl>=0?"pnl-pos":"pnl-neg"}">${p.pnl>=0?"+":"−"}$${Math.abs(p.pnl).toFixed(2)}</span>` : "—";
+    return `<tr><td>${p.date||""}</td><td>${p.match||""}</td><td>${p.pick||""}</td><td>${p.odds??""}</td>
+      <td><span class="pill ${tier}">${tier.toUpperCase()}</span></td>
+      <td><span class="pill ${res}">${res.toUpperCase()}</span></td><td>${pnl}</td></tr>`;
+  }).join("") || `<tr><td colspan="7" style="color:var(--muted)">Nothing matches this filter.</td></tr>`;
+}
+
+async function loadAll(){
+  const err = document.getElementById("errBox");
+  err.style.display = "none";
+  try{
+    allPicks = await j("data/picks.json");
+    challengeCfg = await j("config/challenge.json", true);
+    challengeLedger = await j("data/challenge.json", true);
+    latestRun = await j("data/latest_run.json", true);
+    recordStart = ((await t("config/record_start_date", true)) || "").trim() || null;
+    applyRecordCutoff();
+    render();
+  }catch(e){
+    err.textContent = "Couldn't load live data (" + e.message + "). Check your internet connection, then hit Refresh.";
+    err.style.display = "block";
+  }
+}
+loadAll();
+setInterval(loadAll, 5*60*1000);
+</script>
+</body>
+</html>
