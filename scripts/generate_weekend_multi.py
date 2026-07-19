@@ -110,17 +110,21 @@ def run():
             print(f"  Research fetch failed for {m['match']}: {e}")
             match_news[m["match"]] = {"text": "", "accepted_count": 0, "warnings": [f"fetch error: {e}"], "confidence_ceiling": "LOW"}
 
-    print("\n[3/3] Assembling the weekend Punter Multi and Gambler/Degenerate Multi...")
+    print("\n[3/3] Assembling the weekend Punter / Gambler / Degenerate multis...")
     pick = generate_pick_for_matches(matches, match_news, build_multis=True)
 
     punter_legs = pick.get("punter_multi_legs") or []
     gambler_legs = pick.get("gambler_multi_legs") or []
+    degenerate_legs = pick.get("degenerate_multi_legs") or []
     print(f"  Punter Multi: {len(punter_legs)} leg(s)" + (" — below the 3-leg floor, no multi this weekend." if len(punter_legs) < 3 else ""))
-    print(f"  Gambler/Degenerate Multi: {len(gambler_legs)} leg(s)" + (" — below the 3-leg floor, no multi this weekend." if len(gambler_legs) < 3 else ""))
+    if degenerate_legs:
+        print(f"  DEGENERATE MULTI FIRED: {len(degenerate_legs)} legs — extreme-payout weekend (replaces the Gambler Multi).")
+    else:
+        print(f"  Gambler Multi: {len(gambler_legs)} leg(s)" + (" — below the 3-leg floor, no multi this weekend." if len(gambler_legs) < 3 else ""))
 
     anchor_pick = _weekend_anchor_pick(run_date)
     os.makedirs(CARDS_DIR, exist_ok=True)
-    for tier, legs in (("punter", punter_legs), ("gambler", gambler_legs)):
+    for tier, legs in (("punter", punter_legs), ("gambler", gambler_legs), ("degenerate", degenerate_legs)):
         if len(legs) >= 3:
             render_multi_cards(anchor_pick, tier, legs)
 
@@ -128,6 +132,8 @@ def run():
     run_data["punter_multi_promo_hint"] = pick.get("punter_multi_promo_hint")
     run_data["gambler_multi_legs"] = gambler_legs
     run_data["gambler_multi_promo_hint"] = pick.get("gambler_multi_promo_hint")
+    run_data["degenerate_multi_legs"] = degenerate_legs
+    run_data["degenerate_multi_promo_hint"] = pick.get("degenerate_multi_promo_hint")
     run_data["research_warnings"] = pick.get("research_warnings", [])
     run_data["anchor_pick"] = anchor_pick
 

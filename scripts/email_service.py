@@ -122,7 +122,7 @@ def send_preview_email(metadata, image_paths, telegram_text, instagram_caption, 
     return _send(subject, body, image_paths)
 
 
-def send_weekend_multi_email(metadata, image_paths, punter_text, gambler_text, approval_url):
+def send_weekend_multi_email(metadata, image_paths, punter_text, gambler_text, approval_url, degenerate_text=""):
     """2026-07-19: the weekend Punter Multi / Gambler-Degenerate Multi has
     no single featured pick (has_pick is False), just one or both multi
     tiers -- its own preview email format rather than forcing it through
@@ -139,7 +139,9 @@ def send_weekend_multi_email(metadata, image_paths, punter_text, gambler_text, a
     if punter_text:
         sections.append(f"<h3>Punter Multi (Telegram + Instagram)</h3><pre style=\"white-space:pre-wrap;background:#f5f5f5;padding:10px\">{punter_text}</pre>")
     if gambler_text:
-        sections.append(f"<h3>Gambler/Degenerate Multi (Telegram + Instagram)</h3><pre style=\"white-space:pre-wrap;background:#f5f5f5;padding:10px\">{gambler_text}</pre>")
+        sections.append(f"<h3>Gambler Multi (Telegram + Instagram)</h3><pre style=\"white-space:pre-wrap;background:#f5f5f5;padding:10px\">{gambler_text}</pre>")
+    if degenerate_text:
+        sections.append(f"<h3>☄️ DEGENERATE MULTI — extreme-payout weekend (Telegram + Instagram)</h3><pre style=\"white-space:pre-wrap;background:#fff6e5;padding:10px\">{degenerate_text}</pre>")
 
     body = f"""
     <h2>PuntMate — Weekend Multi Approval Required</h2>

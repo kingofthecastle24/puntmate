@@ -49,6 +49,7 @@ def main():
     run_date = run_data["run_date"]
     punter_legs = run_data.get("punter_multi_legs") or []
     gambler_legs = run_data.get("gambler_multi_legs") or []
+    degenerate_legs = run_data.get("degenerate_multi_legs") or []
     pick_id = f"{run_date}_weekend_multi{brp._pick_id_suffix()}"
     review_dir = os.path.join(REVIEW_ROOT, pick_id)
     os.makedirs(review_dir, exist_ok=True)
@@ -61,14 +62,15 @@ def main():
         "run_id": os.environ.get("GITHUB_RUN_ID", "local"),
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "research_warnings": run_data.get("research_warnings", []),
-        "reasoning": "Neither the Punter Multi nor the Gambler/Degenerate Multi cleared the 3-leg floor this weekend.",
+        "reasoning": "No multi tier (Punter / Gambler / Degenerate) cleared its bar this weekend.",
         "workflow_state": "GENERATED",
     }
 
-    if len(punter_legs) < 3 and len(gambler_legs) < 3:
+    if len(punter_legs) < 3 and len(gambler_legs) < 3 and len(degenerate_legs) < 3:
         # Explicit False flags — publish_pick keys off these (stale-file fix)
         metadata["has_punter_multi"] = False
         metadata["has_gambler_multi"] = False
+        metadata["has_degenerate_multi"] = False
         with open(os.path.join(review_dir, "post-metadata.json"), "w") as f:
             json.dump(metadata, f, indent=2)
         manifest = build_manifest(review_dir, ["post-metadata.json"], extra={
@@ -135,6 +137,7 @@ def main():
 
     _freeze_tier("punter", punter_legs, run_data.get("punter_multi_promo_hint"), brp.build_punter_multi_text, "PUNTER_BET")
     _freeze_tier("gambler", gambler_legs, run_data.get("gambler_multi_promo_hint"), brp.build_gambler_multi_text, "GAMBLER_BET")
+    _freeze_tier("degenerate", degenerate_legs, run_data.get("degenerate_multi_promo_hint"), brp.build_degenerate_multi_text, "GAMBLER_BET")
 
     metadata.pop("reasoning", None)  # only relevant for the "neither tier cleared" early-return case above
     metadata["intended_platforms"] = sorted(intended_platforms)

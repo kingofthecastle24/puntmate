@@ -149,7 +149,7 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
     # template only has a 3-slide feed carousel (cover/legs/breakdown), no
     # story-sized slide, so that's a real, disclosed scope limit, not an
     # oversight.
-    for tier in ("punter", "gambler"):
+    for tier in ("punter", "gambler", "degenerate"):
         # BOTH the metadata flag and the frozen file must agree that this
         # tier fired THIS run — file existence alone allowed a stale multi
         # from an earlier same-pick_id run to be re-published (caught in
@@ -235,7 +235,7 @@ def dry_run_report(metadata, telegram_text, instagram_caption, review_dir=None):
                 print(f"  Would post FB Page Story: {metadata.get('story_url')}")
 
     if review_dir:
-        for tier in ("punter", "gambler"):
+        for tier in ("punter", "gambler", "degenerate"):
             if not metadata.get(f"has_{tier}_multi"):
                 continue  # same stale-file guard as the live publish loop
             text_path = os.path.join(review_dir, f"{tier}-multi-post.txt")
@@ -279,7 +279,8 @@ def main():
     # (there's no single featured selection) but IS something to publish if
     # either tier cleared the bar -- has_pick alone is no longer sufficient
     # to decide "nothing to publish".
-    has_something_to_publish = metadata.get("has_pick") or metadata.get("has_punter_multi") or metadata.get("has_gambler_multi")
+    has_something_to_publish = (metadata.get("has_pick") or metadata.get("has_punter_multi")
+                                or metadata.get("has_gambler_multi") or metadata.get("has_degenerate_multi"))
     if not has_something_to_publish:
         print("NO_BET — nothing to publish.")
         return

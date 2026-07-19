@@ -464,6 +464,7 @@ jobs:
     outputs:
       has_punter_multi: ${{ steps.review_package.outputs.has_punter_multi }}
       has_gambler_multi: ${{ steps.review_package.outputs.has_gambler_multi }}
+      has_degenerate_multi: ${{ steps.review_package.outputs.has_degenerate_multi }}
       dry_run: ${{ steps.mode.outputs.dry_run }}
       pick_id: ${{ steps.review_package.outputs.pick_id }}
       auto_publish: ${{ steps.mode.outputs.auto_publish }}
@@ -519,8 +520,10 @@ jobs:
           cd ..
           HAS_PUNTER=$(python3 -c "import json; d=json.load(open('data/latest_weekend_run.json')); print(str(len(d.get('punter_multi_legs') or []) >= 3).lower())")
           HAS_GAMBLER=$(python3 -c "import json; d=json.load(open('data/latest_weekend_run.json')); print(str(len(d.get('gambler_multi_legs') or []) >= 3).lower())")
+          HAS_DEGEN=$(python3 -c "import json; d=json.load(open('data/latest_weekend_run.json')); print(str(len(d.get('degenerate_multi_legs') or []) >= 3).lower())")
           echo "has_punter_multi=$HAS_PUNTER" >> "$GITHUB_OUTPUT"
           echo "has_gambler_multi=$HAS_GAMBLER" >> "$GITHUB_OUTPUT"
+          echo "has_degenerate_multi=$HAS_DEGEN" >> "$GITHUB_OUTPUT"
           RUN_DATE=$(python3 -c "import json; print(json.load(open('data/latest_weekend_run.json'))['run_date'])")
           PICK_ID=$(python3 -c "
           import sys; sys.path.insert(0, 'scripts')
@@ -541,7 +544,7 @@ jobs:
           python send_preview.py
 
       - name: Commit weekend multi review package + state
-        if: steps.review_package.outputs.has_punter_multi == 'true' || steps.review_package.outputs.has_gambler_multi == 'true'
+        if: steps.review_package.outputs.has_punter_multi == 'true' || steps.review_package.outputs.has_gambler_multi == 'true' || steps.review_package.outputs.has_degenerate_multi == 'true'
         run: |
           git add data/latest_weekend_run.json data/review/ data/state/ data/cards/
           bash scripts/git_push_retry.sh "chore: prepare weekend multi $(date -u +%Y-%m-%d) [skip ci]"
@@ -553,7 +556,8 @@ jobs:
             echo "## PuntMate Weekend Multi — Generate"
             echo ""
             echo "Punter Multi: ${{ steps.review_package.outputs.has_punter_multi }}"
-            echo "Gambler/Degenerate Multi: ${{ steps.review_package.outputs.has_gambler_multi }}"
+            echo "Gambler Multi: ${{ steps.review_package.outputs.has_gambler_multi }}"
+            echo "Degenerate Multi: ${{ steps.review_package.outputs.has_degenerate_multi }}"
             echo ""
             echo "Full review package is in the **puntmate-weekend-review-${{ github.run_id }}** artifact above (if either tier cleared the bar), and committed at \`data/review/${{ steps.review_package.outputs.pick_id }}/\`."
             echo ""
@@ -561,7 +565,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload weekend review artifact
-        if: steps.review_package.outputs.has_punter_multi == 'true' || steps.review_package.outputs.has_gambler_multi == 'true'
+        if: steps.review_package.outputs.has_punter_multi == 'true' || steps.review_package.outputs.has_gambler_multi == 'true' || steps.review_package.outputs.has_degenerate_multi == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: puntmate-weekend-review-${{ github.run_id }}
@@ -572,7 +576,7 @@ jobs:
   approve_weekend:
     name: "⏳ Awaiting approval to publish (Weekend Multi)"
     needs: generate_weekend
-    if: (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true'
+    if: (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true'
     runs-on: ubuntu-latest
     environment: production   # same single approval gate as the daily pick
 
@@ -586,7 +590,7 @@ jobs:
   on_reject_weekend:
     name: Record rejection (Weekend Multi)
     needs: [generate_weekend, approve_weekend]
-    if: always() && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true' && needs.approve_weekend.result != 'success'
+    if: always() && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true' && needs.approve_weekend.result != 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -620,7 +624,7 @@ jobs:
   publish_weekend:
     name: Publish approved weekend multi
     needs: [generate_weekend, approve_weekend]
-    if: always() && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true') && (needs.approve_weekend.result == 'success' || needs.generate_weekend.outputs.auto_publish == 'true')
+    if: always() && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && (needs.approve_weekend.result == 'success' || needs.generate_weekend.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

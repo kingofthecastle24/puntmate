@@ -63,7 +63,7 @@ class Phase4WatchlistTests(unittest.TestCase):
 
 class Phase5MultiTests(unittest.TestCase):
     """2026-07-19 (Micah): the single blended multi is now two independent
-    tiers — a Punter's Multi (measured legs) and a Gambler/Degenerate Multi
+    tiers — a Punter's Multi (measured legs) and a Gambler Multi
     (swing-for-it legs). Each has its own build function and its own
     bet_type for validation."""
 
@@ -92,7 +92,7 @@ class Phase5MultiTests(unittest.TestCase):
         self.assertIn("Leg 3:", text)
         self.assertIn(f"Combined: {3.20*2.80*3.50:.2f}", text)
         self.assertIn("BET TYPE: GAMBLER", text)
-        self.assertIn("THE DEGENERATE MULTI", text)
+        self.assertIn("THE GAMBLER MULTI", text)
         self.assertIn("One leg fails, the lot fails", text)
         # Must clear GAMBLER responsible-gambling + leak validation.
         validate_text(text, risk="RISKY_PICK", bet_type="GAMBLER_BET", public=True)

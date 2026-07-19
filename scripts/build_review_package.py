@@ -213,7 +213,10 @@ def build_punter_multi_text(pick):
 
 
 def build_gambler_multi_text(pick):
-    """The Gambler/Degenerate multi — GAMBLER_BET legs only. Explicitly
+    """The Gambler Multi — GAMBLER_BET legs only. (Renamed from "THE
+    DEGENERATE MULTI" 2026-07-19: "Degenerate" is now its own rarer,
+    extreme-payout mega-multi product — see build_degenerate_multi_text.)
+    Explicitly
     framed as a small-stake, high-upside swing, not a plan. Kept deliberately
     free of any specific stake/dollar-return example in the TEXT copy (that
     illustration lives on the graphic card only, matching the pre-existing
@@ -223,11 +226,47 @@ def build_gambler_multi_text(pick):
     legs = pick["gambler_multi_legs"]
     combined = _combined_odds(legs)
     lines = [
-        "*🎰 PUNTMATE NZ — THE DEGENERATE MULTI*",
+        "*🎰 PUNTMATE NZ — THE GAMBLER MULTI*",
         "",
-        "_Shooting your shot: today produced multiple genuine Gambler-tier "
+        "_Shooting your shot: this slate produced multiple genuine Gambler-tier "
         "longshots. Combined odds are big — this is a small-stake, "
         "high-upside swing, not a plan. One leg fails, the lot fails._",
+        "",
+    ]
+    for i, leg in enumerate(legs, 1):
+        lines.append(f"*Leg {i}:* {leg['match']} — {leg['selection']} @ {leg['odds']} ({leg['market']})")
+    lines += [
+        "",
+        f"*Combined: {combined:.2f}*",
+        "*BET TYPE: GAMBLER*",
+        "",
+        "Small stakes territory. One leg fails, the lot fails.",
+        "",
+        "──────────────────",
+        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+    ]
+    return "\n".join(lines)
+
+
+def build_degenerate_multi_text(pick):
+    """THE DEGENERATE MULTI (2026-07-19, Micah) — the rarest post PuntMate
+    makes, by design. Fires only when the weekend slate produces an
+    unusually large number of independently-qualifying legs (6+) whose
+    combined odds clear an extreme-payout bar (100x+) — every tier's legs
+    pooled into one mega multi. When it fires it replaces that weekend's
+    Gambler Multi. Framed as pure entertainment for the brave: everything
+    must land, and it almost never will. Same validator gates as every
+    public post (GAMBLER-tier responsible-gambling phrasing enforced)."""
+    legs = pick["degenerate_multi_legs"]
+    combined = _combined_odds(legs)
+    lines = [
+        "*☄️ PUNTMATE NZ — THE DEGENERATE MULTI*",
+        "",
+        "_The rarest post we make. An unusually deep slate lined up "
+        f"{len(legs)} genuine legs, and rolled together they pay "
+        f"{combined:.0f}-to-1. Let's be honest: this almost certainly "
+        "doesn't land — every single leg has to come in. Strictly one for "
+        "the brave, strictly small — entertainment, not a plan._",
         "",
     ]
     for i, leg in enumerate(legs, 1):
@@ -459,6 +498,8 @@ def main():
                        build_punter_multi_text, "PUNTER_BET")
     _freeze_multi_tier("gambler", pick.get("gambler_multi_legs"), pick.get("gambler_multi_promo_hint"),
                        build_gambler_multi_text, "GAMBLER_BET")
+    _freeze_multi_tier("degenerate", pick.get("degenerate_multi_legs"), pick.get("degenerate_multi_promo_hint"),
+                       build_degenerate_multi_text, "GAMBLER_BET")
 
     with open(os.path.join(review_dir, "telegram-post.txt"), "w") as f:
         f.write(telegram_text)

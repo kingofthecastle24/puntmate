@@ -175,7 +175,7 @@ class BuildReviewPackageTests(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(review_dir, "gambler-multi-post.txt")))
 
     def test_both_multi_tiers_can_fire_independently_same_day(self):
-        """A day can produce a Punter Multi AND a Gambler/Degenerate Multi
+        """A day can produce a Punter Multi AND a Gambler Multi
         at the same time — they're independent, not mutually exclusive."""
         pick = _standard_pick()
         pick["punter_multi_legs"] = [
@@ -202,7 +202,7 @@ class BuildReviewPackageTests(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(review_dir, "gambler-multi-post.txt")))
         with open(os.path.join(review_dir, "gambler-multi-post.txt")) as f:
             gambler_text = f.read()
-        self.assertIn("THE DEGENERATE MULTI", gambler_text)
+        self.assertIn("THE GAMBLER MULTI", gambler_text)
         self.assertIn("BET TYPE: GAMBLER", gambler_text)
 
     def test_no_bet_writes_metadata_only_no_images_no_approval_fields(self):

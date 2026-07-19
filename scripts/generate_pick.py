@@ -137,6 +137,10 @@ def _is_focus_match(match_name, keywords):
 # tie-break among candidates that ALREADY cleared the classifier's bar on
 # their own merits — it never changes what tier a candidate is classified
 # into, and never manufactures a candidate that doesn't otherwise exist.
+# Degenerate Multi bars (2026-07-19): the extreme-payout mega multi.
+DEGENERATE_MIN_LEGS = 6
+DEGENERATE_MIN_COMBINED_ODDS = 100.0
+
 BET_TYPE_PRIORITY = {"INVESTOR_BET": 0, "PUNTER_BET": 1, "GAMBLER_BET": 2}
 RISK_PRIORITY = {RISK_STANDARD: 0, "RISKY_PICK": 1}
 
@@ -729,6 +733,7 @@ def generate_pick_for_matches(matches, match_news, build_multis=False):
     # match (a candidate's bet_type puts it in exactly one tier).
     PUNTER_MULTI_BET_TYPES = {"INVESTOR_BET", "PUNTER_BET"}
     GAMBLER_MULTI_BET_TYPES = {"GAMBLER_BET"}
+    ALL_MULTI_BET_TYPES = PUNTER_MULTI_BET_TYPES | GAMBLER_MULTI_BET_TYPES
 
     def _assemble_multi_tier(allowed_bet_types):
         legs, leg_sports, seen_matches = [], [], set()
@@ -762,10 +767,34 @@ def generate_pick_for_matches(matches, match_news, build_multis=False):
         gambler_multi_legs, gambler_multi_sports = _assemble_multi_tier(GAMBLER_MULTI_BET_TYPES)
         punter_multi_promo_hint = _tab_multi_promo_hint_from_sports(punter_multi_sports) if punter_multi_legs else None
         gambler_multi_promo_hint = _tab_multi_promo_hint_from_sports(gambler_multi_sports) if gambler_multi_legs else None
+
+        # THE DEGENERATE MULTI (2026-07-19, Micah): "The Degenerate should be
+        # like when there is a large number of bets and the multi needs to pay
+        # off... extreme payoff... the least used item really." Definition:
+        # pool EVERY genuine leg across ALL tiers into one mega multi, and
+        # only call it a Degenerate when BOTH bars clear:
+        #   - at least DEGENERATE_MIN_LEGS legs (a big slate of independent
+        #     value, not a normal 3-4 leg day), AND
+        #   - combined odds of at least DEGENERATE_MIN_COMBINED_ODDS (a
+        #     genuinely extreme payout — $5 returns $500+).
+        # Rare by construction: it needs an unusually deep weekend of
+        # qualifying picks. When it fires it REPLACES the Gambler Multi that
+        # weekend (the gambler legs are inside it, and two longshot products
+        # side by side would dilute both) — the Punter Multi still posts.
+        degenerate_multi_legs, degenerate_multi_sports = _assemble_multi_tier(ALL_MULTI_BET_TYPES)
+        if degenerate_multi_legs:
+            combined = 1.0
+            for leg in degenerate_multi_legs:
+                combined *= float(leg["odds"])
+            if len(degenerate_multi_legs) < DEGENERATE_MIN_LEGS or combined < DEGENERATE_MIN_COMBINED_ODDS:
+                degenerate_multi_legs, degenerate_multi_sports = [], []
+        degenerate_multi_promo_hint = _tab_multi_promo_hint_from_sports(degenerate_multi_sports) if degenerate_multi_legs else None
+        if degenerate_multi_legs:
+            gambler_multi_legs, gambler_multi_promo_hint = [], None
     else:
         # Daily runs never build multis at all (see build_multis note above).
-        punter_multi_legs, gambler_multi_legs = [], []
-        punter_multi_promo_hint, gambler_multi_promo_hint = None, None
+        punter_multi_legs, gambler_multi_legs, degenerate_multi_legs = [], [], []
+        punter_multi_promo_hint, gambler_multi_promo_hint, degenerate_multi_promo_hint = None, None, None
 
     return {
         "has_pick": True,
@@ -798,5 +827,7 @@ def generate_pick_for_matches(matches, match_news, build_multis=False):
         "punter_multi_legs": punter_multi_legs,
         "punter_multi_promo_hint": punter_multi_promo_hint,  # internal only -- never surfaced in public copy
         "gambler_multi_legs": gambler_multi_legs,
-        "gambler_multi_promo_hint": gambler_multi_promo_hint,  # internal only -- never surfaced in public copy
+        "gambler_multi_promo_hint": gambler_multi_promo_hint,
+        "degenerate_multi_legs": degenerate_multi_legs,
+        "degenerate_multi_promo_hint": degenerate_multi_promo_hint,  # internal only -- never surfaced in public copy
     }

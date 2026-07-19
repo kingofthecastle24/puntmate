@@ -15,7 +15,7 @@ def _legs():
 class BuildMultiPropsTests(unittest.TestCase):
     def test_unknown_tier_rejected(self):
         with self.assertRaises(ValueError):
-            build_multi_props(_legs(), "degenerate")  # must be "gambler", not the display name
+            build_multi_props(_legs(), "yolo")  # not a configured tier
 
     def test_punter_tier_props(self):
         props = build_multi_props(_legs(), "punter")
@@ -31,7 +31,7 @@ class BuildMultiPropsTests(unittest.TestCase):
         auto-computes stakeReturn from stake x combined odds); it is
         deliberately never written into the Telegram/Instagram TEXT copy."""
         props = build_multi_props(_legs(), "gambler")
-        self.assertEqual(props["multiType"], "Degenerate Multi")
+        self.assertEqual(props["multiType"], "Gambler Multi")
         self.assertEqual(props["stake"], "$5")
         self.assertEqual(props["palette"], "pink")
         self.assertNotIn("stakeReturn", props)  # left to the template to compute
@@ -46,7 +46,7 @@ class BuildMultiPropsTests(unittest.TestCase):
             self.assertEqual(len(parts), 4, line)
 
     def test_all_tiers_configured(self):
-        self.assertEqual(set(MULTI_TIER_CONFIG.keys()), {"punter", "gambler"})
+        self.assertEqual(set(MULTI_TIER_CONFIG.keys()), {"punter", "gambler", "degenerate"})
 
 
 if __name__ == "__main__":

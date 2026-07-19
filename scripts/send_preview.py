@@ -80,7 +80,7 @@ def main():
     # post, just its own preview email shape (no single telegram-post.txt/
     # instagram-caption.txt to show).
     if metadata.get("is_weekend_multi"):
-        if not (metadata.get("has_punter_multi") or metadata.get("has_gambler_multi")):
+        if not (metadata.get("has_punter_multi") or metadata.get("has_gambler_multi") or metadata.get("has_degenerate_multi")):
             if not _safe_transition(pick_id, PREVIEW_READY, note="weekend multi: neither tier cleared the bar"):
                 return
             print(f"Weekend multi — neither tier cleared 3 legs this weekend, nothing to approve for {pick_id}.")
@@ -99,11 +99,12 @@ def main():
 
         punter_text = _read_if_exists("punter-multi-post.txt")
         gambler_text = _read_if_exists("gambler-multi-post.txt")
+        degenerate_text = _read_if_exists("degenerate-multi-post.txt")
         image_paths = [
             os.path.join(review_dir, name) for name in os.listdir(review_dir)
             if name.endswith(".png")
         ]
-        email_service.send_weekend_multi_email(metadata, image_paths, punter_text, gambler_text, approval_url())
+        email_service.send_weekend_multi_email(metadata, image_paths, punter_text, gambler_text, approval_url(), degenerate_text=degenerate_text)
         print(f"Weekend multi — preview sent, awaiting approval gate for {pick_id}.")
         return
 

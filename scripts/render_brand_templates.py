@@ -74,12 +74,23 @@ MULTI_TIER_CONFIG = {
         "palette": "green",
     },
     "gambler": {
-        "multiType": "Degenerate Multi",
-        "coverKicker": "SHOOTING YOUR SHOT",
+        "multiType": "Gambler Multi",
+        "coverKicker": "THE GAMBLER MULTI",
         "riskTagline": "Longshot legs · Small stake, big swing · One to dream on",
         "stake": "$5",
         "confidence": 1,
         "palette": "pink",
+    },
+    # 2026-07-19 (Micah): Degenerate = its own rare, extreme-payout mega
+    # multi (6+ legs, 100x+ combined) — replaces the Gambler Multi on the
+    # rare weekend it fires. Amber palette so it looks like the event it is.
+    "degenerate": {
+        "multiType": "Degenerate Multi",
+        "coverKicker": "THE DEGENERATE — EXTREME PAYOUT",
+        "riskTagline": "Everything must land · Massive payout · Only for the brave",
+        "stake": "$5",
+        "confidence": 1,
+        "palette": "amber",
     },
 }
 

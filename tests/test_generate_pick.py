@@ -999,6 +999,92 @@ class TwoTierMultiSplitTests(unittest.TestCase):
         self.assertEqual(pick["gambler_multi_legs"], [])  # only 2 -> below the 3-leg floor
 
 
+class DegenerateMultiTests(unittest.TestCase):
+    """2026-07-19 (Micah): 'The Degenerate should be like when there is a
+    large number of bets and the multi needs to pay off... extreme payoff
+    ... the least used item really.' Definition implemented: ALL genuine
+    legs pooled, fires only with >= DEGENERATE_MIN_LEGS legs AND combined
+    odds >= DEGENERATE_MIN_COMBINED_ODDS. When it fires it replaces that
+    weekend's Gambler Multi (its legs are inside it)."""
+
+    def setUp(self):
+        os.environ["ANTHROPIC_API_KEY"] = "test-key"
+
+    def _slate(self, n, home_odds, our_probability=45):
+        matches, candidates = [], []
+        for i in range(n):
+            m = {
+                "sport": "mma_mixed_martial_arts",
+                "match": f"Fighter{i}A vs Fighter{i}B",
+                "home_team": f"Fighter{i}A", "away_team": f"Fighter{i}B",
+                "kickoff": "2026-07-24T06:00:00Z",
+                "odds": {"home": home_odds, "away": 1.30, "draw": None},
+                "implied_probs": {"home": round(1 / home_odds, 2), "away": 0.72, "draw": 0},
+                "big_game": False,
+            }
+            matches.append(m)
+            candidates.append({
+                "match": m["match"], "sport": "mma_mixed_martial_arts", "market_type": "h2h",
+                "selection": f"Fighter{i}A", "line": None, "market": "Head to Head",
+                "our_probability": our_probability, "evidence_sufficient": True, "confidence": "MODERATE",
+                "uncertainty_flags": [], "reasoning": "Genuine, independent longshot edge.",
+            })
+        return matches, candidates
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_six_longshot_legs_with_extreme_combined_odds_fire_the_degenerate(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        matches, candidates = self._slate(6, 3.20)  # 3.2^6 ≈ 1074 >> 100
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+        pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
+
+        self.assertEqual(len(pick["degenerate_multi_legs"]), 6)
+        # Degenerate REPLACES the Gambler Multi that weekend
+        self.assertEqual(pick["gambler_multi_legs"], [])
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_five_legs_is_not_enough_gambler_multi_posts_instead(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        matches, candidates = self._slate(5, 3.20)  # 5 legs < DEGENERATE_MIN_LEGS
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+        pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
+
+        self.assertEqual(pick["degenerate_multi_legs"], [])
+        self.assertEqual(len(pick["gambler_multi_legs"]), 5)
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_many_legs_but_modest_combined_odds_is_not_a_degenerate(self, mock_anthropic_cls):
+        """6 legs of measured 1.9-odds picks combine to ~47x — under the
+        100x extreme-payout bar, so no Degenerate (the Punter Multi still
+        covers the measured side)."""
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        # positive-edge measured picks: 1.90 odds (~52.6% implied) at 60% our
+        # probability -> PUNTER_BET legs; 1.9^6 ≈ 47x combined, under the bar
+        matches, candidates = self._slate(6, 1.90, our_probability=60)
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+        pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
+
+        self.assertEqual(pick["degenerate_multi_legs"], [])
+        self.assertEqual(len(pick["punter_multi_legs"]), 6)  # measured side still fires
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_daily_run_never_builds_a_degenerate(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        matches, candidates = self._slate(6, 3.20)
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
+        pick = generate_pick.generate_pick_for_matches(matches, news)  # build_multis defaults False
+
+        self.assertEqual(pick["degenerate_multi_legs"], [])
+
+
 class SystemPromptQualityGuardrailTests(unittest.TestCase):
     """2026-07-19 (Micah): pick explanations were reading as generic filler
     ('mid-season games between finals hopefuls can be cagey') instead of a
