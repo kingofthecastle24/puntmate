@@ -1,0 +1,100 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 135,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784500866,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADh2pdUoK8VcPwz3bbGJquObQRX7n_AAJhDWsbsFHxRtilKnrm7whMAQADAgADcwADPQQ",
+            "file_unique_id": "AQADYQ1rG7BR8UZ4",
+            "file_size": 1062,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADh2pdUoK8VcPwz3bbGJquObQRX7n_AAJhDWsbsFHxRtilKnrm7whMAQADAgADbQADPQQ",
+            "file_unique_id": "AQADYQ1rG7BR8UZy",
+            "file_size": 10852,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADh2pdUoK8VcPwz3bbGJquObQRX7n_AAJhDWsbsFHxRtilKnrm7whMAQADAgADeAADPQQ",
+            "file_unique_id": "AQADYQ1rG7BR8UZ9",
+            "file_size": 45075,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADh2pdUoK8VcPwz3bbGJquObQRX7n_AAJhDWsbsFHxRtilKnrm7whMAQADAgADdwADPQQ",
+            "file_unique_id": "AQADYQ1rG7BR8UZ8",
+            "file_size": 81680,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADh2pdUoK8VcPwz3bbGJquObQRX7n_AAJhDWsbsFHxRtilKnrm7whMAQADAgADeQADPQQ",
+            "file_unique_id": "AQADYQ1rG7BR8UZ-",
+            "file_size": 82233,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 MLB\n\n\ud83c\udfdf New York Yankees vs Los Angeles Dodgers\n\nPICK: NEW YORK YANKEES +1.5\nODDS: 1.71 (Handicap)\nBET TYPE: PUNTER\n\nEven if you're backing the Dodgers to win the game, covering -1.5 runs in MLB is a different ask \u2014 the Yankees at home with a one-run cushion is a solid position to be in. MLB run-line +1.5 for the home underdog historically hits at a higher rate than the moneyline gap suggests, and at 1.71 there's decent value in the Yankees staying within a run or winning outright.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 66,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 94,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 116,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 134,
+            "length": 369,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "17926622127147964"
+  },
+  "facebook": {
+    "skipped": true,
+    "note": "FACEBOOK_PAGE_ID / page token not configured \u2014 add the GitHub secret to enable direct Page posting."
+  }
+}
