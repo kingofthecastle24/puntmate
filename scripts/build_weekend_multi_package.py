@@ -66,6 +66,9 @@ def main():
     }
 
     if len(punter_legs) < 3 and len(gambler_legs) < 3:
+        # Explicit False flags — publish_pick keys off these (stale-file fix)
+        metadata["has_punter_multi"] = False
+        metadata["has_gambler_multi"] = False
         with open(os.path.join(review_dir, "post-metadata.json"), "w") as f:
             json.dump(metadata, f, indent=2)
         manifest = build_manifest(review_dir, ["post-metadata.json"], extra={
@@ -87,6 +90,16 @@ def main():
 
     def _freeze_tier(tier_key, legs, promo_hint, build_text_fn, bet_type_label):
         if len(legs) < 3:
+            # Same stale-file cleanup as build_review_package (dry run #56
+            # bug): a Friday re-run of the same weekend pick_id must not
+            # leave a previously-frozen tier's files behind when that tier
+            # doesn't fire this time.
+            metadata[f"has_{tier_key}_multi"] = False
+            for name in [f"{tier_key}-multi-post.txt"] + [f"{tier_key}_multi_{k}.png" for k in ("cover", "legs", "breakdown")]:
+                stale_path = os.path.join(review_dir, name)
+                if os.path.exists(stale_path):
+                    os.remove(stale_path)
+                    print(f"  Removed stale {name} from a previous run of this weekend pick_id.")
             return
         pick_for_text = {f"{tier_key}_multi_legs": legs}
         text = build_text_fn(pick_for_text)

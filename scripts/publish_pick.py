@@ -150,6 +150,13 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
     # story-sized slide, so that's a real, disclosed scope limit, not an
     # oversight.
     for tier in ("punter", "gambler"):
+        # BOTH the metadata flag and the frozen file must agree that this
+        # tier fired THIS run — file existence alone allowed a stale multi
+        # from an earlier same-pick_id run to be re-published (caught in
+        # dry run #56, 2026-07-19; build_review_package also now deletes
+        # stale tier files, this is the second line of defence).
+        if not metadata.get(f"has_{tier}_multi"):
+            continue
         text_path = os.path.join(review_dir, f"{tier}-multi-post.txt")
         if not os.path.exists(text_path):
             continue  # that tier didn't clear the bar today — nothing to post
@@ -229,6 +236,8 @@ def dry_run_report(metadata, telegram_text, instagram_caption, review_dir=None):
 
     if review_dir:
         for tier in ("punter", "gambler"):
+            if not metadata.get(f"has_{tier}_multi"):
+                continue  # same stale-file guard as the live publish loop
             text_path = os.path.join(review_dir, f"{tier}-multi-post.txt")
             if not os.path.exists(text_path):
                 continue

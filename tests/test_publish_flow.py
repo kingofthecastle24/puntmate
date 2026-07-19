@@ -251,7 +251,13 @@ class TwoTierMultiPublishTests(unittest.TestCase):
         transition(pp.REPO_ROOT, pick_id, AWAITING_APPROVAL)
 
     def _make_package_with_multis(self, punter_graphic=True, gambler_graphic=False, gambler_text=True):
-        metadata = _make_review_package(self.review_dir)
+        # has_{tier}_multi metadata flags are required as of the stale-file
+        # fix (dry run #56) — publish only posts a tier when the freeze-time
+        # metadata says it fired, not on file existence alone.
+        metadata = _make_review_package(self.review_dir, metadata_extra={
+            "has_punter_multi": True,
+            "has_gambler_multi": gambler_text or gambler_graphic,
+        })
         with open(os.path.join(self.review_dir, "punter-multi-post.txt"), "w") as f:
             f.write("PUNTER MULTI TEXT")
         if punter_graphic:
@@ -266,6 +272,38 @@ class TwoTierMultiPublishTests(unittest.TestCase):
                 with open(os.path.join(self.review_dir, f"gambler_multi_{n}.png"), "wb") as f:
                     f.write(b"FAKE")
         return metadata
+
+    @patch("publish_pick.email_service.send_result_email")
+    @patch("post_instagram_story.post_story_to_instagram")
+    @patch("post_instagram.post_carousel_to_instagram")
+    @patch("post_telegram.post_text")
+    @patch("post_telegram.send_picks_card")
+    def test_stale_multi_file_without_metadata_flag_is_never_published(
+        self, mock_tg_card, mock_tg_text, mock_ig_feed, mock_ig_story, mock_email
+    ):
+        """REGRESSION (real dry run #56, 2026-07-19): a punter-multi-post.txt
+        left in the review dir by an EARLIER run of the same pick_id (built
+        on pre-weekend-multi code) was picked up and 'published' alongside a
+        pick whose own run never built a multi — because the tier loop keyed
+        off file existence alone. A stale file with no has_punter_multi
+        metadata flag must never post."""
+        pp.DRY_RUN = False
+        metadata = _make_review_package(self.review_dir)  # no multi flags
+        # simulate the stale leftovers exactly as found in run #56
+        with open(os.path.join(self.review_dir, "punter-multi-post.txt"), "w") as f:
+            f.write("STALE MULTI FROM AN EARLIER RUN")
+        self._seed_state_through_approval(metadata["pick_id"])
+        mock_tg_card.return_value = {"ok": True}
+        mock_tg_text.return_value = {"ok": True}
+        mock_ig_feed.return_value = True
+        mock_ig_story.return_value = "media123"
+
+        pp.main()
+
+        published = json.load(open(os.path.join(pp.PUBLISHED_DIR, metadata["pick_id"] + ".json")))
+        self.assertNotIn("telegram_punter_multi", published)
+        for call in mock_tg_text.call_args_list:
+            self.assertNotIn("STALE", str(call))
 
     @patch("publish_pick.email_service.send_result_email")
     @patch("post_instagram_story.post_story_to_instagram")

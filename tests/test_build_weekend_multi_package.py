@@ -82,7 +82,9 @@ class BuildWeekendMultiPackageTests(unittest.TestCase):
         metadata = bwmp.main()
 
         self.assertTrue(metadata["has_punter_multi"])
-        self.assertNotIn("has_gambler_multi", metadata)
+        # Explicit False (not absent) since the stale-file fix — publish
+        # keys off this flag.
+        self.assertIs(metadata.get("has_gambler_multi"), False)
         review_dir = os.path.join(bwmp.REVIEW_ROOT, metadata["pick_id"])
         self.assertFalse(os.path.exists(os.path.join(review_dir, "gambler-multi-post.txt")))
 
@@ -90,8 +92,8 @@ class BuildWeekendMultiPackageTests(unittest.TestCase):
         self._write_run(_run_data(punter_n=1, gambler_n=0))
         metadata = bwmp.main()
 
-        self.assertNotIn("has_punter_multi", metadata)
-        self.assertNotIn("has_gambler_multi", metadata)
+        self.assertIs(metadata.get("has_punter_multi"), False)
+        self.assertIs(metadata.get("has_gambler_multi"), False)
         review_dir = os.path.join(bwmp.REVIEW_ROOT, metadata["pick_id"])
         self.assertEqual(sorted(os.listdir(review_dir)), ["manifest.json", "post-metadata.json"])
 

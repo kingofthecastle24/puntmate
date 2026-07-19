@@ -407,6 +407,22 @@ def main():
 
     def _freeze_multi_tier(tier_key, legs, promo_hint, build_text_fn, bet_type_label):
         if len(legs or []) < 3:
+            # STALE-FILE CLEANUP (bug found in real dry run #56, 2026-07-19):
+            # this pick_id's review dir may be a re-run of a dir an earlier
+            # run already committed multi files into (e.g. a morning run on
+            # pre-weekend-multi code built a per-day punter multi for the
+            # same dryrun pick_id). publish_pick discovers tier posts by
+            # file existence, so leftovers from a previous freeze would get
+            # re-published alongside a pick that never built a multi. If
+            # this tier didn't fire THIS run, any files it left behind in a
+            # previous run must go.
+            metadata[f"has_{tier_key}_multi"] = False
+            stale = [f"{tier_key}-multi-post.txt"] + [f"{tier_key}_multi_{k}.png" for k in ("cover", "legs", "breakdown")]
+            for name in stale:
+                stale_path = os.path.join(review_dir, name)
+                if os.path.exists(stale_path):
+                    os.remove(stale_path)
+                    print(f"  Removed stale {name} from a previous run of this pick_id (tier did not fire this run).")
             return
         text = build_text_fn(pick)
         validate_text(text, risk=pick["risk"], bet_type=bet_type_label, public=True)

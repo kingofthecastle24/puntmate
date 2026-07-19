@@ -104,6 +104,36 @@ class BuildReviewPackageTests(unittest.TestCase):
         for banned_key in ("suggested_stake", "stake", "stake_amount", "personality", "personality_summaries"):
             self.assertNotIn(banned_key, metadata)
 
+    def test_stale_multi_files_from_previous_run_are_deleted_when_tier_does_not_fire(self):
+        """REGRESSION (real dry run #56, 2026-07-19): re-running a pick_id
+        whose review dir already contained multi files from an earlier run
+        (committed to main by pre-weekend-multi code) left those files in
+        place, and publish_pick re-posted them. When a tier doesn't fire,
+        freezing must remove that tier's leftovers and stamp the metadata
+        flag False."""
+        pick = _standard_pick()  # no multi legs at all
+        self._write_run(pick)
+        theme = brp.choose_theme(pick)
+        slug = brp.slugify(pick["match"])
+        base = f"2026-07-15_{slug}_{theme}"
+        self._write_fake_cards(base)
+
+        # Pre-seed the review dir with stale tier files, as run #56 found them
+        review_dir = os.path.join(brp.REVIEW_ROOT, f"2026-07-15_{slug}{brp._pick_id_suffix()}")
+        os.makedirs(review_dir, exist_ok=True)
+        stale_names = ["punter-multi-post.txt", "punter_multi_cover.png",
+                       "punter_multi_legs.png", "punter_multi_breakdown.png"]
+        for name in stale_names:
+            with open(os.path.join(review_dir, name), "w") as f:
+                f.write("STALE")
+
+        metadata = brp.main()
+        actual = set(os.listdir(os.path.join(brp.REVIEW_ROOT, metadata["pick_id"])))
+        for name in stale_names:
+            self.assertNotIn(name, actual)
+        self.assertIs(metadata.get("has_punter_multi"), False)
+        self.assertIs(metadata.get("has_gambler_multi"), False)
+
     def test_multi_flags_actually_reach_frozen_metadata_and_preview(self):
         """Regression test (2026-07-18, updated 2026-07-19 for the two-tier
         split): has_multi/multi_promo_hint used to be set on the metadata
@@ -128,7 +158,9 @@ class BuildReviewPackageTests(unittest.TestCase):
 
         metadata = brp.main()
         self.assertTrue(metadata.get("has_punter_multi"))
-        self.assertNotIn("has_gambler_multi", metadata)
+        # Explicit False (not merely absent) as of the stale-file fix —
+        # publish_pick keys off this flag, so it must always be present.
+        self.assertIs(metadata.get("has_gambler_multi"), False)
         self.assertEqual(metadata.get("punter_multi_promo_hint"), pick["punter_multi_promo_hint"])
 
         review_dir = os.path.join(brp.REVIEW_ROOT, metadata["pick_id"])
