@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-20_Seattle_Mariners_vs_Cincinnati_Reds",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-20T23:36:37.233250+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-07-20T23:36:54.532937+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-07-20T23:36:54.533201+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-07-20T23:36:56.769061+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": null}"
     }
   ]
 }
