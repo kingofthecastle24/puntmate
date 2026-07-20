@@ -806,5 +806,22 @@
     "confidence": "MODERATE",
     "result": "manual",
     "pnl": null
+  },
+  {
+    "id": "2026-07-20_baseball_mlb_Seattle_Mariners_PUNTER_BET",
+    "date": "2026-07-20",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "baseball_mlb",
+    "sport": "baseball_mlb",
+    "match": "Seattle Mariners vs Cincinnati Reds",
+    "home_team": "Seattle Mariners",
+    "away_team": "Cincinnati Reds",
+    "pick": "UNDER 7.5",
+    "market": "Total",
+    "odds": 2.0,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

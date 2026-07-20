@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-20_Seattle_Mariners_vs_Cincinnati_Reds",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-20T23:36:37.232851+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-20T23:36:37.233049+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-20T23:36:37.233250+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "59380a59362a178714529b8e643d7a449b2fab53e603ae15ea88fb6da67d5240",
+      "bytes": 653
+    },
+    "instagram-caption.txt": {
+      "sha256": "25354f0f7df3db832e4acd7209d0a8c5547bf57d2116c5992a3b0da52cb1e117",
+      "bytes": 659
+    },
+    "post-metadata.json": {
+      "sha256": "1e73af30a9058e3446fa66ca3bbcb9a43f03d0023e20d0ba53279c72c8790e9b",
+      "bytes": 14413
+    },
+    "preview.html": {
+      "sha256": "37b3eaf37f8fc5a38a3cda8cad0b04ba6bf74e0eda35f6a53fea0de2d5cdb9ed",
+      "bytes": 19648
+    },
+    "cover.png": {
+      "sha256": "5ca438c5fd0dcf69467e82cf6ed525022b5f5d0e789e94cf9bec7d977d3f0b72",
+      "bytes": 78448
+    },
+    "tip.png": {
+      "sha256": "70089ba6275f89b80b891437baebee38d6b3be484c21c75565928927318b7023",
+      "bytes": 75447
+    },
+    "breakdown.png": {
+      "sha256": "8061581f3da8ccbae30f46474dfbbd83c90bfec681f902b5b3b5176ac47f3097",
+      "bytes": 153116
+    },
+    "story.png": {
+      "sha256": "860567291b1563c2e4ff687792a9eeb4e32e59a8a72c19a0407429e6d2a01669",
+      "bytes": 67533
+    }
+  },
+  "pick_id": "2026-07-20_Seattle_Mariners_vs_Cincinnati_Reds",
+  "created_at": "2026-07-20T23:36:36.967034+00:00"
+}
