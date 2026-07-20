@@ -24,8 +24,11 @@ class SlideCopyCleanupTests(unittest.TestCase):
 
     def test_python_cover_themes_no_longer_says_daily(self):
         theme = gpi.COVER_THEMES["Daily Pick"]
-        self.assertNotIn("DAILY", theme["kicker"].upper())
-        self.assertNotIn("DAILY", " ".join(theme["lines"]).upper())
+        # 2026-07-20 (Micah): DAILY PICK LOCKED is back by request — the
+        # earlier removal went further than he wanted (only "Pick of the
+        # Week"/"Tip of the Week" framing should be gone).
+        self.assertEqual(theme["kicker"], "PUNTMATE'S DAILY PICK")
+        self.assertEqual(tuple(theme["lines"]), ("DAILY", "PICK", "LOCKED"))
 
     def test_story_template_never_shows_tip_of_the_week(self):
         # The Story kicker was a literal hardcoded string (no theme system
@@ -46,8 +49,8 @@ class SlideCopyCleanupTests(unittest.TestCase):
     def test_no_daily_pick_headline_copy_in_brand_templates(self):
         for path in (BETSLIP_NIGHT, MATCHDAY_PRINT):
             html = _read(path)
-            self.assertNotIn("PUNTMATE'S DAILY PICK", html)
-            self.assertNotIn("l1: 'DAILY'", html)
+            self.assertIn("PUNTMATE'S DAILY PICK", html)
+            self.assertIn("l1: 'DAILY'", html)
 
     def test_no_dead_swipe_up_cta_in_story_template(self):
         html = _read(SOCIAL_TEMPLATES)

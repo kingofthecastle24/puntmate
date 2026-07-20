@@ -156,7 +156,7 @@ PRINT = {
 COVER_THEMES = {
     "Tip of the Week":    {"kicker": "TIP OF THE WEEK",         "lines": ("BEST",  "VALUE",  "BET.")},
     "Multi Monday":       {"kicker": "MULTI MONDAY",            "lines": ("THE",   "MULTI",  "IS ON.")},
-    "Daily Pick":         {"kicker": "PUNTMATE PICK",           "lines": ("THE",   "PICK",   "LOCKED")},
+    "Daily Pick":         {"kicker": "PUNTMATE'S DAILY PICK",   "lines": ("DAILY", "PICK",   "LOCKED")},
     "Banker of the Day":  {"kicker": "BANKER OF THE DAY",       "lines": ("THE",   "BANKER", "IS IN.")},
     "Value Alert":        {"kicker": "VALUE ALERT",             "lines": ("VALUE", "ALERT",  "LIVE.")},
 }
