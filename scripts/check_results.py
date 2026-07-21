@@ -139,12 +139,18 @@ def check_and_resolve():
                 home_s = float(score_data['home_score'] or 0)
                 away_s = float(score_data['away_score'] or 0)
                 total = home_s + away_s
+                # BUG FIX (2026-07-21, found in coverage review): a total
+                # landing EXACTLY on a whole-number line (e.g. UNDER 7 with
+                # a 4-3 final) is a PUSH — stake refunded — not a loss.
+                # This mattered immediately: real picks on the ledger use
+                # whole-number lines ("UNDER 7"). Miscounting pushes as
+                # losses corrupts the public strike rate.
                 if 'over' in pick_text:
                     line = float(pick_text.split('over')[-1].strip())
-                    result = "win" if total > line else "loss"
+                    result = "win" if total > line else ("push" if total == line else "loss")
                 elif 'under' in pick_text:
                     line = float(pick_text.split('under')[-1].strip())
-                    result = "win" if total < line else "loss"
+                    result = "win" if total < line else ("push" if total == line else "loss")
                 else:
                     result = None
                 pnl = calculate_pnl(result, pick['odds']) if result else None
