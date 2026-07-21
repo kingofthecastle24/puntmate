@@ -821,7 +821,7 @@
     "market": "Total",
     "odds": 2.0,
     "confidence": "LOW",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   }
 ]
