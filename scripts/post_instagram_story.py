@@ -44,6 +44,13 @@ import requests
 
 GRAPH_URL = "https://graph.facebook.com/v21.0"
 
+LAST_ERROR = None  # last Meta API error dict — surfaced into the publish record (2026-07-21)
+
+
+def _set_last_error(err):
+    global LAST_ERROR
+    LAST_ERROR = err
+
 
 def _env(*names):
     """Return the first non-empty environment variable value from the list."""
@@ -95,6 +102,7 @@ def post_story_to_instagram(image_url):
     result = resp.json()
     if "error" in result:
         print(f"  ❌ IG Story container error: {result['error']}")
+        _set_last_error(result['error'])
         return None
     container_id = result.get("id")
     print(f"  ✅ Story container created: {container_id}")
@@ -132,6 +140,7 @@ def post_story_to_instagram(image_url):
     result = resp.json()
     if "error" in result:
         print(f"  ❌ IG Story publish error: {result['error']}")
+        _set_last_error(result['error'])
         return None
     media_id = result.get("id")
     print(f"  ✅ Posted Instagram Story: {media_id}")

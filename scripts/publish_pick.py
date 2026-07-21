@@ -96,6 +96,9 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
                 slide_urls=metadata.get("carousel_urls"),
             )
             results["instagram_feed"] = {"ok": bool(ok)}
+            if not ok:
+                import post_instagram
+                results["instagram_feed"]["error"] = post_instagram.LAST_ERROR
         except Exception as e:
             results["instagram_feed"] = {"ok": False, "error": str(e)}
             print(f"  Instagram feed error: {e}")
@@ -105,6 +108,9 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
             from post_instagram_story import post_story_to_instagram
             media_id = post_story_to_instagram(metadata.get("story_url"))
             results["instagram_story"] = {"ok": media_id is not None, "media_id": media_id}
+            if media_id is None:
+                import post_instagram_story
+                results["instagram_story"]["error"] = getattr(post_instagram_story, "LAST_ERROR", None)
         except Exception as e:
             results["instagram_story"] = {"ok": False, "error": str(e)}
             print(f"  Instagram Story error: {e}")

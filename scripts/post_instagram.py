@@ -28,6 +28,24 @@ IG_TOKEN      = os.environ.get('INSTAGRAM_ACCESS_TOKEN', '')
 IMGUR_CLIENT  = os.environ.get('IMGUR_CLIENT_ID', '')  # optional — for image hosting
 GRAPH_URL     = "https://graph.facebook.com/v19.0"
 
+# Last Meta API error seen by this module (dict or str), so publish_pick can
+# put the REAL reason into the publish record / result email instead of a
+# bare ok:False. Added 2026-07-21 after a real failure (OAuthException code
+# 190 subcode 467, 'session invalid because the user logged out') was only
+# visible by digging through run logs.
+LAST_ERROR = None
+
+
+def _note_error(err):
+    global LAST_ERROR
+    LAST_ERROR = err
+    # Token-death gets an actionable hint right in the record/email.
+    try:
+        if isinstance(err, dict) and err.get("code") == 190:
+            LAST_ERROR = {**err, "fix": "Meta access token invalid/expired — mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."}
+    except Exception:
+        pass
+
 RESPONSIBLE_LINE = "⚠️ Bet responsibly. Problem Gambling Foundation NZ: 0800 664 262"
 HASHTAGS = "#PuntMateNZ #NRL #WorldCup2026 #SportsBetting #NZSports #DailyPicks #ValueBet #SportsTipping"
 
@@ -64,6 +82,7 @@ def _create_ig_container(image_url, caption):
     result = resp.json()
     if "error" in result:
         print(f"  ❌ IG container error: {result['error']}")
+        _note_error(result['error'])
         return None
     container_id = result.get("id")
     print(f"  ✅ IG container created: {container_id}")
@@ -80,6 +99,7 @@ def _publish_ig_container(container_id):
     result = resp.json()
     if "error" in result:
         print(f"  ❌ IG publish error: {result['error']}")
+        _note_error(result['error'])
         return None
     post_id = result.get("id")
     print(f"  ✅ Posted to Instagram: {post_id}")
@@ -167,6 +187,7 @@ def post_carousel_to_instagram(slide_paths, caption=None, picks=None, slide_urls
         result = resp.json()
         if "error" in result:
             print(f"  ❌ Carousel item {i+1} error: {result['error']}")
+            _note_error(result['error'])
             return False
         item_ids.append(result["id"])
         print(f"    ✅ Slide {i+1} container: {result['id']}")
@@ -186,6 +207,7 @@ def post_carousel_to_instagram(slide_paths, caption=None, picks=None, slide_urls
     result = resp.json()
     if "error" in result:
         print(f"  ❌ Carousel container error: {result['error']}")
+        _note_error(result['error'])
         return False
     carousel_id = result["id"]
     print(f"  ✅ Carousel container: {carousel_id}")
