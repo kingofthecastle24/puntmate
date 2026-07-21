@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-21_Colorado_Rockies_vs_Washington_Nationals",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-21T23:17:23.510240+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-21T23:17:23.510426+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-21T23:17:23.510620+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

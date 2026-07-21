@@ -823,5 +823,22 @@
     "confidence": "LOW",
     "result": "loss",
     "pnl": -10.0
+  },
+  {
+    "id": "2026-07-21_baseball_mlb_Colorado_Rockies_PUNTER_BET",
+    "date": "2026-07-21",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "baseball_mlb",
+    "sport": "baseball_mlb",
+    "match": "Colorado Rockies vs Washington Nationals",
+    "home_team": "Colorado Rockies",
+    "away_team": "Washington Nationals",
+    "pick": "OVER 13.5",
+    "market": "Total",
+    "odds": 1.99,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

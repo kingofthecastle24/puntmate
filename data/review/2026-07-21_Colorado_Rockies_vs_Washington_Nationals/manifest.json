@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "9ea8d4eac318a7ec15f392d10b9f5f368013d99c23d87200252942948bd59305",
+      "bytes": 592
+    },
+    "instagram-caption.txt": {
+      "sha256": "244c12eb0b7f95f04a46a9fb31dcaf552b3599be785b3363e94761841094a34e",
+      "bytes": 598
+    },
+    "post-metadata.json": {
+      "sha256": "b1df1ca3db8688eabfb9afc36638f84ebcf3ef919fd483ec43dcec1d759e2216",
+      "bytes": 18229
+    },
+    "preview.html": {
+      "sha256": "69e781ac28bef7d865b2c1e75f1a3a32c21bfe830d16a721e5a9b26832396255",
+      "bytes": 23686
+    },
+    "cover.png": {
+      "sha256": "87be310305a6306a4c7e3c91efbc80fc254ec847a62bd8973fdfc72750bfd862",
+      "bytes": 79538
+    },
+    "tip.png": {
+      "sha256": "c1616cecf1c65c84e87b9a01e780003c35667551fbe22a801b959af2df73faea",
+      "bytes": 81620
+    },
+    "breakdown.png": {
+      "sha256": "5635fde21600934ef8e7f42a4ae7c83906af355bb1bddbeaa82ffda3fa9d3856",
+      "bytes": 148445
+    },
+    "story.png": {
+      "sha256": "a70371c4084792473054ca981482b8d5c17c80c30ad2ed8da13ab215a936a510",
+      "bytes": 70224
+    }
+  },
+  "pick_id": "2026-07-21_Colorado_Rockies_vs_Washington_Nationals",
+  "created_at": "2026-07-21T23:17:23.258307+00:00"
+}
