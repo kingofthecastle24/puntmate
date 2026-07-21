@@ -1,0 +1,115 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 138,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784675864,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADimpf_hc1Z1a2c5Gy62Vb9kSEebPwAAIwDWsbC5sAAUfvUerqKL7FcwEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADMA1rGwubAAFHeA",
+            "file_size": 961,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADimpf_hc1Z1a2c5Gy62Vb9kSEebPwAAIwDWsbC5sAAUfvUerqKL7FcwEAAwIAA20AAz0E",
+            "file_unique_id": "AQADMA1rGwubAAFHcg",
+            "file_size": 9683,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADimpf_hc1Z1a2c5Gy62Vb9kSEebPwAAIwDWsbC5sAAUfvUerqKL7FcwEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADMA1rGwubAAFHfQ",
+            "file_size": 41256,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADimpf_hc1Z1a2c5Gy62Vb9kSEebPwAAIwDWsbC5sAAUfvUerqKL7FcwEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADMA1rGwubAAFHfA",
+            "file_size": 74114,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADimpf_hc1Z1a2c5Gy62Vb9kSEebPwAAIwDWsbC5sAAUfvUerqKL7FcwEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADMA1rGwubAAFHfg",
+            "file_size": 74968,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 MLB\n\n\ud83c\udfdf Colorado Rockies vs Washington Nationals\n\nPICK: OVER 13.5\nODDS: 1.99 (Total)\nBET TYPE: PUNTER\n\nCoors Field is the single most reliably high-scoring venue in baseball \u2014 the altitude genuinely inflates run totals and has done so for decades. Both the Rockies and Nationals rank among the weaker pitching staffs in their respective leagues, so there's no shutdown arms to keep this tidy.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 67,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 83,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 102,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 120,
+            "length": 289,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: The session is invalid because the user logged out.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 467,
+      "fbtrace_id": "ApUF4kcVrf_j6jcTuhDMb_K",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: The session is invalid because the user logged out.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 467,
+      "fbtrace_id": "Ay1_nofAizKzAforkC-I_zJ"
+    }
+  },
+  "facebook": {
+    "skipped": true,
+    "note": "FACEBOOK_PAGE_ID / page token not configured \u2014 add the GitHub secret to enable direct Page posting."
+  }
+}
