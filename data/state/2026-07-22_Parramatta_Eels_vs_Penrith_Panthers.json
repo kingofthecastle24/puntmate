@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-22_Parramatta_Eels_vs_Penrith_Panthers",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-22T21:16:40.311354+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-07-22T21:16:57.545278+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-07-22T21:16:57.545520+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-07-22T21:16:59.243933+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": null}"
     }
   ]
 }
