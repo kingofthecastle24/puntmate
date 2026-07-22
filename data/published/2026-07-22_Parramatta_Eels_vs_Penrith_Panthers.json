@@ -87,29 +87,18 @@
     }
   },
   "instagram_feed": {
-    "ok": false,
-    "error": {
-      "message": "Error validating access token: The session is invalid because the user logged out.",
-      "type": "OAuthException",
-      "code": 190,
-      "error_subcode": 467,
-      "fbtrace_id": "A-finnXypXdgnFw15UG8ygN",
-      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
-    }
+    "ok": true
   },
   "instagram_story": {
-    "ok": false,
-    "media_id": null,
-    "error": {
-      "message": "Error validating access token: The session is invalid because the user logged out.",
-      "type": "OAuthException",
-      "code": 190,
-      "error_subcode": 467,
-      "fbtrace_id": "ANh6zCZnwkayOm-wWGKbJD6"
-    }
+    "ok": true,
+    "media_id": "17858539620676975"
   },
   "facebook": {
-    "skipped": true,
-    "note": "FACEBOOK_PAGE_ID / page token not configured \u2014 add the GitHub secret to enable direct Page posting."
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
   }
 }
