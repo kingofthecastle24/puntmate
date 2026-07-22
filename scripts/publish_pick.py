@@ -51,10 +51,37 @@ REVIEW_ROOT = os.path.join(REPO_ROOT, "data", "review")
 PUBLISHED_DIR = os.path.join(REPO_ROOT, "data", "published")
 
 DRY_RUN = os.environ.get("DRY_RUN", "true").strip().lower() not in ("false", "0", "no")
+# RESEND_FAILED (2026-07-23): manual retry mode for the Manual Republish
+# workflow. When true and the pick already has a published record, re-attempt
+# ONLY the platforms whose prior result wasn't a success (failed, skipped, or
+# never attempted) — never re-posts a platform that already went out (e.g.
+# Telegram), so a partial-failure retry can't create duplicates.
+RESEND_FAILED = os.environ.get("RESEND_FAILED", "").strip().lower() in ("true", "1", "yes")
 
 
 def already_published(pick_id):
     return os.path.exists(os.path.join(PUBLISHED_DIR, f"{pick_id}.json"))
+
+
+def _prior_publish_record(pick_id):
+    path = os.path.join(PUBLISHED_DIR, f"{pick_id}.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path) as f:
+        return json.load(f)
+
+
+def _platforms_needing_retry(metadata, prior):
+    """Main-post platforms from intended_platforms whose prior result wasn't a
+    genuine success (ok:True). 'skipped' (e.g. Facebook before its secret was
+    configured) and outright failures both qualify for a retry; a platform
+    already ok:True is never touched."""
+    retry = []
+    for p in metadata.get("intended_platforms", []):
+        r = prior.get(p)
+        if not (r and r.get("ok") is True):
+            retry.append(p)
+    return retry
 
 
 def mark_published(pick_id, results):
@@ -293,7 +320,7 @@ def main():
 
     pick_id = metadata["pick_id"]
 
-    if already_published(pick_id):
+    if already_published(pick_id) and not RESEND_FAILED:
         print(f"::notice::{pick_id} was already published — skipping to avoid a duplicate post.")
         return
 
@@ -318,6 +345,52 @@ def main():
     # passed, so AWAITING_APPROVAL -> APPROVED is safe here. Checksum
     # verification happens INSIDE the PUBLISHING state — a mismatch is a
     # publish-time failure (PUBLISHING -> PUBLISH_FAILED), not a rejection.
+    # ── Manual resend of only the platforms that didn't succeed ──────────
+    if RESEND_FAILED and already_published(pick_id):
+        prior = _prior_publish_record(pick_id)
+        retry_platforms = _platforms_needing_retry(metadata, prior)
+        if not retry_platforms:
+            print(f"Nothing to retry for {pick_id} — every intended platform already succeeded.")
+            return
+        print(f"RESEND — pick_id={pick_id}, retrying only: {retry_platforms} (prior successes untouched)")
+
+        # verify the frozen files still match before re-sending anything
+        manifest = load_manifest(os.path.join(review_dir, "manifest.json"))
+        okm, mismatches = verify_manifest(manifest, review_dir)
+        if not okm:
+            print("::error::Checksum mismatch — refusing to resend.")
+            for m in mismatches:
+                print(f"  - {m}")
+            sys.exit(1)
+
+        retry_meta = {**metadata, "intended_platforms": retry_platforms}
+        new_results = {}
+        publish(review_dir, retry_meta, telegram_text, instagram_caption, new_results)
+
+        merged = {**prior, **new_results}  # new attempts override; prior successes kept
+        print("\n" + "=" * 55)
+        for platform, r in merged.items():
+            status = "OK" if (r.get("ok") is True or r.get("skipped") is True) else "FAILED"
+            print(f"[{status}] {platform}: {r}")
+        print("=" * 55)
+        mark_published(pick_id, merged)
+
+        real = [p for p in merged if not merged[p].get("skipped")]
+        all_ok = all(merged[p].get("ok") for p in real) if real else False
+        any_ok = any(merged[p].get("ok") for p in real) if real else False
+        new_state = PUBLISHED if all_ok else (PARTIALLY_PUBLISHED if any_ok else PUBLISH_FAILED)
+        try:
+            transition(REPO_ROOT, pick_id, new_state,
+                       note=f"manual resend of {retry_platforms}: " + json.dumps({k: v.get("ok", v.get("skipped")) for k, v in new_results.items()}))
+        except Exception as e:
+            print(f"::warning::state not advanced ({e}); publish record still updated.")
+        metadata["_telegram_text"] = telegram_text
+        metadata["_instagram_caption"] = instagram_caption
+        email_service.send_result_email(metadata, merged, new_state)
+        if new_state != PUBLISHED:
+            print(f"::warning::Resend ended in state {new_state} — see results above.")
+        return
+
     auto_mode = os.environ.get("AUTO_PUBLISH", "").strip().lower() == "true"
     approval_note = (
         "AUTO-PUBLISH TRIAL — no human gate; copy validator (hard-fail at freeze) was the only gate"

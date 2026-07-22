@@ -42,8 +42,15 @@ VALID_TRANSITIONS = {
     REJECTED: set(),                # terminal — nothing may follow a rejection
     PUBLISHING: {PUBLISHED, PARTIALLY_PUBLISHED, PUBLISH_FAILED},
     PUBLISHED: set(),                # terminal
-    PARTIALLY_PUBLISHED: set(),      # terminal (a manual re-publish would be a new pick_id/run)
-    PUBLISH_FAILED: set(),           # terminal
+    # 2026-07-23: a manual "resend failed platforms" retry can legitimately
+    # complete a partial/failed publish (e.g. Instagram was down/token-dead
+    # at publish time, gets retried once fixed). These are the ONLY
+    # transitions out of the two non-terminal failure states, and they can
+    # only ever be reached by the explicit RESEND_FAILED path in
+    # publish_pick.py — the normal generate->approve->publish flow never
+    # hits them.
+    PARTIALLY_PUBLISHED: {PUBLISHED, PARTIALLY_PUBLISHED},
+    PUBLISH_FAILED: {PUBLISHED, PARTIALLY_PUBLISHED, PUBLISH_FAILED},
 }
 
 

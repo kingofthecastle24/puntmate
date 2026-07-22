@@ -374,3 +374,101 @@ class TwoTierMultiPublishTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ResendFailedPlatformsTests(unittest.TestCase):
+    """Manual retry mode (2026-07-23): after a partial publish (e.g. Telegram
+    succeeded but Instagram's token was dead and Facebook was unconfigured),
+    RESEND_FAILED re-attempts ONLY the platforms that didn't already succeed.
+    A platform already ok:True (Telegram) must never be re-posted — no
+    duplicates. Real scenario: run #58's Parramatta pick, retried once Micah
+    refreshed the Meta tokens."""
+
+    def setUp(self):
+        os.environ.setdefault("TELEGRAM_BOT_TOKEN", "t")
+        os.environ.setdefault("TELEGRAM_CHANNEL_ID", "c")
+        self.tmp = tempfile.mkdtemp()
+        self.review_dir = os.path.join(self.tmp, "review", "2026-07-15_test-match")
+        self._orig = (pp.REPO_ROOT, pp.REVIEW_ROOT, pp.PUBLISHED_DIR, pp.DRY_RUN, pp.RESEND_FAILED)
+        pp.REPO_ROOT = self.tmp
+        pp.REVIEW_ROOT = os.path.join(self.tmp, "review")
+        pp.PUBLISHED_DIR = os.path.join(self.tmp, "published")
+        pp.DRY_RUN = False
+        pp.RESEND_FAILED = True
+        os.environ["REVIEW_DIR"] = self.review_dir
+
+    def tearDown(self):
+        pp.REPO_ROOT, pp.REVIEW_ROOT, pp.PUBLISHED_DIR, pp.DRY_RUN, pp.RESEND_FAILED = self._orig
+        os.environ.pop("REVIEW_DIR", None)
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _seed_partial(self, pick_id):
+        # state: a real partial publish landed here
+        transition(pp.REPO_ROOT, pick_id, GENERATED)
+        transition(pp.REPO_ROOT, pick_id, PREVIEW_READY)
+        transition(pp.REPO_ROOT, pick_id, AWAITING_APPROVAL)
+        from workflow_state import APPROVED, PUBLISHING
+        transition(pp.REPO_ROOT, pick_id, APPROVED)
+        transition(pp.REPO_ROOT, pick_id, PUBLISHING)
+        transition(pp.REPO_ROOT, pick_id, PARTIALLY_PUBLISHED)
+        os.makedirs(pp.PUBLISHED_DIR, exist_ok=True)
+        with open(os.path.join(pp.PUBLISHED_DIR, pick_id + ".json"), "w") as f:
+            json.dump({
+                "telegram": {"ok": True},
+                "instagram_feed": {"ok": False, "error": {"code": 190}},
+                "instagram_story": {"ok": False, "media_id": None},
+                "facebook": {"skipped": True},
+            }, f)
+
+    @patch("publish_pick.email_service.send_result_email")
+    @patch("post_facebook.post_story")
+    @patch("post_facebook.post_photo")
+    @patch("post_instagram_story.post_story_to_instagram")
+    @patch("post_instagram.post_carousel_to_instagram")
+    @patch("post_telegram.post_text")
+    @patch("post_telegram.send_picks_card")
+    def test_resend_retries_only_failed_platforms_and_completes(
+        self, mock_tg_card, mock_tg_text, mock_ig_feed, mock_ig_story, mock_fb_photo, mock_fb_story, mock_email
+    ):
+        import post_facebook
+        metadata = _make_review_package(self.review_dir)
+        self._seed_partial(metadata["pick_id"])
+        # everything that gets retried now succeeds
+        mock_ig_feed.return_value = True
+        mock_ig_story.return_value = "media999"
+        mock_fb_photo.return_value = "fbpost_1"
+        mock_fb_story.return_value = "fbstory_1"
+        orig = (post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN)
+        post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN = "123", "tok"
+        try:
+            pp.main()
+        finally:
+            post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN = orig
+
+        # Telegram already succeeded -> must NOT be re-posted
+        mock_tg_card.assert_not_called()
+        mock_tg_text.assert_not_called()
+        # the previously-failed platforms were retried
+        mock_ig_feed.assert_called_once()
+        mock_ig_story.assert_called_once()
+        mock_fb_photo.assert_called_once()
+
+        rec = json.load(open(os.path.join(pp.PUBLISHED_DIR, metadata["pick_id"] + ".json")))
+        self.assertTrue(rec["telegram"]["ok"])        # prior success preserved
+        self.assertTrue(rec["instagram_feed"]["ok"])  # now fixed
+        self.assertTrue(rec["facebook"]["ok"])
+        self.assertEqual(load_state(pp.REPO_ROOT, metadata["pick_id"])["state"], PUBLISHED)
+
+    @patch("publish_pick.email_service.send_result_email")
+    @patch("post_telegram.send_picks_card")
+    def test_resend_noops_when_everything_already_succeeded(self, mock_tg_card, mock_email):
+        metadata = _make_review_package(self.review_dir)
+        pick_id = metadata["pick_id"]
+        transition(pp.REPO_ROOT, pick_id, GENERATED)
+        os.makedirs(pp.PUBLISHED_DIR, exist_ok=True)
+        with open(os.path.join(pp.PUBLISHED_DIR, pick_id + ".json"), "w") as f:
+            json.dump({"telegram": {"ok": True}, "instagram_feed": {"ok": True},
+                       "instagram_story": {"ok": True}, "facebook": {"ok": True}}, f)
+        pp.main()
+        mock_tg_card.assert_not_called()
+        mock_email.assert_not_called()

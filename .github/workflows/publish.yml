@@ -21,6 +21,14 @@ name: PuntMate Social - Manual Republish
 on:
   workflow_dispatch:
     inputs:
+      pick_id:
+        description: 'pick_id to (re)publish, e.g. 2026-07-22_Parramatta_Eels_vs_Penrith_Panthers (its data/review/<pick_id>/ folder must exist on main)'
+        type: string
+        required: true
+      resend_failed:
+        description: 'Resend ONLY the platforms that did not already succeed (safe partial-failure retry — never re-posts Telegram if it already went out)'
+        type: boolean
+        default: true
       dry_run:
         description: 'Dry run — log what would be sent without posting'
         type: boolean
@@ -46,6 +54,8 @@ jobs:
       - name: Publish (or simulate, if dry run)
         env:
           DRY_RUN:             ${{ inputs.dry_run }}
+          RESEND_FAILED:       ${{ inputs.resend_failed }}
+          PICK_ID:             ${{ inputs.pick_id }}
           TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           INSTAGRAM_USER_ID:   ${{ secrets.IG_USER_ID }}
