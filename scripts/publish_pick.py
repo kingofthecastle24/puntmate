@@ -338,6 +338,23 @@ def main():
         # real approved run does.
         manifest = load_manifest(os.path.join(review_dir, "manifest.json"))
         verify_manifest(manifest, review_dir)  # surfaced in the report either way
+        if RESEND_FAILED and already_published(pick_id):
+            # In resend mode the dry run must reflect the RESEND plan, not the
+            # generic all-platforms report — otherwise it misleadingly shows
+            # "[telegram] would post" for a platform that already went out.
+            prior = _prior_publish_record(pick_id)
+            retry_platforms = _platforms_needing_retry(metadata, prior)
+            print("=" * 55)
+            print("DRY RUN (RESEND) — no platform will receive a post")
+            print("=" * 55)
+            print(f"pick_id: {pick_id}")
+            print(f"Prior results: " + ", ".join(f"{k}={'ok' if v.get('ok') else v.get('skipped') and 'skipped' or 'FAILED'}" for k, v in prior.items()))
+            if retry_platforms:
+                print(f"Would RETRY only: {retry_platforms}")
+                print("(platforms already ok are left untouched — no duplicate posts)")
+            else:
+                print("Nothing to retry — every intended platform already succeeded.")
+            return
         dry_run_report(metadata, telegram_text, instagram_caption, review_dir)
         return
 
