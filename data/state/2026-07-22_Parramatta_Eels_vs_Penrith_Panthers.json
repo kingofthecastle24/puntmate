@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-22_Parramatta_Eels_vs_Penrith_Panthers",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-22T21:16:40.310954+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-22T21:16:40.311154+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-22T21:16:40.311354+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

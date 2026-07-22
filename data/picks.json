@@ -840,5 +840,22 @@
     "confidence": "MODERATE",
     "result": "win",
     "pnl": 9.9
+  },
+  {
+    "id": "2026-07-22_rugbyleague_nrl_Parramatta_Eels_PUNTER_BET",
+    "date": "2026-07-22",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Parramatta Eels vs Penrith Panthers",
+    "home_team": "Parramatta Eels",
+    "away_team": "Penrith Panthers",
+    "pick": "PENRITH PANTHERS -14.5",
+    "market": "Handicap",
+    "odds": 1.98,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

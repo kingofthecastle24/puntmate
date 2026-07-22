@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "42ec701e1f483c830e738605b77f3edf0a0a9db1c1d205aa40a9fa744f56f60d",
+      "bytes": 647
+    },
+    "instagram-caption.txt": {
+      "sha256": "069fa93d2981b176b810c7e37ad9a3902055a8649207959abfbcff23edce474b",
+      "bytes": 653
+    },
+    "post-metadata.json": {
+      "sha256": "ce6f8084868e3b6ece1cc325b1db6b8d9eef668f5ef0a0cb41446aee344ad5e7",
+      "bytes": 14174
+    },
+    "preview.html": {
+      "sha256": "efedb6e6558b0b79df28cc0bc348bf73717481f43b61ce4cc137073a8ffd025d",
+      "bytes": 19499
+    },
+    "cover.png": {
+      "sha256": "60f27e603559c2b13892833f6ecc597ea9104f37d106621c1529012aa95c73af",
+      "bytes": 78509
+    },
+    "tip.png": {
+      "sha256": "44966b510b194f7d27b9ac3ad699a93ac2420f888549f36b09acfc9ba7a642eb",
+      "bytes": 81158
+    },
+    "breakdown.png": {
+      "sha256": "a560b032c19bdf6478ceea3a93532a4b8893579d77fb99fe337b0012275e14e7",
+      "bytes": 156832
+    },
+    "story.png": {
+      "sha256": "125d43653439044efb97c96c9da0aacf57a69c1a1f15ce0544f6eef73db1c307",
+      "bytes": 70307
+    }
+  },
+  "pick_id": "2026-07-22_Parramatta_Eels_vs_Penrith_Panthers",
+  "created_at": "2026-07-22T21:16:40.058183+00:00"
+}
