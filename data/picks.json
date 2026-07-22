@@ -838,7 +838,7 @@
     "market": "Total",
     "odds": 1.99,
     "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 9.9
   }
 ]
