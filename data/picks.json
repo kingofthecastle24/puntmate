@@ -855,7 +855,7 @@
     "market": "Handicap",
     "odds": 1.98,
     "confidence": "MODERATE",
-    "result": "pending",
+    "result": "manual",
     "pnl": null
   }
 ]
