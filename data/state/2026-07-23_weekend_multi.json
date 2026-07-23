@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-23_weekend_multi",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-23T22:36:17.183334+00:00",
       "note": "weekend multi entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-07-23T22:36:42.261871+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-07-23T22:36:42.262125+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-07-23T22:37:12.563752+00:00",
+      "note": "{\"telegram_punter_multi\": true, \"instagram_punter_multi\": true}"
     }
   ]
 }
