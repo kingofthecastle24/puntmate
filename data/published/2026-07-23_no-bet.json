@@ -1,0 +1,42 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 143,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784846107,
+        "text": "\ud83d\udd0d PUNTMATE NZ \u2014 NO BET TODAY\n\nNothing cleared the bar today \u2014 no pick meets my criteria, so we're sitting this one out. A no-bet day protects the strike rate; forcing a pick never does.\n\nOn the watchlist today:\n\u2022 NRL: Newcastle Knights vs Sydney Roosters \u2014 Fri 8:00PM NZT\n\u2022 NRL: South Sydney Rabbitohs vs Melbourne Storm \u2014 Fri 10:00PM NZT\n\u2022 MLB: Detroit Tigers vs Kansas City Royals \u2014 Fri 10:41AM NZT\n\u2022 AFL: Melbourne Demons vs Geelong Cats \u2014 Fri 9:40PM NZT\n\u2022 AFL: Fremantle Dockers vs West Coast Eagles \u2014 Fri 10:10PM NZT\n\nBack tomorrow with the numbers.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 29,
+            "type": "bold"
+          },
+          {
+            "offset": 31,
+            "length": 155,
+            "type": "italic"
+          },
+          {
+            "offset": 188,
+            "length": 23,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  }
+}
