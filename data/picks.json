@@ -857,5 +857,22 @@
     "confidence": "MODERATE",
     "result": "manual",
     "pnl": null
+  },
+  {
+    "id": "2026-07-23_rugbyleague_nrl_South_Sydney_Rabbitohs_PUNTER_BET",
+    "date": "2026-07-23",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "South Sydney Rabbitohs vs Melbourne Storm",
+    "home_team": "South Sydney Rabbitohs",
+    "away_team": "Melbourne Storm",
+    "pick": "SOUTH SYDNEY RABBITOHS",
+    "market": "Head to Head",
+    "odds": 2.02,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

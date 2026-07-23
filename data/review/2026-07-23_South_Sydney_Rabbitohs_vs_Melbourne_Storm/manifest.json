@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "a073a24b80f6a4410e07e7d239d197af40102e9b891b4293cf0176882d4b4a7b",
+      "bytes": 561
+    },
+    "instagram-caption.txt": {
+      "sha256": "047421d22b20b6c73c11c51a0019466cfae2cf2dd06977297150cdb446b4236f",
+      "bytes": 567
+    },
+    "post-metadata.json": {
+      "sha256": "ddaee8602cc4737cabd5db7a46fe1473fcc82a1707951ee422e6da0db9599012",
+      "bytes": 8466
+    },
+    "preview.html": {
+      "sha256": "ba6cab0d456454f8b7ea27c6e2f8103e43cf207a4c349a23ce762605fe21f0e0",
+      "bytes": 13128
+    },
+    "cover.png": {
+      "sha256": "1a6bdded3e908afa5f2efbdce96fb097388099ee4ec956d401f8cb68c32b8326",
+      "bytes": 77792
+    },
+    "tip.png": {
+      "sha256": "a5ca21a419d91e37a0f489edfe0fa43732a3d0cd932620e87ed88f68782513dc",
+      "bytes": 97559
+    },
+    "breakdown.png": {
+      "sha256": "f632a3a956f48e4fbd67522c40f5f38d979f1774458a0e40a59f3bf3759145e5",
+      "bytes": 142199
+    },
+    "story.png": {
+      "sha256": "cda992018904ebf0508df416f01d48b92f48334e600e69b22fcb80aa6c4e1ad6",
+      "bytes": 83663
+    }
+  },
+  "pick_id": "2026-07-23_South_Sydney_Rabbitohs_vs_Melbourne_Storm",
+  "created_at": "2026-07-23T21:12:47.455899+00:00"
+}
