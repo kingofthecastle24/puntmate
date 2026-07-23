@@ -1,46 +1,16 @@
 {
   "run_date": "2026-07-23",
-  "run_ts": "2026-07-23T21:12:33.554202+00:00",
+  "run_ts": "2026-07-23T22:34:41.717883+00:00",
   "pick": {
-    "has_pick": true,
-    "match": "South Sydney Rabbitohs vs Melbourne Storm",
-    "sport": "rugbyleague_nrl",
-    "sport_label": "NRL",
-    "home_team": "South Sydney Rabbitohs",
-    "away_team": "Melbourne Storm",
-    "kickoff": "2026-07-24T10:00:00Z",
-    "market_type": "h2h",
-    "line": null,
-    "selection": "SOUTH SYDNEY RABBITOHS",
-    "market": "Head to Head",
-    "odds": "2.02",
-    "our_probability": 52.0,
-    "implied_probability": 48.3,
-    "edge_pct": 3.66,
-    "risk": "RISKY_PICK",
-    "bet_type": "PUNTER_BET",
-    "bet_type_label": "BET TYPE: PUNTER",
-    "bet_type_reason": "Solid touch here. Not a lock, but the value's real and the form backs it up. The Munster-to-rival-club story is a genuine distraction for Melbourne's camp, and that sort of uncertainty tends to fragment preparation and team cohesion at least marginally. Meanwhile Hughes returning for the Rabbits is a genuine boost.",
-    "final_explanation": "The Munster-to-rival-club story is a genuine distraction for Melbourne's camp, and that sort of uncertainty tends to fragment preparation and team cohesion at least marginally. Meanwhile Hughes returning for the Rabbits is a genuine boost.",
-    "confidence": "LOW",
-    "confidence_label": "LOW",
-    "uncertainty_flags": [
-      "Rabbitohs have their own 'big three' sidelined which could neutralise the Munster distraction advantage",
-      "Melbourne typically grind out results regardless of off-field noise"
-    ],
-    "public_caution": "Keep this one light \u2014 the value's there but so is the uncertainty.",
+    "has_pick": false,
+    "reasoning": "South Sydney Rabbitohs vs Melbourne Storm already went through today's pipeline earlier (state: PARTIALLY_PUBLISHED) \u2014 skipping to avoid a duplicate post or a workflow-state collision.",
     "research_warnings": [
       "rejected source (team-name-only match, no sport context): \"24 Hour Update | Round 21 - Newcastle Knights\"",
       "rejected source (team-name-only match, no sport context): \"The 2026 First Nations Jersey - Sydney Roosters\"",
       "only 1 validated source(s) \u2014 confidence capped at MODERATE",
-      "rejected source (no relevance to fixture): \"Diamondbacks vs Cardinals Prediction: Odds, recent stats, trends, and best bets \"",
-      "rejected source (team-name-only match, no sport context): \"Where to watch Arizona Diamondbacks vs St. Louis Cardinals: TV channel, start ti\"",
-      "rejected source (no relevance to fixture): \"Diamondbacks vs Cardinals Prediction, Picks & Odds for Today's MLB Game - Yahoo \"",
-      "rejected source (no relevance to fixture): \"MLB betting tips for Thursday: Diamondbacks seek to remain road warriors - ESPN\"",
-      "rejected source (team-name-only match, no sport context): \"Arizona Diamondbacks vs. St. Louis Cardinals - Live Score - July 23, 2026 - FOX \"",
-      "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
       "rejected source (team-name-only match, no sport context): \"With 10 games to play before the MLB trade deadline, can the Detroit Tigers avoi\"",
       "rejected source (no relevance to fixture): \"Tigers' Troy Melton Set for Start vs. Royals on One-Year Anniversary of MLB Debu\"",
+      "rejected source (team-name-only match, no sport context): \"Little League to Major League Baseball: Livermore native drafted by Kansas City \"",
       "rejected source (no relevance to fixture): \"Royals vs. Tigers prediction: Odds, recent stats, trends, and best bets for July\"",
       "rejected source (team-name-only match, no sport context): \"Where to watch Detroit Tigers-Kansas City Royals MLB game for free tonight - AL.\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
@@ -62,26 +32,45 @@
       "rejected source (team-name-only match, no sport context): \"Tyson Fury vs Mariusz Wach: Briton lighter than an opponent - BBC\"",
       "rejected source (team-name-only match, no sport context): \"Tyson Fury vs. Mariusz Wach: How to follow, start time, why it's not on TV, why \"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+      "rejected source (no relevance to fixture): \"Now in pole position, Brewers 'definitely active' heading into Deadline - MLB.co\"",
       "rejected source (no relevance to fixture): \"Are the Brewers buying as we approach the MLB Trade Deadline? - GazetteXtra\"",
-      "rejected source (no relevance to fixture): \"Brewers Tarik Skubal Buzz Makes More Sense Than You Think - Sports Illustrated\"",
       "rejected source (no relevance to fixture): \"Rockies All-Star catcher Hunter Goodman tunes out trade buzz, keeps up power sur\"",
-      "rejected source (no relevance to fixture): \"Rockies\u2019 Hunter Goodman is a hot commodity as MLB trade deadline nears. Here\u2019s h\"",
+      "rejected source (team-name-only match, no sport context): \"Series Preview: Milwaukee Brewers vs. Colorado Rockies - Yahoo Sports\"",
       "rejected source (team-name-only match, no sport context): \"Milwaukee Brewers at Colorado Rockies Preview - 06/05/2026 - MLB.com\"",
       "rejected source (team-name-only match, no sport context): \"Where to watch Milwaukee Brewers vs Colorado Rockies: TV channel, start time, st\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
-      "classifier [Fremantle Dockers vs West Coast Eagles / h2h]: edge 1.1% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
+      "classifier [Fremantle Dockers vs West Coast Eagles / h2h]: edge 2.1% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
       "classifier [Fremantle Dockers vs West Coast Eagles / spread]: edge 2.0% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
-      "classifier [Tyson Fury vs Mariusz Wach / h2h]: edge 0.1% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
-      "uncertainty_flag (internal only, not shown publicly): \"Rabbitohs have their own 'big three' sidelined which could neutralise the Munster distraction advantage\"",
-      "uncertainty_flag (internal only, not shown publicly): 'Melbourne typically grind out results regardless of off-field noise'"
-    ],
-    "big_game": false,
-    "other_defensible_candidates": 6,
-    "punter_multi_legs": [],
-    "punter_multi_promo_hint": null,
-    "gambler_multi_legs": [],
-    "gambler_multi_promo_hint": null,
-    "degenerate_multi_legs": [],
-    "degenerate_multi_promo_hint": null
-  }
+      "classifier [Tyson Fury vs Mariusz Wach / h2h]: edge 0.9% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
+      "uncertainty_flag (internal only, not shown publicly): \"Storm's attack can be relentless even against depleted defences\"",
+      "uncertainty_flag (internal only, not shown publicly): 'Souths missing multiple key players could mean a lopsided blowout rather than a low-scoring grind'"
+    ]
+  },
+  "watchlist": [
+    {
+      "match": "Newcastle Knights vs Sydney Roosters",
+      "sport_label": "NRL",
+      "kickoff": "2026-07-24T08:00:00Z"
+    },
+    {
+      "match": "South Sydney Rabbitohs vs Melbourne Storm",
+      "sport_label": "NRL",
+      "kickoff": "2026-07-24T10:00:00Z"
+    },
+    {
+      "match": "Detroit Tigers vs Kansas City Royals",
+      "sport_label": "MLB",
+      "kickoff": "2026-07-23T22:41:00Z"
+    },
+    {
+      "match": "Melbourne Demons vs Geelong Cats",
+      "sport_label": "AFL",
+      "kickoff": "2026-07-24T09:40:02Z"
+    },
+    {
+      "match": "Fremantle Dockers vs West Coast Eagles",
+      "sport_label": "AFL",
+      "kickoff": "2026-07-24T10:10:29Z"
+    }
+  ]
 }

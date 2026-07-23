@@ -1,0 +1,84 @@
+{
+  "has_pick": false,
+  "pick_id": "2026-07-23_no-bet",
+  "run_id": "30050268093",
+  "generated_at": "2026-07-23T22:34:49.426395+00:00",
+  "post_date": "2026-07-23",
+  "classification": "NO_BET",
+  "risk": "NO_BET",
+  "bet_type": "NO_BET",
+  "reasoning": "South Sydney Rabbitohs vs Melbourne Storm already went through today's pipeline earlier (state: PARTIALLY_PUBLISHED) \u2014 skipping to avoid a duplicate post or a workflow-state collision.",
+  "research_warnings": [
+    "rejected source (team-name-only match, no sport context): \"24 Hour Update | Round 21 - Newcastle Knights\"",
+    "rejected source (team-name-only match, no sport context): \"The 2026 First Nations Jersey - Sydney Roosters\"",
+    "only 1 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (team-name-only match, no sport context): \"With 10 games to play before the MLB trade deadline, can the Detroit Tigers avoi\"",
+    "rejected source (no relevance to fixture): \"Tigers' Troy Melton Set for Start vs. Royals on One-Year Anniversary of MLB Debu\"",
+    "rejected source (team-name-only match, no sport context): \"Little League to Major League Baseball: Livermore native drafted by Kansas City \"",
+    "rejected source (no relevance to fixture): \"Royals vs. Tigers prediction: Odds, recent stats, trends, and best bets for July\"",
+    "rejected source (team-name-only match, no sport context): \"Where to watch Detroit Tigers-Kansas City Royals MLB game for free tonight - AL.\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (no relevance to fixture): \"'I like this game better than ours': Behind footy's incursions into North Americ\"",
+    "rejected source (no relevance to fixture): \"Family \u2018incredibly grateful\u2019 for community support after on-field Aussie rules t\"",
+    "rejected source (team-name-only match, no sport context): \"AFL grand final in pictures, as Brisbane Lions beat Geelong Cats at the MCG - Th\"",
+    "rejected source (team-name-only match, no sport context): \"VFLW Player Focus: Mekah Morrissy (Geelong Cats) - Rookie Me Central\"",
+    "rejected source (no relevance to fixture): \"AFL Round 20: Who is in and out for your club this week? - Flashscore.com\"",
+    "rejected source (no relevance to fixture): \"Melbourne vs Geelong Preview & Tips: 2026 AFL Round 20 - Before You Bet\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (team-name-only match, no sport context): \"Brisbane Lions Vs Fremantle Dockers Aussie Rules \ud835\udddf\ud835\uddf6\ud835\ude03\ud835\uddf2 \ud835\ude00\ud835\ude01\ud835\uddff\ud835\uddf2\ud835\uddee\ud835\uddfa\ud835\uddf6\ud835\uddfb\ud835\uddf4 St Louis Cardina\"",
+    "rejected source (no relevance to fixture): \"2025 AFL Draft Preview: Fremantle - Rookie Me Central\"",
+    "rejected source (team-name-only match, no sport context): \"2025 AFL Draft Preview: West Coast Eagles - Rookie Me Central\"",
+    "rejected source (no relevance to fixture): \"Former player makes AFL history by coming out as bisexual - BBC\"",
+    "rejected source (no relevance to fixture): \"Fremantle's flag window is wide open, but the Eagles are facing more pain - ABC \"",
+    "rejected source (no relevance to fixture): \"The 25 highest paid AFL players, ranked - GQ Australia\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (team-name-only match, no sport context): \"Tyson Fury to fight Mariusz Wach in Thailand - Sky Sports\"",
+    "rejected source (team-name-only match, no sport context): \"Tyson Fury vs Mariusz Wach: Briton lighter than an opponent - BBC\"",
+    "rejected source (team-name-only match, no sport context): \"Tyson Fury vs. Mariusz Wach: How to follow, start time, why it's not on TV, why \"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (no relevance to fixture): \"Now in pole position, Brewers 'definitely active' heading into Deadline - MLB.co\"",
+    "rejected source (no relevance to fixture): \"Are the Brewers buying as we approach the MLB Trade Deadline? - GazetteXtra\"",
+    "rejected source (no relevance to fixture): \"Rockies All-Star catcher Hunter Goodman tunes out trade buzz, keeps up power sur\"",
+    "rejected source (team-name-only match, no sport context): \"Series Preview: Milwaukee Brewers vs. Colorado Rockies - Yahoo Sports\"",
+    "rejected source (team-name-only match, no sport context): \"Milwaukee Brewers at Colorado Rockies Preview - 06/05/2026 - MLB.com\"",
+    "rejected source (team-name-only match, no sport context): \"Where to watch Milwaukee Brewers vs Colorado Rockies: TV channel, start time, st\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "classifier [Fremantle Dockers vs West Coast Eagles / h2h]: edge 2.1% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
+    "classifier [Fremantle Dockers vs West Coast Eagles / spread]: edge 2.0% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
+    "classifier [Tyson Fury vs Mariusz Wach / h2h]: edge 0.9% is below even the 2.5% shaky-angle floor \u2014 no genuine case",
+    "uncertainty_flag (internal only, not shown publicly): \"Storm's attack can be relentless even against depleted defences\"",
+    "uncertainty_flag (internal only, not shown publicly): 'Souths missing multiple key players could mean a lopsided blowout rather than a low-scoring grind'"
+  ],
+  "intended_platforms": [
+    "telegram"
+  ],
+  "workflow_state": "GENERATED",
+  "has_watchlist": true,
+  "watchlist": [
+    {
+      "match": "Newcastle Knights vs Sydney Roosters",
+      "sport_label": "NRL",
+      "kickoff": "2026-07-24T08:00:00Z"
+    },
+    {
+      "match": "South Sydney Rabbitohs vs Melbourne Storm",
+      "sport_label": "NRL",
+      "kickoff": "2026-07-24T10:00:00Z"
+    },
+    {
+      "match": "Detroit Tigers vs Kansas City Royals",
+      "sport_label": "MLB",
+      "kickoff": "2026-07-23T22:41:00Z"
+    },
+    {
+      "match": "Melbourne Demons vs Geelong Cats",
+      "sport_label": "AFL",
+      "kickoff": "2026-07-24T09:40:02Z"
+    },
+    {
+      "match": "Fremantle Dockers vs West Coast Eagles",
+      "sport_label": "AFL",
+      "kickoff": "2026-07-24T10:10:29Z"
+    }
+  ]
+}
