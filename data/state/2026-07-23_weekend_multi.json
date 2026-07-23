@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-23_weekend_multi",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-23T22:36:17.182937+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-23T22:36:17.183120+00:00",
+      "note": "weekend multi review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-23T22:36:17.183334+00:00",
+      "note": "weekend multi entering GitHub environment approval gate"
+    }
+  ]
+}
