@@ -1,0 +1,104 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 142,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784841189,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADjmpig-XFusCtOfHSn6CSRjY5XjKLAAMNaxvClRFH5l_OWPia46kBAAMCAANzAAM9BA",
+            "file_unique_id": "AQAEDWsbwpURR3g",
+            "file_size": 1083,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADjmpig-XFusCtOfHSn6CSRjY5XjKLAAMNaxvClRFH5l_OWPia46kBAAMCAANtAAM9BA",
+            "file_unique_id": "AQAEDWsbwpURR3I",
+            "file_size": 12025,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADjmpig-XFusCtOfHSn6CSRjY5XjKLAAMNaxvClRFH5l_OWPia46kBAAMCAAN4AAM9BA",
+            "file_unique_id": "AQAEDWsbwpURR30",
+            "file_size": 48238,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADjmpig-XFusCtOfHSn6CSRjY5XjKLAAMNaxvClRFH5l_OWPia46kBAAMCAAN5AAM9BA",
+            "file_unique_id": "AQAEDWsbwpURR34",
+            "file_size": 88181,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADjmpig-XFusCtOfHSn6CSRjY5XjKLAAMNaxvClRFH5l_OWPia46kBAAMCAAN3AAM9BA",
+            "file_unique_id": "AQAEDWsbwpURR3w",
+            "file_size": 88239,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf South Sydney Rabbitohs vs Melbourne Storm\n\nPICK: SOUTH SYDNEY RABBITOHS\nODDS: 2.02 (Head to Head)\nBET TYPE: PUNTER\n\nThe Munster-to-rival-club story is a genuine distraction for Melbourne's camp, and that sort of uncertainty tends to fragment preparation and team cohesion at least marginally. Meanwhile Hughes returning for the Rabbits is a genuine boost.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 68,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 97,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 123,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 141,
+            "length": 239,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18128066164643720"
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}

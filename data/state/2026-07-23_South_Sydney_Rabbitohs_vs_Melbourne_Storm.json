@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-23_South_Sydney_Rabbitohs_vs_Melbourne_Storm",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-23T21:12:47.719837+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-07-23T21:13:08.045442+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-07-23T21:13:08.045697+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-07-23T21:13:39.694611+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": true, \"instagram_story\": true, \"facebook\": false, \"facebook_story\": false}"
     }
   ]
 }
