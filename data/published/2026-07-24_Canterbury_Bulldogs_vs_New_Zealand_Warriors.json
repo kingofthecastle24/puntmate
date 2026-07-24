@@ -1,0 +1,104 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 146,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784924519,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADkmpjyWecJartUe7ZClyHej4OXTexAAKkDWsb5jgZRyZ5lAaGpcgEAQADAgADcwADPQQ",
+            "file_unique_id": "AQADpA1rG-Y4GUd4",
+            "file_size": 933,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADkmpjyWecJartUe7ZClyHej4OXTexAAKkDWsb5jgZRyZ5lAaGpcgEAQADAgADbQADPQQ",
+            "file_unique_id": "AQADpA1rG-Y4GUdy",
+            "file_size": 9881,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADkmpjyWecJartUe7ZClyHej4OXTexAAKkDWsb5jgZRyZ5lAaGpcgEAQADAgADeAADPQQ",
+            "file_unique_id": "AQADpA1rG-Y4GUd9",
+            "file_size": 41330,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADkmpjyWecJartUe7ZClyHej4OXTexAAKkDWsb5jgZRyZ5lAaGpcgEAQADAgADeQADPQQ",
+            "file_unique_id": "AQADpA1rG-Y4GUd-",
+            "file_size": 74146,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADkmpjyWecJartUe7ZClyHej4OXTexAAKkDWsb5jgZRyZ5lAaGpcgEAQADAgADdwADPQQ",
+            "file_unique_id": "AQADpA1rG-Y4GUd8",
+            "file_size": 74519,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Canterbury Bulldogs vs New Zealand Warriors\n\nPICK: UNDER 41.5\nODDS: 1.99 (Total)\nBET TYPE: PUNTER\n\nThe Warriors news confirms their lineup is unchanged \u2014 they're a structured, defence-first side under their current system and don't tend to be involved in free-scoring blowouts. The Bulldogs have been inconsistent in attack and this matchup has the feel of a grind.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 70,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 87,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 106,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 124,
+            "length": 266,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18002779052958785"
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
