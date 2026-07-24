@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "77fc7b4fd1a6a885695a46acad4244f50e12005d4c0ccf2e1f2031916f95a1d4",
+      "bytes": 573
+    },
+    "instagram-caption.txt": {
+      "sha256": "afd607090eab778fbf0d8f9ef0deba5dda84a59495db876fc1d68b2ee3380514",
+      "bytes": 579
+    },
+    "post-metadata.json": {
+      "sha256": "64eef9bcbd709d06e38a5a31ca3334661cf6b5611bb6ed7bf6a21a2cb319dcad",
+      "bytes": 31658
+    },
+    "preview.html": {
+      "sha256": "2830dc9c7ae2cc7913468b469dd594f73969c6c08ea2cd59f236ad3d0c65a54b",
+      "bytes": 37833
+    },
+    "cover.png": {
+      "sha256": "0935bec3f91c688a15881f1162735773f55930dadba0846683904d872150658c",
+      "bytes": 79049
+    },
+    "tip.png": {
+      "sha256": "19fc55edb143d56d22eed671132ed9a2926ea309c1ca036f1a0beccebab1d884",
+      "bytes": 81570
+    },
+    "breakdown.png": {
+      "sha256": "261c87f8618856d24bb1cbd00dd5bf4604cb33f39f4adc3801ea817fa73d187d",
+      "bytes": 145168
+    },
+    "story.png": {
+      "sha256": "aba2b7e1a56a90b2c6cf1e941b620e82b3b05b6b3f3346c5ab7aa16e8f7c56aa",
+      "bytes": 69984
+    }
+  },
+  "pick_id": "2026-07-24_Canterbury_Bulldogs_vs_New_Zealand_Warriors",
+  "created_at": "2026-07-24T20:21:40.907885+00:00"
+}

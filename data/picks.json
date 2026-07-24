@@ -874,5 +874,22 @@
     "confidence": "LOW",
     "result": "win",
     "pnl": 10.2
+  },
+  {
+    "id": "2026-07-24_rugbyleague_nrl_Canterbury_Bulldogs_PUNTER_BET",
+    "date": "2026-07-24",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Canterbury Bulldogs vs New Zealand Warriors",
+    "home_team": "Canterbury Bulldogs",
+    "away_team": "New Zealand Warriors",
+    "pick": "UNDER 41.5",
+    "market": "Total",
+    "odds": 1.99,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

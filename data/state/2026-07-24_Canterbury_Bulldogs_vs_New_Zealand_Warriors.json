@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-24_Canterbury_Bulldogs_vs_New_Zealand_Warriors",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-24T20:21:41.227583+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-24T20:21:41.227843+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-24T20:21:41.228064+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
