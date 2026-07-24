@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-24_no-bet",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-24T21:14:13.213810+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-24T21:14:13.214010+00:00",
+      "note": "no_bet + watchlist post frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-24T21:14:13.214210+00:00",
+      "note": "watchlist post entering approval gate"
+    }
+  ]
+}
