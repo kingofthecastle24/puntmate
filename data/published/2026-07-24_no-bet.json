@@ -1,0 +1,42 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 147,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1784927673,
+        "text": "\ud83d\udd0d PUNTMATE NZ \u2014 NO BET TODAY\n\nNothing cleared the bar today \u2014 no pick meets my criteria, so we're sitting this one out. A no-bet day protects the strike rate; forcing a pick never does.\n\nOn the watchlist today:\n\u2022 UFC: Santos Verdinez vs Ray Hayes \u2014 Sat 12:00PM NZT\n\u2022 UFC: Ezayah Gomez Oropeza vs Luther Egerson \u2014 Sat 1:10PM NZT\n\u2022 UFC: Carlos Tardio vs Mackson Lee \u2014 Sat 2:00PM NZT\n\u2022 UFC: James Martin vs Joey Hart \u2014 Sat 2:00PM NZT\n\u2022 UFC: Dylan Diebitz vs Preston Lagrange \u2014 Sat 2:25PM NZT\n\nBack tomorrow with the numbers.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 29,
+            "type": "bold"
+          },
+          {
+            "offset": 31,
+            "length": 155,
+            "type": "italic"
+          },
+          {
+            "offset": 188,
+            "length": 23,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-07-24_no-bet",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-07-24T21:14:13.214210+00:00",
       "note": "watchlist post entering approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-07-24T21:14:32.315715+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-07-24T21:14:32.315897+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-07-24T21:14:33.276518+00:00",
+      "note": "{\"telegram\": true}"
     }
   ]
 }
