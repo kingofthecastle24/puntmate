@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 149,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1785010377,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADlWplGMkAAQYAASHmUGCr9XGnuJB2YKMAAskMaxvmOClHO9hMZDy0WI8BAAMCAANzAAM9BA",
+            "file_unique_id": "AQADyQxrG-Y4KUd4",
+            "file_size": 1091,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADlWplGMkAAQYAASHmUGCr9XGnuJB2YKMAAskMaxvmOClHO9hMZDy0WI8BAAMCAANtAAM9BA",
+            "file_unique_id": "AQADyQxrG-Y4KUdy",
+            "file_size": 11637,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADlWplGMkAAQYAASHmUGCr9XGnuJB2YKMAAskMaxvmOClHO9hMZDy0WI8BAAMCAAN4AAM9BA",
+            "file_unique_id": "AQADyQxrG-Y4KUd9",
+            "file_size": 47626,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADlWplGMkAAQYAASHmUGCr9XGnuJB2YKMAAskMaxvmOClHO9hMZDy0WI8BAAMCAAN5AAM9BA",
+            "file_unique_id": "AQADyQxrG-Y4KUd-",
+            "file_size": 86366,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADlWplGMkAAQYAASHmUGCr9XGnuJB2YKMAAskMaxvmOClHO9hMZDy0WI8BAAMCAAN3AAM9BA",
+            "file_unique_id": "AQADyQxrG-Y4KUd8",
+            "file_size": 87344,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf St George Illawarra Dragons vs Gold Coast Titans\n\nPICK: GOLD COAST TITANS +0.5\nODDS: 1.95 (Handicap)\nBET TYPE: PUNTER\n\nEven with Brimson out, the Titans +0.5 at 1.95 is a reasonable safety play \u2014 the line is essentially pick-em and a draw-equivalent result refunds. These two sides are genuinely close in quality in 2026, and the Titans have enough squad depth to keep it within a score. The extra half-point cushion at near-even money has some merit as a protective angle.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\nR18 \u00b7 Gamble responsibly \u00b7 Problem Gambling Foundation NZ: 0800 664 262",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 75,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 104,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 126,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 144,
+            "length": 354,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Friday, 24-Jul-26 23:00:00 PDT. The current time is Saturday, 25-Jul-26 13:12:57 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AZbAHRBMyIirs7SKjwaNqw1",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Friday, 24-Jul-26 23:00:00 PDT. The current time is Saturday, 25-Jul-26 13:12:57 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "ACY0OrIlNXIaEU1Lvh4na99"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
