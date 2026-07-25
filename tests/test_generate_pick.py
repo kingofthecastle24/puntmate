@@ -567,11 +567,14 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
             self.assertNotIn("no pick meets", text.lower())
 
     @patch("generate_pick.anthropic.Anthropic")
-    def test_truly_thin_edge_below_shaky_floor_is_still_no_bet(self, mock_anthropic_cls):
+    def test_no_value_negative_edge_is_a_genuine_skip(self, mock_anthropic_cls):
+        """2026-07-25: NO_BET is no longer a routine result. The ONLY time a
+        day is skipped is when there is no genuine value anywhere — here the
+        sole candidate is priced by the book (implied 40%) as MORE likely
+        than our own estimate (37%), i.e. a negative edge / no value, so it
+        is not backable and the day is a genuine skip."""
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        # our_probability 41 vs implied 40 -> edge ~1%, below even the 2.5%
-        # shaky floor -- genuinely nothing here, must remain NO_BET.
         mock_client.messages.create.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
@@ -580,16 +583,42 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 41,
+                "our_probability": 37,   # below the book's 40% implied -> no value
                 "evidence_sufficient": True,
                 "confidence": "LOW",
                 "uncertainty_flags": [],
-                "reasoning": "Coin flip at best, nothing genuinely defensible.",
+                "reasoning": "No genuine edge over the book on this one.",
             }],
         })
         pick = generate_pick.generate_pick_for_matches(_mock_matches(), {})
         self.assertFalse(pick["has_pick"])
-        self.assertEqual(pick["risk"], "NO_BET")
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_thin_positive_edge_now_produces_a_pick_not_no_bet(self, mock_anthropic_cls):
+        """The core behaviour change: a thin but genuine positive edge that
+        used to fall into NO_BET now yields a real (risky) pick."""
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "market_type": "h2h",
+                "selection": "France",
+                "line": None,
+                "market": "Head to Head",
+                "our_probability": 42,   # just above the book's 40% implied
+                "evidence_sufficient": True,
+                "confidence": "MODERATE",
+                "uncertainty_flags": [],
+                "reasoning": "France's away record gives a genuine if slim edge here.",
+            }],
+        })
+        match_news = {"France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"}}
+        pick = generate_pick.generate_pick_for_matches(_mock_matches(), match_news)
+        self.assertTrue(pick["has_pick"])
+        self.assertIn(pick["risk"], ("STANDARD_PICK", "RISKY_PICK"))
+        self.assertNotEqual(pick["risk"], "NO_BET")
 
 
 class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
@@ -1165,3 +1194,59 @@ class TruncationRegressionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WidenedMarketsTests(unittest.TestCase):
+    """2026-07-25 (Micah): widened markets — draw-no-bet and double chance
+    derived from the book's own three-way prices, so a credible protective
+    pick can be found on almost any real slate instead of a no-bet day."""
+
+    def setUp(self):
+        os.environ["ANTHROPIC_API_KEY"] = "test-key"
+
+    def test_draw_no_bet_resolves_from_three_way_odds(self):
+        m = _mock_matches()[0]
+        odds, implied = generate_pick._resolve_selection_odds(m, "draw_no_bet", "France", None)
+        self.assertIsNotNone(odds)
+        self.assertTrue(1.4 < odds < 2.5)
+        self.assertTrue(40 < implied < 60)
+
+    def test_double_chance_resolves_and_is_shorter_than_the_win(self):
+        m = _mock_matches()[0]
+        dc_odds, dc_implied = generate_pick._resolve_selection_odds(m, "double_chance", "France or Draw", None)
+        self.assertIsNotNone(dc_odds)
+        self.assertLess(dc_odds, m["odds"]["home"])   # covering two outcomes is shorter
+        self.assertGreater(dc_implied, 50)
+
+    def test_protective_markets_need_a_draw_price(self):
+        # two-way sport (no draw) -> DNB / double chance can't be formed
+        m = _mock_matches_with_extra_markets()[0]  # NRL, draw=None
+        self.assertEqual(generate_pick._resolve_selection_odds(m, "draw_no_bet", "Warriors", None), (None, None))
+        self.assertEqual(generate_pick._resolve_selection_odds(m, "double_chance", "Warriors or Draw", None), (None, None))
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_draw_no_bet_pick_flows_end_to_end_and_is_not_auto_risky(self, mock_anthropic_cls):
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        mock_client.messages.create.return_value = _mock_anthropic_response({
+            "candidates": [{
+                "match": "France vs Spain",
+                "sport": "soccer_fifa_world_cup",
+                "market_type": "draw_no_bet",
+                "selection": "France",
+                "line": None,
+                "market": "Draw No Bet",
+                "our_probability": 60,   # comfortably above the derived DNB implied
+                "evidence_sufficient": True,
+                "confidence": "HIGH",
+                "uncertainty_flags": [],
+                "reasoning": "France are the stronger side and the draw-no-bet protects against a stalemate.",
+            }],
+        })
+        news = {"France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "HIGH"}}
+        pick = generate_pick.generate_pick_for_matches(_mock_matches(), news)
+        self.assertTrue(pick["has_pick"])
+        self.assertEqual(pick["market"], "Draw No Bet")
+        self.assertIn("(DNB)", pick["selection"])
+        # a well-supported protective-market pick must NOT be auto-classified risky
+        self.assertEqual(pick["risk"], "STANDARD_PICK")

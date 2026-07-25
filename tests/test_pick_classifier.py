@@ -1,56 +1,71 @@
 import os, sys, unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-from pick_classifier import Evidence, classify, classify_risk, classify_bet_type, \
+from pick_classifier import Evidence, classify, classify_risk, classify_bet_type, is_backable, \
     RISK_STANDARD, RISK_RISKY, RISK_NO_BET, BET_INVESTOR, BET_PUNTER, BET_GAMBLER, BET_NO_BET, \
-    MIN_EDGE_PCT, RISKY_MIN_EDGE_PCT
+    MIN_EDGE_PCT, RISKY_MIN_EDGE_PCT, MIN_VALUE_EDGE_PCT
+
+
+class BackabilityTests(unittest.TestCase):
+    """2026-07-25 (Micah): NO_BET is no longer a pick classification. The
+    'is this worth featuring at all' decision now lives in is_backable();
+    classify_risk only ever returns STANDARD_PICK or RISKY_PICK."""
+
+    def test_insufficient_evidence_is_not_backable(self):
+        e = Evidence(evidence_sufficient=False, odds=2.0, our_probability=60, implied_probability=50, confidence="HIGH")
+        backable, reason = is_backable(e)
+        self.assertFalse(backable)
+        self.assertIn("insufficient evidence", reason)
+
+    def test_negative_edge_is_not_backable(self):
+        # book prices it MORE likely than we do -> no genuine value -> dropped
+        e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=48, implied_probability=50, confidence="HIGH")
+        backable, reason = is_backable(e)
+        self.assertFalse(backable)
+        self.assertIn("no genuine value", reason)
+
+    def test_slim_positive_edge_is_backable(self):
+        # a 2% edge is now a real (if light) pick, never a no-bet
+        e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=52, implied_probability=50, confidence="HIGH")
+        backable, _ = is_backable(e)
+        self.assertTrue(backable)
+
+    def test_zero_edge_is_the_backable_floor(self):
+        e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=50, implied_probability=50, confidence="HIGH")
+        self.assertEqual(MIN_VALUE_EDGE_PCT, 0.0)
+        self.assertTrue(is_backable(e)[0])
 
 
 class RiskClassificationTests(unittest.TestCase):
-    def test_insufficient_evidence_is_no_bet(self):
-        e = Evidence(evidence_sufficient=False, odds=2.0, our_probability=60, implied_probability=50, confidence="HIGH")
-        risk, _ = classify_risk(e)
-        self.assertEqual(risk, RISK_NO_BET)
+    def test_classify_risk_never_returns_no_bet(self):
+        # Even a wafer-thin win-market edge is STANDARD or RISKY, never NO_BET.
+        for prob in (50.1, 52, 55, 60, 80):
+            e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=prob, implied_probability=50, confidence="MODERATE")
+            self.assertIn(classify_risk(e)[0], (RISK_STANDARD, RISK_RISKY))
 
-    def test_edge_below_minimum_is_no_bet(self):
-        # edge here is 2.0%, below RISKY_MIN_EDGE_PCT (2.5%) too -- genuinely
-        # nothing here, still NO_BET even after the Phase 3 threshold nuance.
-        e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=52, implied_probability=50, confidence="HIGH")
-        risk, _ = classify_risk(e)
-        self.assertEqual(risk, RISK_NO_BET)
-
-    def test_shaky_edge_above_lower_floor_is_risky_not_no_bet(self):
-        # Phase 3: edge of 3.0% clears RISKY_MIN_EDGE_PCT (2.5%) but not the
-        # standard MIN_EDGE_PCT (5.0%) -- a genuine, if lighter, angle. This
-        # used to be an automatic NO_BET; it should now be RISKY_PICK.
-        self.assertTrue(RISKY_MIN_EDGE_PCT < 3.0 < MIN_EDGE_PCT)
+    def test_thin_win_market_edge_is_risky(self):
+        # edge 3% on a straight win market: below the 5% standard bar -> risky
         e = Evidence(evidence_sufficient=True, odds=2.20, our_probability=53, implied_probability=50, confidence="MODERATE")
         risk, reasons = classify_risk(e)
         self.assertEqual(risk, RISK_RISKY)
-        self.assertTrue(any("shaky-angle floor" in r for r in reasons))
+        self.assertTrue(any("below the standard" in r for r in reasons))
 
-    def test_edge_right_at_lower_floor_is_risky(self):
-        # Exactly at RISKY_MIN_EDGE_PCT should clear it (>=), not be excluded.
-        e = Evidence(evidence_sufficient=True, odds=2.20, our_probability=52.5, implied_probability=50, confidence="MODERATE")
-        risk, _ = classify_risk(e)
-        self.assertEqual(risk, RISK_RISKY)
+    def test_thin_edge_on_protective_market_is_standard(self):
+        # SAME thin 3% edge but on a protective market (e.g. handicap/DNB):
+        # lower variance, so it is an acceptable STANDARD pick, not risky.
+        e = Evidence(evidence_sufficient=True, odds=1.90, our_probability=53, implied_probability=50,
+                     confidence="MODERATE", protective_market=True)
+        self.assertEqual(classify_risk(e)[0], RISK_STANDARD)
 
-    def test_edge_just_below_lower_floor_is_still_no_bet(self):
-        # Phase 3 narrows the gap but does not remove NO_BET -- truly thin
-        # edges (below even the shaky floor) must remain NO_BET.
-        e = Evidence(evidence_sufficient=True, odds=2.20, our_probability=52.0, implied_probability=50, confidence="MODERATE")
-        risk, reasons = classify_risk(e)
-        self.assertEqual(risk, RISK_NO_BET)
-        self.assertTrue(any("no genuine case" in r for r in reasons))
+    def test_handicap_is_not_auto_risky_at_a_big_price(self):
+        # big price that would flag a WIN market risky is fine on a handicap
+        e = Evidence(evidence_sufficient=True, odds=3.20, our_probability=40, implied_probability=32,
+                     confidence="MODERATE", protective_market=True)
+        self.assertEqual(classify_risk(e)[0], RISK_STANDARD)
 
-    def test_evidence_insufficient_still_no_bet_even_with_large_edge(self):
-        # Phase 3's threshold nuance only applies to the edge gate -- it must
-        # never bypass the evidence_sufficient gate. A model self-reporting
-        # insufficient evidence is still an automatic NO_BET regardless of
-        # how large the nominal edge looks.
-        e = Evidence(evidence_sufficient=False, odds=2.0, our_probability=80, implied_probability=40, confidence="HIGH")
-        risk, _ = classify_risk(e)
-        self.assertEqual(risk, RISK_NO_BET)
+    def test_big_price_win_market_without_high_confidence_is_risky(self):
+        e = Evidence(evidence_sufficient=True, odds=3.20, our_probability=40, implied_probability=32, confidence="MODERATE")
+        self.assertEqual(classify_risk(e)[0], RISK_RISKY)
 
     def test_strong_evidence_is_standard(self):
         e = Evidence(evidence_sufficient=True, odds=1.90, our_probability=60, implied_probability=50, confidence="HIGH", uncertainty_flags=[])

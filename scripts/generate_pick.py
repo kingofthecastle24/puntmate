@@ -1,5 +1,6 @@
 """
-generate_pick.py — selects ONE official PuntMate pick (or NO_BET) per run.
+generate_pick.py — selects ONE official PuntMate pick per run (STANDARD_PICK
+or RISKY_PICK). A day is only skipped when no backable pick exists at all.
 
 This replaces the old three-personality system (investor/punter/gambler each
 producing their own pick). That design is what caused a real live-post bug:
@@ -45,7 +46,7 @@ import json
 import os
 import re
 
-from pick_classifier import Evidence, classify, RISK_NO_BET, RISK_STANDARD, BET_NO_BET
+from pick_classifier import Evidence, classify, is_backable, RISK_NO_BET, RISK_STANDARD, BET_NO_BET
 from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES
 from text_format import truncate_at_sentence
 
@@ -112,6 +113,17 @@ def _tab_multi_promo_hint_from_sports(sport_keys):
 
 CONFIDENCE_RANK = {"LOW": 0, "MODERATE": 1, "HIGH": 2}
 
+# Markets PuntMate can assess. Widened 2026-07-25 (Micah) beyond h2h/spread/
+# total to include the two derived protective markets — draw-no-bet and
+# double chance — so a credible, better-protected selection can be found on
+# almost any real slate instead of skipping to a no-bet day. DNB and double
+# chance are computed from the book's own three-way (1X2) prices, not
+# invented. "spread" covers standard AND Asian-style handicaps, positive and
+# negative, home or away.
+WIN_MARKETS = {"h2h"}
+PROTECTIVE_MARKETS = {"spread", "total", "draw_no_bet", "double_chance"}
+VALID_MARKET_TYPES = WIN_MARKETS | PROTECTIVE_MARKETS
+
 # Hard cap on fixtures shown to Claude in one prompt (see generate_pick_for_matches).
 MAX_MATCHES_IN_PROMPT = 25
 
@@ -151,8 +163,10 @@ never corporate or robotic.
 
 You will be shown today's matches with bookmaker odds — head-to-head, and
 where available, spreads (handicap) and totals (over/under) — plus any
-validated recent news/form snippets. Your job is ONLY to assess the evidence
-for EVERY match and market shown — you do NOT decide risk level or bet type,
+validated recent news/form snippets. You can also use two derived protective
+markets on any match with a draw price: draw-no-bet (stake back on a draw)
+and double chance (two of the three outcomes). Your job is ONLY to assess the
+evidence for EVERY match and market — you do NOT decide risk level or bet type,
 that's calculated separately, and you do NOT rank or choose a "best" one —
 a separate deterministic step does that after you're done.
 
@@ -265,15 +279,26 @@ def _build_prompt(matches, match_news):
 
 {matches_text}
 
-Assess every match across every market shown (head-to-head, and spread/total
-where listed). List EVERY selection that has a genuinely defensible edge (the
-evidence actually supports it beating the bookmaker's implied probability) —
-there may be zero, one, or several across today's matches. Don't rank them
-and don't try to pick a "best" one — just report each one honestly on its
-own merits, including ones you'd only call a longshot swing. A separate
-deterministic step decides which one gets featured. Do NOT stretch a
-marginal case just to lengthen the list — only include ones you'd genuinely
-defend.
+Assess every match across EVERY market available to you. As well as the
+head-to-head and any spread/total lines shown, you may also use these
+protective markets on any match that has a Draw price:
+  - draw_no_bet: back a side to win; your stake is refunded if it's a draw.
+  - double_chance: back TWO of the three outcomes (e.g. "Team A or Draw").
+These lower-risk, better-protected markets exist so that on a normal day of
+real fixtures you can almost always find at least ONE credible selection —
+that is the goal: aim to put up a genuine pick every posting day. A shorter
+price on a more protective market, backed by stronger evidence, is a
+perfectly good pick — lower odds are fine when the case is solid.
+
+List EVERY selection that has a genuinely defensible edge (the evidence
+actually supports it beating the bookmaker's implied probability) across all
+these markets. Prefer the market that best fits the evidence — if a side is
+solid but could be frustrated by a draw, draw-no-bet or double chance may be
+the smarter call than the straight head-to-head. Don't rank them and don't
+pick a "best" one — a separate deterministic step does that. Do NOT invent
+data, stretch a marginal case, or propose a market you have no real basis
+for — only skip a match entirely when there is genuinely no defensible angle
+in any market.
 
 Return this exact JSON:
 {{
@@ -281,10 +306,10 @@ Return this exact JSON:
     {{
       "match": "exact match name from above",
       "sport": "sport key matching the match",
-      "market_type": "h2h, spread, or total",
-      "selection": "TEAM NAME / DRAW for h2h; TEAM NAME for spread; Over or Under for total",
-      "line": null for h2h, or the handicap/total number for spread/total (e.g. -6.5 or 42.5),
-      "market": "Head to Head, Handicap, or Total — human-readable label",
+      "market_type": "h2h, spread, total, draw_no_bet, or double_chance",
+      "selection": "TEAM NAME / DRAW for h2h; TEAM NAME for spread or draw_no_bet; Over or Under for total; 'TEAM NAME or Draw' (or 'TEAM A or TEAM B') for double_chance",
+      "line": null for h2h/draw_no_bet/double_chance, or the handicap/total number for spread/total (e.g. -6.5 or 42.5),
+      "market": "Head to Head, Handicap, Total, Draw No Bet, or Double Chance — human-readable label",
       "our_probability": 58,
       "evidence_sufficient": true,
       "confidence": "HIGH or MODERATE or LOW — how strong is the evidence you actually have (validated news AND/OR genuine general knowledge), not how you feel about the team",
@@ -444,17 +469,57 @@ def _resolve_selection_odds(match_meta, market_type, selection, line):
             return total["under"]["price"], (probs["b"] * 100) if probs else None
         return None, None
 
+    # Derived protective markets (2026-07-25) — computed from the book's own
+    # three-way head-to-head prices, only for matches that actually have a
+    # draw price (soccer, rugby league, etc.). Not invented data: these are
+    # the standard fair combinations of the published 1X2 odds.
+    if market_type in ("draw_no_bet", "double_chance"):
+        from fetch_odds import calc_implied_probs
+        odds = match_meta["odds"]
+        if not odds.get("draw"):
+            return None, None  # two-way sport — no draw to protect against / combine
+        probs = calc_implied_probs(odds)  # no-vig p_home, p_draw, p_away
+        if not probs:
+            return None, None
+        p_home, p_draw, p_away = probs.get("home", 0), probs.get("draw", 0), probs.get("away", 0)
+
+        if market_type == "draw_no_bet":
+            # Back home or away; stake refunded on a draw. Fair decimal odds
+            # = 1 + p_other/p_pick over the two non-draw outcomes.
+            if selection_upper == home.upper() and p_home > 0:
+                return round(1 + p_away / p_home, 2), (p_home / (p_home + p_away)) * 100
+            if selection_upper == away.upper() and p_away > 0:
+                return round(1 + p_home / p_away, 2), (p_away / (p_home + p_away)) * 100
+            return None, None
+
+        # double_chance: two of the three outcomes. Selection names the two
+        # sides it covers, e.g. "HOME OR DRAW", "AWAY OR DRAW", "HOME OR AWAY".
+        covers_home = home.upper() in selection_upper
+        covers_away = away.upper() in selection_upper
+        covers_draw = "DRAW" in selection_upper
+        p = 0.0
+        if covers_home: p += p_home
+        if covers_away: p += p_away
+        if covers_draw: p += p_draw
+        # exactly two outcomes must be covered for a valid double chance
+        if (covers_home + covers_away + covers_draw) != 2 or p <= 0:
+            return None, None
+        return round(1 / p, 2), p * 100
+
     return None, None
 
 
 def _display_selection(market_type, selection, line):
-    """How the selection should read publicly, e.g. 'WARRIORS -6.5' or 'OVER 42.5'."""
+    """How the selection should read publicly, e.g. 'WARRIORS -6.5',
+    'OVER 42.5', 'WARRIORS (DNB)' or 'WARRIORS OR DRAW'."""
     selection_upper = (selection or "").upper()
     if market_type in ("spread", "total") and line is not None:
         try:
             return f"{selection_upper} {float(line):+g}" if market_type == "spread" else f"{selection_upper} {float(line):g}"
         except (TypeError, ValueError):
             return selection_upper
+    if market_type == "draw_no_bet":
+        return f"{selection_upper} (DNB)"
     return selection_upper
 
 
@@ -470,7 +535,7 @@ def _classify_candidate(raw, matches, match_news, warnings):
         return None
 
     market_type = (raw.get("market_type") or "h2h").strip().lower()
-    if market_type not in ("h2h", "spread", "total"):
+    if market_type not in VALID_MARKET_TYPES:
         market_type = "h2h"
     line = raw.get("line")
     odds_val, implied_pct = _resolve_selection_odds(match_meta, market_type, raw.get("selection"), line)
@@ -491,7 +556,19 @@ def _classify_candidate(raw, matches, match_news, warnings):
         implied_probability=implied_pct,
         confidence=confidence,
         uncertainty_flags=raw.get("uncertainty_flags", []),
+        protective_market=market_type in PROTECTIVE_MARKETS,
     )
+
+    # Backability gate (2026-07-25): a candidate with insufficient evidence or
+    # no genuine value over the book is dropped here — it is NOT featured and
+    # NOT classified NO_BET. Everything that survives is a real STANDARD_PICK
+    # or RISKY_PICK. When nothing survives on a real slate, the day is a
+    # genuine skip (handled by the caller), not a routine no-bet.
+    backable, reason = is_backable(evidence)
+    if not backable:
+        warnings.append(f"[{raw.get('match')} / {market_type}] not backable — {reason}")
+        return None
+
     verdict = classify(evidence)
 
     return {
@@ -714,7 +791,10 @@ def generate_pick_for_matches(matches, match_news, build_multis=False):
         validate_text(text, risk=verdict.risk, bet_type=verdict.bet_type, public=True)
 
     selection_display = _display_selection(market_type, raw.get("selection"), line)
-    market_label = raw.get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[market_type]
+    market_label = raw.get("market") or {
+        "h2h": "Head to Head", "spread": "Handicap", "total": "Total",
+        "draw_no_bet": "Draw No Bet", "double_chance": "Double Chance",
+    }.get(market_type, "Head to Head")
 
     other_defensible = len(classified) - 1
 

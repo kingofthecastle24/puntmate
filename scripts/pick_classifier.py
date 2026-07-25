@@ -7,7 +7,12 @@ whether the evidence was actually sufficient, and any uncertainty flags — and
 applies fixed, testable rules to decide two INDEPENDENT things:
 
   1. RISK classification  — how defensible/certain is this selection?
-       STANDARD_PICK | RISKY_PICK | NO_BET
+       STANDARD_PICK | RISKY_PICK
+     (2026-07-25, Micah: NO_BET is no longer a pick classification. A real
+     candidate is always STANDARD_PICK or RISKY_PICK. Whether a candidate is
+     worth featuring at all is a separate question answered by is_backable();
+     a day is only skipped when NO candidate is backable — i.e. fixtures,
+     odds or reliable data are genuinely unavailable.)
   2. BET-TYPE classification — what flavour of bet is this (tone/style), not
      how risky it is.
        INVESTOR_BET | PUNTER_BET | GAMBLER_BET | NO_BET
@@ -40,8 +45,13 @@ from dataclasses import dataclass, field
 
 RISK_STANDARD = "STANDARD_PICK"
 RISK_RISKY = "RISKY_PICK"
+# NO_BET is NO LONGER a pick classification (2026-07-25, Micah). It survives
+# ONLY as the day-level marker meaning "no backable pick today", used by the
+# generate_pick skip paths and downstream no-bet-day handling when fixtures/
+# odds/data genuinely don't support any credible selection. classify() never
+# returns it — every real candidate is STANDARD_PICK or RISKY_PICK.
 RISK_NO_BET = "NO_BET"
-VALID_RISK = {RISK_STANDARD, RISK_RISKY, RISK_NO_BET}
+VALID_RISK = {RISK_STANDARD, RISK_RISKY}
 
 BET_INVESTOR = "INVESTOR_BET"
 BET_PUNTER = "PUNTER_BET"
@@ -52,17 +62,23 @@ VALID_BET_TYPE = {BET_INVESTOR, BET_PUNTER, BET_GAMBLER, BET_NO_BET}
 CONFIDENCE_LEVELS = ("HIGH", "MODERATE", "LOW")
 
 # Minimum edge (our estimated probability minus the bookmaker's implied
-# probability, in percentage points) before a selection is a full-confidence
-# defensible pick.
+# probability, in percentage points) before a WIN-market selection is treated
+# as a full-confidence standard pick. Below this on a straight win market
+# nudges toward RISKY_PICK (not NO_BET) — see classify_risk.
 MIN_EDGE_PCT = 5.0
 
-# Phase 3: a second, lower floor. An edge at or above this but below
-# MIN_EDGE_PCT is still a genuine case -- just a shakier one -- and gets
-# RISKY_PICK instead of NO_BET. Below this floor there is no real value case
-# at all, regardless of confidence, and it stays NO_BET. Deliberately set
-# well below MIN_EDGE_PCT (roughly half) so this is a real threshold nuance
-# for edges that are honestly borderline, not a back door that waves through
-# everything.
+# Backable floor (2026-07-25). A candidate is only worth featuring when the
+# evidence is sufficient AND it shows at least a non-negative edge over the
+# book — i.e. we are not backing a selection the bookmaker itself prices as
+# more likely to lose than we do. This is the ONLY value gate now; it decides
+# whether a candidate can be featured at all (is_backable), NOT its risk tier.
+# Protective markets (draw-no-bet, double chance, handicaps, totals) are
+# lower-variance, so a slim edge there is genuinely acceptable — the point of
+# widening markets is that a credible, better-protected selection can be found
+# on almost any day with real fixtures, instead of skipping to NO_BET.
+MIN_VALUE_EDGE_PCT = 0.0
+
+# Retained for backward-compatible imports/tests; no longer a NO_BET gate.
 RISKY_MIN_EDGE_PCT = 2.5
 
 # Odds thresholds used only to help pick a BET-TYPE bucket (tone), and as one
@@ -85,6 +101,10 @@ class Evidence:
     implied_probability: float      # 0-100
     confidence: str                 # HIGH | MODERATE | LOW  (evidence strength, not a vibe)
     uncertainty_flags: list = field(default_factory=list)  # short strings, e.g. "limited team news"
+    # True for lower-variance / more protective markets — draw-no-bet, double
+    # chance, handicaps (spreads) and totals. A protective market is not, by
+    # itself, risky, and a slim edge on one is acceptable as a standard pick.
+    protective_market: bool = False
 
     def __post_init__(self):
         self.confidence = (self.confidence or "LOW").upper()
@@ -106,28 +126,37 @@ class Classification:
     reasons: list
 
 
-def classify_risk(evidence: Evidence) -> tuple:
-    """Returns (risk, reasons)."""
-    reasons = []
+def is_backable(evidence: Evidence) -> tuple:
+    """Is this candidate worth featuring AT ALL? Returns (backable, reason).
 
+    This is the single value gate (2026-07-25) — it replaces the old
+    NO_BET-from-classify_risk behaviour. A candidate is backable when the
+    model had sufficient evidence AND the selection shows at least a
+    non-negative edge over the bookmaker. Everything backable then gets a
+    STANDARD_PICK or RISKY_PICK tier from classify_risk. When NOTHING is
+    backable on a day with real fixtures, that is the genuine "no reliable
+    data / no credible pick" case where the day is skipped — not a routine
+    NO_BET on a game we could have found a protective angle in."""
     if not evidence.evidence_sufficient:
-        return RISK_NO_BET, ["insufficient evidence to support any selection"]
+        return False, "insufficient evidence to support any selection"
+    if evidence.edge_pct < MIN_VALUE_EDGE_PCT:
+        return False, (
+            f"no genuine value — our estimate ({evidence.our_probability:.0f}%) is not above "
+            f"the book's implied probability ({evidence.implied_probability:.0f}%)"
+        )
+    return True, "backable"
 
-    if evidence.edge_pct < RISKY_MIN_EDGE_PCT:
-        return RISK_NO_BET, [f"edge {evidence.edge_pct:.1f}% is below even the {RISKY_MIN_EDGE_PCT:.1f}% shaky-angle floor — no genuine case"]
 
-    if evidence.edge_pct < MIN_EDGE_PCT:
-        # Phase 3: below the standard bar but above the shaky-angle floor --
-        # a real, if lighter, case. RISKY_PICK (with the "keep this light"
-        # caution), not NO_BET.
-        return RISK_RISKY, [
-            f"edge {evidence.edge_pct:.1f}% is below the standard {MIN_EDGE_PCT:.0f}% bar but clears the "
-            f"{RISKY_MIN_EDGE_PCT:.1f}% shaky-angle floor — genuine but light, classified risky rather than no-bet"
-        ]
+def classify_risk(evidence: Evidence) -> tuple:
+    """Returns (risk, reasons) — always STANDARD_PICK or RISKY_PICK, never
+    NO_BET (backability is decided separately by is_backable). A pick is
+    STANDARD unless one or more risk signals apply.
 
-    # From here, evidence is sufficient AND the edge clears the full bar —
-    # this is always at least a defensible pick. Whether it's STANDARD or
-    # RISKY comes down to how much uncertainty is layered on top.
+    Protective markets (draw-no-bet, double chance, handicaps, totals) are
+    lower-variance: a slim edge on one is fine, and a bigger price on one is
+    not automatically risky — so handicap/total/DNB/double-chance picks are
+    NOT auto-classified risky (Micah 2026-07-25)."""
+    reasons = []
     riskier_signals = 0
 
     if evidence.confidence == "LOW":
@@ -138,17 +167,27 @@ def classify_risk(evidence: Evidence) -> tuple:
         riskier_signals += 1
         reasons.append(f"{len(evidence.uncertainty_flags)} uncertainty factors noted")
 
-    if evidence.odds >= GAMBLER_ODDS_MIN and evidence.confidence != "HIGH":
-        # Big price AND we're not fully confident — riskier, but not
-        # disqualifying. (Big price + HIGH confidence + sufficient evidence
-        # is a genuine standard pick that happens to pay well.)
+    # A big price without high confidence to offset it is risky — but only on
+    # a straight WIN market. A protective market at a bigger price is exactly
+    # the kind of safer angle we now prefer, so it is not auto-risky.
+    if (evidence.odds >= GAMBLER_ODDS_MIN and evidence.confidence != "HIGH"
+            and not evidence.protective_market):
         riskier_signals += 1
-        reasons.append("odds outside the normal comfort range without high confidence to offset it")
+        reasons.append("big price on a win market without high confidence to offset it")
+
+    # A thin edge nudges a WIN-market pick toward risky. On a protective
+    # (lower-variance) market a slim edge is acceptable as a standard pick,
+    # so the thin-edge signal does not apply there.
+    if evidence.edge_pct < MIN_EDGE_PCT and not evidence.protective_market:
+        riskier_signals += 1
+        reasons.append(
+            f"edge {evidence.edge_pct:.1f}% is below the standard {MIN_EDGE_PCT:.0f}% bar on a win market"
+        )
 
     if riskier_signals > 0:
         return RISK_RISKY, reasons
 
-    reasons.append("evidence sufficient, edge clears the minimum, confidence and odds both check out")
+    reasons.append("evidence sufficient, edge and confidence both hold up")
     return RISK_STANDARD, reasons
 
 
