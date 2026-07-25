@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "13b1939071600b09d7e238aa19ef093ecd785675fb7d6850b28682d667eb92c4",
+      "bytes": 681
+    },
+    "instagram-caption.txt": {
+      "sha256": "43b0be2b668cb2d081e607d0f38703a76965633d53888d30b58fa74cfda2c2dd",
+      "bytes": 687
+    },
+    "post-metadata.json": {
+      "sha256": "881c2470d6b11f84c2a462d33d7997363bbfcb86ae3f9adb3d56f284d7486201",
+      "bytes": 31979
+    },
+    "preview.html": {
+      "sha256": "70aa38996d019c692c6d57bafed1188c1301cf7a6ef72c022d3726c23db2080b",
+      "bytes": 38281
+    },
+    "cover.png": {
+      "sha256": "f5029d650bb5511a191bd5911763650849739ea323da597a39ec47612602ef76",
+      "bytes": 79440
+    },
+    "tip.png": {
+      "sha256": "77e177f34325160aef592be28f1a438fae9dbfe9cec4469db6bf5473c7181c36",
+      "bytes": 98570
+    },
+    "breakdown.png": {
+      "sha256": "d2b57579f06a64053c39e1eb3cdc54b27b71ab5cabec2087e7b7bda02f8a83ff",
+      "bytes": 169092
+    },
+    "story.png": {
+      "sha256": "1ae82fc2c052626d3af2ce80b35afb590d79fde26bbb7a83dbaeaaa76beb6f0b",
+      "bytes": 82396
+    }
+  },
+  "pick_id": "2026-07-25_St_George_Illawarra_Dragons_vs_Gold_Coast_Titans",
+  "created_at": "2026-07-25T20:12:37.448024+00:00"
+}

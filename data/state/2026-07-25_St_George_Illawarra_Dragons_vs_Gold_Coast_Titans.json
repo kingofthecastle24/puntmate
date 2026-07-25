@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-07-25_St_George_Illawarra_Dragons_vs_Gold_Coast_Titans",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-07-25T20:12:37.747288+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-07-25T20:12:37.747488+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-07-25T20:12:37.747714+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

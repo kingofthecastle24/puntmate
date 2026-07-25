@@ -891,5 +891,22 @@
     "confidence": "MODERATE",
     "result": "win",
     "pnl": 9.9
+  },
+  {
+    "id": "2026-07-25_rugbyleague_nrl_St_George_Illawarra_Dragons_PUNTER_BET",
+    "date": "2026-07-25",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "St George Illawarra Dragons vs Gold Coast Titans",
+    "home_team": "St George Illawarra Dragons",
+    "away_team": "Gold Coast Titans",
+    "pick": "GOLD COAST TITANS +0.5",
+    "market": "Handicap",
+    "odds": 1.95,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]
