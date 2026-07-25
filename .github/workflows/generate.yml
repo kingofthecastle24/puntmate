@@ -85,9 +85,9 @@ on:
         type: boolean
         default: false
       auto_publish:
-        description: 'TRIAL — skip the human approval gate and publish directly after the copy validator passes. Scheduled runs read config/auto_publish instead of this input.'
+        description: 'Skip the human approval gate and publish directly after the copy validator passes. Default TRUE (2026-07-26, Micah: approval removed for now — the deterministic copy validator remains the hard gate). Scheduled runs read config/auto_publish (also true).'
         type: boolean
-        default: false
+        default: true
       run_weekend_multi:
         description: 'Also run the weekend Punter/Gambler-Degenerate multi job set (normally Friday-only) — for manual testing outside the schedule.'
         type: boolean
