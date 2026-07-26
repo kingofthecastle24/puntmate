@@ -36,7 +36,7 @@ BET_TYPE_LABELS = {
     "PUNTER_BET": ("🎯", "Punter"),
     "GAMBLER_BET": ("🎰", "Gambler"),
 }
-RESPONSIBLE_LINE = "Problem Gambling Foundation NZ: 0800 664 262"
+RESPONSIBLE_LINE = "⚠️ For entertainment & informational purposes only. Not advice. 18+."
 
 
 def week_window(today=None):
@@ -169,7 +169,7 @@ def build_recap_text(stats, overall, no_bet_days, start, end):
         "",
         "──────────────────",
         "📲 Join Telegram for daily picks",
-        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+        RESPONSIBLE_LINE,
     ]
     return "\n".join(lines)
 

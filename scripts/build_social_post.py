@@ -25,7 +25,7 @@ SOCIAL_POST_PATH = os.path.join(REPO_ROOT, 'data', 'social_post.json')
 CARDS_DIR = os.path.join(REPO_ROOT, 'data', 'cards')
 
 TIER_EMOJI = {"investor": "📊", "punter": "🎯", "gambler": "🎰"}
-RESPONSIBLE_LINE = "Problem Gambling Foundation NZ: 0800 664 262"
+RESPONSIBLE_LINE = "⚠️ For entertainment & informational purposes only. Not advice. 18+."
 
 
 def raw_url(repo, filename):
@@ -49,7 +49,7 @@ def format_telegram_message(pick):
         "",
         "──────────────────",
         "📲 Join Telegram for daily picks",
-        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+        RESPONSIBLE_LINE,
     ]
     return "\n".join(lines)
 

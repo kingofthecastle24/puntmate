@@ -10,7 +10,7 @@ from datetime import datetime
 BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
 CHANNEL_ID = os.environ['TELEGRAM_CHANNEL_ID']
 
-RESPONSIBLE_LINE = "_All analysis is for entertainment only. Bet responsibly — Problem Gambling Foundation NZ: 0800 664 262_"
+RESPONSIBLE_LINE = "_⚠️ For entertainment & informational purposes only. Not advice. 18+._"
 
 
 def _send(text, parse_mode="Markdown"):

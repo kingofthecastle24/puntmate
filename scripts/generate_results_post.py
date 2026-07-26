@@ -80,7 +80,7 @@ def generate_post(picks: list[dict]) -> str:
     lines.append(f"*OVERALL: {pl_str} | {total_wins}W {total_losses}L*")
 
     round_label = get_round_label(picks)
-    lines.append(f"_{round_label} · Gamble responsibly · 0800 654 655 · gamblinghelpline.co.nz_")
+    lines.append(f"_{round_label} · For entertainment only · 18+_")
 
     return "\n".join(lines)
 

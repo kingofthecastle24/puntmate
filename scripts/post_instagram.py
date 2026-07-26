@@ -46,7 +46,7 @@ def _note_error(err):
     except Exception:
         pass
 
-RESPONSIBLE_LINE = "⚠️ Bet responsibly. Problem Gambling Foundation NZ: 0800 664 262"
+RESPONSIBLE_LINE = "⚠️ For entertainment & informational purposes only. Not advice. 18+."
 HASHTAGS = "#PuntMateNZ #NRL #WorldCup2026 #SportsBetting #NZSports #DailyPicks #ValueBet #SportsTipping"
 
 

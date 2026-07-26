@@ -36,7 +36,7 @@ TIER_LABELS = {
     "PUNTER_BET": ("🎯", "Punter"),
     "GAMBLER_BET": ("🎰", "Gambler"),
 }
-RESPONSIBLE_LINE = "R18 · Gamble responsibly · Problem Gambling Foundation NZ: 0800 664 262"
+RESPONSIBLE_LINE = "⚠️ For entertainment & informational purposes only. Not advice. 18+."
 
 
 def record_start_date():

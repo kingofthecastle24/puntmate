@@ -52,7 +52,7 @@ LATEST_RUN_PATH = os.path.join(REPO_ROOT, "data", "latest_run.json")
 CARDS_DIR = os.path.join(REPO_ROOT, "data", "cards")
 REVIEW_ROOT = os.path.join(REPO_ROOT, "data", "review")
 
-RESPONSIBLE_LINE = "Problem Gambling Foundation NZ: 0800 664 262"
+RESPONSIBLE_LINE = "⚠️ For entertainment & informational purposes only. Not advice. 18+."
 
 # Same parsing convention as publish_pick.py's DRY_RUN, so "true"/"false"
 # (the workflow_dispatch input's literal string form) and unset (defaults to
@@ -91,7 +91,7 @@ def build_telegram_text(pick):
         "",
         "──────────────────",
         "📲 Join Telegram for daily picks",
-        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+        RESPONSIBLE_LINE,
     ]
     return "\n".join(lines)
 
@@ -169,7 +169,7 @@ def build_watchlist_text(watchlist, post_date):
         "",
         "──────────────────",
         "📲 Join Telegram for daily picks",
-        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+        RESPONSIBLE_LINE,
     ]
     return "\n".join(lines)
 
@@ -207,7 +207,7 @@ def build_punter_multi_text(pick):
         "One leg fails, the lot fails.",
         "",
         "──────────────────",
-        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+        RESPONSIBLE_LINE,
     ]
     return "\n".join(lines)
 
@@ -243,7 +243,7 @@ def build_gambler_multi_text(pick):
         "Small stakes territory. One leg fails, the lot fails.",
         "",
         "──────────────────",
-        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+        RESPONSIBLE_LINE,
     ]
     return "\n".join(lines)
 
@@ -279,7 +279,7 @@ def build_degenerate_multi_text(pick):
         "Small stakes territory. One leg fails, the lot fails.",
         "",
         "──────────────────",
-        f"R18 · Gamble responsibly · {RESPONSIBLE_LINE}",
+        RESPONSIBLE_LINE,
     ]
     return "\n".join(lines)
 
