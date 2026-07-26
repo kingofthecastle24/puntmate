@@ -77,3 +77,25 @@ Every result on the record, wins and losses alike.
 📲 Join Telegram for daily picks
 R18 · Gamble responsibly · Problem Gambling Foundation NZ: 0800 664 262
 ```
+
+
+## Week 2026-07-20 → 2026-07-26 (auto-generated)
+
+```
+*📈 PUNTMATE NZ — WEEKLY RECAP*
+_20 Jul – 26 Jul 2026_
+
+*Overall: 3W – 1L  ·  Strike rate 75%*
+
+🎯 Punter: 3W – 1L  (75%)
+
+⏳ 2 pick(s) still to settle — counted next week, never guessed.
+
+🔍 2 no-bet day(s) this week — nothing cleared the bar, so nothing was forced.
+
+Every result on the record, wins and losses alike.
+
+──────────────────
+📲 Join Telegram for daily picks
+⚠️ For entertainment & informational purposes only. Not advice. 18+.
+```
