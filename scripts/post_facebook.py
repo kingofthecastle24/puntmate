@@ -59,6 +59,43 @@ def _configured():
     return True
 
 
+# Cache the resolved Page access token for the process so we only derive once.
+_RESOLVED_PAGE_TOKEN = None
+
+
+def _page_access_token():
+    """Return a PAGE access token to post with.
+
+    2026-07-26: the configured secret may be a long-lived USER token (which
+    is simplest to obtain/refresh in Graph API Explorer) rather than a Page
+    token. Posting to a Page as the Page requires a PAGE token, so we derive
+    it at publish time via GET /{PAGE_ID}?fields=access_token using the
+    configured token. This works whether the configured token is a user token
+    (returns the page's token) OR already a page token (returns itself), and
+    a page token derived from a LONG-LIVED user token does not expire — so
+    Micah only ever has to store/refresh ONE token. If derivation fails we
+    fall back to using the configured token directly, so a genuine page token
+    in the secret still works unchanged."""
+    global _RESOLVED_PAGE_TOKEN
+    if _RESOLVED_PAGE_TOKEN:
+        return _RESOLVED_PAGE_TOKEN
+    try:
+        resp = requests.get(
+            f"{GRAPH_URL}/{PAGE_ID}",
+            params={"fields": "access_token", "access_token": PAGE_TOKEN},
+            timeout=15,
+        )
+        data = resp.json()
+        if isinstance(data, dict) and data.get("access_token"):
+            _RESOLVED_PAGE_TOKEN = data["access_token"]
+            print("  Facebook: derived Page access token from the configured token.")
+            return _RESOLVED_PAGE_TOKEN
+    except Exception as e:
+        print(f"  Facebook: could not derive a Page token ({e}); using the configured token as-is.")
+    _RESOLVED_PAGE_TOKEN = PAGE_TOKEN
+    return _RESOLVED_PAGE_TOKEN
+
+
 def _explain_error(err):
     """Print the Graph error plus, for the known permission failures, the
     exact fix — so a failed run's log tells Micah what to do, instead of a
@@ -78,7 +115,7 @@ def _explain_error(err):
 def _call(endpoint, data):
     url = f"{GRAPH_URL}/{PAGE_ID}/{endpoint}"
     try:
-        resp = requests.post(url, data={**data, "access_token": PAGE_TOKEN}, timeout=20)
+        resp = requests.post(url, data={**data, "access_token": _page_access_token()}, timeout=20)
         result = resp.json()
     except Exception as e:
         print(f"  Facebook request failed: {e}")

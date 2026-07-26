@@ -75,3 +75,52 @@ class StoryErrorCaptureTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FacebookPageTokenDerivationTests(unittest.TestCase):
+    """2026-07-26: post_facebook derives a PAGE token at runtime from the
+    configured token (which may be a long-lived USER token), so posting to
+    the Page works and Micah only stores one token."""
+
+    def setUp(self):
+        import post_facebook
+        self._orig = (post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN, post_facebook._RESOLVED_PAGE_TOKEN)
+        post_facebook._RESOLVED_PAGE_TOKEN = None
+        post_facebook.PAGE_ID = "1173598642506628"
+        post_facebook.PAGE_TOKEN = "USER-LONG-LIVED-TOKEN"
+
+    def tearDown(self):
+        import post_facebook
+        post_facebook.PAGE_ID, post_facebook.PAGE_TOKEN, post_facebook._RESOLVED_PAGE_TOKEN = self._orig
+
+    @patch("post_facebook.requests.get")
+    def test_derives_page_token_from_user_token(self, mock_get):
+        import post_facebook
+        resp = MagicMock()
+        resp.json.return_value = {"access_token": "PAGE-TOKEN-XYZ", "id": "1173598642506628"}
+        mock_get.return_value = resp
+        self.assertEqual(post_facebook._page_access_token(), "PAGE-TOKEN-XYZ")
+        # cached — second call doesn't re-fetch
+        post_facebook._page_access_token()
+        self.assertEqual(mock_get.call_count, 1)
+
+    @patch("post_facebook.requests.get")
+    def test_falls_back_to_configured_token_when_derivation_fails(self, mock_get):
+        import post_facebook
+        resp = MagicMock()
+        resp.json.return_value = {"error": {"message": "nope", "code": 100}}
+        mock_get.return_value = resp
+        self.assertEqual(post_facebook._page_access_token(), "USER-LONG-LIVED-TOKEN")
+
+    @patch("post_facebook.requests.post")
+    @patch("post_facebook.requests.get")
+    def test_post_photo_uses_the_derived_page_token(self, mock_get, mock_post):
+        import post_facebook
+        gresp = MagicMock(); gresp.json.return_value = {"access_token": "PAGE-TOKEN-XYZ"}
+        mock_get.return_value = gresp
+        presp = MagicMock(); presp.json.return_value = {"post_id": "123_456"}
+        mock_post.return_value = presp
+        post_id = post_facebook.post_photo("http://example.com/card.png", "caption")
+        self.assertEqual(post_id, "123_456")
+        # the POST used the derived page token, not the raw user token
+        self.assertEqual(mock_post.call_args.kwargs["data"]["access_token"], "PAGE-TOKEN-XYZ")
