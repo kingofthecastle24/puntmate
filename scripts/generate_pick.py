@@ -602,7 +602,7 @@ PRIORITY_SPORTS = {
 }
 
 
-def _select_featured(classified, focus_keywords=None):
+def _select_featured(classified, focus_keywords=None, exclude_slugs=None):
     """Phase 2: among candidates that actually cleared the classifier's bar
     (risk != NO_BET), pick the one to feature this run. Ordering, strongest
     signal first: (1) owner-focus fixtures (config/focus_matches.txt), (2)
@@ -614,7 +614,13 @@ def _select_featured(classified, focus_keywords=None):
     genuine Gambler-tier candidate over a non-focus/non-priority Investor
     one (that's the owner's editorial call), but neither can ever conjure a
     candidate that didn't clear the bar."""
-    eligible = [c for c in classified if c["verdict"].risk != RISK_NO_BET]
+    exclude_slugs = exclude_slugs or set()
+    from render_brand_templates import slugify as _slug
+    eligible = [
+        c for c in classified
+        if c["verdict"].risk != RISK_NO_BET
+        and _slug(c["match_meta"].get("match", "")) not in exclude_slugs
+    ]
     if not eligible:
         return None
     focus_keywords = focus_keywords or []
@@ -630,7 +636,7 @@ def _select_featured(classified, focus_keywords=None):
     return eligible[0]
 
 
-def generate_pick_for_matches(matches, match_news, build_multis=False):
+def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_matches=None):
     """
     matches: list of match dicts from fetch_odds.fetch_upcoming_odds()
     match_news: dict {match_name: fetch_news() result dict}
@@ -755,7 +761,7 @@ def generate_pick_for_matches(matches, match_news, build_multis=False):
         if c["verdict"].risk == RISK_NO_BET:
             research_warnings += [f"classifier [{c['match_meta']['match']} / {c['market_type']}]: {r}" for r in c["verdict"].reasons]
 
-    featured = _select_featured(classified, focus_keywords)
+    featured = _select_featured(classified, focus_keywords, exclude_slugs=exclude_matches)
 
     if featured is None:
         # Every candidate the model proposed was independently classified as

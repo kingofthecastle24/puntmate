@@ -1250,3 +1250,67 @@ class WidenedMarketsTests(unittest.TestCase):
         self.assertIn("(DNB)", pick["selection"])
         # a well-supported protective-market pick must NOT be auto-classified risky
         self.assertEqual(pick["risk"], "STANDARD_PICK")
+
+
+class StuckFixtureExclusionTests(unittest.TestCase):
+    """2026-07-27 incident: the pipeline kept re-selecting the same already-
+    posted fixture (Saturday's Dragons pick, stuck in PARTIALLY_PUBLISHED
+    after the Meta token died) and skipped every day. generate_pick now
+    accepts exclude_matches (match slugs already posted) so the next-best
+    genuinely-new fixture is featured instead."""
+
+    def setUp(self):
+        os.environ["ANTHROPIC_API_KEY"] = "test-key"
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_excluded_fixture_is_skipped_for_the_next_candidate(self, mock_anthropic_cls):
+        from render_brand_templates import slugify
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        matches = [
+            {"sport": "rugbyleague_nrl", "match": "Dragons vs Titans",
+             "home_team": "Dragons", "away_team": "Titans", "kickoff": "2026-07-27T06:00:00Z",
+             "odds": {"home": 1.80, "away": 2.05, "draw": None},
+             "implied_probs": {"home": 0.53, "away": 0.47, "draw": 0}, "big_game": False},
+            {"sport": "rugbyleague_nrl", "match": "Broncos vs Roosters",
+             "home_team": "Broncos", "away_team": "Roosters", "kickoff": "2026-07-27T08:00:00Z",
+             "odds": {"home": 1.75, "away": 2.10, "draw": None},
+             "implied_probs": {"home": 0.55, "away": 0.45, "draw": 0}, "big_game": False},
+        ]
+        cands = [
+            {"match": "Dragons vs Titans", "sport": "rugbyleague_nrl", "market_type": "h2h",
+             "selection": "Dragons", "line": None, "market": "Head to Head", "our_probability": 62,
+             "evidence_sufficient": True, "confidence": "HIGH", "uncertainty_flags": [],
+             "reasoning": "Dragons strong at home with a genuine edge."},
+            {"match": "Broncos vs Roosters", "sport": "rugbyleague_nrl", "market_type": "h2h",
+             "selection": "Broncos", "line": None, "market": "Head to Head", "our_probability": 63,
+             "evidence_sufficient": True, "confidence": "HIGH", "uncertainty_flags": [],
+             "reasoning": "Broncos rolling at home, real edge on the line."},
+        ]
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": cands})
+        news = {m["match"]: {"confidence_ceiling": "HIGH"} for m in matches}
+
+        # Dragons already posted -> must feature Broncos instead, not skip the day
+        pick = generate_pick.generate_pick_for_matches(
+            matches, news, exclude_matches={slugify("Dragons vs Titans")})
+        self.assertTrue(pick["has_pick"])
+        self.assertEqual(pick["match"], "Broncos vs Roosters")
+
+    @patch("generate_pick.anthropic.Anthropic")
+    def test_all_candidates_excluded_is_a_clean_skip(self, mock_anthropic_cls):
+        from render_brand_templates import slugify
+        mock_client = MagicMock()
+        mock_anthropic_cls.return_value = mock_client
+        matches = [{"sport": "rugbyleague_nrl", "match": "Dragons vs Titans",
+                    "home_team": "Dragons", "away_team": "Titans", "kickoff": "2026-07-27T06:00:00Z",
+                    "odds": {"home": 1.80, "away": 2.05, "draw": None},
+                    "implied_probs": {"home": 0.53, "away": 0.47, "draw": 0}, "big_game": False}]
+        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": [
+            {"match": "Dragons vs Titans", "sport": "rugbyleague_nrl", "market_type": "h2h",
+             "selection": "Dragons", "line": None, "market": "Head to Head", "our_probability": 62,
+             "evidence_sufficient": True, "confidence": "HIGH", "uncertainty_flags": [],
+             "reasoning": "Dragons strong at home."}]})
+        news = {"Dragons vs Titans": {"confidence_ceiling": "HIGH"}}
+        pick = generate_pick.generate_pick_for_matches(
+            matches, news, exclude_matches={slugify("Dragons vs Titans")})
+        self.assertFalse(pick["has_pick"])

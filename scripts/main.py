@@ -121,6 +121,45 @@ def _already_actioned_today(match_name, run_date):
     return load_state(REPO_ROOT, live_pick_id)
 
 
+def _recently_actioned_slugs(days=4):
+    """Match slugs that already have a committed pipeline state within the
+    last `days` days. Used to stop the daily pick re-selecting a fixture
+    we've ALREADY posted about.
+
+    BUG (2026-07-27): the Saturday Dragons pick landed in
+    PARTIALLY_PUBLISHED (Telegram went out, but Instagram/Facebook failed
+    on a dead Meta token). Every run since kept re-selecting that same
+    fixture as the best value, hit the "already actioned" guard, and skipped
+    the ENTIRE day — so no new picks flowed for days. Excluding by MATCH
+    slug (not date) means a stuck pick_id can never trap the pipeline again:
+    the next-best genuinely-new fixture is featured instead."""
+    slugs = set()
+    try:
+        from render_brand_templates import slugify  # noqa: F401 (kept for parity)
+    except Exception:
+        pass
+    from datetime import date, timedelta
+    state_dir = os.path.join(REPO_ROOT, "data", "state")
+    if not os.path.isdir(state_dir):
+        return slugs
+    cutoff = date.today() - timedelta(days=days)
+    for name in os.listdir(state_dir):
+        if not name.endswith(".json"):
+            continue
+        stem = name[:-5].replace("_dryrun", "")
+        parts = stem.split("_", 1)
+        if len(parts) != 2:
+            continue
+        datestr, slug = parts
+        try:
+            d = date.fromisoformat(datestr)  # local real `date`, mock-safe
+        except ValueError:
+            continue
+        if d >= cutoff:
+            slugs.add(slug)
+    return slugs
+
+
 def run():
     from fetch_odds import fetch_upcoming_odds
     from fetch_news import fetch_news
@@ -152,7 +191,10 @@ def run():
             match_news[m["match"]] = {"text": "", "accepted_count": 0, "warnings": [f"fetch error: {e}"], "confidence_ceiling": "LOW"}
 
     print(f"\n[3/3] Selecting one official pick...")
-    pick = generate_pick_for_matches(matches, match_news)
+    already_posted = _recently_actioned_slugs()
+    if already_posted:
+        print(f"  Excluding {len(already_posted)} already-posted fixture(s) from featured selection.")
+    pick = generate_pick_for_matches(matches, match_news, exclude_matches=already_posted)
 
     run_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
 
