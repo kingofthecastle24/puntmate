@@ -1,0 +1,116 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 158,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1785618291,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADnmpuX3Mq9oM_bwxfcgdzq12UpzNHAAJADmsbsYFxRywcciFwTqd3AQADAgADcwADPQQ",
+            "file_unique_id": "AQADQA5rG7GBcUd4",
+            "file_size": 1138,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADnmpuX3Mq9oM_bwxfcgdzq12UpzNHAAJADmsbsYFxRywcciFwTqd3AQADAgADbQADPQQ",
+            "file_unique_id": "AQADQA5rG7GBcUdy",
+            "file_size": 12938,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADnmpuX3Mq9oM_bwxfcgdzq12UpzNHAAJADmsbsYFxRywcciFwTqd3AQADAgADeAADPQQ",
+            "file_unique_id": "AQADQA5rG7GBcUd9",
+            "file_size": 51828,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADnmpuX3Mq9oM_bwxfcgdzq12UpzNHAAJADmsbsYFxRywcciFwTqd3AQADAgADeQADPQQ",
+            "file_unique_id": "AQADQA5rG7GBcUd-",
+            "file_size": 93549,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADnmpuX3Mq9oM_bwxfcgdzq12UpzNHAAJADmsbsYFxRywcciFwTqd3AQADAgADdwADPQQ",
+            "file_unique_id": "AQADQA5rG7GBcUd8",
+            "file_size": 95069,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Cronulla Sutherland Sharks vs South Sydney Rabbitohs\n\nPICK: CRONULLA SUTHERLAND SHARKS\nODDS: 1.26 (Head to Head)\nBET TYPE: INVESTOR\n\nThe validated news confirms Hynes is eyeing a streak, which tells you the Sharks are in form and motivated at home. Souths are heavy underdogs at 4.80 for a reason \u2014 they've been well below the Sharks' level this season and Cronulla at home is a tough ask for any side, let alone one this far out in the market.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 79,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 112,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 138,
+            "length": 18,
+            "type": "bold"
+          },
+          {
+            "offset": 158,
+            "length": 311,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "(#10) Application does not have permission for this action",
+      "type": "OAuthException",
+      "code": 10,
+      "fbtrace_id": "AiaGt48zxxWiK1uc05d_YL9"
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "(#10) Application does not have permission for this action",
+      "type": "OAuthException",
+      "code": 10,
+      "fbtrace_id": "AnFUIPmzQQ3l_OY4CmnZCt-"
+    }
+  },
+  "facebook": {
+    "ok": true,
+    "post_id": "1173598642506628_122115336405391560"
+  },
+  "facebook_story": {
+    "ok": true,
+    "story_id": "1060882953001190"
+  }
+}
