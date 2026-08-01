@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "12d9429d916d422c6271b3c16d56deaea304d5a4ba90db7062baf73af73f4168",
+      "bytes": 651
+    },
+    "instagram-caption.txt": {
+      "sha256": "5d5e9279f4aa79bede0b37c9507d21097aec9d1505e95a2f879b2b634bfcd8a3",
+      "bytes": 716
+    },
+    "post-metadata.json": {
+      "sha256": "9c4c10a3cc077ec896997be166df658885279503e40c8ce78a0f4c7ad1ca74c4",
+      "bytes": 30949
+    },
+    "preview.html": {
+      "sha256": "5d64918545d0d3f3cd263b49020fbf171281576c5d878aecf339a7cd08a6e536",
+      "bytes": 37253
+    },
+    "cover.png": {
+      "sha256": "9efa6e11288ec7ffc639ff8515527b429efac6f65b6d123bae98a59228e9b9c2",
+      "bytes": 75540
+    },
+    "tip.png": {
+      "sha256": "0a7171d0f75eeeb85918893e2ab22c7e84d44164e27affa6fb0b7d53c6b3bdbc",
+      "bytes": 100539
+    },
+    "breakdown.png": {
+      "sha256": "a5f96ef943bef3f6882227e77a0b6c2079748e00ed8e8d05f2886f144aec3dc0",
+      "bytes": 159917
+    },
+    "story.png": {
+      "sha256": "f79ed68351cc7e810c7abd16b5b19f3ec2b8cfa74042a69399e85a158b00a107",
+      "bytes": 86170
+    }
+  },
+  "pick_id": "2026-08-01_Cronulla_Sutherland_Sharks_vs_South_Sydney_Rabbitohs",
+  "created_at": "2026-08-01T21:04:35.442949+00:00"
+}

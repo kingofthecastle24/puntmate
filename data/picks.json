@@ -908,5 +908,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-08-01_rugbyleague_nrl_Cronulla_Sutherland_Sharks_INVESTOR_BET",
+    "date": "2026-08-01",
+    "bet_type": "INVESTOR_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Cronulla Sutherland Sharks vs South Sydney Rabbitohs",
+    "home_team": "Cronulla Sutherland Sharks",
+    "away_team": "South Sydney Rabbitohs",
+    "pick": "CRONULLA SUTHERLAND SHARKS",
+    "market": "Head to Head",
+    "odds": 1.26,
+    "confidence": "HIGH",
+    "result": "pending",
+    "pnl": null
   }
 ]

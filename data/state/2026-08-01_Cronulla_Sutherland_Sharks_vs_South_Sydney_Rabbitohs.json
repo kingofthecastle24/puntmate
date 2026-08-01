@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-01_Cronulla_Sutherland_Sharks_vs_South_Sydney_Rabbitohs",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-01T21:04:35.703838+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-01T21:04:35.704067+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-01T21:04:35.704271+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
