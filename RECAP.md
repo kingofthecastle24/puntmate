@@ -99,3 +99,23 @@ Every result on the record, wins and losses alike.
 📲 Join Telegram for daily picks
 ⚠️ For entertainment & informational purposes only. Not advice. 18+.
 ```
+
+
+## Week 2026-07-27 → 2026-08-02 (auto-generated)
+
+```
+*📈 PUNTMATE NZ — WEEKLY RECAP*
+_27 Jul – 02 Aug 2026_
+
+*Overall: 0W – 0L  ·  Strike rate —*
+
+📊 Investor: 0W – 0L  (—)
+
+⏳ 1 pick(s) still to settle — counted next week, never guessed.
+
+Every result on the record, wins and losses alike.
+
+──────────────────
+📲 Join Telegram for daily picks
+⚠️ For entertainment & informational purposes only. Not advice. 18+.
+```
