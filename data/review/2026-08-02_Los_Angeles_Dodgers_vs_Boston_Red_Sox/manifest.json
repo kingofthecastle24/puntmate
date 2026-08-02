@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "e0a12d518b66109e3c3eafcd5a479e37c9d01cd74c5fc3ad8890b212f3c21206",
+      "bytes": 570
+    },
+    "instagram-caption.txt": {
+      "sha256": "b54f7b158a52c21ea3e692fdd489cffdc77e7281e4cd36983fb68e2d90541015",
+      "bytes": 605
+    },
+    "post-metadata.json": {
+      "sha256": "c469330d4b6243e9292c21ac576ad3d56fed4d3f7e63d5da8b0f5437607e9d41",
+      "bytes": 3639
+    },
+    "preview.html": {
+      "sha256": "879da71e8dbb471812d3de0ca628b6c2716925c262485edd057cce7932c29bea",
+      "bytes": 8234
+    },
+    "cover.png": {
+      "sha256": "19928c58ac96fbf6aec04ab18180f3b952899b2fa3504d1cab7f2e4e4fe45338",
+      "bytes": 76201
+    },
+    "tip.png": {
+      "sha256": "42b975838fe03380f538967903a7974f2faadf41672731f601d154801e7cded8",
+      "bytes": 93349
+    },
+    "breakdown.png": {
+      "sha256": "d4c6eee600636330b7e5460611748ac938c4232d605f8f73759c504a63b221f8",
+      "bytes": 140881
+    },
+    "story.png": {
+      "sha256": "568f07941f45cc3d2fde855abc4439369d6ef3f030ba8d0ddedafa7cd0e24c82",
+      "bytes": 81179
+    }
+  },
+  "pick_id": "2026-08-02_Los_Angeles_Dodgers_vs_Boston_Red_Sox",
+  "created_at": "2026-08-02T21:02:30.933787+00:00"
+}
