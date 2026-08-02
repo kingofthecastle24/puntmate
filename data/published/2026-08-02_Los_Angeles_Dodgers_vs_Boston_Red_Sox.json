@@ -1,0 +1,116 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 161,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1785704574,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADoWpvsH7NC670yyK_8eG4c-yxykStAALaDGsbKciBR6gU9KcsZ6-OAQADAgADcwADPQQ",
+            "file_unique_id": "AQAD2gxrGynIgUd4",
+            "file_size": 1089,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADoWpvsH7NC670yyK_8eG4c-yxykStAALaDGsbKciBR6gU9KcsZ6-OAQADAgADbQADPQQ",
+            "file_unique_id": "AQAD2gxrGynIgUdy",
+            "file_size": 11480,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADoWpvsH7NC670yyK_8eG4c-yxykStAALaDGsbKciBR6gU9KcsZ6-OAQADAgADeAADPQQ",
+            "file_unique_id": "AQAD2gxrGynIgUd9",
+            "file_size": 47601,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADoWpvsH7NC670yyK_8eG4c-yxykStAALaDGsbKciBR6gU9KcsZ6-OAQADAgADdwADPQQ",
+            "file_unique_id": "AQAD2gxrGynIgUd8",
+            "file_size": 86740,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADoWpvsH7NC670yyK_8eG4c-yxykStAALaDGsbKciBR6gU9KcsZ6-OAQADAgADeQADPQQ",
+            "file_unique_id": "AQAD2gxrGynIgUd-",
+            "file_size": 87168,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 MLB\n\n\ud83c\udfdf Los Angeles Dodgers vs Boston Red Sox\n\nPICK: LOS ANGELES DODGERS\nODDS: 1.60 (Head to Head)\nBET TYPE: PUNTER\n\nThe Dodgers at home in Dodger Stadium is a genuine structural edge \u2014 they've been one of MLB's elite franchises with serious depth across their rotation and lineup, and the bookmaker's 62% implied probability might actually be underselling them slightly.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 64,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 90,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 116,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 134,
+            "length": 254,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "(#10) Application does not have permission for this action",
+      "type": "OAuthException",
+      "code": 10,
+      "fbtrace_id": "AkxE_E-CjcHE67kh_Lw3d2X"
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "(#10) Application does not have permission for this action",
+      "type": "OAuthException",
+      "code": 10,
+      "fbtrace_id": "ACwZjLcxU1X0jZN1o2Xj40X"
+    }
+  },
+  "facebook": {
+    "ok": true,
+    "post_id": "1173598642506628_122115692625391560"
+  },
+  "facebook_story": {
+    "ok": true,
+    "story_id": "1422903442989687"
+  }
+}
