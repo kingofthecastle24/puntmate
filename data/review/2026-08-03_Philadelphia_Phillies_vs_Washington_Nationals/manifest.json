@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "a9da8e7dd53d49091147f7fafab6c06a9e4d7ce8a40b8be03ce3a4ec0410c918",
+      "bytes": 672
+    },
+    "instagram-caption.txt": {
+      "sha256": "aa8a4450fe98e4aec45ed45479f532ff49154f2b2ff63759ce5337b51b41b9a8",
+      "bytes": 707
+    },
+    "post-metadata.json": {
+      "sha256": "9993832c52c7a8aa6cadaa243fcdc8066d851f5d1e0a714f2568386f9b4fbb4d",
+      "bytes": 10176
+    },
+    "preview.html": {
+      "sha256": "b267bc37f2e984c6853a48136977ecf9ee1f4e7270de38776c578014a510477f",
+      "bytes": 15321
+    },
+    "cover.png": {
+      "sha256": "43873d260a126be48a0e618ec18ff270ff34a059e5fef969447a98f93e7d04f5",
+      "bytes": 75241
+    },
+    "tip.png": {
+      "sha256": "5a882e0f5b1ebacec3920c6baf8e2718a4bc7e0faf05268981e443886c510ec6",
+      "bytes": 77717
+    },
+    "breakdown.png": {
+      "sha256": "1c7f3186254a96d869582985a1a2cf8a71457cecdab328cf7cdf274062678e50",
+      "bytes": 154048
+    },
+    "story.png": {
+      "sha256": "7979c86ad60ab8dfb4a08628ab413bd109e5b14e0f63a9e1d3da685231b96a78",
+      "bytes": 67429
+    }
+  },
+  "pick_id": "2026-08-03_Philadelphia_Phillies_vs_Washington_Nationals",
+  "created_at": "2026-08-03T21:12:20.048405+00:00"
+}
