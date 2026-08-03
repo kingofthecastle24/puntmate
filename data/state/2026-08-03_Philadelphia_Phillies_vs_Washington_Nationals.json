@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-08-03_Philadelphia_Phillies_vs_Washington_Nationals",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-08-03T21:12:20.269845+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-08-03T21:12:41.531058+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-08-03T21:12:41.531309+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-08-03T21:12:52.978433+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": true, \"facebook_story\": true}"
     }
   ]
 }
