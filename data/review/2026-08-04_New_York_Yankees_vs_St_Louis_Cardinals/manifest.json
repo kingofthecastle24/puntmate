@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "4090859eb3969257177c7e7ff783e2f34d3ab3b07f41318d58c5fc99050048fc",
+      "bytes": 643
+    },
+    "instagram-caption.txt": {
+      "sha256": "48016f46f78f05a21d9ad78df3d4d9fa49ff0d49845e654594247afac4286186",
+      "bytes": 678
+    },
+    "post-metadata.json": {
+      "sha256": "7dd2b60836c5f2acfe68ed420127c6f9a158ed46dd3cdecaeb719676ddba8189",
+      "bytes": 19594
+    },
+    "preview.html": {
+      "sha256": "8c94d2acde9d0284971e39f332128e36427706c08d2ac8348f4b52dd462dc40b",
+      "bytes": 25228
+    },
+    "cover.png": {
+      "sha256": "46f78a21b53ec60bf7882fbfc73ed8fec9b9e94242b0dad34fb4d239632fe78d",
+      "bytes": 75497
+    },
+    "tip.png": {
+      "sha256": "a22ae20d84d5150ca788b42c8c3f425c4e6bb6282ef071c6fa68b46bfb4d0e09",
+      "bytes": 95427
+    },
+    "breakdown.png": {
+      "sha256": "10d384ede0773fbc4a6c88c6272b225477e7b90aa05a79ad5d9a709e7de863e1",
+      "bytes": 154865
+    },
+    "story.png": {
+      "sha256": "986a7e85279ca45fc96690283c30a88b0bab00d19e28cb35be054f1e1092e91a",
+      "bytes": 79453
+    }
+  },
+  "pick_id": "2026-08-04_New_York_Yankees_vs_St_Louis_Cardinals",
+  "created_at": "2026-08-04T21:20:00.045637+00:00"
+}

@@ -959,5 +959,22 @@
     "confidence": "LOW",
     "result": "push",
     "pnl": 0.0
+  },
+  {
+    "id": "2026-08-04_baseball_mlb_New_York_Yankees_PUNTER_BET",
+    "date": "2026-08-04",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "baseball_mlb",
+    "sport": "baseball_mlb",
+    "match": "New York Yankees vs St. Louis Cardinals",
+    "home_team": "New York Yankees",
+    "away_team": "St. Louis Cardinals",
+    "pick": "NEW YORK YANKEES -1.5",
+    "market": "Handicap",
+    "odds": 2.06,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

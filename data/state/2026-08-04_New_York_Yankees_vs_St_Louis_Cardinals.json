@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-04_New_York_Yankees_vs_St_Louis_Cardinals",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-04T21:20:00.304323+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-04T21:20:00.304520+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-04T21:20:00.304720+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
