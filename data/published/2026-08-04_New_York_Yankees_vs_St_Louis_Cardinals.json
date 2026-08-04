@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 165,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1785878420,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADpWpyV5NaLNcZMmtN7AauTzeyt3NPAALBDGsb3c6QR8NjFmwG89yqAQADAgADcwADPQQ",
+            "file_unique_id": "AQADwQxrG93OkEd4",
+            "file_size": 1057,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADpWpyV5NaLNcZMmtN7AauTzeyt3NPAALBDGsb3c6QR8NjFmwG89yqAQADAgADbQADPQQ",
+            "file_unique_id": "AQADwQxrG93OkEdy",
+            "file_size": 11069,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADpWpyV5NaLNcZMmtN7AauTzeyt3NPAALBDGsb3c6QR8NjFmwG89yqAQADAgADeAADPQQ",
+            "file_unique_id": "AQADwQxrG93OkEd9",
+            "file_size": 45836,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADpWpyV5NaLNcZMmtN7AauTzeyt3NPAALBDGsb3c6QR8NjFmwG89yqAQADAgADeQADPQQ",
+            "file_unique_id": "AQADwQxrG93OkEd-",
+            "file_size": 83160,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADpWpyV5NaLNcZMmtN7AauTzeyt3NPAALBDGsb3c6QR8NjFmwG89yqAQADAgADdwADPQQ",
+            "file_unique_id": "AQADwQxrG93OkEd8",
+            "file_size": 83247,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 MLB\n\n\ud83c\udfdf New York Yankees vs St. Louis Cardinals\n\nPICK: NEW YORK YANKEES -1.5\nODDS: 2.06 (Handicap)\nBET TYPE: PUNTER\n\nIf you believe in the Yankees here, the -1.5 spread at 2.06 is decent value because it implies only around 48.5% chance they win by two or more \u2014 for a home Yankees side against St. Louis, that feels a tick low. It's a higher-variance selection than the straight H2H but the price makes it worth flagging as a legitimate angle.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 66,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 94,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 116,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 134,
+            "length": 327,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Tuesday, 04-Aug-26 14:20:20 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "Aqs4zO_y0448cqRCPBPbEqt",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Tuesday, 04-Aug-26 14:20:20 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "A_TejfyhuauuKx81BeF6BTz"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
