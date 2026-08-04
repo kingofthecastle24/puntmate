@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-04_Seattle_Mariners_vs_Detroit_Tigers_dryrun",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-04T18:03:37.820605+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-04T18:03:37.820769+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-04T18:03:37.820920+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

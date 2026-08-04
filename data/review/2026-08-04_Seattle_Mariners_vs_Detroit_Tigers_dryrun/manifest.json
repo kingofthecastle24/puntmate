@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "f42454cce5d3675c37235f606ba255f05a4ede2c55590471d7cadb03dad999ff",
+      "bytes": 625
+    },
+    "instagram-caption.txt": {
+      "sha256": "02b28d45904ab6c1d3838b25edbfb7404ebcdea8c26e8bd29f1c6c1f1c92e79a",
+      "bytes": 660
+    },
+    "post-metadata.json": {
+      "sha256": "49368d18e7502910ff16e11551e25fa15e77e8a58fafca1d25d7e7c9c1867d53",
+      "bytes": 15864
+    },
+    "preview.html": {
+      "sha256": "17c51f07bc8fedc521012d84415994ab95f7bf77b795b34ff54bd9f35aa8bed3",
+      "bytes": 21277
+    },
+    "cover.png": {
+      "sha256": "46f78a21b53ec60bf7882fbfc73ed8fec9b9e94242b0dad34fb4d239632fe78d",
+      "bytes": 75497
+    },
+    "tip.png": {
+      "sha256": "772f9c22806ec56efef548f4b6d00f5da7336abf10da434b3c8f3d43929b5598",
+      "bytes": 74560
+    },
+    "breakdown.png": {
+      "sha256": "5e47c6a499beeb83258aba4c66fa95a7603f3d0291edfe7ba3850a7d71d35ee9",
+      "bytes": 143682
+    },
+    "story.png": {
+      "sha256": "c04f760f94547a80e02d1705092f6ed046f27ee5a95206b12426db6c0b571f68",
+      "bytes": 63175
+    }
+  },
+  "pick_id": "2026-08-04_Seattle_Mariners_vs_Detroit_Tigers_dryrun",
+  "created_at": "2026-08-04T18:03:37.566687+00:00"
+}
