@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 167,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1785964810,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADp2pzqQoh0Z_5W0kEAfyvu6fT3qGRAAL_DGsbHF6gR4KF7fla2oRrAQADAgADcwADPQQ",
+            "file_unique_id": "AQAD_wxrGxxeoEd4",
+            "file_size": 1094,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADp2pzqQoh0Z_5W0kEAfyvu6fT3qGRAAL_DGsbHF6gR4KF7fla2oRrAQADAgADbQADPQQ",
+            "file_unique_id": "AQAD_wxrGxxeoEdy",
+            "file_size": 12688,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADp2pzqQoh0Z_5W0kEAfyvu6fT3qGRAAL_DGsbHF6gR4KF7fla2oRrAQADAgADeAADPQQ",
+            "file_unique_id": "AQAD_wxrGxxeoEd9",
+            "file_size": 51577,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADp2pzqQoh0Z_5W0kEAfyvu6fT3qGRAAL_DGsbHF6gR4KF7fla2oRrAQADAgADeQADPQQ",
+            "file_unique_id": "AQAD_wxrGxxeoEd-",
+            "file_size": 92867,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADp2pzqQoh0Z_5W0kEAfyvu6fT3qGRAAL_DGsbHF6gR4KF7fla2oRrAQADAgADdwADPQQ",
+            "file_unique_id": "AQAD_wxrGxxeoEd8",
+            "file_size": 93351,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Gold Coast Titans vs North Queensland Cowboys\n\nPICK: NORTH QUEENSLAND COWBOYS\nODDS: 1.70 (Head to Head)\nBET TYPE: PUNTER\n\nThe Cowboys are priced as clear favourites at 1.70 and the validated news confirms Gold Coast are having a rough trot \u2014 described as a 'grey day' heading into this one \u2014 while North Queensland are bringing enough confidence to debut a new player from a position of strength.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 72,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 103,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 129,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 147,
+            "length": 274,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Wednesday, 05-Aug-26 14:20:10 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "Ay_lAELt85Fn-dKmwJwzWwJ",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Wednesday, 05-Aug-26 14:20:11 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AFyMDVeQNSoRfFClFuxQlnh"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
