@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-05_Gold_Coast_Titans_vs_North_Queensland_Cowboys",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-05T21:19:41.885712+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-05T21:19:41.885951+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-05T21:19:41.886148+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "d0ed6d59ec462ac2cf12041356869178115171613e5a4afb22b72e14b7e3a27e",
+      "bytes": 605
+    },
+    "instagram-caption.txt": {
+      "sha256": "8b8aec9f1a976617e2e6d23b61b97290b29ee60f84e765e627ccf5b2e9615d93",
+      "bytes": 640
+    },
+    "post-metadata.json": {
+      "sha256": "9a48a10cd2cb0462953667456c8ecbe3726f0ac356940fc8607539c2f5f02ded",
+      "bytes": 17278
+    },
+    "preview.html": {
+      "sha256": "e8fb759dff0f303f0a685022b1094da386ed1edab202fd33e2f12e924341dc4a",
+      "bytes": 22656
+    },
+    "cover.png": {
+      "sha256": "77568122ba40a6f0640b495744b5cb4e37d18eae705472d50ba7be629d79c77f",
+      "bytes": 75075
+    },
+    "tip.png": {
+      "sha256": "ba5bc239f59def1e98b2c7f0a127e1d442840044cd79cbd78fba249afb4612c9",
+      "bytes": 105230
+    },
+    "breakdown.png": {
+      "sha256": "5e53b4220aecfbac02b53b709b96dc451372baa49da37b8ffde9598e2e8c457c",
+      "bytes": 154327
+    },
+    "story.png": {
+      "sha256": "00205368d737ad45776ae186502bb6cf452ff9ffcb808a9432fe4ee8f2e510be",
+      "bytes": 87404
+    }
+  },
+  "pick_id": "2026-08-05_Gold_Coast_Titans_vs_North_Queensland_Cowboys",
+  "created_at": "2026-08-05T21:19:41.617589+00:00"
+}

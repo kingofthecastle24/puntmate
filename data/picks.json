@@ -976,5 +976,22 @@
     "confidence": "LOW",
     "result": "manual",
     "pnl": null
+  },
+  {
+    "id": "2026-08-05_rugbyleague_nrl_Gold_Coast_Titans_PUNTER_BET",
+    "date": "2026-08-05",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Gold Coast Titans vs North Queensland Cowboys",
+    "home_team": "Gold Coast Titans",
+    "away_team": "North Queensland Cowboys",
+    "pick": "NORTH QUEENSLAND COWBOYS",
+    "market": "Head to Head",
+    "odds": 1.7,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]
