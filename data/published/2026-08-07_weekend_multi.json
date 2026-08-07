@@ -1,0 +1,100 @@
+{
+  "telegram_punter_multi": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 170,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1786063383,
+        "text": "\ud83c\udfaf PUNTMATE NZ \u2014 THE PUNTER'S MULTI\n\nA measured one: today produced multiple selections that each stand on their own as Investor/Punter-tier picks. Rolled together they pay well beyond any single leg \u2014 every leg still has to land, so this is a bigger swing than the day's single pick, not a certainty.\n\nLeg 1: New Zealand Warriors vs Penrith Panthers \u2014 NEW ZEALAND WARRIORS +3.5 @ 1.95 (Handicap)\nLeg 2: Dolphins vs Brisbane Broncos \u2014 DOLPHINS @ 1.48 (Head to Head)\nLeg 3: Juliana Miller vs Ravena Oliveira \u2014 JULIANA MILLER @ 1.34 (Head to Head)\nLeg 4: Sydney Roosters vs Canterbury Bulldogs \u2014 SYDNEY ROOSTERS @ 1.55 (Head to Head)\nLeg 5: South Sydney Rabbitohs vs Parramatta Eels \u2014 SOUTH SYDNEY RABBITOHS @ 1.38 (Head to Head)\nLeg 6: Louie Sutherland vs Jose Montanha \u2014 LOUIE SUTHERLAND @ 1.55 (Head to Head)\nLeg 7: Manoel Sousa vs Richie Miranda \u2014 MANOEL SOUSA @ 1.38 (Head to Head)\nLeg 8: Cheyanne Bowers vs Elora Dana \u2014 CHEYANNE BOWERS @ 1.28 (Head to Head)\nLeg 9: Valentin Moldavsky vs Bruno Cappelozza \u2014 VALENTIN MOLDAVSKY @ 1.24 (Head to Head)\nLeg 10: Steven Asplund vs Guilherme Pat \u2014 STEVEN ASPLUND @ 1.37 (Head to Head)\n\nCombined: 38.47\nBET TYPE: PUNTER\n\nOne leg fails, the lot fails.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 35,
+            "type": "bold"
+          },
+          {
+            "offset": 37,
+            "length": 264,
+            "type": "italic"
+          },
+          {
+            "offset": 303,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 397,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 466,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 546,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 632,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 728,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 810,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 885,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 962,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 1051,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1131,
+            "length": 15,
+            "type": "bold"
+          },
+          {
+            "offset": 1147,
+            "length": 16,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_punter_multi": {
+    "ok": false
+  }
+}
