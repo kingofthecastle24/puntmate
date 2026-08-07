@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-07_New_Zealand_Warriors_vs_Penrith_Panthers",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-07T00:41:32.807230+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-07T00:41:32.807364+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-07T00:41:32.807484+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

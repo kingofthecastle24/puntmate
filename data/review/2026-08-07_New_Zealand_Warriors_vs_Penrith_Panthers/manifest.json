@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "22c2414f4ee1de1a98a9910f356b0f3305d2b18aee58dfc13332fe2e331a81c0",
+      "bytes": 678
+    },
+    "instagram-caption.txt": {
+      "sha256": "63dfe7ba15beff7b547dc0abec6922f8c328bbc68b075a1a34d784fa7f1da8f7",
+      "bytes": 713
+    },
+    "post-metadata.json": {
+      "sha256": "7699b477d7c174ba82f782b097dad84699b119d5a2c5fb522f807a910c2b4bc5",
+      "bytes": 13215
+    },
+    "preview.html": {
+      "sha256": "7f7d43812092aabac78b7ed3db0d9c7ef259e314f34a0f71d345f98740b087bd",
+      "bytes": 18532
+    },
+    "cover.png": {
+      "sha256": "807d29d625cd3a963a2ccb7d8531aaeeaa59d8404cb0b76e255ca47bc1409fd9",
+      "bytes": 74817
+    },
+    "tip.png": {
+      "sha256": "21e30551be9fdb8b7cbb53bb070ea2f67cc7d3e28f179670800e5d276674c739",
+      "bytes": 83565
+    },
+    "breakdown.png": {
+      "sha256": "2c4d6410d4d5ad92d87782dc778b18d62e34f763a1786701b33d7e3f828b12ab",
+      "bytes": 153156
+    },
+    "story.png": {
+      "sha256": "6e267a0761576635ac414773e40cd9b43b75de231c12206ab5b8990b78640648",
+      "bytes": 66230
+    }
+  },
+  "pick_id": "2026-08-07_New_Zealand_Warriors_vs_Penrith_Panthers",
+  "created_at": "2026-08-07T00:41:32.531071+00:00"
+}
