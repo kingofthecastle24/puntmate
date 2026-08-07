@@ -1008,8 +1008,8 @@
     "market": "Head to Head",
     "odds": 1.72,
     "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-08-07_rugbyleague_nrl_Sydney_Roosters_PUNTER_BET",
