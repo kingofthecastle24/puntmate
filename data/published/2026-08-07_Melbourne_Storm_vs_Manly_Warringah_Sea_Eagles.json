@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 173,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1786132514,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrWp2OCGEGjwAAZLNV61lE-Bwec-1zAACSQxrG26UsUdUx6u06gY9agEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADSQxrG26UsUd4",
+            "file_size": 1033,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrWp2OCGEGjwAAZLNV61lE-Bwec-1zAACSQxrG26UsUdUx6u06gY9agEAAwIAA20AAz0E",
+            "file_unique_id": "AQADSQxrG26UsUdy",
+            "file_size": 11246,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrWp2OCGEGjwAAZLNV61lE-Bwec-1zAACSQxrG26UsUdUx6u06gY9agEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADSQxrG26UsUd9",
+            "file_size": 46352,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrWp2OCGEGjwAAZLNV61lE-Bwec-1zAACSQxrG26UsUdUx6u06gY9agEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADSQxrG26UsUd-",
+            "file_size": 84373,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrWp2OCGEGjwAAZLNV61lE-Bwec-1zAACSQxrG26UsUdUx6u06gY9agEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADSQxrG26UsUd8",
+            "file_size": 84741,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Melbourne Storm vs Manly Warringah Sea Eagles\n\nPICK: MELBOURNE STORM +1.5\nODDS: 1.99 (Handicap)\nBET TYPE: PUNTER\n\nWith Munster back, Storm are dangerous enough that giving them +1.5 at near even money has some appeal \u2014 they've got the class to stay within a score in most games regardless of venue. But this is a thin edge at best given Manly's home advantage and their own returning personnel. Treat this as a secondary option only.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 72,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 99,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 121,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 139,
+            "length": 319,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Friday, 07-Aug-26 12:55:14 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AkerToHExtchOQzT_qbHNmC",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Friday, 07-Aug-26 12:55:14 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AFZzcaweB7KwhfGJlixRTVf"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
