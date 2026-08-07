@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-07_Dolphins_vs_Brisbane_Broncos",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-07T20:51:33.729022+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-07T20:51:33.729193+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-07T20:51:33.729331+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

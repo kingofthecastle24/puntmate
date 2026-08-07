@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "68f028b3965e801dfbe52b603dcc0b520921c9466899767096c1217bd7b386bb",
+      "bytes": 623
+    },
+    "instagram-caption.txt": {
+      "sha256": "559fa5b2865c2e925dbe7328546c4e789914cfe68f7fd0d0c8dee53e8eeb3aae",
+      "bytes": 658
+    },
+    "post-metadata.json": {
+      "sha256": "306a1171fcc74c996936256ba2e7544f365a979a4b8e75731c8091955f029c15",
+      "bytes": 39467
+    },
+    "preview.html": {
+      "sha256": "a425db760f32efffbaad858040c08f56ada6b651cd7e788407ee94511347179a",
+      "bytes": 46065
+    },
+    "cover.png": {
+      "sha256": "09f762ace51cf82c4d6e8b8b4934f842a4d7148e86fba859cf3ad10dd08a0c4e",
+      "bytes": 75830
+    },
+    "tip.png": {
+      "sha256": "ce50efefdfc00476a64181f46c85acc7ba4a1fcc6d90c0b689b6c0109856f435",
+      "bytes": 76858
+    },
+    "breakdown.png": {
+      "sha256": "0a30094def9f897f2f8d3b07a4bce7023b6ffd1c3760ba38c7118c23eb2bce68",
+      "bytes": 140745
+    },
+    "story.png": {
+      "sha256": "9d9c487e31e902a79882b2b606d32e80a360fbd6ed3c062a166b86b435a4ba9c",
+      "bytes": 61159
+    }
+  },
+  "pick_id": "2026-08-07_Dolphins_vs_Brisbane_Broncos",
+  "created_at": "2026-08-07T20:51:33.456155+00:00"
+}

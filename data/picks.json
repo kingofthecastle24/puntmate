@@ -1044,5 +1044,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-08-07_rugbyleague_nrl_Dolphins_PUNTER_BET",
+    "date": "2026-08-07",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Dolphins vs Brisbane Broncos",
+    "home_team": "Dolphins",
+    "away_team": "Brisbane Broncos",
+    "pick": "DOLPHINS",
+    "market": "Head to Head",
+    "odds": 1.47,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]
