@@ -1,0 +1,134 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 174,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1786135917,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrmp2RW22oS_PzP6u7W3BUEU8AAFlBgACUwxrG26UsUd58rAKjazKRQEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADUwxrG26UsUd4",
+            "file_size": 923,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrmp2RW22oS_PzP6u7W3BUEU8AAFlBgACUwxrG26UsUd58rAKjazKRQEAAwIAA20AAz0E",
+            "file_unique_id": "AQADUwxrG26UsUdy",
+            "file_size": 8568,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrmp2RW22oS_PzP6u7W3BUEU8AAFlBgACUwxrG26UsUd58rAKjazKRQEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADUwxrG26UsUd9",
+            "file_size": 37393,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrmp2RW22oS_PzP6u7W3BUEU8AAFlBgACUwxrG26UsUd58rAKjazKRQEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADUwxrG26UsUd8",
+            "file_size": 69157,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADrmp2RW22oS_PzP6u7W3BUEU8AAFlBgACUwxrG26UsUd58rAKjazKRQEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADUwxrG26UsUd-",
+            "file_size": 69836,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Dolphins vs Brisbane Broncos\n\nPICK: DOLPHINS\nODDS: 1.47 (Head to Head)\nBET TYPE: PUNTER\n\nThe NRL.com snippet confirms Katoa is ready to shine and Duffy steps up for the Dolphins, suggesting they're relatively well-staffed at home. The Broncos snippet notes their title defence is alive but also references Reece being 'on' \u2014 that reads more like they're making the best of things rather than firing on all cylinders.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 55,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 70,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 96,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 114,
+            "length": 4,
+            "type": "italic"
+          },
+          {
+            "offset": 118,
+            "length": 7,
+            "type": "url"
+          },
+          {
+            "offset": 118,
+            "length": 7,
+            "type": "italic"
+          },
+          {
+            "offset": 125,
+            "length": 316,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Friday, 07-Aug-26 13:51:58 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AdLOU2ZmYweRai36_vx2tf-",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Friday, 07-Aug-26 13:51:58 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "ADM0FSEmn8x6GjQTvX_jw9w"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
