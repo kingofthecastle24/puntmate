@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "2a32ae9b7f5da0f25be889292aaf016060bb761de2c237420befe4b3e6f2d61b",
+      "bytes": 624
+    },
+    "instagram-caption.txt": {
+      "sha256": "be558fd0aac4cec4f8591732df57f03c121e193653f1085d9aea655c65515942",
+      "bytes": 659
+    },
+    "post-metadata.json": {
+      "sha256": "f70fa263eda8803fbae25245c5465b71b0b07efe5125ccf854f8fa41c255b18c",
+      "bytes": 13156
+    },
+    "preview.html": {
+      "sha256": "7d0e8d057a029a01da33f523bbe5a5752a2ceb73d330042a4d4ae701a2490502",
+      "bytes": 18339
+    },
+    "cover.png": {
+      "sha256": "807d29d625cd3a963a2ccb7d8531aaeeaa59d8404cb0b76e255ca47bc1409fd9",
+      "bytes": 74817
+    },
+    "tip.png": {
+      "sha256": "fa1c0bc780667b8192396c1b1e041a8112c1c1143f18052bc0ff97412c4c29a9",
+      "bytes": 88133
+    },
+    "breakdown.png": {
+      "sha256": "0042cd2eaff45ab28096a9a7ec2a9dff8bd39c98299aaee0a76c92c45c636eea",
+      "bytes": 151607
+    },
+    "story.png": {
+      "sha256": "ab95ab22e6525154a951cb132e238487a0343d9f3ad2671e769c42d1e00507f7",
+      "bytes": 74257
+    }
+  },
+  "pick_id": "2026-08-07_Sydney_Roosters_vs_Canterbury_Bulldogs",
+  "created_at": "2026-08-07T00:56:23.064565+00:00"
+}

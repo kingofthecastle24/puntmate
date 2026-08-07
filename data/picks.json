@@ -1010,5 +1010,22 @@
     "confidence": "MODERATE",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-08-07_rugbyleague_nrl_Sydney_Roosters_PUNTER_BET",
+    "date": "2026-08-07",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Sydney Roosters vs Canterbury Bulldogs",
+    "home_team": "Sydney Roosters",
+    "away_team": "Canterbury Bulldogs",
+    "pick": "SYDNEY ROOSTERS",
+    "market": "Head to Head",
+    "odds": 1.55,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]
