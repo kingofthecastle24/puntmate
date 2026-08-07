@@ -1,0 +1,30 @@
+{
+  "files": {
+    "punter-multi-post.txt": {
+      "sha256": "7b89f2b601a6373a28c19e711c058c21baad3b64602f4b8c59b57441b6774066",
+      "bytes": 1377
+    },
+    "punter_multi_cover.png": {
+      "sha256": "eb9956c809e8afa360dd30eaf537677debf403ed94361dc7995befe65050bdb5",
+      "bytes": 50096
+    },
+    "punter_multi_legs.png": {
+      "sha256": "f25e06fde8a9783bff9ddfc896afa2319e0fefeacd6534030df96fc7653778b4",
+      "bytes": 112336
+    },
+    "punter_multi_breakdown.png": {
+      "sha256": "d35d11d4cea84b7b31369448d5f44fd24f3fb06cfbcf40d849d2994a2952a09e",
+      "bytes": 97049
+    },
+    "post-metadata.json": {
+      "sha256": "f25397f7009797551e72f038521e96498b2d93ab308c3ff46426c19669aaf409",
+      "bytes": 43199
+    },
+    "preview.html": {
+      "sha256": "ce68147ab019b9f038adccf1451280e92a648884f47aa15c02ce4faf18d65174",
+      "bytes": 48967
+    }
+  },
+  "pick_id": "2026-08-07_weekend_multi",
+  "created_at": "2026-08-07T00:42:39.472481+00:00"
+}

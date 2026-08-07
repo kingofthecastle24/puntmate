@@ -1,85 +1,10 @@
 {
-  "run_date": "2026-08-07",
-  "run_ts": "2026-08-07T00:39:53.038690+00:00",
-  "hours_ahead": 76,
-  "fixture_count": 80,
-  "punter_multi_legs": [
-    {
-      "match": "New Zealand Warriors vs Penrith Panthers",
-      "sport_label": "NRL",
-      "selection": "NEW ZEALAND WARRIORS +3.5",
-      "market": "Handicap",
-      "odds": "1.95"
-    },
-    {
-      "match": "Dolphins vs Brisbane Broncos",
-      "sport_label": "NRL",
-      "selection": "DOLPHINS",
-      "market": "Head to Head",
-      "odds": "1.48"
-    },
-    {
-      "match": "Juliana Miller vs Ravena Oliveira",
-      "sport_label": "UFC",
-      "selection": "JULIANA MILLER",
-      "market": "Head to Head",
-      "odds": "1.34"
-    },
-    {
-      "match": "Sydney Roosters vs Canterbury Bulldogs",
-      "sport_label": "NRL",
-      "selection": "SYDNEY ROOSTERS",
-      "market": "Head to Head",
-      "odds": "1.55"
-    },
-    {
-      "match": "South Sydney Rabbitohs vs Parramatta Eels",
-      "sport_label": "NRL",
-      "selection": "SOUTH SYDNEY RABBITOHS",
-      "market": "Head to Head",
-      "odds": "1.38"
-    },
-    {
-      "match": "Louie Sutherland vs Jose Montanha",
-      "sport_label": "UFC",
-      "selection": "LOUIE SUTHERLAND",
-      "market": "Head to Head",
-      "odds": "1.55"
-    },
-    {
-      "match": "Manoel Sousa vs Richie Miranda",
-      "sport_label": "UFC",
-      "selection": "MANOEL SOUSA",
-      "market": "Head to Head",
-      "odds": "1.38"
-    },
-    {
-      "match": "Cheyanne Bowers vs Elora Dana",
-      "sport_label": "UFC",
-      "selection": "CHEYANNE BOWERS",
-      "market": "Head to Head",
-      "odds": "1.28"
-    },
-    {
-      "match": "Valentin Moldavsky vs Bruno Cappelozza",
-      "sport_label": "UFC",
-      "selection": "VALENTIN MOLDAVSKY",
-      "market": "Head to Head",
-      "odds": "1.24"
-    },
-    {
-      "match": "Steven Asplund vs Guilherme Pat",
-      "sport_label": "UFC",
-      "selection": "STEVEN ASPLUND",
-      "market": "Head to Head",
-      "odds": "1.37"
-    }
-  ],
-  "punter_multi_promo_hint": null,
-  "gambler_multi_legs": [],
-  "gambler_multi_promo_hint": null,
-  "degenerate_multi_legs": [],
-  "degenerate_multi_promo_hint": null,
+  "has_pick": false,
+  "is_weekend_multi": true,
+  "pick_id": "2026-08-07_weekend_multi",
+  "post_date": "2026-08-07",
+  "run_id": "31135382908",
+  "generated_at": "2026-08-07T00:42:39.470686+00:00",
   "research_warnings": [
     "rejected source (no relevance to fixture): \"The brutal pre-season reality check and \u2018eye-opening\u2019 act that transformed Warri\"",
     "rejected source (no relevance to fixture): \"DCE has brought a lot to the Roosters. What you don\u2019t see might be the most impo\"",
@@ -410,12 +335,22 @@
     "uncertainty_flag (internal only, not shown publicly): 'Metcalf returning after 405-day absence \u2014 rust and match fitness genuinely unknown'",
     "uncertainty_flag (internal only, not shown publicly): 'Penrith have been finals-calibre for years and tend to cover short spreads'"
   ],
-  "anchor_pick": {
-    "match": "Weekend Multi",
-    "home_team": "Weekend",
-    "away_team": "Multi",
-    "sport": "",
-    "sport_key": "",
-    "kickoff": "2026-08-07T00:00:00Z"
-  }
+  "workflow_state": "GENERATED",
+  "has_punter_multi": true,
+  "punter_multi_carousel_paths": [
+    "data/review/2026-08-07_weekend_multi/punter_multi_cover.png",
+    "data/review/2026-08-07_weekend_multi/punter_multi_legs.png",
+    "data/review/2026-08-07_weekend_multi/punter_multi_breakdown.png"
+  ],
+  "punter_multi_carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-07_Weekend_Multi_night_punter_multi_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-07_Weekend_Multi_night_punter_multi_2_legs.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-07_Weekend_Multi_night_punter_multi_3_breakdown.png"
+  ],
+  "has_gambler_multi": false,
+  "has_degenerate_multi": false,
+  "intended_platforms": [
+    "instagram_feed",
+    "telegram"
+  ]
 }
