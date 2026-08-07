@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "e3382e66f450ef1418d1839895c3886cf6f79854c8f04321cda7ff3a821c39b5",
+      "bytes": 640
+    },
+    "instagram-caption.txt": {
+      "sha256": "7d61809a57dad2e6334b3a2c30562c7dedcbb395b000bbe746dc9948e2ea198e",
+      "bytes": 675
+    },
+    "post-metadata.json": {
+      "sha256": "f8ce8e46e38b185aefdd29153bd633ad3e5c40d85d9b974bf9b2753f61eada8b",
+      "bytes": 35785
+    },
+    "preview.html": {
+      "sha256": "ba69bf247336f0a250c6c88206fa6740ced0d0b1ff7cf51604a0ae6c55794ba7",
+      "bytes": 42223
+    },
+    "cover.png": {
+      "sha256": "09f762ace51cf82c4d6e8b8b4934f842a4d7148e86fba859cf3ad10dd08a0c4e",
+      "bytes": 75830
+    },
+    "tip.png": {
+      "sha256": "1361fe012cf82b0759a7f22d8389d28ab674fa8f202c2d9944291da9aaab04bb",
+      "bytes": 95738
+    },
+    "breakdown.png": {
+      "sha256": "1820363e6f3c3e55f11367527ae6acbdf316441fc8c75fd93435dca48ed9c5eb",
+      "bytes": 154677
+    },
+    "story.png": {
+      "sha256": "0aa4e791e29e91d74d13edbf455b70a9a8ca3c0b324a01396ffea77430dc4de4",
+      "bytes": 78133
+    }
+  },
+  "pick_id": "2026-08-07_Melbourne_Storm_vs_Manly_Warringah_Sea_Eagles",
+  "created_at": "2026-08-07T19:54:48.824328+00:00"
+}

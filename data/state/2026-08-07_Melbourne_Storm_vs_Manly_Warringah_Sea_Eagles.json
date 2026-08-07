@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-07_Melbourne_Storm_vs_Manly_Warringah_Sea_Eagles",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-07T19:54:49.086041+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-07T19:54:49.086242+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-07T19:54:49.086435+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

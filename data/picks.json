@@ -1027,5 +1027,22 @@
     "confidence": "MODERATE",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-08-07_rugbyleague_nrl_Melbourne_Storm_PUNTER_BET",
+    "date": "2026-08-07",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Melbourne Storm vs Manly Warringah Sea Eagles",
+    "home_team": "Melbourne Storm",
+    "away_team": "Manly Warringah Sea Eagles",
+    "pick": "MELBOURNE STORM +1.5",
+    "market": "Handicap",
+    "odds": 1.99,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]
