@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-08_St_George_Illawarra_Dragons_vs_Cronulla_Sutherland_Sharks",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-08T19:31:37.330110+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-08T19:31:37.330313+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-08T19:31:37.330506+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

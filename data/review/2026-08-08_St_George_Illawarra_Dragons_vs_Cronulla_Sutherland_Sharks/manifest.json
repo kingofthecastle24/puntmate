@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "59ae0d1b55f44af6224d11ce7d3ac15c2c8b2629296ba04a14a05d0f2450ac87",
+      "bytes": 620
+    },
+    "instagram-caption.txt": {
+      "sha256": "54166cc49ae71b5e92bba2ff6e9f77876df7ef512b4612af10a02fb29b71e059",
+      "bytes": 685
+    },
+    "post-metadata.json": {
+      "sha256": "65760ecb59357ad26d4124e50b43b556807c1b544963fc7e914dbbea6ca9d6b8",
+      "bytes": 28306
+    },
+    "preview.html": {
+      "sha256": "825c080297377f5113bc743644badc2d7d4942de150c12d337b4e63c7ae2a9db",
+      "bytes": 34323
+    },
+    "cover.png": {
+      "sha256": "2171c93ffc2fe6b1d8a362ec753b808bc47541769b89bd891dea570eeb65cd8a",
+      "bytes": 75355
+    },
+    "tip.png": {
+      "sha256": "dd9597379f1afc3ecd0b7ebaf574db2c6fd07f3f6f071388e32f430704f8c173",
+      "bytes": 103698
+    },
+    "breakdown.png": {
+      "sha256": "440c1f8fe033053cc1229c0aef32c24c37418a35988e30ceb901c99b2bb78fbe",
+      "bytes": 151982
+    },
+    "story.png": {
+      "sha256": "a2831d0695999c4d9f39a52de53b96d5a8f6bd7cdfb26fe04c0788d375b7d5f1",
+      "bytes": 86825
+    }
+  },
+  "pick_id": "2026-08-08_St_George_Illawarra_Dragons_vs_Cronulla_Sutherland_Sharks",
+  "created_at": "2026-08-08T19:31:37.073578+00:00"
+}

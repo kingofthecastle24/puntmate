@@ -1061,5 +1061,22 @@
     "confidence": "MODERATE",
     "result": "win",
     "pnl": 4.7
+  },
+  {
+    "id": "2026-08-08_rugbyleague_nrl_St_George_Illawarra_Dragons_INVESTOR_BET",
+    "date": "2026-08-08",
+    "bet_type": "INVESTOR_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "St George Illawarra Dragons vs Cronulla Sutherland Sharks",
+    "home_team": "St George Illawarra Dragons",
+    "away_team": "Cronulla Sutherland Sharks",
+    "pick": "CRONULLA SUTHERLAND SHARKS",
+    "market": "Head to Head",
+    "odds": 1.18,
+    "confidence": "HIGH",
+    "result": "pending",
+    "pnl": null
   }
 ]
