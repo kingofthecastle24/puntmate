@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 177,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1786221601,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsWp3lCAQ3_RFF49LseDHuHjzWdflAAIeDGsbbpTBR1bTli1Rca7TAQADAgADcwADPQQ",
+            "file_unique_id": "AQADHgxrG26UwUd4",
+            "file_size": 1066,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsWp3lCAQ3_RFF49LseDHuHjzWdflAAIeDGsbbpTBR1bTli1Rca7TAQADAgADbQADPQQ",
+            "file_unique_id": "AQADHgxrG26UwUdy",
+            "file_size": 10713,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsWp3lCAQ3_RFF49LseDHuHjzWdflAAIeDGsbbpTBR1bTli1Rca7TAQADAgADeAADPQQ",
+            "file_unique_id": "AQADHgxrG26UwUd9",
+            "file_size": 43577,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsWp3lCAQ3_RFF49LseDHuHjzWdflAAIeDGsbbpTBR1bTli1Rca7TAQADAgADeQADPQQ",
+            "file_unique_id": "AQADHgxrG26UwUd-",
+            "file_size": 80247,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsWp3lCAQ3_RFF49LseDHuHjzWdflAAIeDGsbbpTBR1bTli1Rca7TAQADAgADdwADPQQ",
+            "file_unique_id": "AQADHgxrG26UwUd8",
+            "file_size": 80536,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Canberra Raiders vs Newcastle Knights\n\nPICK: NEWCASTLE KNIGHTS +2.5\nODDS: 1.90 (Handicap)\nBET TYPE: PUNTER\n\nThe Knights at +2.5 on the spread at 1.90 is a fair market price for what looks like a tight contest. The Raiders are favoured but only by a small margin \u2014 this is the kind of game that can easily be decided by a late try either way. If you think the Raiders win but narrowly, the Knights covering the 2.5 spread is the better-value angle than the head-to-head.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 64,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 93,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 115,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 133,
+            "length": 361,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Saturday, 08-Aug-26 13:40:01 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AUT7Fb4qrrcpwdb5QGkoyrl",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Saturday, 08-Aug-26 13:40:01 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AE8CAhLRWmQqOTzKLslb9fo"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
