@@ -1025,8 +1025,8 @@
     "market": "Head to Head",
     "odds": 1.55,
     "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 5.5
   },
   {
     "id": "2026-08-07_rugbyleague_nrl_Melbourne_Storm_PUNTER_BET",
@@ -1042,7 +1042,7 @@
     "market": "Handicap",
     "odds": 1.99,
     "confidence": "LOW",
-    "result": "pending",
+    "result": "manual",
     "pnl": null
   },
   {
@@ -1059,7 +1059,7 @@
     "market": "Head to Head",
     "odds": 1.47,
     "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 4.7
   }
 ]
