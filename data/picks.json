@@ -1078,5 +1078,22 @@
     "confidence": "HIGH",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-08-08_rugbyleague_nrl_Canberra_Raiders_PUNTER_BET",
+    "date": "2026-08-08",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Canberra Raiders vs Newcastle Knights",
+    "home_team": "Canberra Raiders",
+    "away_team": "Newcastle Knights",
+    "pick": "NEWCASTLE KNIGHTS +2.5",
+    "market": "Handicap",
+    "odds": 1.9,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

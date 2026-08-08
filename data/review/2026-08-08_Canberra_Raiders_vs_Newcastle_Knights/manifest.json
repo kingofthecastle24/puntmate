@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "16d99d20b621dca64516b3dfab7f52ee80d0203a8b4b387d44b984f599e0d0f0",
+      "bytes": 676
+    },
+    "instagram-caption.txt": {
+      "sha256": "ab522a361024370a9cec6628436fbe08240de291c7c5f8463982d3d8ff8ca777",
+      "bytes": 711
+    },
+    "post-metadata.json": {
+      "sha256": "c9e25e8b1bf29d53eb63b0ce5210e664e1f65ece909f3b94a8ac02bae52bb2a9",
+      "bytes": 26745
+    },
+    "preview.html": {
+      "sha256": "d3405ba91c0a7db275624d29255c2fa93a721da638844cdf1d24f0757d970eb7",
+      "bytes": 32676
+    },
+    "cover.png": {
+      "sha256": "2171c93ffc2fe6b1d8a362ec753b808bc47541769b89bd891dea570eeb65cd8a",
+      "bytes": 75355
+    },
+    "tip.png": {
+      "sha256": "21c236dc1c664776df2583cd5536c05c3a5ac22665c7cc51c2a4adf655ed4823",
+      "bytes": 88751
+    },
+    "breakdown.png": {
+      "sha256": "ce233d2553f43651eafe8e007e11e301b937f9e2532a545ab03fa91ef308a499",
+      "bytes": 157695
+    },
+    "story.png": {
+      "sha256": "a374a13bd56d846810b244ccae719697201cfac1b88537e2029a752635507f1d",
+      "bytes": 79076
+    }
+  },
+  "pick_id": "2026-08-08_Canberra_Raiders_vs_Newcastle_Knights",
+  "created_at": "2026-08-08T20:39:42.241693+00:00"
+}
