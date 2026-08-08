@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 176,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1786217520,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsGp3hC_Ft-WavEyKHEYEdh_HUGhBAAIWDGsbbpTBR5tdDG5NIAn_AQADAgADcwADPQQ",
+            "file_unique_id": "AQADFgxrG26UwUd4",
+            "file_size": 1131,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsGp3hC_Ft-WavEyKHEYEdh_HUGhBAAIWDGsbbpTBR5tdDG5NIAn_AQADAgADbQADPQQ",
+            "file_unique_id": "AQADFgxrG26UwUdy",
+            "file_size": 13023,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsGp3hC_Ft-WavEyKHEYEdh_HUGhBAAIWDGsbbpTBR5tdDG5NIAn_AQADAgADeAADPQQ",
+            "file_unique_id": "AQADFgxrG26UwUd9",
+            "file_size": 52588,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsGp3hC_Ft-WavEyKHEYEdh_HUGhBAAIWDGsbbpTBR5tdDG5NIAn_AQADAgADeQADPQQ",
+            "file_unique_id": "AQADFgxrG26UwUd-",
+            "file_size": 94566,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADsGp3hC_Ft-WavEyKHEYEdh_HUGhBAAIWDGsbbpTBR5tdDG5NIAn_AQADAgADdwADPQQ",
+            "file_unique_id": "AQADFgxrG26UwUd8",
+            "file_size": 96991,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf St George Illawarra Dragons vs Cronulla Sutherland Sharks\n\nPICK: CRONULLA SUTHERLAND SHARKS\nODDS: 1.18 (Head to Head)\nBET TYPE: INVESTOR\n\nThe market has Sharks at 84% \u2014 a massive favourite \u2014 and the Dragons are one of the competition's most undermanned, struggling sides this year. Cronulla have been a genuinely strong team, and a 16.5-point spread signals the quality gap is real and recognised by the market.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 84,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 117,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 143,
+            "length": 18,
+            "type": "bold"
+          },
+          {
+            "offset": 163,
+            "length": 273,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Saturday, 08-Aug-26 12:32:00 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AzDwUlmDeACxqWuRx5beIsZ",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Saturday, 08-Aug-26 12:32:00 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AeBejCQ1nIUg-jP0DzXEojb"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
