@@ -1076,8 +1076,8 @@
     "market": "Head to Head",
     "odds": 1.18,
     "confidence": "HIGH",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-08-08_rugbyleague_nrl_Canberra_Raiders_PUNTER_BET",
@@ -1093,7 +1093,7 @@
     "market": "Handicap",
     "odds": 1.9,
     "confidence": "LOW",
-    "result": "pending",
+    "result": "manual",
     "pnl": null
   }
 ]
