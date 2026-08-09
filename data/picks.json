@@ -1095,5 +1095,22 @@
     "confidence": "LOW",
     "result": "manual",
     "pnl": null
+  },
+  {
+    "id": "2026-08-09_baseball_mlb_San_Diego_Padres_PUNTER_BET",
+    "date": "2026-08-09",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "baseball_mlb",
+    "sport": "baseball_mlb",
+    "match": "San Diego Padres vs Houston Astros",
+    "home_team": "San Diego Padres",
+    "away_team": "Houston Astros",
+    "pick": "UNDER 9",
+    "market": "Total",
+    "odds": 1.9,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

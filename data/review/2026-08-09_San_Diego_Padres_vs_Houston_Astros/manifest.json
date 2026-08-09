@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "cef88fd57866fb4b969feaa16822491959f5e73b15ed7d43c2716186e9b97fc3",
+      "bytes": 577
+    },
+    "instagram-caption.txt": {
+      "sha256": "7aaeb60f248c8a8705510c241fb2e54bd20483ea1b869410341de17e2475aa98",
+      "bytes": 612
+    },
+    "post-metadata.json": {
+      "sha256": "13c9150aa3f65dbf0b9a7d56307d83987b622140ae3c5ee3f7eebeaa90078917",
+      "bytes": 3268
+    },
+    "preview.html": {
+      "sha256": "9dd0b2058a0e9a406dbc9e2ea28c519ab545634482ce2be58067170b2b1a9267",
+      "bytes": 7785
+    },
+    "cover.png": {
+      "sha256": "d55772da1bc7e80ef66a5f92eb5cf554140593a6bfcfd02870cbd104c4180557",
+      "bytes": 75566
+    },
+    "tip.png": {
+      "sha256": "7d865c9424048ba41130d8e3f28fa4bd0d1791c9f4d49e9ad63726fe3e2cbb82",
+      "bytes": 79812
+    },
+    "breakdown.png": {
+      "sha256": "ec962bfa4bd6956deb94619805195e44a4780476a58697373150ce0a25136960",
+      "bytes": 133013
+    },
+    "story.png": {
+      "sha256": "29ab90da4b22dc12afc43fee1293b18fa4067ca25b174d2af3b6e1bc02b80b59",
+      "bytes": 64262
+    }
+  },
+  "pick_id": "2026-08-09_San_Diego_Padres_vs_Houston_Astros",
+  "created_at": "2026-08-09T20:40:25.357729+00:00"
+}

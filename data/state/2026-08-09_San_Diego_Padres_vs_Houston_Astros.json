@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-09_San_Diego_Padres_vs_Houston_Astros",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-09T20:40:26.236682+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-09T20:40:26.236880+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-09T20:40:26.238591+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
