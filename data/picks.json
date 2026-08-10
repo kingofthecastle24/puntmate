@@ -1112,5 +1112,22 @@
     "confidence": "LOW",
     "result": "push",
     "pnl": 0.0
+  },
+  {
+    "id": "2026-08-10_baseball_mlb_Los_Angeles_Dodgers_PUNTER_BET",
+    "date": "2026-08-10",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "baseball_mlb",
+    "sport": "baseball_mlb",
+    "match": "Los Angeles Dodgers vs Kansas City Royals",
+    "home_team": "Los Angeles Dodgers",
+    "away_team": "Kansas City Royals",
+    "pick": "LOS ANGELES DODGERS -1.5",
+    "market": "Handicap",
+    "odds": 1.87,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

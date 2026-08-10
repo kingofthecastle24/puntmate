@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "2a92089a30c4e7e7d391c725a993728726556cef9a8fc4413dff2512033175ee",
+      "bytes": 628
+    },
+    "instagram-caption.txt": {
+      "sha256": "79c97f737acaf5a17c2b2220f2c4b1f4572dbc83f9301a05781db5a3abce0713",
+      "bytes": 663
+    },
+    "post-metadata.json": {
+      "sha256": "126b5e10ed160e831be532a760386d1a02e34de7bfb3f1c341ceead524faf42c",
+      "bytes": 10773
+    },
+    "preview.html": {
+      "sha256": "b37217436b29bb4332af8f4556746a0eb225239c0c0bca9672e81176d4864669",
+      "bytes": 15913
+    },
+    "cover.png": {
+      "sha256": "c1dea3a9e2f467d160b228f9f1cd25b0f3b231f423d4a81464390c09a65d7bd4",
+      "bytes": 74739
+    },
+    "tip.png": {
+      "sha256": "6388d267332c98762c4334fae1cdaf0b2467ecae87d1da45ecd2d4ea4ef6f867",
+      "bytes": 89207
+    },
+    "breakdown.png": {
+      "sha256": "46e3f369cf8ff1d56f320a5ec22d34ad18ed78df7adaabebd1db5dfc89ec8937",
+      "bytes": 152422
+    },
+    "story.png": {
+      "sha256": "90ffc688dfdf151a4ff7cc5208d241a5a9f277c5f787921a6367a662f7b68ffe",
+      "bytes": 81839
+    }
+  },
+  "pick_id": "2026-08-10_Los_Angeles_Dodgers_vs_Kansas_City_Royals",
+  "created_at": "2026-08-10T20:52:18.262217+00:00"
+}

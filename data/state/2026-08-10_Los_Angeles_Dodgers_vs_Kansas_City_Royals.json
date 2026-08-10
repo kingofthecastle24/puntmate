@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-10_Los_Angeles_Dodgers_vs_Kansas_City_Royals",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-10T20:52:18.542767+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-10T20:52:18.542988+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-10T20:52:18.543224+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
