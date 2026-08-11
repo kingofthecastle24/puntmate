@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-11_Jon_Kunneman_vs_Joseph_Kropschot",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-11T20:56:03.504604+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-11T20:56:03.504806+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-11T20:56:03.504974+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

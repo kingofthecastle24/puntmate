@@ -1129,5 +1129,22 @@
     "confidence": "MODERATE",
     "result": "manual",
     "pnl": null
+  },
+  {
+    "id": "2026-08-11_mma_mixed_martial_arts_Jon_Kunneman_PUNTER_BET",
+    "date": "2026-08-11",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "mma_mixed_martial_arts",
+    "sport": "mma_mixed_martial_arts",
+    "match": "Jon Kunneman vs Joseph Kropschot",
+    "home_team": "Jon Kunneman",
+    "away_team": "Joseph Kropschot",
+    "pick": "JON KUNNEMAN",
+    "market": "Head to Head",
+    "odds": 1.48,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

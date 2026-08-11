@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "1827e5a19ea36d0ee96c510feb0cd5ca8a3f4d7da4b065036c08d74d4a37aabc",
+      "bytes": 589
+    },
+    "instagram-caption.txt": {
+      "sha256": "23791e74c9200ede8eab0374dfc3c0ebaa52b1e2be12d2adec3b872f507563de",
+      "bytes": 624
+    },
+    "post-metadata.json": {
+      "sha256": "2adfeaba3ea820458ea7456ddb9e671f47ac59142b2def2676347488573cb030",
+      "bytes": 25066
+    },
+    "preview.html": {
+      "sha256": "219138899f2cffcd19cfbe251972a4b7d5ca6cf8ad8be27773cbae66faaf042d",
+      "bytes": 30908
+    },
+    "cover.png": {
+      "sha256": "05eb0ef12083790903a734042025f9a35d1cdf3e895f06f0a66429f53bcd505e",
+      "bytes": 75772
+    },
+    "tip.png": {
+      "sha256": "1133f730b5d84980fd130bc976ae4328f8f9976ea4b35d62f76a828c69711b00",
+      "bytes": 84811
+    },
+    "breakdown.png": {
+      "sha256": "d621bb8f7d5dbc96a94486ab61ddbb96736f9457a13f05a1a9ed3f3dd9a624ba",
+      "bytes": 140012
+    },
+    "story.png": {
+      "sha256": "b9da3a5d1e1f345b0adc147212554057c08767185e23a399f071c6ad2121e877",
+      "bytes": 67933
+    }
+  },
+  "pick_id": "2026-08-11_Jon_Kunneman_vs_Joseph_Kropschot",
+  "created_at": "2026-08-11T20:56:03.280430+00:00"
+}
