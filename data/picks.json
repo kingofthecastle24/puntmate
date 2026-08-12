@@ -1146,5 +1146,22 @@
     "confidence": "MODERATE",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-08-12_rugbyleague_nrl_Penrith_Panthers_PUNTER_BET",
+    "date": "2026-08-12",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Penrith Panthers vs Sydney Roosters",
+    "home_team": "Penrith Panthers",
+    "away_team": "Sydney Roosters",
+    "pick": "PENRITH PANTHERS",
+    "market": "Head to Head",
+    "odds": 1.58,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

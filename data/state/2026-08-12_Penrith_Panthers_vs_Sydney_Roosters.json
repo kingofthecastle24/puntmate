@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-12_Penrith_Panthers_vs_Sydney_Roosters",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-12T20:55:02.720713+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-12T20:55:02.720913+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-12T20:55:02.721130+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
