@@ -1180,5 +1180,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-08-13_rugbyleague_nrl_Manly_Warringah_Sea_Eagles_PUNTER_BET",
+    "date": "2026-08-13",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Manly Warringah Sea Eagles vs Dolphins",
+    "home_team": "Manly Warringah Sea Eagles",
+    "away_team": "Dolphins",
+    "pick": "MANLY WARRINGAH SEA EAGLES +9.5",
+    "market": "Handicap",
+    "odds": 1.93,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

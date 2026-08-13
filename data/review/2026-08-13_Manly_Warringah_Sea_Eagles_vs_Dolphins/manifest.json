@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "7a508bd716ffa2d51d4ea9f6d00836ec8b9979edd32644ba6ecee7bf593f71ad",
+      "bytes": 695
+    },
+    "instagram-caption.txt": {
+      "sha256": "65f66f1fd08354ff5a5592a0bd185c5f75a4f77a1a87ca10bdb61463cc4f854f",
+      "bytes": 730
+    },
+    "post-metadata.json": {
+      "sha256": "9fbfc965fed9700356c36b52c0ad8aa6b1ea7d91cc998506801270e261c1ecd7",
+      "bytes": 8434
+    },
+    "preview.html": {
+      "sha256": "124ee88aa1a22ec42dd206fbe95bdbcc32403e092ba58fd98e54561591f758b2",
+      "bytes": 13481
+    },
+    "cover.png": {
+      "sha256": "bd3881dc0e3054e6131accbe99c5455b5b30df4d3d6ab57711d929053760d093",
+      "bytes": 74457
+    },
+    "tip.png": {
+      "sha256": "a9cb9cf9aecf54a0f39c682373794c6d53eadc296bc7d7a9bea4b9af0b6a7a17",
+      "bytes": 101554
+    },
+    "breakdown.png": {
+      "sha256": "49c6717a9314b3e46e0fe812ea3fcc184298261609ed1deebda471a42b41cd75",
+      "bytes": 164145
+    },
+    "story.png": {
+      "sha256": "255a364d1eab0b5398b6bae64f8c8ba6d9487485316210d78cdda677e6755d6c",
+      "bytes": 88252
+    }
+  },
+  "pick_id": "2026-08-13_Manly_Warringah_Sea_Eagles_vs_Dolphins",
+  "created_at": "2026-08-13T20:52:00.755915+00:00"
+}
