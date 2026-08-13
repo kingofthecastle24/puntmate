@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-13_Canterbury_Bulldogs_vs_South_Sydney_Rabbitohs",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-13T19:55:58.970146+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-13T19:55:58.970357+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-13T19:55:58.970552+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

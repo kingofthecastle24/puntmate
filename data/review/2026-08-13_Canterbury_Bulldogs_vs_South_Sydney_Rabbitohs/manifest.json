@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "5ad79b7159f2abf270a4a473c121ff1f49e68e14910b8f8796f87572a1117c91",
+      "bytes": 663
+    },
+    "instagram-caption.txt": {
+      "sha256": "0ffc05362bb2cb3ea22c4a8d2202a5ade23e3562e7053029e101ed9fad2d2301",
+      "bytes": 698
+    },
+    "post-metadata.json": {
+      "sha256": "772bfc2a295a4e878b28d8d3102a6d32fe3691bcac58c527fabd86e469b1eb8c",
+      "bytes": 9680
+    },
+    "preview.html": {
+      "sha256": "fb448fad98108e216cbf83bc6d5c4e3283bef179a6973557c9fa664dfbcdaaff",
+      "bytes": 14726
+    },
+    "cover.png": {
+      "sha256": "bd3881dc0e3054e6131accbe99c5455b5b30df4d3d6ab57711d929053760d093",
+      "bytes": 74457
+    },
+    "tip.png": {
+      "sha256": "8c6d6b65667988757c012b9d93b3ed5119477762c81c46a4db5ef80f38b6cf86",
+      "bytes": 80830
+    },
+    "breakdown.png": {
+      "sha256": "23f27157c8f8378896c3e28ac4d83894d751e9bc8b88cc96f620e1e992e5f893",
+      "bytes": 162789
+    },
+    "story.png": {
+      "sha256": "c316ced3c19024e4846ece4e824131720fefcadb82bb1b58d8dcf3445e0bf1df",
+      "bytes": 69280
+    }
+  },
+  "pick_id": "2026-08-13_Canterbury_Bulldogs_vs_South_Sydney_Rabbitohs",
+  "created_at": "2026-08-13T19:55:58.710933+00:00"
+}
