@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-08-13_Manly_Warringah_Sea_Eagles_vs_Dolphins",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-08-13T20:52:01.016333+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-08-13T20:52:14.749978+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-08-13T20:52:14.750272+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-08-13T20:52:17.608574+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": false, \"facebook_story\": false}"
     }
   ]
 }

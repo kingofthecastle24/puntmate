@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 191,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1786654336,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADv2p-Ln8Xq6_hM7HjosLLFXy1KZZOAALFDGsbcObxR0bkWWZ8WF-yAQADAgADcwADPQQ",
+            "file_unique_id": "AQADxQxrG3Dm8Ud4",
+            "file_size": 1140,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADv2p-Ln8Xq6_hM7HjosLLFXy1KZZOAALFDGsbcObxR0bkWWZ8WF-yAQADAgADbQADPQQ",
+            "file_unique_id": "AQADxQxrG3Dm8Udy",
+            "file_size": 12484,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADv2p-Ln8Xq6_hM7HjosLLFXy1KZZOAALFDGsbcObxR0bkWWZ8WF-yAQADAgADeAADPQQ",
+            "file_unique_id": "AQADxQxrG3Dm8Ud9",
+            "file_size": 50242,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADv2p-Ln8Xq6_hM7HjosLLFXy1KZZOAALFDGsbcObxR0bkWWZ8WF-yAQADAgADdwADPQQ",
+            "file_unique_id": "AQADxQxrG3Dm8Ud8",
+            "file_size": 91340,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawADv2p-Ln8Xq6_hM7HjosLLFXy1KZZOAALFDGsbcObxR0bkWWZ8WF-yAQADAgADeQADPQQ",
+            "file_unique_id": "AQADxQxrG3Dm8Ud-",
+            "file_size": 92371,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Manly Warringah Sea Eagles vs Dolphins\n\nPICK: MANLY WARRINGAH SEA EAGLES +9.5\nODDS: 1.93 (Handicap)\nBET TYPE: PUNTER\n\nEven if the Dolphins win comfortably, 9.5 is a big line to cover against a Sea Eagles side that has Faulalo and Stone back \u2014 those are meaningful inclusions that shore up their roster. The SMH piece about that dangerous tackle suggests the Dolphins are putting in big physical hits which can produce penalties and momentum shifts, potentially keeping the margin tighter.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 65,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 103,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 125,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 143,
+            "length": 370,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Thursday, 13-Aug-26 13:52:16 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "Av_xUHcnwFCsNCv--ZcTcAx",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Thursday, 13-Aug-26 13:52:16 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AYDNUCBHL8PRuHGD39srJmL"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
