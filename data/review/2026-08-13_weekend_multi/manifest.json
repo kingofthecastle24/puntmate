@@ -1,0 +1,46 @@
+{
+  "files": {
+    "punter-multi-post.txt": {
+      "sha256": "5810694568c483c71e7d2bb0cf73a143a5a5e0dedeefe0fb62aa3dcec606ac3f",
+      "bytes": 1794
+    },
+    "punter_multi_cover.png": {
+      "sha256": "eb9956c809e8afa360dd30eaf537677debf403ed94361dc7995befe65050bdb5",
+      "bytes": 50096
+    },
+    "punter_multi_legs.png": {
+      "sha256": "1f03931b89b6b5ddc1430f86d251104be8203c0e414506e8082f6f8b0d5e2c9e",
+      "bytes": 123350
+    },
+    "punter_multi_breakdown.png": {
+      "sha256": "b40178d6a82d35752d3d46fb838822143226111d20baea9013bb18fe7c03283b",
+      "bytes": 96976
+    },
+    "degenerate-multi-post.txt": {
+      "sha256": "de1ef7b3a1dea4d28dfc6a5f3d7c76b6240be964997bc75f0c92a353c811dc95",
+      "bytes": 1833
+    },
+    "degenerate_multi_cover.png": {
+      "sha256": "ef09c828cb6ef6a70e2e7009d1ab7b687cc3fe6f41a0d4004ca9bfe37c915866",
+      "bytes": 53986
+    },
+    "degenerate_multi_legs.png": {
+      "sha256": "3becfd8e2fcf9ce8248443c2dc86260ef8105dadd0251611cb2f27975f38a8e3",
+      "bytes": 125114
+    },
+    "degenerate_multi_breakdown.png": {
+      "sha256": "cbf8a28a97646a219933fa29563bd319484e8e3264fc9497f055ae2ec274d5cb",
+      "bytes": 95425
+    },
+    "post-metadata.json": {
+      "sha256": "24df066addbec80fc496c363c43e316616f51052753262f4e1a73c6963bdd38b",
+      "bytes": 31061
+    },
+    "preview.html": {
+      "sha256": "1c761eb7149b5c74a10f5227f1e2502af8e00e8d56d3223c8e203c8443a75871",
+      "bytes": 36992
+    }
+  },
+  "pick_id": "2026-08-13_weekend_multi",
+  "created_at": "2026-08-13T19:57:23.682602+00:00"
+}

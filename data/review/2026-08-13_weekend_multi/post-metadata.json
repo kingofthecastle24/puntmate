@@ -1,212 +1,10 @@
 {
-  "run_date": "2026-08-13",
-  "run_ts": "2026-08-13T19:54:45.206751+00:00",
-  "hours_ahead": 76,
-  "fixture_count": 53,
-  "punter_multi_legs": [
-    {
-      "match": "Brisbane Broncos vs New Zealand Warriors",
-      "sport_label": "NRL",
-      "selection": "NEW ZEALAND WARRIORS",
-      "market": "Head to Head",
-      "odds": "1.49"
-    },
-    {
-      "match": "Islam Makhachev vs Ian Garry",
-      "sport_label": "UFC",
-      "selection": "ISLAM MAKHACHEV",
-      "market": "Head to Head",
-      "odds": "1.31"
-    },
-    {
-      "match": "Vicente Luque vs Tresean Gore",
-      "sport_label": "UFC",
-      "selection": "TRESEAN GORE",
-      "market": "Head to Head",
-      "odds": "1.87"
-    },
-    {
-      "match": "Cronulla Sutherland Sharks vs Canberra Raiders",
-      "sport_label": "NRL",
-      "selection": "CRONULLA SUTHERLAND SHARKS",
-      "market": "Head to Head",
-      "odds": "1.35"
-    },
-    {
-      "match": "Parramatta Eels vs North Queensland Cowboys",
-      "sport_label": "NRL",
-      "selection": "NORTH QUEENSLAND COWBOYS",
-      "market": "Head to Head",
-      "odds": "1.59"
-    },
-    {
-      "match": "Canterbury Bulldogs vs South Sydney Rabbitohs",
-      "sport_label": "NRL",
-      "selection": "CANTERBURY BULLDOGS",
-      "market": "Head to Head",
-      "odds": "1.66"
-    },
-    {
-      "match": "Donte Johnson vs Eric McConico",
-      "sport_label": "UFC",
-      "selection": "DONTE JOHNSON",
-      "market": "Head to Head",
-      "odds": "1.42"
-    },
-    {
-      "match": "Manly Warringah Sea Eagles vs Dolphins",
-      "sport_label": "NRL",
-      "selection": "DOLPHINS",
-      "market": "Head to Head",
-      "odds": "1.38"
-    },
-    {
-      "match": "Newcastle Knights vs Gold Coast Titans",
-      "sport_label": "NRL",
-      "selection": "NEWCASTLE KNIGHTS",
-      "market": "Head to Head",
-      "odds": "1.27"
-    },
-    {
-      "match": "Wests Tigers vs St George Illawarra Dragons",
-      "sport_label": "NRL",
-      "selection": "ST GEORGE ILLAWARRA DRAGONS",
-      "market": "Head to Head",
-      "odds": "1.91"
-    },
-    {
-      "match": "Mackenzie Dern vs Gillian Robertson",
-      "sport_label": "UFC",
-      "selection": "MACKENZIE DERN",
-      "market": "Head to Head",
-      "odds": "1.52"
-    },
-    {
-      "match": "Mansur Abdul-Malik vs Dustin Stoltzfus",
-      "sport_label": "UFC",
-      "selection": "MANSUR ABDUL-MALIK",
-      "market": "Head to Head",
-      "odds": "1.17"
-    },
-    {
-      "match": "Chidi Njokuani vs Joel Alvarez",
-      "sport_label": "UFC",
-      "selection": "JOEL ALVAREZ",
-      "market": "Head to Head",
-      "odds": "1.34"
-    },
-    {
-      "match": "Fremantle Dockers vs Adelaide Crows",
-      "sport_label": "AFL",
-      "selection": "FREMANTLE DOCKERS",
-      "market": "Head to Head",
-      "odds": "1.35"
-    }
-  ],
-  "punter_multi_promo_hint": null,
-  "gambler_multi_legs": [],
-  "gambler_multi_promo_hint": null,
-  "degenerate_multi_legs": [
-    {
-      "match": "Brisbane Broncos vs New Zealand Warriors",
-      "sport_label": "NRL",
-      "selection": "NEW ZEALAND WARRIORS",
-      "market": "Head to Head",
-      "odds": "1.49"
-    },
-    {
-      "match": "Islam Makhachev vs Ian Garry",
-      "sport_label": "UFC",
-      "selection": "ISLAM MAKHACHEV",
-      "market": "Head to Head",
-      "odds": "1.31"
-    },
-    {
-      "match": "Vicente Luque vs Tresean Gore",
-      "sport_label": "UFC",
-      "selection": "TRESEAN GORE",
-      "market": "Head to Head",
-      "odds": "1.87"
-    },
-    {
-      "match": "Cronulla Sutherland Sharks vs Canberra Raiders",
-      "sport_label": "NRL",
-      "selection": "CRONULLA SUTHERLAND SHARKS",
-      "market": "Head to Head",
-      "odds": "1.35"
-    },
-    {
-      "match": "Parramatta Eels vs North Queensland Cowboys",
-      "sport_label": "NRL",
-      "selection": "NORTH QUEENSLAND COWBOYS",
-      "market": "Head to Head",
-      "odds": "1.59"
-    },
-    {
-      "match": "Canterbury Bulldogs vs South Sydney Rabbitohs",
-      "sport_label": "NRL",
-      "selection": "CANTERBURY BULLDOGS",
-      "market": "Head to Head",
-      "odds": "1.66"
-    },
-    {
-      "match": "Donte Johnson vs Eric McConico",
-      "sport_label": "UFC",
-      "selection": "DONTE JOHNSON",
-      "market": "Head to Head",
-      "odds": "1.42"
-    },
-    {
-      "match": "Manly Warringah Sea Eagles vs Dolphins",
-      "sport_label": "NRL",
-      "selection": "DOLPHINS",
-      "market": "Head to Head",
-      "odds": "1.38"
-    },
-    {
-      "match": "Newcastle Knights vs Gold Coast Titans",
-      "sport_label": "NRL",
-      "selection": "NEWCASTLE KNIGHTS",
-      "market": "Head to Head",
-      "odds": "1.27"
-    },
-    {
-      "match": "Wests Tigers vs St George Illawarra Dragons",
-      "sport_label": "NRL",
-      "selection": "ST GEORGE ILLAWARRA DRAGONS",
-      "market": "Head to Head",
-      "odds": "1.91"
-    },
-    {
-      "match": "Mackenzie Dern vs Gillian Robertson",
-      "sport_label": "UFC",
-      "selection": "MACKENZIE DERN",
-      "market": "Head to Head",
-      "odds": "1.52"
-    },
-    {
-      "match": "Mansur Abdul-Malik vs Dustin Stoltzfus",
-      "sport_label": "UFC",
-      "selection": "MANSUR ABDUL-MALIK",
-      "market": "Head to Head",
-      "odds": "1.17"
-    },
-    {
-      "match": "Chidi Njokuani vs Joel Alvarez",
-      "sport_label": "UFC",
-      "selection": "JOEL ALVAREZ",
-      "market": "Head to Head",
-      "odds": "1.34"
-    },
-    {
-      "match": "Fremantle Dockers vs Adelaide Crows",
-      "sport_label": "AFL",
-      "selection": "FREMANTLE DOCKERS",
-      "market": "Head to Head",
-      "odds": "1.35"
-    }
-  ],
-  "degenerate_multi_promo_hint": null,
+  "has_pick": false,
+  "is_weekend_multi": true,
+  "pick_id": "2026-08-13_weekend_multi",
+  "post_date": "2026-08-13",
+  "run_id": "31738148481",
+  "generated_at": "2026-08-13T19:57:23.680543+00:00",
   "research_warnings": [
     "rejected source (no relevance to fixture): \"\u2018Frustrated\u2019 Foran\u2019s message to fans after Manly capitulation - Nine.com.au\"",
     "rejected source (team-name-only match, no sport context): \"Match Report: Round 23 vs Storm - Manly Warringah Sea Eagles\"",
@@ -439,12 +237,32 @@
     "uncertainty_flag (internal only, not shown publicly): 'Brisbane at home \u2014 Lang Park crowd can lift a struggling side'",
     "uncertainty_flag (internal only, not shown publicly): 'Vaimauga returning for Warriors adds depth but also means some squad shuffling'"
   ],
-  "anchor_pick": {
-    "match": "Weekend Multi",
-    "home_team": "Weekend",
-    "away_team": "Multi",
-    "sport": "",
-    "sport_key": "",
-    "kickoff": "2026-08-13T00:00:00Z"
-  }
+  "workflow_state": "GENERATED",
+  "has_punter_multi": true,
+  "punter_multi_carousel_paths": [
+    "data/review/2026-08-13_weekend_multi/punter_multi_cover.png",
+    "data/review/2026-08-13_weekend_multi/punter_multi_legs.png",
+    "data/review/2026-08-13_weekend_multi/punter_multi_breakdown.png"
+  ],
+  "punter_multi_carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-13_Weekend_Multi_night_punter_multi_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-13_Weekend_Multi_night_punter_multi_2_legs.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-13_Weekend_Multi_night_punter_multi_3_breakdown.png"
+  ],
+  "has_gambler_multi": false,
+  "has_degenerate_multi": true,
+  "degenerate_multi_carousel_paths": [
+    "data/review/2026-08-13_weekend_multi/degenerate_multi_cover.png",
+    "data/review/2026-08-13_weekend_multi/degenerate_multi_legs.png",
+    "data/review/2026-08-13_weekend_multi/degenerate_multi_breakdown.png"
+  ],
+  "degenerate_multi_carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-13_Weekend_Multi_night_degenerate_multi_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-13_Weekend_Multi_night_degenerate_multi_2_legs.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-08-13_Weekend_Multi_night_degenerate_multi_3_breakdown.png"
+  ],
+  "intended_platforms": [
+    "instagram_feed",
+    "telegram"
+  ]
 }
