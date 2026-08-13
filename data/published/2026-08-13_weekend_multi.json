@@ -1,0 +1,238 @@
+{
+  "telegram_punter_multi": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 189,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1786651067,
+        "text": "\ud83c\udfaf PUNTMATE NZ \u2014 THE PUNTER'S MULTI\n\nA measured one: today produced multiple selections that each stand on their own as Investor/Punter-tier picks. Rolled together they pay well beyond any single leg \u2014 every leg still has to land, so this is a bigger swing than the day's single pick, not a certainty.\n\nLeg 1: Brisbane Broncos vs New Zealand Warriors \u2014 NEW ZEALAND WARRIORS @ 1.49 (Head to Head)\nLeg 2: Islam Makhachev vs Ian Garry \u2014 ISLAM MAKHACHEV @ 1.31 (Head to Head)\nLeg 3: Vicente Luque vs Tresean Gore \u2014 TRESEAN GORE @ 1.87 (Head to Head)\nLeg 4: Cronulla Sutherland Sharks vs Canberra Raiders \u2014 CRONULLA SUTHERLAND SHARKS @ 1.35 (Head to Head)\nLeg 5: Parramatta Eels vs North Queensland Cowboys \u2014 NORTH QUEENSLAND COWBOYS @ 1.59 (Head to Head)\nLeg 6: Canterbury Bulldogs vs South Sydney Rabbitohs \u2014 CANTERBURY BULLDOGS @ 1.66 (Head to Head)\nLeg 7: Donte Johnson vs Eric McConico \u2014 DONTE JOHNSON @ 1.42 (Head to Head)\nLeg 8: Manly Warringah Sea Eagles vs Dolphins \u2014 DOLPHINS @ 1.38 (Head to Head)\nLeg 9: Newcastle Knights vs Gold Coast Titans \u2014 NEWCASTLE KNIGHTS @ 1.27 (Head to Head)\nLeg 10: Wests Tigers vs St George Illawarra Dragons \u2014 ST GEORGE ILLAWARRA DRAGONS @ 1.91 (Head to Head)\nLeg 11: Mackenzie Dern vs Gillian Robertson \u2014 MACKENZIE DERN @ 1.52 (Head to Head)\nLeg 12: Mansur Abdul-Malik vs Dustin Stoltzfus \u2014 MANSUR ABDUL-MALIK @ 1.17 (Head to Head)\nLeg 13: Chidi Njokuani vs Joel Alvarez \u2014 JOEL ALVAREZ @ 1.34 (Head to Head)\nLeg 14: Fremantle Dockers vs Adelaide Crows \u2014 FREMANTLE DOCKERS @ 1.35 (Head to Head)\n\nCombined: 198.89\nBET TYPE: PUNTER\n\nOne leg fails, the lot fails.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 35,
+            "type": "bold"
+          },
+          {
+            "offset": 37,
+            "length": 264,
+            "type": "italic"
+          },
+          {
+            "offset": 303,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 396,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 472,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 546,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 651,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 751,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 848,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 924,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 1003,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 1091,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1195,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1278,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1368,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1444,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1531,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 1548,
+            "length": 16,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_punter_multi": {
+    "ok": false
+  },
+  "telegram_degenerate_multi": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 190,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1786651068,
+        "text": "\u2604\ufe0f PUNTMATE NZ \u2014 THE DEGENERATE MULTI\n\nThe rarest post we make. An unusually deep slate lined up 14 genuine legs, and rolled together they pay 199-to-1. Let's be honest: this almost certainly doesn't land \u2014 every single leg has to come in. Strictly one for the brave, strictly small \u2014 entertainment, not a plan.\n\nLeg 1: Brisbane Broncos vs New Zealand Warriors \u2014 NEW ZEALAND WARRIORS @ 1.49 (Head to Head)\nLeg 2: Islam Makhachev vs Ian Garry \u2014 ISLAM MAKHACHEV @ 1.31 (Head to Head)\nLeg 3: Vicente Luque vs Tresean Gore \u2014 TRESEAN GORE @ 1.87 (Head to Head)\nLeg 4: Cronulla Sutherland Sharks vs Canberra Raiders \u2014 CRONULLA SUTHERLAND SHARKS @ 1.35 (Head to Head)\nLeg 5: Parramatta Eels vs North Queensland Cowboys \u2014 NORTH QUEENSLAND COWBOYS @ 1.59 (Head to Head)\nLeg 6: Canterbury Bulldogs vs South Sydney Rabbitohs \u2014 CANTERBURY BULLDOGS @ 1.66 (Head to Head)\nLeg 7: Donte Johnson vs Eric McConico \u2014 DONTE JOHNSON @ 1.42 (Head to Head)\nLeg 8: Manly Warringah Sea Eagles vs Dolphins \u2014 DOLPHINS @ 1.38 (Head to Head)\nLeg 9: Newcastle Knights vs Gold Coast Titans \u2014 NEWCASTLE KNIGHTS @ 1.27 (Head to Head)\nLeg 10: Wests Tigers vs St George Illawarra Dragons \u2014 ST GEORGE ILLAWARRA DRAGONS @ 1.91 (Head to Head)\nLeg 11: Mackenzie Dern vs Gillian Robertson \u2014 MACKENZIE DERN @ 1.52 (Head to Head)\nLeg 12: Mansur Abdul-Malik vs Dustin Stoltzfus \u2014 MANSUR ABDUL-MALIK @ 1.17 (Head to Head)\nLeg 13: Chidi Njokuani vs Joel Alvarez \u2014 JOEL ALVAREZ @ 1.34 (Head to Head)\nLeg 14: Fremantle Dockers vs Adelaide Crows \u2014 FREMANTLE DOCKERS @ 1.35 (Head to Head)\n\nCombined: 198.89\nBET TYPE: GAMBLER\n\nSmall stakes territory. One leg fails, the lot fails.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 37,
+            "type": "bold"
+          },
+          {
+            "offset": 39,
+            "length": 272,
+            "type": "italic"
+          },
+          {
+            "offset": 313,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 406,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 482,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 556,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 661,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 761,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 858,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 934,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 1013,
+            "length": 6,
+            "type": "bold"
+          },
+          {
+            "offset": 1101,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1205,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1288,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1378,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1454,
+            "length": 7,
+            "type": "bold"
+          },
+          {
+            "offset": 1541,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 1558,
+            "length": 17,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_degenerate_multi": {
+    "ok": false
+  }
+}
