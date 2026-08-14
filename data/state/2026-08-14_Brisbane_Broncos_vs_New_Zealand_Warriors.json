@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-08-14_Brisbane_Broncos_vs_New_Zealand_Warriors",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-08-14T19:48:56.928975+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-08-14T19:48:56.929169+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-08-14T19:48:56.929376+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

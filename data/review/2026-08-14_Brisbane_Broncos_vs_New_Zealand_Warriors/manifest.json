@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "8a880643d5154e2517c5639a832c9dfc340a2562c7d792d7c060302c776e0789",
+      "bytes": 693
+    },
+    "instagram-caption.txt": {
+      "sha256": "0a66fa023fc0f8fee4ad88a02903a251a394b69c4e9b9b6e939e9828226ad589",
+      "bytes": 728
+    },
+    "post-metadata.json": {
+      "sha256": "3b6ccaf314cb6591574941d11bf8262dcffb21f6adfbdc28b7fb6bcecc2fba35",
+      "bytes": 22445
+    },
+    "preview.html": {
+      "sha256": "17b2ca5478d192c887d1c6e1d61baf37fb352b674307951da8d73c242cf8ec91",
+      "bytes": 28413
+    },
+    "cover.png": {
+      "sha256": "0d6bc08b6bf6a25f6950070c87f9217ac5ea1e040470a560addf5a96d4b0c060",
+      "bytes": 75732
+    },
+    "tip.png": {
+      "sha256": "c22544fdfc4e9ead2fe38d1d166591fbbb95a888e00c6216950cfd73903efe4c",
+      "bytes": 85417
+    },
+    "breakdown.png": {
+      "sha256": "3f52166a8887b518f6d47def20e1bda7150de342978963abbdcf36c50b87a1e2",
+      "bytes": 160827
+    },
+    "story.png": {
+      "sha256": "84fe3c1ba2638a452e842aa102c34988120c71cd68c4ff5e3853797aa436b4ba",
+      "bytes": 67986
+    }
+  },
+  "pick_id": "2026-08-14_Brisbane_Broncos_vs_New_Zealand_Warriors",
+  "created_at": "2026-08-14T19:48:56.682138+00:00"
+}

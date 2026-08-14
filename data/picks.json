@@ -1197,5 +1197,22 @@
     "confidence": "MODERATE",
     "result": "manual",
     "pnl": null
+  },
+  {
+    "id": "2026-08-14_rugbyleague_nrl_Brisbane_Broncos_PUNTER_BET",
+    "date": "2026-08-14",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Brisbane Broncos vs New Zealand Warriors",
+    "home_team": "Brisbane Broncos",
+    "away_team": "New Zealand Warriors",
+    "pick": "UNDER 46.5",
+    "market": "Total",
+    "odds": 1.9,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]
