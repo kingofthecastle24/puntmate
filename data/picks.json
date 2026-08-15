@@ -1178,8 +1178,8 @@
     "market": "Total",
     "odds": 1.95,
     "confidence": "LOW",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 9.5
   },
   {
     "id": "2026-08-13_rugbyleague_nrl_Manly_Warringah_Sea_Eagles_PUNTER_BET",
