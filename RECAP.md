@@ -176,3 +176,19 @@ Every result on the record, wins and losses alike.
 📲 Join Telegram for daily picks
 ⚠️ For entertainment & informational purposes only. Not advice. 18+.
 ```
+
+
+## Week 2026-08-24 → 2026-08-30 (auto-generated)
+
+```
+*📈 PUNTMATE NZ — WEEKLY RECAP*
+_24 Aug – 30 Aug 2026_
+
+Quiet week — no picks put up. No-bet days protect the record.
+
+Every result on the record, wins and losses alike.
+
+──────────────────
+📲 Join Telegram for daily picks
+⚠️ For entertainment & informational purposes only. Not advice. 18+.
+```
