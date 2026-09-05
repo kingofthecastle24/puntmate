@@ -219,7 +219,7 @@ class GeneratePickTests(unittest.TestCase):
                 "selection": "Over",
                 "line": 42.5,
                 "market": "Total",
-                "our_probability": 56,
+                "our_probability": 58,  # de-vigged fair "over" is ~50.8% -> edge ~7.2%, clears the 7% floor
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": [],
@@ -277,7 +277,7 @@ class GeneratePickTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 46,
+                "our_probability": 48,  # implied 40% -> edge 8%, clears the 7% floor
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": ["no fresh news found, relying on general squad strength"],
@@ -373,7 +373,7 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
                     "selection": "Yankees",
                     "line": None,
                     "market": "Head to Head",
-                    "our_probability": 65,
+                    "our_probability": 69,  # implied 61.7% -> edge ~7.3%, clears the 7% floor
                     "evidence_sufficient": True,
                     "confidence": "HIGH",
                     "uncertainty_flags": [],
@@ -538,8 +538,11 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
     def test_shaky_but_genuine_edge_produces_risky_pick_with_caution_copy(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        # our_probability 53 vs implied ~50 (odds 2.00) -> edge ~3.0%, below
-        # the 5% standard bar but above the 2.5% shaky-angle floor.
+        # our_probability 50 vs implied 40% (home odds 2.50) -> edge 10%,
+        # clears the (restored, 2026-09-05) 7% backable floor comfortably.
+        # Still RISKY_PICK: odds 2.50 >= GAMBLER_ODDS_MIN with MODERATE (not
+        # HIGH) confidence on a win market is its own risk signal regardless
+        # of edge size -- see classify_risk's "big price" check.
         mock_client.messages.create.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
@@ -548,7 +551,7 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 43,
+                "our_probability": 50,
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": ["squad rotation possible"],
@@ -594,9 +597,16 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
         self.assertFalse(pick["has_pick"])
 
     @patch("generate_pick.anthropic.Anthropic")
-    def test_thin_positive_edge_now_produces_a_pick_not_no_bet(self, mock_anthropic_cls):
-        """The core behaviour change: a thin but genuine positive edge that
-        used to fall into NO_BET now yields a real (risky) pick."""
+    def test_thin_edge_below_restored_floor_is_now_a_genuine_skip(self, mock_anthropic_cls):
+        """2026-09-05 (Micah): the 2026-07-25 change this class was written
+        for dropped the backable floor to >=0% edge, which this exact case
+        (a 2% edge) was meant to demonstrate clearing. That floor is exactly
+        what turned out to have no real value -- our_probability is an LLM's
+        own uncalibrated estimate, and implied_probability here is already
+        de-vigged fair value, so beating it by 2 points is noise, not skill
+        (see pick_classifier.MIN_VALUE_EDGE_PCT). Restored to the 7% floor
+        PICK_ANALYST_SKILL.md has always documented, so this exact 2% edge
+        is now, correctly, a genuine skip -- not a pick."""
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         mock_client.messages.create.return_value = _mock_anthropic_response({
@@ -607,7 +617,7 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 42,   # just above the book's 40% implied
+                "our_probability": 42,   # only 2pp above the book's 40% implied
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": [],
@@ -616,9 +626,8 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
         })
         match_news = {"France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"}}
         pick = generate_pick.generate_pick_for_matches(_mock_matches(), match_news)
-        self.assertTrue(pick["has_pick"])
-        self.assertIn(pick["risk"], ("STANDARD_PICK", "RISKY_PICK"))
-        self.assertNotEqual(pick["risk"], "NO_BET")
+        self.assertFalse(pick["has_pick"])
+        self.assertEqual(pick["risk"], "NO_BET")
 
 
 class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
@@ -730,7 +739,7 @@ class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 43,
+                "our_probability": 50,  # implied 40% -> edge 10%, clears the 7% floor
                 "evidence_sufficient": True,
                 "confidence": "HIGH",
                 "uncertainty_flags": [
