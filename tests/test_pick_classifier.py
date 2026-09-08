@@ -24,15 +24,17 @@ class BackabilityTests(unittest.TestCase):
         self.assertFalse(backable)
         self.assertIn("no genuine value", reason)
 
-    def test_slim_positive_edge_is_backable(self):
-        # a 2% edge is now a real (if light) pick, never a no-bet
+    def test_thin_edge_below_the_restored_floor_is_not_backable(self):
+        # a 2% edge no longer clears the restored 7% value-betting floor
+        # (PICK_ANALYST_SKILL.md: "Edge % >= 7% ... Quality over quantity")
         e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=52, implied_probability=50, confidence="HIGH")
-        backable, _ = is_backable(e)
-        self.assertTrue(backable)
+        backable, reason = is_backable(e)
+        self.assertFalse(backable)
+        self.assertIn("no genuine value", reason)
 
-    def test_zero_edge_is_the_backable_floor(self):
-        e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=50, implied_probability=50, confidence="HIGH")
-        self.assertEqual(MIN_VALUE_EDGE_PCT, 0.0)
+    def test_edge_at_the_floor_is_backable(self):
+        e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=57, implied_probability=50, confidence="HIGH")
+        self.assertEqual(MIN_VALUE_EDGE_PCT, 7.0)
         self.assertTrue(is_backable(e)[0])
 
 

@@ -27,14 +27,12 @@ force NO_BET — odds only ever push a pick toward RISKY_PICK or toward a
 different bet-type bucket. Only insufficient evidence or an edge below the
 minimum threshold produces NO_BET.
 
-Phase 3: below the standard edge bar there is now a second, lower floor
-(RISKY_MIN_EDGE_PCT). An edge that clears the lower floor but not the
-standard one is a genuine, if shakier, angle -- it gets RISKY_PICK (with the
-"keep this light" caution copy) rather than being thrown out as NO_BET. An
-edge below the lower floor, or evidence the model itself flagged as
-insufficient, still means no genuine case exists -- that is still NO_BET.
-This is a threshold nuance, not a removal of NO_BET: on a day with truly
-nothing defensible, NO_BET is still exactly what comes out.
+Note: an earlier design (Phase 3) had a second, lower edge floor
+(RISKY_MIN_EDGE_PCT) that let a shakier-but-real edge through as RISKY_PICK
+instead of NO_BET. That is NOT how is_backable works today — there is a
+single MIN_VALUE_EDGE_PCT floor (see below) below which a candidate is
+dropped outright, full stop. RISKY_MIN_EDGE_PCT is kept only so old imports/
+tests don't break; it is not read anywhere in this module's logic.
 """
 
 from dataclasses import dataclass, field
@@ -67,16 +65,28 @@ CONFIDENCE_LEVELS = ("HIGH", "MODERATE", "LOW")
 # nudges toward RISKY_PICK (not NO_BET) — see classify_risk.
 MIN_EDGE_PCT = 5.0
 
-# Backable floor (2026-07-25). A candidate is only worth featuring when the
-# evidence is sufficient AND it shows at least a non-negative edge over the
-# book — i.e. we are not backing a selection the bookmaker itself prices as
-# more likely to lose than we do. This is the ONLY value gate now; it decides
-# whether a candidate can be featured at all (is_backable), NOT its risk tier.
-# Protective markets (draw-no-bet, double chance, handicaps, totals) are
-# lower-variance, so a slim edge there is genuinely acceptable — the point of
-# widening markets is that a credible, better-protected selection can be found
-# on almost any day with real fixtures, instead of skipping to NO_BET.
-MIN_VALUE_EDGE_PCT = 0.0
+# Backable floor. A candidate is only worth featuring when the evidence is
+# sufficient AND it clears a genuine value bar over the book — this is the
+# ONLY value gate now; it decides whether a candidate can be featured at all
+# (is_backable), NOT its risk tier.
+#
+# 2026-07-25 -> 2026-09-05: this was dropped to 0.0 (any non-negative edge)
+# on 2026-07-25 alongside the market-widening change, on the theory that a
+# credible, better-protected selection (draw-no-bet, double chance, handicap,
+# total) should be findable on almost any day rather than skipping to NO_BET.
+# In practice a >=0% bar is not a real edge requirement — our_probability is
+# an LLM's own subjective, uncalibrated read, and the book's implied
+# probability here is already de-vigged (fair value, not the raw overround
+# price — see fetch_odds.calc_implied_probs), so "our estimate is 0.1pp above
+# the sharp market's fair price" is just noise around an efficient number,
+# not skill. The real ledger backed this up: 45.8% win rate / -$3.90 before
+# this date vs 55.6% win rate but -$10.70 (worse $ result, on fewer, shorter-
+# priced picks) after it. Restored to the 7% floor PICK_ANALYST_SKILL.md has
+# always documented ("Edge % >= 7% (ideally 10%+)... Quality over quantity.
+# No pick is better than a forced pick.") — the code had drifted from the
+# project's own stated philosophy. Expect fewer picks and more NO_BET days;
+# that is the intended trade-off, not a bug.
+MIN_VALUE_EDGE_PCT = 7.0
 
 # Retained for backward-compatible imports/tests; no longer a NO_BET gate.
 RISKY_MIN_EDGE_PCT = 2.5
