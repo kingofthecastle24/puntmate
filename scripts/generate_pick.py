@@ -700,23 +700,57 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
                 + ". Same evidence standards apply — if there is no genuine edge in a focus "
                 "fixture, say so honestly rather than stretching to produce a candidate for it."
             )
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        # 1500 was enough for the original 1-6 fixture slate but a widened
-        # slate can produce a long candidates array; run #49 (2026-07-17,
-        # 59 fixtures) hit the cap and the truncated JSON crashed the run.
-        max_tokens=8000,
+    # 2026-09-08 (Micah): upgraded from claude-sonnet-4-6 to claude-opus-5 —
+    # a straight quality upgrade for a task that's real money, at a few
+    # dollars a month for one call/day. Two things changed on top of the
+    # model-ID swap, both required, not optional tuning:
+    #   - Opus 5 thinks by default (the old call never set `thinking`, which
+    #     used to mean no thinking) and max_tokens now caps thinking + text
+    #     together, not just the JSON candidates array. Streamed, with a
+    #     generous cap, so thinking overhead can't silently eat the budget
+    #     meant for the candidates array — 1500 was enough for the original
+    #     1-6 fixture slate but a widened slate can produce a long candidates
+    #     array; run #49 (2026-07-17, 59 fixtures) hit an 8000 cap and the
+    #     truncated JSON crashed the run.
+    #   - message.content[0] is no longer safely "the answer" — a thinking
+    #     block can lead the response, so the text block has to be found by
+    #     type, not assumed to be first.
+    with client.messages.stream(
+        model="claude-opus-5",
+        max_tokens=32000,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": prompt}],
-    )
-    raw_text = message.content[0].text
+    ) as stream:
+        message = stream.get_final_message()
+
+    stop_reason = getattr(message, "stop_reason", None)
+    text_block = next((b for b in message.content if getattr(b, "type", None) == "text"), None)
+
+    if stop_reason == "refusal" or text_block is None:
+        # Opus 5's safety classifiers can decline a request outright (HTTP
+        # 200, stop_reason="refusal", no text block). This content is benign
+        # sports analysis so it should be rare, but fail safe to NO_BET
+        # rather than crash if it ever happens.
+        research_warnings.append(
+            f"model call returned no usable text (stop_reason={stop_reason}) — "
+            f"failing safe to NO_BET rather than guessing"
+        )
+        print(f"::warning::generate_pick: no text block from model (stop_reason={stop_reason}) — NO_BET fail-safe")
+        return {
+            "has_pick": False,
+            "risk": RISK_NO_BET,
+            "bet_type": BET_NO_BET,
+            "reasoning": "Couldn't complete today's assessment cleanly — no pick rather than a rushed one.",
+            "research_warnings": research_warnings,
+        }
+
+    raw_text = text_block.text
     try:
         result = _extract_json(raw_text)
     except (json.JSONDecodeError, ValueError) as e:
         # FAIL-SAFE (added after run #49 crashed here): an unparseable model
         # response must degrade to an honest NO_BET, never crash the run.
         # Most likely cause is output truncation (check stop_reason).
-        stop_reason = getattr(message, "stop_reason", None)
         research_warnings.append(
             f"model response could not be parsed as JSON ({e}; stop_reason={stop_reason}) — "
             f"failing safe to NO_BET rather than guessing"
