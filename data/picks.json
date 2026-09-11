@@ -1214,5 +1214,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-09-11_rugbyleague_nrl_Cronulla_Sutherland_Sharks_PUNTER_BET",
+    "date": "2026-09-11",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Cronulla Sutherland Sharks vs North Queensland Cowboys",
+    "home_team": "Cronulla Sutherland Sharks",
+    "away_team": "North Queensland Cowboys",
+    "pick": "UNDER 47.5",
+    "market": "Total",
+    "odds": 2.0,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

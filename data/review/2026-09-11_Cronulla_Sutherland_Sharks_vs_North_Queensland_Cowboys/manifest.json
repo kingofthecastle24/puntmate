@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "7a3ffc8e6018de98b86694fa395436a902e3490259b081bb91a0ab2cbed701d4",
+      "bytes": 649
+    },
+    "instagram-caption.txt": {
+      "sha256": "5014bc8e187b49654a17d65981be789e744c17f64ffc453e5e0586ad263d22cf",
+      "bytes": 684
+    },
+    "post-metadata.json": {
+      "sha256": "4465342aafdae5cf778fbb99236e4cdaaa21ed4fb83f44d7a5e002a93a355376",
+      "bytes": 31815
+    },
+    "preview.html": {
+      "sha256": "62a0871b4a8fad531e6d62702d2e943b5a26445bfc8a2c88b8b7442c78594e95",
+      "bytes": 38177
+    },
+    "cover.png": {
+      "sha256": "3defd99601caed2c0668d019218c12d582876c6848bfd6776f4903e86f439eca",
+      "bytes": 74925
+    },
+    "tip.png": {
+      "sha256": "cc74ca5a4558796f02a9fb226ecee1f4f7e340e0318d9b43f275b1e571594520",
+      "bytes": 87392
+    },
+    "breakdown.png": {
+      "sha256": "cd77a6c17bbe47537657a43bb1daea2f79c533b2d40cbb318406aabaea5391c8",
+      "bytes": 156287
+    },
+    "story.png": {
+      "sha256": "486187caabe3ca1cf34e7087a310acc5dddc7c755ab72bbf5a56816a1a64eb43",
+      "bytes": 73521
+    }
+  },
+  "pick_id": "2026-09-11_Cronulla_Sutherland_Sharks_vs_North_Queensland_Cowboys",
+  "created_at": "2026-09-11T21:35:41.212864+00:00"
+}
