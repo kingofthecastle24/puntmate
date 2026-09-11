@@ -1231,5 +1231,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-09-11_rugbyleague_nrl_New_Zealand_Warriors_PUNTER_BET",
+    "date": "2026-09-11",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "New Zealand Warriors vs Dolphins",
+    "home_team": "New Zealand Warriors",
+    "away_team": "Dolphins",
+    "pick": "NEW ZEALAND WARRIORS",
+    "market": "Head to Head",
+    "odds": 1.64,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

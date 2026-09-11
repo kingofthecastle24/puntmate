@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-09-11_New_Zealand_Warriors_vs_Dolphins",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-09-11T22:25:51.113569+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-09-11T22:25:51.113786+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-09-11T22:25:51.113980+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "b1fba44fc02de493ea095d7f8127b06001a8ef4d60f9dc50686590f0bd7ea0b2",
+      "bytes": 671
+    },
+    "instagram-caption.txt": {
+      "sha256": "343fe385d358aeadff8b45e638233ef5b56bbcfa7cfe4b97627618476075fa58",
+      "bytes": 706
+    },
+    "post-metadata.json": {
+      "sha256": "0556ed4a670da782d5d390cc9875d7d13dde573fba87350e4e6d63eae7f6abfe",
+      "bytes": 34792
+    },
+    "preview.html": {
+      "sha256": "82670ee88bf4ac65fb73e6287f6557150cf918a2106889a955c4ba26b30b24b9",
+      "bytes": 41403
+    },
+    "cover.png": {
+      "sha256": "3defd99601caed2c0668d019218c12d582876c6848bfd6776f4903e86f439eca",
+      "bytes": 74925
+    },
+    "tip.png": {
+      "sha256": "ea9aec357c0cfbfa1cd791cd2c12c9ae2c0bf0e014c01beae5ff354597cad253",
+      "bytes": 88311
+    },
+    "breakdown.png": {
+      "sha256": "5f4948fa50c1864cd76ae8aa0f513857ec481e8577de59121587551146be7462",
+      "bytes": 155449
+    },
+    "story.png": {
+      "sha256": "46e12274311bb2b4030434425b460fdec2c3b1367e54f835d3d35e062103cc49",
+      "bytes": 77542
+    }
+  },
+  "pick_id": "2026-09-11_New_Zealand_Warriors_vs_Dolphins",
+  "created_at": "2026-09-11T22:25:50.876306+00:00"
+}
