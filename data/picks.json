@@ -1265,5 +1265,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-09-12_mma_mixed_martial_arts_Brandon_Moreno_PUNTER_BET",
+    "date": "2026-09-12",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "mma_mixed_martial_arts",
+    "sport": "mma_mixed_martial_arts",
+    "match": "Brandon Moreno vs Joseph Morales",
+    "home_team": "Brandon Moreno",
+    "away_team": "Joseph Morales",
+    "pick": "JOSEPH MORALES",
+    "market": "Head to Head",
+    "odds": 1.95,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "189a13851ff135bb179043170efa02cd617582531766416750f37d30e39b6067",
+      "bytes": 580
+    },
+    "instagram-caption.txt": {
+      "sha256": "e9b1e94f2ceb1a8a4669118158def60fe9fead935da16c73c6a904f345d53328",
+      "bytes": 615
+    },
+    "post-metadata.json": {
+      "sha256": "e9920312fa56a5c843cb6b4b16f48cc6ed81b9aed1f90f52eaecde8c03fcd4c4",
+      "bytes": 21180
+    },
+    "preview.html": {
+      "sha256": "e0270ebe50509c04a6afb10c7a0601c4ce4a8b060b1b7f08fff799cd3321d793",
+      "bytes": 26738
+    },
+    "cover.png": {
+      "sha256": "43ca1675acab3311e152f80b3ebc66fdbdead51215f0ed0bb6fe0e4bf8990916",
+      "bytes": 75533
+    },
+    "tip.png": {
+      "sha256": "17c3114cd55792a8f6846fe820c9ebc738c48fb67bfb95d786a7ee20b3c3780a",
+      "bytes": 85808
+    },
+    "breakdown.png": {
+      "sha256": "5043eb7e631d1b01723ce10451a78e882af802b10fb4306deb2e6d022394e9c7",
+      "bytes": 141934
+    },
+    "story.png": {
+      "sha256": "0c134c411b199a2cd6fb75cc2bb6a1e2d3d674dc8ce557e8cd0209870845dfdf",
+      "bytes": 71157
+    }
+  },
+  "pick_id": "2026-09-12_Brandon_Moreno_vs_Joseph_Morales",
+  "created_at": "2026-09-12T22:08:28.757003+00:00"
+}
