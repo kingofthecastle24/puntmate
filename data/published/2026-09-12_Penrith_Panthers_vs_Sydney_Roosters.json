@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 229,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1789247726,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5WqlwO7SUT7zTD14TeC8W8JzmMn-AAKhDGsbAxAxRTeBG6oXNLzRAQADAgADcwADPQQ",
+            "file_unique_id": "AQADoQxrGwMQMUV4",
+            "file_size": 1027,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5WqlwO7SUT7zTD14TeC8W8JzmMn-AAKhDGsbAxAxRTeBG6oXNLzRAQADAgADbQADPQQ",
+            "file_unique_id": "AQADoQxrGwMQMUVy",
+            "file_size": 10852,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5WqlwO7SUT7zTD14TeC8W8JzmMn-AAKhDGsbAxAxRTeBG6oXNLzRAQADAgADeAADPQQ",
+            "file_unique_id": "AQADoQxrGwMQMUV9",
+            "file_size": 42945,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5WqlwO7SUT7zTD14TeC8W8JzmMn-AAKhDGsbAxAxRTeBG6oXNLzRAQADAgADdwADPQQ",
+            "file_unique_id": "AQADoQxrGwMQMUV8",
+            "file_size": 79032,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5WqlwO7SUT7zTD14TeC8W8JzmMn-AAKhDGsbAxAxRTeBG6oXNLzRAQADAgADeQADPQQ",
+            "file_unique_id": "AQADoQxrGwMQMUV-",
+            "file_size": 80206,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Penrith Panthers vs Sydney Roosters\n\nPICK: SYDNEY ROOSTERS +9.5\nODDS: 1.95 (Handicap)\nBET TYPE: PUNTER\n\nFinals week, Sydney Roosters are a legitimate top-four quality side and won't be in blowout territory without a fight. Penrith winning by 10+ is possible but the Roosters' defensive system and their capacity to stay in big games makes +9.5 at nearly even money look like it has some value.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 62,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 89,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 111,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 129,
+            "length": 289,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Saturday, 12-Sep-26 14:15:26 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AhsHVV28yv37J461ZkdevK_",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Saturday, 12-Sep-26 14:15:27 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "A12ytJyJTqHWVum9VLp6SX2"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}

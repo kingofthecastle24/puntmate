@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-09-12_Penrith_Panthers_vs_Sydney_Roosters",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-09-12T21:15:07.713351+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-09-12T21:15:25.344411+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-09-12T21:15:25.344648+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-09-12T21:15:27.527368+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": false, \"facebook_story\": false}"
     }
   ]
 }
