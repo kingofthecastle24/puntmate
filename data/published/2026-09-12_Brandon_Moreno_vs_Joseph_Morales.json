@@ -1,0 +1,119 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 230,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1789250928,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5mqlzW-TMv61IPpMixzpf5GEoxb5AAKiDGsbAxAxRSM7cCTqjDyKAQADAgADcwADPQQ",
+            "file_unique_id": "AQADogxrGwMQMUV4",
+            "file_size": 1003,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5mqlzW-TMv61IPpMixzpf5GEoxb5AAKiDGsbAxAxRSM7cCTqjDyKAQADAgADbQADPQQ",
+            "file_unique_id": "AQADogxrGwMQMUVy",
+            "file_size": 10360,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5mqlzW-TMv61IPpMixzpf5GEoxb5AAKiDGsbAxAxRSM7cCTqjDyKAQADAgADeAADPQQ",
+            "file_unique_id": "AQADogxrGwMQMUV9",
+            "file_size": 42263,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5mqlzW-TMv61IPpMixzpf5GEoxb5AAKiDGsbAxAxRSM7cCTqjDyKAQADAgADdwADPQQ",
+            "file_unique_id": "AQADogxrGwMQMUV8",
+            "file_size": 76724,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD5mqlzW-TMv61IPpMixzpf5GEoxb5AAKiDGsbAxAxRSM7cCTqjDyKAQADAgADeQADPQQ",
+            "file_unique_id": "AQADogxrGwMQMUV-",
+            "file_size": 77720,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 UFC\n\n\ud83c\udfdf Brandon Moreno vs Joseph Morales\n\nPICK: JOSEPH MORALES\nODDS: 1.95 (Head to Head)\nBET TYPE: PUNTER\n\nThe market has Morales as a slight favourite at 1.95 (50.9% implied) over Moreno at 2.02, which is notable \u2014 Moreno is a former UFC flyweight world champion and the fact that Morales is favoured tells you something about the perception of where Moreno's career is right now.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 59,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 80,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 106,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 124,
+            "length": 274,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Saturday, 12-Sep-26 15:08:48 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AHygLzRXNUk7OuKohutbj0P",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Saturday, 12-Sep-26 15:08:48 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AK2OIUuGjqGpdzCdU7H7Vj3"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
