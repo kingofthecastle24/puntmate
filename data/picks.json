@@ -1229,8 +1229,8 @@
     "market": "Total",
     "odds": 2.0,
     "confidence": "LOW",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 10.0
   },
   {
     "id": "2026-09-11_rugbyleague_nrl_New_Zealand_Warriors_PUNTER_BET",
@@ -1246,7 +1246,7 @@
     "market": "Head to Head",
     "odds": 1.64,
     "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   }
 ]
