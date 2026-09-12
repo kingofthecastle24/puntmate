@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "ba1f7c36ca6302c73dc69948bf256171f1d61a82a35f695d1208df203fa029fe",
+      "bytes": 598
+    },
+    "instagram-caption.txt": {
+      "sha256": "1822580c9d4a01ba7685fe41194436a4271ff0d0384c1b1b91ab2a54e533d26e",
+      "bytes": 633
+    },
+    "post-metadata.json": {
+      "sha256": "412f4f7b2dc4ae586e5a77c084331fdc491307f81bef88c328d2afaab060d1e1",
+      "bytes": 25532
+    },
+    "preview.html": {
+      "sha256": "24dbfa751c5ae71e2c1c68da935e94c0974fb277adca68f3b3a27ff3128d2791",
+      "bytes": 31339
+    },
+    "cover.png": {
+      "sha256": "2c9043ea80dc894c9bc2b81cdd245e5092467885f588be83ecea6eefc8c3b7d6",
+      "bytes": 75157
+    },
+    "tip.png": {
+      "sha256": "4c3f4f801858ae52bfcdaebfc489734fa3ea73e3dd13a453ba8df96c51498834",
+      "bytes": 89603
+    },
+    "breakdown.png": {
+      "sha256": "32740ea261d758c9ddaf60e97060b298b4a8193055f8766ae81d46c2f132cc43",
+      "bytes": 145672
+    },
+    "story.png": {
+      "sha256": "c22fac96dccfe95682954162b9d53215a2ff9485207f2f2f5f61837f92d32988",
+      "bytes": 75428
+    }
+  },
+  "pick_id": "2026-09-12_Penrith_Panthers_vs_Sydney_Roosters",
+  "created_at": "2026-09-12T21:15:07.499730+00:00"
+}
