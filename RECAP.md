@@ -208,3 +208,23 @@ Every result on the record, wins and losses alike.
 📲 Join Telegram for daily picks
 ⚠️ For entertainment & informational purposes only. Not advice. 18+.
 ```
+
+
+## Week 2026-09-07 → 2026-09-13 (auto-generated)
+
+```
+*📈 PUNTMATE NZ — WEEKLY RECAP*
+_07 Sep – 13 Sep 2026_
+
+*Overall: 1W – 1L  ·  Strike rate 50%*
+
+🎯 Punter: 1W – 1L  (50%)
+
+⏳ 2 pick(s) still to settle — counted next week, never guessed.
+
+Every result on the record, wins and losses alike.
+
+──────────────────
+📲 Join Telegram for daily picks
+⚠️ For entertainment & informational purposes only. Not advice. 18+.
+```
