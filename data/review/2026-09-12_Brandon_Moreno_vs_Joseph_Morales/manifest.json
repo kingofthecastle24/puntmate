@@ -9,11 +9,11 @@
       "bytes": 615
     },
     "post-metadata.json": {
-      "sha256": "b91bfec91f77a2fee52fe594f052c35ed09534b682a9469233491d543a7417fe",
+      "sha256": "926add6d3d191ef4da884718a3936e69a55d92c97d8579b78103add3992e8d29",
       "bytes": 21180
     },
     "preview.html": {
-      "sha256": "f02ec1f53379e11208f81442c8d7cf24b75d5adb9638b9422e0f92a3ff14a250",
+      "sha256": "6e3ea6893125060da96ef2c58d2ed2e845ccdcc0a0a7906a2555aee07114dd92",
       "bytes": 26738
     },
     "cover.png": {
@@ -34,5 +34,5 @@
     }
   },
   "pick_id": "2026-09-12_Brandon_Moreno_vs_Joseph_Morales",
-  "created_at": "2026-09-17T22:46:23.416318+00:00"
+  "created_at": "2026-09-18T21:25:59.538357+00:00"
 }
