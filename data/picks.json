@@ -1282,5 +1282,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-10-01_icehockey_nhl_Utah_Mammoth_PUNTER_BET",
+    "date": "2026-10-01",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "icehockey_nhl",
+    "sport": "icehockey_nhl",
+    "match": "Utah Mammoth vs Chicago Blackhawks",
+    "home_team": "Utah Mammoth",
+    "away_team": "Chicago Blackhawks",
+    "pick": "UTAH MAMMOTH",
+    "market": "Head to Head",
+    "odds": 1.73,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]
