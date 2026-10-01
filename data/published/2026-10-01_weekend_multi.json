@@ -1,0 +1,13 @@
+{
+  "telegram_punter_multi": {
+    "ok": false,
+    "detail": {
+      "ok": false,
+      "error_code": 400,
+      "description": "Bad Request: PEER_ID_INVALID"
+    }
+  },
+  "instagram_punter_multi": {
+    "ok": false
+  }
+}
