@@ -1,78 +1,10 @@
 {
-  "run_date": "2026-10-01",
-  "run_ts": "2026-10-01T22:59:02.214591+00:00",
-  "hours_ahead": 76,
-  "fixture_count": 52,
-  "punter_multi_legs": [
-    {
-      "match": "Sydney Roosters vs Newcastle Knights",
-      "sport_label": "NRL",
-      "selection": "SYDNEY ROOSTERS",
-      "market": "Head to Head",
-      "odds": "1.46"
-    },
-    {
-      "match": "Jacobe Smith vs Bruce Whitehead",
-      "sport_label": "UFC",
-      "selection": "JACOBE SMITH",
-      "market": "Head to Head",
-      "odds": "1.11"
-    },
-    {
-      "match": "Imanol Rodriguez vs Alden Coria",
-      "sport_label": "UFC",
-      "selection": "ALDEN CORIA",
-      "market": "Head to Head",
-      "odds": "2.30"
-    },
-    {
-      "match": "Marvin Vettori vs Ismail Naurdiev",
-      "sport_label": "UFC",
-      "selection": "ISMAIL NAURDIEV",
-      "market": "Head to Head",
-      "odds": "1.77"
-    },
-    {
-      "match": "Johnny Walker vs Michael Parkin",
-      "sport_label": "UFC",
-      "selection": "JOHNNY WALKER",
-      "market": "Head to Head",
-      "odds": "1.80"
-    },
-    {
-      "match": "Ateba Gautier vs Roman Kopylov",
-      "sport_label": "UFC",
-      "selection": "ATEBA GAUTIER",
-      "market": "Head to Head",
-      "odds": "1.46"
-    },
-    {
-      "match": "Natalia Silva vs Wang Cong",
-      "sport_label": "UFC",
-      "selection": "NATALIA SILVA",
-      "market": "Head to Head",
-      "odds": "1.50"
-    },
-    {
-      "match": "Damian Pinas vs Andrey Pulyaev",
-      "sport_label": "UFC",
-      "selection": "DAMIAN PINAS",
-      "market": "Head to Head",
-      "odds": "1.20"
-    },
-    {
-      "match": "Lucas Armand vs Anthony Wint",
-      "sport_label": "UFC",
-      "selection": "ANTHONY WINT",
-      "market": "Head to Head",
-      "odds": "1.21"
-    }
-  ],
-  "punter_multi_promo_hint": null,
-  "gambler_multi_legs": [],
-  "gambler_multi_promo_hint": null,
-  "degenerate_multi_legs": [],
-  "degenerate_multi_promo_hint": null,
+  "has_pick": false,
+  "is_weekend_multi": true,
+  "pick_id": "2026-10-01_weekend_multi",
+  "post_date": "2026-10-01",
+  "run_id": "36938182545",
+  "generated_at": "2026-10-01T23:01:24.208315+00:00",
   "research_warnings": [
     "rejected source (team-name-only match, no sport context): \"Marvin Vettori v Ismail Naurdiev Odds - FanDuel Sportsbook\"",
     "only 2 validated source(s) \u2014 confidence capped at MODERATE",
@@ -309,12 +241,22 @@
     "uncertainty_flag (internal only, not shown publicly): 'Grand final pressure can tighten even the most dominant sides'",
     "uncertainty_flag (internal only, not shown publicly): \"Knights have earned their spot here \u2014 they're no pretenders\""
   ],
-  "anchor_pick": {
-    "match": "Weekend Multi",
-    "home_team": "Weekend",
-    "away_team": "Multi",
-    "sport": "",
-    "sport_key": "",
-    "kickoff": "2026-10-01T00:00:00Z"
-  }
+  "workflow_state": "GENERATED",
+  "has_punter_multi": true,
+  "punter_multi_carousel_paths": [
+    "data/review/2026-10-01_weekend_multi/punter_multi_cover.png",
+    "data/review/2026-10-01_weekend_multi/punter_multi_legs.png",
+    "data/review/2026-10-01_weekend_multi/punter_multi_breakdown.png"
+  ],
+  "punter_multi_carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-01_Weekend_Multi_night_punter_multi_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-01_Weekend_Multi_night_punter_multi_2_legs.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-01_Weekend_Multi_night_punter_multi_3_breakdown.png"
+  ],
+  "has_gambler_multi": false,
+  "has_degenerate_multi": false,
+  "intended_platforms": [
+    "instagram_feed",
+    "telegram"
+  ]
 }
