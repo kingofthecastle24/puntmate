@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-01_Utah_Mammoth_vs_Chicago_Blackhawks",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISH_FAILED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-01T23:00:17.450345+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-01T23:00:37.143406+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-01T23:00:37.143571+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISH_FAILED",
+      "at": "2026-10-01T23:00:39.402685+00:00",
+      "note": "{\"telegram\": false, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": false, \"facebook_story\": false}"
     }
   ]
 }
