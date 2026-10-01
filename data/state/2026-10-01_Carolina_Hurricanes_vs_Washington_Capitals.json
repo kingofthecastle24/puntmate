@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-01_Carolina_Hurricanes_vs_Washington_Capitals",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-01T23:50:43.235681+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-01T23:50:43.235869+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-01T23:50:43.236070+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

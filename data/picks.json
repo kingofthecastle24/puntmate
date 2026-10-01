@@ -1299,5 +1299,22 @@
     "confidence": "MODERATE",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-10-01_icehockey_nhl_Carolina_Hurricanes_PUNTER_BET",
+    "date": "2026-10-01",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "icehockey_nhl",
+    "sport": "icehockey_nhl",
+    "match": "Carolina Hurricanes vs Washington Capitals",
+    "home_team": "Carolina Hurricanes",
+    "away_team": "Washington Capitals",
+    "pick": "CAROLINA HURRICANES",
+    "market": "Head to Head",
+    "odds": 2.14,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]

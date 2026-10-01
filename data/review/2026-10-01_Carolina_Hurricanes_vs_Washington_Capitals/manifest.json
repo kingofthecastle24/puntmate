@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "159e744f6b271d179cfb74f719ecd5e53572b6a116e8a8c7c396276ef817a8af",
+      "bytes": 675
+    },
+    "instagram-caption.txt": {
+      "sha256": "6063e9bb52d944242e00dc586117cfc9e29082f4417e3134302420e90dd61013",
+      "bytes": 710
+    },
+    "post-metadata.json": {
+      "sha256": "70f82bdb82c56db78b3988d324dfc617a5585f0582f7393b416d39d322b76596",
+      "bytes": 10726
+    },
+    "preview.html": {
+      "sha256": "6f34d21a459a843bda7fb3d7a88c7ffffab7358da576e05ac2e4a123f90cd2bf",
+      "bytes": 15952
+    },
+    "cover.png": {
+      "sha256": "bba48fae9698705ad139f2d7a43e0f94ba54722e889a5c097ed077471060252c",
+      "bytes": 75609
+    },
+    "tip.png": {
+      "sha256": "1e6e47f7feac04eabcdf45c2825267f056c42fbd51771c4f1a502f2b6c033cc9",
+      "bytes": 91820
+    },
+    "breakdown.png": {
+      "sha256": "0479a3330f5ad644a6d61ddc4b6c4e0a65cf329d44393d2d4cd8cad05b3ec91b",
+      "bytes": 156150
+    },
+    "story.png": {
+      "sha256": "3992e1116da0e83da4d8d1dda9ee86bb7ffe10b2d1bac05bcf9fbe86a6c1a367",
+      "bytes": 77571
+    }
+  },
+  "pick_id": "2026-10-01_Carolina_Hurricanes_vs_Washington_Capitals",
+  "created_at": "2026-10-01T23:50:42.966146+00:00"
+}
