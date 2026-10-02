@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-02_Court_McGee_vs_Eric_Nolan",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISH_FAILED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-02T23:41:15.490567+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-02T23:41:33.959247+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-02T23:41:33.959430+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISH_FAILED",
+      "at": "2026-10-02T23:41:36.863283+00:00",
+      "note": "{\"telegram\": false, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": false, \"facebook_story\": false}"
     }
   ]
 }
