@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "e161433e22cad081fdbd2c92649ca2f61b7f24075a44152f33e93473cf958da7",
+      "bytes": 554
+    },
+    "instagram-caption.txt": {
+      "sha256": "d9e73c018c8f6c27955064ab134eae9c8beba2fc70ba8feffa182b859afa41e9",
+      "bytes": 589
+    },
+    "post-metadata.json": {
+      "sha256": "b427f043a0b8972c01350de1fa226a6723211bc0584404ed4ca4fb2a8f57bb87",
+      "bytes": 23442
+    },
+    "preview.html": {
+      "sha256": "9e07a2b81de41b1eccae2e7b747eff6675f0add147b1d8130908ceaa11ec5e05",
+      "bytes": 29174
+    },
+    "cover.png": {
+      "sha256": "5ede8987ba2572bb547ad8e589fa43ea5d53c927d511174869c16ea4abec2a5a",
+      "bytes": 75804
+    },
+    "tip.png": {
+      "sha256": "50f0099cde7e1939cef6e1f3698c6a66c1b1b8a9919303748d2f10ff3e89568d",
+      "bytes": 75137
+    },
+    "breakdown.png": {
+      "sha256": "f4b1a1577dcc484337984d25bbd42649a33ca4f587e1e4b8857d651f5ee620b0",
+      "bytes": 129201
+    },
+    "story.png": {
+      "sha256": "7260c2997f4089d8440fadba8dd3926563ad08e17ac3404231a135ee47fa8a87",
+      "bytes": 64504
+    }
+  },
+  "pick_id": "2026-10-02_Court_McGee_vs_Eric_Nolan",
+  "created_at": "2026-10-02T23:41:15.250855+00:00"
+}

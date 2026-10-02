@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-02_Court_McGee_vs_Eric_Nolan",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-02T23:41:15.490165+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-02T23:41:15.490371+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-02T23:41:15.490567+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
