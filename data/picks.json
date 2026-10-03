@@ -1314,8 +1314,8 @@
     "market": "Head to Head",
     "odds": 2.14,
     "confidence": "LOW",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-10-02_mma_mixed_martial_arts_Johnny_Walker_PUNTER_BET",
