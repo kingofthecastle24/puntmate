@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "74832a6ac0a30f8ce76f95927b8927ef2472255394945b2d9382237718614775",
+      "bytes": 595
+    },
+    "instagram-caption.txt": {
+      "sha256": "8651cfc5673f11b3f7a9b2f519c088f520e0970f04481ae3df83a09f95101ec2",
+      "bytes": 630
+    },
+    "post-metadata.json": {
+      "sha256": "26c0b73f7508675b39506613d0c9f3569d01c36cce86768b8855ae546532e49d",
+      "bytes": 19490
+    },
+    "preview.html": {
+      "sha256": "56a99d7e02d0f7d493cc3e3a7400fe9d96cc8ce9c07ee294e24a73940dd6cff4",
+      "bytes": 25155
+    },
+    "cover.png": {
+      "sha256": "5bd4ec3864db26317b15a4f22aa6a07af8c52748ffc692cb41e03e1aefddbd9a",
+      "bytes": 75379
+    },
+    "tip.png": {
+      "sha256": "296c0405d47fd55ab2a42e9dd4a258f732e582ad8496860a0670a885035b73ac",
+      "bytes": 81720
+    },
+    "breakdown.png": {
+      "sha256": "c1e7c93d397180467c8241afd18056ba5c3c1dfc9541bf78b8ec81d47ca14504",
+      "bytes": 144444
+    },
+    "story.png": {
+      "sha256": "36303745dec44fea92af64dcf20b911fa52be9037398dff2999e14783e9053ed",
+      "bytes": 66109
+    }
+  },
+  "pick_id": "2026-10-03_Ateba_Gautier_vs_Roman_Kopylov",
+  "created_at": "2026-10-03T22:49:03.057620+00:00"
+}

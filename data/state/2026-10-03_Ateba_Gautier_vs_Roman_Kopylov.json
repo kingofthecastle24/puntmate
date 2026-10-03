@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-03_Ateba_Gautier_vs_Roman_Kopylov",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-03T22:49:03.339294+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-03T22:49:03.339500+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-03T22:49:03.339708+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

@@ -1367,5 +1367,22 @@
     "confidence": "HIGH",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-10-03_mma_mixed_martial_arts_Ateba_Gautier_PUNTER_BET",
+    "date": "2026-10-03",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "mma_mixed_martial_arts",
+    "sport": "mma_mixed_martial_arts",
+    "match": "Ateba Gautier vs Roman Kopylov",
+    "home_team": "Ateba Gautier",
+    "away_team": "Roman Kopylov",
+    "pick": "ATEBA GAUTIER",
+    "market": "Head to Head",
+    "odds": 1.46,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]
