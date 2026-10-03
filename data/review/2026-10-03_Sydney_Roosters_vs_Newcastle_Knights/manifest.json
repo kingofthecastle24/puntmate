@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "87b82a6586b6be3ac14a019f43d466ed47733e491f3e4f6563a3f1965fd230a6",
+      "bytes": 571
+    },
+    "instagram-caption.txt": {
+      "sha256": "2a8aa7758be20561e18e144e1855ac5ab52f38a4b8a9f1792ae9869fe3f39109",
+      "bytes": 636
+    },
+    "post-metadata.json": {
+      "sha256": "76c67985b214bac34c825ae17467cfd9839f4e182a40c9f5096bfe605d233894",
+      "bytes": 19990
+    },
+    "preview.html": {
+      "sha256": "b7b9b92f5bb18130a159bbe2dd30ac0c18a2de185b404d305b8309a32e5a9924",
+      "bytes": 25623
+    },
+    "cover.png": {
+      "sha256": "af9d2910e3196c16f209cb890ae9983724da8f6668474c0abed1c5c23f634c08",
+      "bytes": 74946
+    },
+    "tip.png": {
+      "sha256": "3f6e5f4c863be3a19338d42595d4d36c0b0ab21cf958b760f90d7dc534ace6d4",
+      "bytes": 88104
+    },
+    "breakdown.png": {
+      "sha256": "a369f3fbb79afb856d8de85fc9a5b7072f8226ab1e19da99bf9423495b0dce7c",
+      "bytes": 136737
+    },
+    "story.png": {
+      "sha256": "6480426e25693c95fba6ba45e9998b80bec37c7b6f5c0d5706dd02d220bacac1",
+      "bytes": 74118
+    }
+  },
+  "pick_id": "2026-10-03_Sydney_Roosters_vs_Newcastle_Knights",
+  "created_at": "2026-10-03T22:01:21.701270+00:00"
+}

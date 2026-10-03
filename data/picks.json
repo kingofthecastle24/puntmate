@@ -1350,5 +1350,22 @@
     "confidence": "MODERATE",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-10-03_rugbyleague_nrl_Sydney_Roosters_INVESTOR_BET",
+    "date": "2026-10-03",
+    "bet_type": "INVESTOR_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "rugbyleague_nrl",
+    "sport": "rugbyleague_nrl",
+    "match": "Sydney Roosters vs Newcastle Knights",
+    "home_team": "Sydney Roosters",
+    "away_team": "Newcastle Knights",
+    "pick": "SYDNEY ROOSTERS",
+    "market": "Head to Head",
+    "odds": 1.46,
+    "confidence": "HIGH",
+    "result": "pending",
+    "pnl": null
   }
 ]
