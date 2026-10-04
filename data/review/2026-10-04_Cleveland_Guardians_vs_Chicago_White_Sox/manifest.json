@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "4d6f534b5c94aa36ccfcfdafd624d046496c3a46c82e394a6b2ba12d276ba555",
+      "bytes": 691
+    },
+    "instagram-caption.txt": {
+      "sha256": "385fa81559e466cd52871668959829c477b54f7fce7a5a47c50333e6a0976427",
+      "bytes": 726
+    },
+    "post-metadata.json": {
+      "sha256": "4d4765c4289fcdfeb0cc4b8c23cfc5fe3ffe63b0984ccb7eebb2576eb84dbf87",
+      "bytes": 7672
+    },
+    "preview.html": {
+      "sha256": "8946001c5e10b8a27aab9269cfd0b78af96e4ecf93ba43b76cb3c48241ba1da2",
+      "bytes": 12715
+    },
+    "cover.png": {
+      "sha256": "02f0bdda14aa333a12836f147ba41625bb9e0dc3fcbc27e94691cdda6880a1e0",
+      "bytes": 75276
+    },
+    "tip.png": {
+      "sha256": "e572ceb33619355dd7bcd7d6da11a1f3ec61e01f5eb9fa3c763d3356e2298691",
+      "bytes": 82814
+    },
+    "breakdown.png": {
+      "sha256": "b7639e0fdc688734c22bf846f9b601810c0fa84dae7dbefa5ad318f89496532c",
+      "bytes": 161367
+    },
+    "story.png": {
+      "sha256": "30e17eb68771da7c2f576d9617b18f343bb0e601693812744cd9fa87dd3ef38e",
+      "bytes": 69100
+    }
+  },
+  "pick_id": "2026-10-04_Cleveland_Guardians_vs_Chicago_White_Sox",
+  "created_at": "2026-10-04T22:57:16.650423+00:00"
+}

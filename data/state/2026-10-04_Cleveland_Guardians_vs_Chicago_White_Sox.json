@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-04_Cleveland_Guardians_vs_Chicago_White_Sox",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-04T22:57:16.887825+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-04T22:57:16.888015+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-04T22:57:16.888210+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
