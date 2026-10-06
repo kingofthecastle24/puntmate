@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-06_Montr_al_Canadiens_vs_Carolina_Hurricanes",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-06T01:15:57.634261+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-06T01:15:57.634458+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-06T01:15:57.634659+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

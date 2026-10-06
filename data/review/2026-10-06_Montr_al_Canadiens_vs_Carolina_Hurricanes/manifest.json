@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "82d552c7e3fda412c8bef5e1006917564e4cdd702793059c50c7388646d552b5",
+      "bytes": 609
+    },
+    "instagram-caption.txt": {
+      "sha256": "5bc9104adaf5057ffe6e60470c52b69fbb32b087953f8943950b7004d241f28f",
+      "bytes": 644
+    },
+    "post-metadata.json": {
+      "sha256": "508ea192b159e66335361551c4f3d8890d826faee0c98d548643be4f3eabb0bb",
+      "bytes": 10168
+    },
+    "preview.html": {
+      "sha256": "d4073517856d4205a0d4d4082b16f61623813b0cc19b2d02dac09e75080c0227",
+      "bytes": 15138
+    },
+    "cover.png": {
+      "sha256": "8c18a5aa1bc772b2c24dafbfdb3c079e1a3f95c726c4476076576724c98259d2",
+      "bytes": 75445
+    },
+    "tip.png": {
+      "sha256": "22253a7bb96e14277f3e48fc9e9dbc8d52dc13354da350efc3bbdb1ff9dc78d9",
+      "bytes": 92614
+    },
+    "breakdown.png": {
+      "sha256": "8e29dd77a73deda161d82ed9fac6999461404c4cf79ccba6dc3d53b66259a07e",
+      "bytes": 145793
+    },
+    "story.png": {
+      "sha256": "b3a4d5fdce4cec9e8ca9d40f3c981dfb9750404e41f4147a57424ad46494300f",
+      "bytes": 78669
+    }
+  },
+  "pick_id": "2026-10-06_Montr_al_Canadiens_vs_Carolina_Hurricanes",
+  "created_at": "2026-10-06T01:15:57.363846+00:00"
+}

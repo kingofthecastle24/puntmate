@@ -1401,5 +1401,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-10-06_icehockey_nhl_Montr\u00e9al_Canadiens_PUNTER_BET",
+    "date": "2026-10-06",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "icehockey_nhl",
+    "sport": "icehockey_nhl",
+    "match": "Montr\u00e9al Canadiens vs Carolina Hurricanes",
+    "home_team": "Montr\u00e9al Canadiens",
+    "away_team": "Carolina Hurricanes",
+    "pick": "CAROLINA HURRICANES",
+    "market": "Head to Head",
+    "odds": 2.35,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]
