@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-06_Montr_al_Canadiens_vs_Carolina_Hurricanes",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISH_FAILED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-06T01:15:57.634659+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-06T01:16:15.654597+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-06T01:16:15.654834+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISH_FAILED",
+      "at": "2026-10-06T01:16:18.531975+00:00",
+      "note": "{\"telegram\": false, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": false, \"facebook_story\": false}"
     }
   ]
 }
