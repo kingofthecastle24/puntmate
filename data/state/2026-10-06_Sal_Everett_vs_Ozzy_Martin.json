@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-06_Sal_Everett_vs_Ozzy_Martin",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-06T23:45:10.076085+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-06T23:45:10.076257+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-06T23:45:10.076396+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

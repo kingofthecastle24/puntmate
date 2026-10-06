@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "89d3ea47b0823ca33446bc9688177a40ca1bcb2333e2a90d6ec3024d7829281e",
+      "bytes": 605
+    },
+    "instagram-caption.txt": {
+      "sha256": "791f2d5551ad3fd82f0ed66a0199ca0e2de2a6ce9b50cd15cbac12ddc5b77a13",
+      "bytes": 640
+    },
+    "post-metadata.json": {
+      "sha256": "110b33575f9e6c73906b534a0e73cc2b5446b5f2a0d2cf509d8e0d753006b6fa",
+      "bytes": 9371
+    },
+    "preview.html": {
+      "sha256": "fd37a538adeec66a50742606eddd6cbdc382b5dd69bc5f2765900be6c2586b29",
+      "bytes": 14274
+    },
+    "cover.png": {
+      "sha256": "8670806f1ef89ccdbffc4a3af3accff4f8e82144e56fc259fc8f1a95312bbcd9",
+      "bytes": 75829
+    },
+    "tip.png": {
+      "sha256": "783019db1f06db50bbd7d2186169e82df64c3c97ca191ad57e15960e4b171726",
+      "bytes": 75282
+    },
+    "breakdown.png": {
+      "sha256": "558384f60f8b237dc50ef4c62d313cf0eb90c586aa2a96ce3bb1c7981c3258be",
+      "bytes": 136288
+    },
+    "story.png": {
+      "sha256": "811c4b4a80bbae281b4264499174822d27f0739fa385fd5338a7e318310f4ff5",
+      "bytes": 61930
+    }
+  },
+  "pick_id": "2026-10-06_Sal_Everett_vs_Ozzy_Martin",
+  "created_at": "2026-10-06T23:45:09.857441+00:00"
+}

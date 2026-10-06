@@ -1418,5 +1418,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-10-06_mma_mixed_martial_arts_Sal_Everett_PUNTER_BET",
+    "date": "2026-10-06",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "mma_mixed_martial_arts",
+    "sport": "mma_mixed_martial_arts",
+    "match": "Sal Everett vs Ozzy Martin",
+    "home_team": "Sal Everett",
+    "away_team": "Ozzy Martin",
+    "pick": "SAL EVERETT",
+    "market": "Head to Head",
+    "odds": 1.79,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]
