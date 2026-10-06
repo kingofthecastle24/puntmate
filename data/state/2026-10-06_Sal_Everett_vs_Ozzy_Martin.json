@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-06_Sal_Everett_vs_Ozzy_Martin",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISH_FAILED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-06T23:45:10.076396+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-06T23:45:35.149053+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-06T23:45:35.149334+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISH_FAILED",
+      "at": "2026-10-06T23:45:38.102510+00:00",
+      "note": "{\"telegram\": false, \"instagram_feed\": false, \"instagram_story\": false, \"facebook\": false, \"facebook_story\": false}"
     }
   ]
 }

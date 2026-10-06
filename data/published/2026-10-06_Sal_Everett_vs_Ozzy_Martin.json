@@ -1,0 +1,40 @@
+{
+  "telegram": {
+    "ok": false,
+    "detail": {
+      "ok": false,
+      "error_code": 400,
+      "description": "Bad Request: PEER_ID_INVALID"
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Tuesday, 06-Oct-26 16:45:37 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AjNcrejfnmTPPC-ZqAeQsMt",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Tuesday, 04-Aug-26 12:00:00 PDT. The current time is Tuesday, 06-Oct-26 16:45:37 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "APzEK81-8Xa4OdR5t-yRTJR"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
