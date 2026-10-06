@@ -1399,8 +1399,8 @@
     "market": "Total",
     "odds": 2.05,
     "confidence": "LOW",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   },
   {
     "id": "2026-10-06_icehockey_nhl_Montr\u00e9al_Canadiens_PUNTER_BET",
