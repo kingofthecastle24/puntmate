@@ -1,14 +1,14 @@
 {
   "run_date": "2026-10-07",
-  "run_ts": "2026-10-07T10:08:15.906719+00:00",
+  "run_ts": "2026-10-07T10:17:31.278633+00:00",
   "pick": {
     "has_pick": true,
-    "match": "Warriors vs Storm (test 37605305519)",
+    "match": "Warriors vs Storm (test 37606330481)",
     "sport": "rugbyleague_nrl",
     "sport_label": "NRL",
     "home_team": "Warriors",
-    "away_team": "Storm (test 37605305519)",
-    "kickoff": "2026-10-07T10:08:15.906675+00:00",
+    "away_team": "Storm (test 37606330481)",
+    "kickoff": "2026-10-07T10:17:31.278585+00:00",
     "selection": "WARRIORS",
     "market": "Head to Head",
     "odds": "2.10",
