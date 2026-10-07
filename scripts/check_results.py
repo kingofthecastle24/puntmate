@@ -9,7 +9,7 @@ Flat stake: $10 NZD per pick.
 import json
 import os
 import requests
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 ODDS_API_KEY = os.environ.get('ODDS_API_KEY', '')
 BASE_URL = "https://api.the-odds-api.com/v4"
@@ -17,6 +17,17 @@ BASE_URL = "https://api.the-odds-api.com/v4"
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 PICKS_PATH = os.path.join(REPO_ROOT, 'data', 'picks.json')
 FLAT_STAKE = 10.0  # NZD
+
+# The Odds API's /scores endpoint only returns completed games from the last
+# `daysFrom` days (max 3), so a pick whose match never resolves within that
+# window — a team-name mismatch between the odds snapshot and the scores
+# response, a sport the scores endpoint doesn't cover well (e.g. individual
+# combat-sport fights), or a missed run — falls out of the API's own history
+# and can NEVER be auto-resolved again. Previously such a pick just stayed
+# "pending" forever with no signal. STALE_PENDING_DAYS bounds how long we
+# keep silently retrying before flagging it loudly instead (2026-09-05, found
+# via 4 picks stuck pending since as far back as 2026-07-16).
+STALE_PENDING_DAYS = 5
 
 
 def fetch_scores(sport_key, days_from=3):
@@ -100,6 +111,7 @@ def check_and_resolve():
         by_sport.setdefault(sk, []).append(pick)
 
     resolved_count = 0
+    today = datetime.now(timezone.utc).date()
 
     for sport_key, sport_picks in by_sport.items():
         scores = fetch_scores(sport_key)
@@ -123,7 +135,24 @@ def check_and_resolve():
         for pick in sport_picks:
             match_key = (pick['home_team'], pick['away_team'])
             if match_key not in score_map:
-                print(f"  [{sport_key}] No completed score yet: {pick['match']}")
+                try:
+                    days_pending = (today - date.fromisoformat(pick['date'])).days
+                except ValueError:
+                    days_pending = 0
+                if days_pending > STALE_PENDING_DAYS:
+                    for p in all_picks:
+                        if p['id'] == pick['id']:
+                            p['result'] = 'unresolved'
+                            p['pnl'] = None
+                            break
+                    print(
+                        f"::warning::[{sport_key}] {pick['match']} has been pending for "
+                        f"{days_pending} days with no matching score from the API (team-name "
+                        f"mismatch or outside the scores endpoint's history window) — marked "
+                        f"'unresolved', needs a manual check against the real result"
+                    )
+                else:
+                    print(f"  [{sport_key}] No completed score yet: {pick['match']}")
                 continue
 
             score_data = score_map[match_key]
@@ -191,7 +220,7 @@ if __name__ == "__main__":
     if os.path.exists(PICKS_PATH):
         with open(PICKS_PATH, 'r') as f:
             all_picks = json.load(f)
-        settled = [p for p in all_picks if p['result'] not in ('pending', 'manual', None)]
+        settled = [p for p in all_picks if p['result'] not in ('pending', 'manual', 'unresolved', None)]
         wins = sum(1 for p in settled if p['result'] == 'win')
         losses = sum(1 for p in settled if p['result'] == 'loss')
         total_pnl = sum(p['pnl'] for p in settled if p['pnl'] is not None)

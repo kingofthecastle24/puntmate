@@ -74,8 +74,10 @@ def _mock_two_matches_investor_and_gambler():
 def _mock_anthropic_response(payload):
     resp = MagicMock()
     block = MagicMock()
+    block.type = "text"
     block.text = json.dumps(payload)
     resp.content = [block]
+    resp.stop_reason = "end_turn"
     return resp
 
 
@@ -87,7 +89,7 @@ class GeneratePickTests(unittest.TestCase):
     def test_defensible_pick_produces_consistent_copy(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -117,7 +119,7 @@ class GeneratePickTests(unittest.TestCase):
     def test_model_returns_no_candidates_is_no_bet_not_a_pick(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [],
             "reasoning": "Nothing here clears the bar today.",
         })
@@ -138,7 +140,7 @@ class GeneratePickTests(unittest.TestCase):
         # validated sources for this match -> ceiling is LOW -> gets capped,
         # which (given no other uncertainty flags) should push this to RISKY
         # rather than being taken at face value as a HIGH-confidence STANDARD pick.
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -161,7 +163,7 @@ class GeneratePickTests(unittest.TestCase):
     def test_hallucinated_match_not_in_candidates_is_no_bet(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "Some Other Match Not In List",
                 "sport": "soccer_fifa_world_cup",
@@ -181,7 +183,7 @@ class GeneratePickTests(unittest.TestCase):
     def test_spread_market_selection_resolves_correct_odds_and_line(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "Warriors vs Broncos",
                 "sport": "rugbyleague_nrl",
@@ -211,7 +213,7 @@ class GeneratePickTests(unittest.TestCase):
     def test_total_market_selection_resolves_correct_odds_and_line(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "Warriors vs Broncos",
                 "sport": "rugbyleague_nrl",
@@ -219,7 +221,7 @@ class GeneratePickTests(unittest.TestCase):
                 "selection": "Over",
                 "line": 42.5,
                 "market": "Total",
-                "our_probability": 56,
+                "our_probability": 58,  # de-vigged fair "over" is ~50.8% -> edge ~7.2%, clears the 7% floor
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": [],
@@ -244,7 +246,7 @@ class GeneratePickTests(unittest.TestCase):
         # unresolvable / dropped rather than guessing.
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "Warriors vs Broncos",
                 "sport": "rugbyleague_nrl",
@@ -269,7 +271,7 @@ class GeneratePickTests(unittest.TestCase):
         # general-knowledge-based reasoning should be able to clear the bar.
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -277,7 +279,7 @@ class GeneratePickTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 46,
+                "our_probability": 48,  # implied 40% -> edge 8%, clears the 7% floor
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": ["no fresh news found, relying on general squad strength"],
@@ -307,7 +309,7 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
     def test_investor_grade_candidate_preferred_over_gambler_grade_same_day(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [
                 # Listed FIRST but should NOT win -- Gambler-tier: long odds,
                 # moderate confidence, still clears the edge bar.
@@ -362,7 +364,7 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
         tests which one gets featured."""
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [
                 # Investor-tier (short odds, high confidence) but MLB --
                 # a fallback sport -- should NOT win despite the stronger tier.
@@ -373,7 +375,7 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
                     "selection": "Yankees",
                     "line": None,
                     "market": "Head to Head",
-                    "our_probability": 65,
+                    "our_probability": 69,  # implied 61.7% -> edge ~7.3%, clears the 7% floor
                     "evidence_sufficient": True,
                     "confidence": "HIGH",
                     "uncertainty_flags": [],
@@ -431,7 +433,7 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
         # as-is, never manufactured into a fake Investor pick.
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -460,7 +462,7 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
         # because one of several proposals didn't hold up.
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [
                 {
                     "match": "Warriors vs Broncos",
@@ -503,7 +505,7 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
     def test_all_candidates_classified_no_bet_yields_no_bet(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "Warriors vs Broncos",
                 "sport": "rugbyleague_nrl",
@@ -538,9 +540,12 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
     def test_shaky_but_genuine_edge_produces_risky_pick_with_caution_copy(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        # our_probability 53 vs implied ~50 (odds 2.00) -> edge ~3.0%, below
-        # the 5% standard bar but above the 2.5% shaky-angle floor.
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        # our_probability 50 vs implied 40% (home odds 2.50) -> edge 10%,
+        # clears the (restored, 2026-09-05) 7% backable floor comfortably.
+        # Still RISKY_PICK: odds 2.50 >= GAMBLER_ODDS_MIN with MODERATE (not
+        # HIGH) confidence on a win market is its own risk signal regardless
+        # of edge size -- see classify_risk's "big price" check.
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -548,7 +553,7 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 43,
+                "our_probability": 50,
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": ["squad rotation possible"],
@@ -575,7 +580,7 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
         is not backable and the day is a genuine skip."""
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -594,12 +599,19 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
         self.assertFalse(pick["has_pick"])
 
     @patch("generate_pick.anthropic.Anthropic")
-    def test_thin_positive_edge_now_produces_a_pick_not_no_bet(self, mock_anthropic_cls):
-        """The core behaviour change: a thin but genuine positive edge that
-        used to fall into NO_BET now yields a real (risky) pick."""
+    def test_thin_edge_below_restored_floor_is_now_a_genuine_skip(self, mock_anthropic_cls):
+        """2026-09-05 (Micah): the 2026-07-25 change this class was written
+        for dropped the backable floor to >=0% edge, which this exact case
+        (a 2% edge) was meant to demonstrate clearing. That floor is exactly
+        what turned out to have no real value -- our_probability is an LLM's
+        own uncalibrated estimate, and implied_probability here is already
+        de-vigged fair value, so beating it by 2 points is noise, not skill
+        (see pick_classifier.MIN_VALUE_EDGE_PCT). Restored to the 7% floor
+        PICK_ANALYST_SKILL.md has always documented, so this exact 2% edge
+        is now, correctly, a genuine skip -- not a pick."""
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -607,7 +619,7 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 42,   # just above the book's 40% implied
+                "our_probability": 42,   # only 2pp above the book's 40% implied
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": [],
@@ -616,9 +628,8 @@ class Phase3ShakyEdgeRiskyNotNoBetTests(unittest.TestCase):
         })
         match_news = {"France vs Spain": {"text": "- squad news", "accepted_count": 2, "warnings": [], "confidence_ceiling": "MODERATE"}}
         pick = generate_pick.generate_pick_for_matches(_mock_matches(), match_news)
-        self.assertTrue(pick["has_pick"])
-        self.assertIn(pick["risk"], ("STANDARD_PICK", "RISKY_PICK"))
-        self.assertNotEqual(pick["risk"], "NO_BET")
+        self.assertFalse(pick["has_pick"])
+        self.assertEqual(pick["risk"], "NO_BET")
 
 
 class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
@@ -722,7 +733,7 @@ class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
         than failing the whole run."""
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -730,7 +741,7 @@ class IncidentUncertaintyFlagLeakTests(unittest.TestCase):
                 "selection": "France",
                 "line": None,
                 "market": "Head to Head",
-                "our_probability": 43,
+                "our_probability": 50,  # implied 40% -> edge 10%, clears the 7% floor
                 "evidence_sufficient": True,
                 "confidence": "HIGH",
                 "uncertainty_flags": [
@@ -765,9 +776,9 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         response = MagicMock()
-        response.content = [MagicMock(text='{"candidates": [{"match": "France vs Spain", "sport": "soccer_fifa_world_cup", "market_type": "h2h", "selection": "Fran')]
+        response.content = [MagicMock(type="text", text='{"candidates": [{"match": "France vs Spain", "sport": "soccer_fifa_world_cup", "market_type": "h2h", "selection": "Fran')]
         response.stop_reason = "max_tokens"
-        mock_client.messages.create.return_value = response
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = response
 
         pick = generate_pick.generate_pick_for_matches(_mock_matches(), {})
         self.assertFalse(pick["has_pick"])
@@ -778,7 +789,7 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
     def test_oversized_slate_is_capped_before_prompting(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": [], "reasoning": "nothing today"})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": [], "reasoning": "nothing today"})
 
         base = _mock_matches()[0]
         many = []
@@ -788,7 +799,7 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
             m["home_team"], m["away_team"] = f"Team{i}", f"Team{i+100}"
             many.append(m)
         pick = generate_pick.generate_pick_for_matches(many, {})
-        prompt_sent = mock_client.messages.create.call_args.kwargs["messages"][0]["content"]
+        prompt_sent = mock_client.messages.stream.call_args.kwargs["messages"][0]["content"]
         self.assertIn("Team0 vs Team100", prompt_sent)
         self.assertNotIn("Team39 vs Team139", prompt_sent)
         self.assertTrue(any("only the first" in w for w in pick["research_warnings"]))
@@ -822,7 +833,7 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
                 "our_probability": 68, "evidence_sufficient": True, "confidence": "MODERATE",
                 "uncertainty_flags": [], "reasoning": "Genuine, independent edge on its own merits.",
             })
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
 
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
@@ -887,7 +898,7 @@ class TruncatedModelResponseFailSafeTests(unittest.TestCase):
             "our_probability": 68, "evidence_sufficient": True, "confidence": "MODERATE",
             "uncertainty_flags": [], "reasoning": "Genuine, independent edge on its own merits.",
         } for m in matches]
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
 
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
@@ -929,7 +940,7 @@ class DailyRunNeverBuildsMultisTests(unittest.TestCase):
                 "our_probability": 68, "evidence_sufficient": True, "confidence": "MODERATE",
                 "uncertainty_flags": [], "reasoning": "Genuine, independent edge on its own merits.",
             })
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
 
         # No build_multis kwarg at all -- exactly how main.py's daily run calls this.
@@ -972,7 +983,7 @@ class TwoTierMultiSplitTests(unittest.TestCase):
                 "our_probability": 45, "evidence_sufficient": True, "confidence": "MODERATE",
                 "uncertainty_flags": [], "reasoning": "Genuine, independent longshot edge.",
             })
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
@@ -1020,7 +1031,7 @@ class TwoTierMultiSplitTests(unittest.TestCase):
                 "our_probability": 45, "evidence_sufficient": True, "confidence": "MODERATE",
                 "uncertainty_flags": [], "reasoning": "Genuine, independent longshot edge.",
             })
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
@@ -1065,7 +1076,7 @@ class DegenerateMultiTests(unittest.TestCase):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         matches, candidates = self._slate(6, 3.20)  # 3.2^6 ≈ 1074 >> 100
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
@@ -1078,7 +1089,7 @@ class DegenerateMultiTests(unittest.TestCase):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         matches, candidates = self._slate(5, 3.20)  # 5 legs < DEGENERATE_MIN_LEGS
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
@@ -1095,7 +1106,7 @@ class DegenerateMultiTests(unittest.TestCase):
         # positive-edge measured picks: 1.90 odds (~52.6% implied) at 60% our
         # probability -> PUNTER_BET legs; 1.9^6 ≈ 47x combined, under the bar
         matches, candidates = self._slate(6, 1.90, our_probability=60)
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news, build_multis=True)
 
@@ -1107,7 +1118,7 @@ class DegenerateMultiTests(unittest.TestCase):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
         matches, candidates = self._slate(6, 3.20)
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": candidates})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": candidates})
         news = {m["match"]: {"confidence_ceiling": "MODERATE"} for m in matches}
         pick = generate_pick.generate_pick_for_matches(matches, news)  # build_multis defaults False
 
@@ -1228,7 +1239,7 @@ class WidenedMarketsTests(unittest.TestCase):
     def test_draw_no_bet_pick_flows_end_to_end_and_is_not_auto_risky(self, mock_anthropic_cls):
         mock_client = MagicMock()
         mock_anthropic_cls.return_value = mock_client
-        mock_client.messages.create.return_value = _mock_anthropic_response({
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({
             "candidates": [{
                 "match": "France vs Spain",
                 "sport": "soccer_fifa_world_cup",
@@ -1287,7 +1298,7 @@ class StuckFixtureExclusionTests(unittest.TestCase):
              "evidence_sufficient": True, "confidence": "HIGH", "uncertainty_flags": [],
              "reasoning": "Broncos rolling at home, real edge on the line."},
         ]
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": cands})
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": cands})
         news = {m["match"]: {"confidence_ceiling": "HIGH"} for m in matches}
 
         # Dragons already posted -> must feature Broncos instead, not skip the day
@@ -1305,7 +1316,7 @@ class StuckFixtureExclusionTests(unittest.TestCase):
                     "home_team": "Dragons", "away_team": "Titans", "kickoff": "2026-07-27T06:00:00Z",
                     "odds": {"home": 1.80, "away": 2.05, "draw": None},
                     "implied_probs": {"home": 0.53, "away": 0.47, "draw": 0}, "big_game": False}]
-        mock_client.messages.create.return_value = _mock_anthropic_response({"candidates": [
+        mock_client.messages.stream.return_value.__enter__.return_value.get_final_message.return_value = _mock_anthropic_response({"candidates": [
             {"match": "Dragons vs Titans", "sport": "rugbyleague_nrl", "market_type": "h2h",
              "selection": "Dragons", "line": None, "market": "Head to Head", "our_probability": 62,
              "evidence_sufficient": True, "confidence": "HIGH", "uncertainty_flags": [],
