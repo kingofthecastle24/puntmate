@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-07_no-bet",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISH_FAILED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-07T09:34:22.839864+00:00",
       "note": "watchlist post entering approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-07T09:34:40.583219+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-07T09:34:40.583507+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISH_FAILED",
+      "at": "2026-10-07T09:34:41.823400+00:00",
+      "note": "{\"telegram\": false}"
     }
   ]
 }
