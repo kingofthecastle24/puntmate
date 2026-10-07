@@ -1,0 +1,118 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 238,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1791367421,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD7mrGGP1lgVqk_jHWv1oZ5jxRmDWlAALFDWsbbxk5RkBOI1hk4DdbAQADAgADcwADPQQ",
+            "file_unique_id": "AQADxQ1rG28ZOUZ4",
+            "file_size": 1038,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD7mrGGP1lgVqk_jHWv1oZ5jxRmDWlAALFDWsbbxk5RkBOI1hk4DdbAQADAgADbQADPQQ",
+            "file_unique_id": "AQADxQ1rG28ZOUZy",
+            "file_size": 10593,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD7mrGGP1lgVqk_jHWv1oZ5jxRmDWlAALFDWsbbxk5RkBOI1hk4DdbAQADAgADeAADPQQ",
+            "file_unique_id": "AQADxQ1rG28ZOUZ9",
+            "file_size": 42756,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD7mrGGP1lgVqk_jHWv1oZ5jxRmDWlAALFDWsbbxk5RkBOI1hk4DdbAQADAgADdwADPQQ",
+            "file_unique_id": "AQADxQ1rG28ZOUZ8",
+            "file_size": 77615,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD7mrGGP1lgVqk_jHWv1oZ5jxRmDWlAALFDWsbbxk5RkBOI1hk4DdbAQADAgADeQADPQQ",
+            "file_unique_id": "AQADxQ1rG28ZOUZ-",
+            "file_size": 78678,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 MLB\n\n\ud83c\udfdf Atlanta Braves vs Los Angeles Dodgers\n\nPICK: ATLANTA BRAVES +1.5\nODDS: 1.71 (Handicap)\nBET TYPE: PUNTER\n\nLA are rightly favoured on talent, but asking the Dodgers to beat the Braves by two or more in Atlanta is a different question \u2014 Truist Park is one of the tougher road trips in the National League and Atlanta's lineup is built to get back into games with one swing. The +1.5 at 1.71 is the smart way to be on the home side without needing them to actually win it.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 64,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 90,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 112,
+            "length": 16,
+            "type": "bold"
+          },
+          {
+            "offset": 130,
+            "length": 363,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Unsupported post request. Object with ID '17841415246709818' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api",
+      "type": "GraphMethodException",
+      "code": 100,
+      "error_subcode": 33,
+      "fbtrace_id": "AbGc6gQZ4S5fn1xDO2x7TIe"
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Unsupported post request. Object with ID '17841415246709818' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api",
+      "type": "GraphMethodException",
+      "code": 100,
+      "error_subcode": 33,
+      "fbtrace_id": "ALNQVLccVY3ytT8Gbjm3rbC"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
