@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "9f9bbf9bb6462ef4b575aeba28f55c441aa771ea628e5cd612c4fb2176ca1217",
+      "bytes": 417
+    },
+    "instagram-caption.txt": {
+      "sha256": "c9f210aa16e9951259a0bb556c7600531cd60ec96c4b1078456ccbea8c229c2d",
+      "bytes": 482
+    },
+    "post-metadata.json": {
+      "sha256": "a986038e29e8e380a0aaf7ab47a5637d35c5e135f9c43a9680f0a65557e06ba9",
+      "bytes": 2414
+    },
+    "preview.html": {
+      "sha256": "95a4581dea2c8d0966f6ab47f510cb8bd2814d80962fd6e26c5a58b3aba5e0cd",
+      "bytes": 6598
+    },
+    "cover.png": {
+      "sha256": "9888f6c6d6fe164fe67d38dd951c44471421d421bc724cfe95e067f3f72b487a",
+      "bytes": 75241
+    },
+    "tip.png": {
+      "sha256": "e55e3cf5acd141a65cdb7e3b87af2e4d2eae6ddea7f3b647c44452434a80ef2e",
+      "bytes": 84641
+    },
+    "breakdown.png": {
+      "sha256": "dcc594dd128629653e6f919b04756a0a1423855148fb4c90466fade621263ef7",
+      "bytes": 106433
+    },
+    "story.png": {
+      "sha256": "cb65968aaa75409ba97bda4af81b9156e8f1fed5a96ef73fd3ee5af4e30120c6",
+      "bytes": 71241
+    }
+  },
+  "pick_id": "2026-10-07_Warriors_vs_Storm_test_37606954311",
+  "created_at": "2026-10-07T10:23:14.596137+00:00"
+}
