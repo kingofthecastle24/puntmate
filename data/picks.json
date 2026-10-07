@@ -1281,7 +1281,7 @@
     "market": "Head to Head",
     "odds": 1.95,
     "confidence": "LOW",
-    "result": "pending",
+    "result": "unresolved",
     "pnl": null
   },
   {
@@ -1417,8 +1417,8 @@
     "market": "Head to Head",
     "odds": 2.35,
     "confidence": "LOW",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 13.5
   },
   {
     "id": "2026-10-06_mma_mixed_martial_arts_Sal_Everett_PUNTER_BET",
@@ -1451,7 +1451,7 @@
     "market": "Handicap",
     "odds": 1.71,
     "confidence": "MODERATE",
-    "result": "pending",
+    "result": "manual",
     "pnl": null
   },
   {
