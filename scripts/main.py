@@ -160,6 +160,33 @@ def _recently_actioned_slugs(days=4):
     return slugs
 
 
+def _week_ahead_fixtures(fetch_upcoming_odds, exclude_matches):
+    """2026-10-07 (Micah): a No-Bet day's Watchlist post should still give
+    followers something to look forward to, not just today's fixtures and
+    an apology. Pulls a 7-day window via a SEPARATE fetch_upcoming_odds()
+    call (never mixed into `matches`, which stays a 24h window for actual
+    pick selection above — widening that would let the daily pick select a
+    fixture days out and call it "today's pick"). Only called from the
+    NO_BET branch, so the extra Odds API quota cost only lands on days that
+    already produced nothing to post. Returns [] (never raises) on fetch
+    failure — a missing week-ahead section degrades gracefully to the
+    today-only Watchlist that already shipped before this."""
+    try:
+        week_matches = fetch_upcoming_odds(hours_ahead=168)
+    except Exception as e:
+        print(f"  ::warning:: week-ahead fetch failed ({e}) — watchlist will only cover today.")
+        return []
+    return [
+        {
+            "match": m["match"],
+            "sport_label": m.get("sport_label") or m.get("sport", ""),
+            "kickoff": m.get("kickoff", ""),
+        }
+        for m in week_matches
+        if m["match"] not in exclude_matches
+    ][:10]
+
+
 def run():
     from fetch_odds import fetch_upcoming_odds
     from fetch_news import fetch_news
@@ -228,18 +255,23 @@ def run():
         # ordering fetch_upcoming_odds returns), with NO selections and NO
         # odds framed as advice. This gives followers honest content on a
         # no-bet day without manufacturing a pick.
+        todays_fixtures = matches[:5]
         run_data["watchlist"] = [
             {
                 "match": m["match"],
                 "sport_label": m.get("sport_label") or m.get("sport", ""),
                 "kickoff": m.get("kickoff", ""),
             }
-            for m in matches[:5]
+            for m in todays_fixtures
         ]
+        run_data["week_ahead"] = _week_ahead_fixtures(
+            fetch_upcoming_odds, exclude_matches={m["match"] for m in todays_fixtures}
+        )
         os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
         with open(LATEST_RUN_PATH, 'w') as f:
             json.dump(run_data, f, indent=2)
-        print(f"  Saved NO_BET result + {len(run_data['watchlist'])}-fixture watchlist to data/latest_run.json (no cards rendered).")
+        print(f"  Saved NO_BET result + {len(run_data['watchlist'])}-fixture watchlist "
+              f"+ {len(run_data['week_ahead'])}-fixture week-ahead forecast to data/latest_run.json (no cards rendered).")
         return
 
     print(f"  -> {pick['match']} | {pick['selection']} @ {pick['odds']} | "
