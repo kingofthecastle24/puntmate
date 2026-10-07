@@ -1453,23 +1453,5 @@
     "confidence": "MODERATE",
     "result": "pending",
     "pnl": null
-  },
-  {
-    "id": "2026-10-07_rugbyleague_nrl_Warriors_INVESTOR_BET",
-    "date": "2026-10-07",
-    "bet_type": "INVESTOR_BET",
-    "risk": "STANDARD_PICK",
-    "sport_key": "rugbyleague_nrl",
-    "sport": "rugbyleague_nrl",
-    "match": "Warriors vs Storm (test 37605305519)",
-    "home_team": "Warriors",
-    "away_team": "Storm (test 37605305519)",
-    "pick": "WARRIORS",
-    "market": "Head to Head",
-    "odds": 2.1,
-    "confidence": "HIGH",
-    "result": "void",
-    "pnl": null,
-    "note": "Synthetic force_test_pick used to verify Telegram/Instagram/Facebook posting after the credential fixes — not a real match, voided from win/loss stats."
   }
 ]
