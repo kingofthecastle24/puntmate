@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-07_Winnipeg_Jets_vs_Colorado_Avalanche_dryrun",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-07T09:29:42.191112+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-07T09:29:42.191321+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-07T09:29:42.191517+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

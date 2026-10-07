@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "e1dec28827351eff00c406d1a02d3d49bf833f147afcbbbba4b5d4cd40f81834",
+      "bytes": 597
+    },
+    "instagram-caption.txt": {
+      "sha256": "057793e0f86c183d667e74743075f2801c768868268312d717473dfe4edb1ea2",
+      "bytes": 632
+    },
+    "post-metadata.json": {
+      "sha256": "897b66172d3dbc4435243c726437dfa20e02d45f66c96bbfc2cc99092f3dc475",
+      "bytes": 8613
+    },
+    "preview.html": {
+      "sha256": "71219c23cfa524beb755ff58bfdf836844bf68f853b3f982aaaacd8f48dc1de3",
+      "bytes": 13464
+    },
+    "cover.png": {
+      "sha256": "2135f276cbc827c0eb70a0e06bf8c9d812bdc7ede84ee50cd3aa91f78c2a43cc",
+      "bytes": 74600
+    },
+    "tip.png": {
+      "sha256": "9bd36db35d92c9fd4a537f621d1fd8ae7aa59993bcfd6a6a2b203131f6d457b7",
+      "bytes": 95709
+    },
+    "breakdown.png": {
+      "sha256": "38f2c16931f2d37c46825547841af973b171bae4832574c3017fd5d77bf9487b",
+      "bytes": 142155
+    },
+    "story.png": {
+      "sha256": "30365d39045640976d29993d474d0ea311a42c6c41a542376e967bb1bbfdaf21",
+      "bytes": 83043
+    }
+  },
+  "pick_id": "2026-10-07_Winnipeg_Jets_vs_Colorado_Avalanche_dryrun",
+  "created_at": "2026-10-07T09:29:41.893484+00:00"
+}
