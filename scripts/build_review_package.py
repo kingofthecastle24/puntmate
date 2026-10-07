@@ -105,7 +105,7 @@ def build_instagram_caption(pick):
         "",
         pick["bet_type_reason"],
     ]
-    # Same removal as build_telegram_text — see note there.
+    # Same removal as build_telegram_text -- see note there.
     lines += [
         "",
         "Follow for daily value picks → @puntmatenz",
@@ -149,10 +149,17 @@ def _fmt_kickoff_nzt(iso_ts):
         return str(iso_ts)
 
 
-def build_watchlist_text(watchlist, post_date):
+def build_watchlist_text(watchlist, post_date, week_ahead=None):
     """Phase 4 — the public Telegram text for a No-Bet-day Watchlist post.
     Deliberately: no selections, no odds, no anything framed as advice. The
-    honest message IS the product: nothing cleared the bar today."""
+    honest message IS the product: nothing cleared the bar today.
+
+    week_ahead (2026-10-07, Micah — optional): a second section previewing
+    the next 7 days' fixtures (priority sports first, same ordering
+    fetch_upcoming_odds returns), so a no-bet day still gives followers
+    something to look forward to instead of just today's apology. Omitted
+    entirely when empty/None — the today-only Watchlist this shipped with
+    originally is still the whole post on a day with no week-ahead data."""
     lines = [
         "*🔍 PUNTMATE NZ — NO BET TODAY*",
         "",
@@ -163,6 +170,13 @@ def build_watchlist_text(watchlist, post_date):
     ]
     for w in watchlist:
         lines.append(f"• {w.get('sport_label','')}: {w.get('match','')} — {_fmt_kickoff_nzt(w.get('kickoff',''))}")
+    if week_ahead:
+        lines += [
+            "",
+            "*Coming up this week:*",
+        ]
+        for w in week_ahead:
+            lines.append(f"• {w.get('sport_label','')}: {w.get('match','')} — {_fmt_kickoff_nzt(w.get('kickoff',''))}")
     lines += [
         "",
         "Back tomorrow with the numbers.",
@@ -323,9 +337,10 @@ def main():
         # Phase 4: watchlist post on genuine No-Bet days (main.py only writes
         # a watchlist when fixtures existed but nothing cleared the bar).
         watchlist = run_data.get("watchlist") or []
+        week_ahead = run_data.get("week_ahead") or []
         manifest_files = ["post-metadata.json"]
         if watchlist:
-            watchlist_text = build_watchlist_text(watchlist, post_date)
+            watchlist_text = build_watchlist_text(watchlist, post_date, week_ahead)
             # Same hard validation gate as real picks. risk=NO_BET so the
             # no-bet phrasing is allowed; internal-leak + tone checks apply.
             validate_text(watchlist_text, risk="NO_BET", public=True)
@@ -333,6 +348,8 @@ def main():
                 f.write(watchlist_text)
             metadata["has_watchlist"] = True
             metadata["watchlist"] = watchlist
+            if week_ahead:
+                metadata["week_ahead"] = week_ahead
             metadata["intended_platforms"] = ["telegram"]
             manifest_files.append("watchlist-post.txt")
 
@@ -344,7 +361,8 @@ def main():
         })
         write_manifest(manifest, os.path.join(review_dir, "manifest.json"))
         if watchlist:
-            print(f"NO_BET today — built watchlist post ({len(watchlist)} fixtures) at {metadata['pick_id']}/ (goes through the same gate).")
+            print(f"NO_BET today — built watchlist post ({len(watchlist)} fixtures"
+                  f"{f' + {len(week_ahead)} week-ahead' if week_ahead else ''}) at {metadata['pick_id']}/ (goes through the same gate).")
         else:
             print(f"NO_BET today — wrote {metadata['pick_id']}/post-metadata.json (no fixtures at all; staying silent).")
         return metadata
