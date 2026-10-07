@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-07_Atlanta_Braves_vs_Los_Angeles_Dodgers",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-07T10:03:24.919031+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-07T10:03:24.919221+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-07T10:03:24.919406+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "3a4a603eb18b8800ef74d5debc3fe84400cfd62ea9c7bac07c42500beee8ae2e",
+      "bytes": 675
+    },
+    "instagram-caption.txt": {
+      "sha256": "b10bb53ea5ee6725917c81012d67266b8c2c9ea38f9a73170110ae5d51a6e674",
+      "bytes": 710
+    },
+    "post-metadata.json": {
+      "sha256": "a0fbc91049397bad54a39093f3670a62c3b6e16af10dc61a940ba86d81da31c0",
+      "bytes": 8917
+    },
+    "preview.html": {
+      "sha256": "3161a0fb788d8dc05d663cba82deb32eaf9058623b0cbafa1775c396a79742ec",
+      "bytes": 13932
+    },
+    "cover.png": {
+      "sha256": "95e7143192a45fadaa3574844b4cdf52f26817b1de06e8e6fc5639c8df8e6d06",
+      "bytes": 74954
+    },
+    "tip.png": {
+      "sha256": "f18269a4bebba0872cb5b2e47d38875f66cbd06c9a0205eaff2e84e96eecf577",
+      "bytes": 84286
+    },
+    "breakdown.png": {
+      "sha256": "eb745e552677f5467fd6d83e765a5056f11ab2206d623d45847966578e767e26",
+      "bytes": 157091
+    },
+    "story.png": {
+      "sha256": "1afddacab5747ae8d56202505a5db30ad022efd8d420417787c6b3c63e990c27",
+      "bytes": 69273
+    }
+  },
+  "pick_id": "2026-10-07_Atlanta_Braves_vs_Los_Angeles_Dodgers",
+  "created_at": "2026-10-07T10:03:24.628038+00:00"
+}
