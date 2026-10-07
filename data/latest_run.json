@@ -1,34 +1,11 @@
 {
   "run_date": "2026-10-07",
-  "run_ts": "2026-10-07T09:29:28.073314+00:00",
+  "run_ts": "2026-10-07T09:34:13.019490+00:00",
   "pick": {
-    "has_pick": true,
-    "match": "Winnipeg Jets vs Colorado Avalanche",
-    "sport": "icehockey_nhl",
-    "sport_label": "NHL",
-    "home_team": "Winnipeg Jets",
-    "away_team": "Colorado Avalanche",
-    "kickoff": "2026-10-07T23:30:00Z",
-    "market_type": "double_chance",
-    "line": null,
-    "selection": "WINNIPEG JETS OR DRAW",
-    "market": "Double Chance",
-    "odds": "2.03",
-    "our_probability": 57.0,
-    "implied_probability": 49.4,
-    "edge_pct": 7.65,
-    "risk": "RISKY_PICK",
-    "bet_type": "PUNTER_BET",
-    "bet_type_label": "BET TYPE: PUNTER",
-    "bet_type_reason": "Solid touch here. Not a lock, but the value's real and the form backs it up. Colorado are the better-credentialled side on paper, but 27% for Winnipeg to win this in regulation at Canada Life Centre is light \u2014 the Jets have been one of the toughest home teams in the league for a few seasons now, and they defend and goaltend well enough to keep this tight.",
-    "final_explanation": "Colorado are the better-credentialled side on paper, but 27% for Winnipeg to win this in regulation at Canada Life Centre is light \u2014 the Jets have been one of the toughest home teams in the league for a few seasons now, and they defend and goaltend well enough to keep this tight.",
-    "confidence": "MODERATE",
-    "confidence_label": "MODERATE",
-    "uncertainty_flags": [
-      "Colorado's top line can win a game on its own",
-      "early-season rust is a factor for both sides"
-    ],
-    "public_caution": "Keep this one light \u2014 the value's there but so is the uncertainty.",
+    "has_pick": false,
+    "risk": "NO_BET",
+    "bet_type": "NO_BET",
+    "reasoning": "None of the model's proposed candidates could be resolved to real odds \u2014 treated as no bet.",
     "research_warnings": [
       "rejected source (no relevance to fixture): \"Will Venable: the White Sox manager who used basketball tactics to transform a b\"",
       "rejected source (no relevance to fixture): \"White Sox try to clinch ALDS in Game 3 against Guardians - FOX Sports\"",
@@ -50,7 +27,6 @@
       "rejected source (team-name-only match, no sport context): \"New Jersey Devils - Washington Capitals Stats: Ice Hockey Scores & Results - TNT\"",
       "rejected source (team-name-only match, no sport context): \"Ice hockey: Alex Ovechkin re-signs with NHL's Washington Capitals for a 22nd sea\"",
       "rejected source (team-name-only match, no sport context): \"Pittsburgh Penguins | History & Notable Players - Britannica\"",
-      "rejected source (team-name-only match, no sport context): \"Philadelphia Flyers - Pittsburgh Penguins Live - NHL: Ice Hockey Scores & Highli\"",
       "rejected source (no relevance to fixture): \"Live NHL on TV: Which matches are on in the UK this week? - Radio Times\"",
       "rejected source (team-name-only match, no sport context): \"Washington Capitals - Pittsburgh Penguins Stats: Ice Hockey Scores & Results - T\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
@@ -67,21 +43,37 @@
       "rejected source (team-name-only match, no sport context): \"Minnesota Wild - Edmonton Oilers Related Matches: Live Ice Hockey Updates - TNT \"",
       "rejected source (team-name-only match, no sport context): \"Anaheim Ducks - Edmonton Oilers Live - NHL: Ice Hockey Scores & Highlights - 08/\"",
       "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
-      "[Chicago White Sox vs Cleveland Guardians / h2h] not backable \u2014 no genuine value \u2014 our estimate (55%) is not above the book's implied probability (48%)",
-      "[Washington Capitals vs Pittsburgh Penguins / double_chance] not backable \u2014 no genuine value \u2014 our estimate (73%) is not above the book's implied probability (69%)",
-      "[San Diego Padres vs Milwaukee Brewers / total] not backable \u2014 no genuine value \u2014 our estimate (56%) is not above the book's implied probability (52%)",
-      "[New York Yankees vs Tampa Bay Rays / spread] not backable \u2014 no genuine value \u2014 our estimate (64%) is not above the book's implied probability (59%)",
-      "[Anaheim Ducks vs Edmonton Oilers / draw_no_bet] not backable \u2014 no genuine value \u2014 our estimate (58%) is not above the book's implied probability (56%)",
-      "uncertainty_flag (internal only, not shown publicly): \"Colorado's top line can win a game on its own\"",
-      "uncertainty_flag (internal only, not shown publicly): 'early-season rust is a factor for both sides'"
-    ],
-    "big_game": false,
-    "other_defensible_candidates": 0,
-    "punter_multi_legs": [],
-    "punter_multi_promo_hint": null,
-    "gambler_multi_legs": [],
-    "gambler_multi_promo_hint": null,
-    "degenerate_multi_legs": [],
-    "degenerate_multi_promo_hint": null
-  }
+      "[Washington Capitals vs Pittsburgh Penguins / double_chance] not backable \u2014 no genuine value \u2014 our estimate (72%) is not above the book's implied probability (69%)",
+      "[Winnipeg Jets vs Colorado Avalanche / double_chance] not backable \u2014 no genuine value \u2014 our estimate (55%) is not above the book's implied probability (49%)",
+      "[Anaheim Ducks vs Edmonton Oilers / double_chance] not backable \u2014 no genuine value \u2014 our estimate (62%) is not above the book's implied probability (57%)",
+      "[Atlanta Braves vs Los Angeles Dodgers / spread] not backable \u2014 no genuine value \u2014 our estimate (63%) is not above the book's implied probability (57%)"
+    ]
+  },
+  "watchlist": [
+    {
+      "match": "Chicago White Sox vs Cleveland Guardians",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-07T20:00:00Z"
+    },
+    {
+      "match": "Atlanta Braves vs Los Angeles Dodgers",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-07T22:10:00Z"
+    },
+    {
+      "match": "Winnipeg Jets vs Colorado Avalanche",
+      "sport_label": "NHL",
+      "kickoff": "2026-10-07T23:30:00Z"
+    },
+    {
+      "match": "Washington Capitals vs Pittsburgh Penguins",
+      "sport_label": "NHL",
+      "kickoff": "2026-10-07T23:40:00Z"
+    },
+    {
+      "match": "New York Yankees vs Tampa Bay Rays",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-08T00:00:00Z"
+    }
+  ]
 }

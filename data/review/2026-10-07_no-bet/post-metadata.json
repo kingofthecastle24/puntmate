@@ -1,0 +1,85 @@
+{
+  "has_pick": false,
+  "pick_id": "2026-10-07_no-bet",
+  "run_id": "37601314149",
+  "generated_at": "2026-10-07T09:34:22.565535+00:00",
+  "post_date": "2026-10-07",
+  "classification": "NO_BET",
+  "risk": "NO_BET",
+  "bet_type": "NO_BET",
+  "reasoning": "None of the model's proposed candidates could be resolved to real odds \u2014 treated as no bet.",
+  "research_warnings": [
+    "rejected source (no relevance to fixture): \"Will Venable: the White Sox manager who used basketball tactics to transform a b\"",
+    "rejected source (no relevance to fixture): \"White Sox try to clinch ALDS in Game 3 against Guardians - FOX Sports\"",
+    "rejected source (no relevance to fixture): \"Guardians-White Sox ALDS Game 3 FAQ (4 ET, TBS/HBO Max) - MLB.com\"",
+    "rejected source (no relevance to fixture): \"White Sox looking to eliminate Guardians at home in AL Division Series - Bozeman\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (no relevance to fixture): \"How to Watch Dodgers vs. Braves: NLDS Game 3 TV Channel, Live Stream, Time - FOX\"",
+    "rejected source (no relevance to fixture): \"Yamamoto drives Dodgers to the brink of NLCS - The Japan Times\"",
+    "rejected source (no relevance to fixture): \"MLB Division Series Roundup: Padres Stay Alive, Dodgers Put Braves On Brink - FO\"",
+    "rejected source (no relevance to fixture): \"How to Watch Braves vs. Dodgers: NLDS Game 2 TV Channel, Live Stream, Time - FOX\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (team-name-only match, no sport context): \"Winnipeg Jets - Chicago Blackhawks Stats: Ice Hockey Scores & Results - TNT Spor\"",
+    "rejected source (team-name-only match, no sport context): \"Winnipeg Jets | History, Notable Players, & Facts - Britannica\"",
+    "rejected source (team-name-only match, no sport context): \"Colorado Avalanche - Utah Mammoth Live - NHL: Ice Hockey Scores & Highlights - 1\"",
+    "rejected source (no relevance to fixture): \"Live NHL on TV: Which matches are on in the UK this week? - Radio Times\"",
+    "rejected source (team-name-only match, no sport context): \"Winnipeg Jets - Colorado Avalanche Live - NHL: Ice Hockey Scores & Highlights - \"",
+    "rejected source (team-name-only match, no sport context): \"Licensable picture: NHL: Preseason-Winnipeg Jets at Colorado Avalanche - Reuters\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (team-name-only match, no sport context): \"New Jersey Devils - Washington Capitals Stats: Ice Hockey Scores & Results - TNT\"",
+    "rejected source (team-name-only match, no sport context): \"Ice hockey: Alex Ovechkin re-signs with NHL's Washington Capitals for a 22nd sea\"",
+    "rejected source (team-name-only match, no sport context): \"Pittsburgh Penguins | History & Notable Players - Britannica\"",
+    "rejected source (no relevance to fixture): \"Live NHL on TV: Which matches are on in the UK this week? - Radio Times\"",
+    "rejected source (team-name-only match, no sport context): \"Washington Capitals - Pittsburgh Penguins Stats: Ice Hockey Scores & Results - T\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (no relevance to fixture): \"Rays aim to sweep ALDS in Game 3 against Yankees - FOX Sports\"",
+    "rejected source (no relevance to fixture): \"The Rays\u2019 brand of baseball is suffocating the Yankees \u2014 and New York is running\"",
+    "rejected source (no relevance to fixture): \"Aaron Boone Stresses Yankees Need To 'Get Up Off The Mat' vs. Rays - FOX Sports\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (no relevance to fixture): \"MLB Division Series Roundup: Padres Stay Alive, Dodgers Put Braves On Brink - FO\"",
+    "rejected source (team-name-only match, no sport context): \"Milwaukee Brewers at San Diego Padres Game Story, Scores/Highlights - 10/06/2026\"",
+    "rejected source (no relevance to fixture): \"How to watch Brewers vs Padres: Game 3, MLB Playoffs, live stream, TV channel - \"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (team-name-only match, no sport context): \"Vegas Golden Knights - Anaheim Ducks Live - NHL: Ice Hockey Scores & Highlights \"",
+    "rejected source (no relevance to fixture): \"Live NHL on TV: Which matches are on in the UK this week? - Radio Times\"",
+    "rejected source (team-name-only match, no sport context): \"Minnesota Wild - Edmonton Oilers Related Matches: Live Ice Hockey Updates - TNT \"",
+    "rejected source (team-name-only match, no sport context): \"Anaheim Ducks - Edmonton Oilers Live - NHL: Ice Hockey Scores & Highlights - 08/\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "[Washington Capitals vs Pittsburgh Penguins / double_chance] not backable \u2014 no genuine value \u2014 our estimate (72%) is not above the book's implied probability (69%)",
+    "[Winnipeg Jets vs Colorado Avalanche / double_chance] not backable \u2014 no genuine value \u2014 our estimate (55%) is not above the book's implied probability (49%)",
+    "[Anaheim Ducks vs Edmonton Oilers / double_chance] not backable \u2014 no genuine value \u2014 our estimate (62%) is not above the book's implied probability (57%)",
+    "[Atlanta Braves vs Los Angeles Dodgers / spread] not backable \u2014 no genuine value \u2014 our estimate (63%) is not above the book's implied probability (57%)"
+  ],
+  "intended_platforms": [
+    "telegram"
+  ],
+  "workflow_state": "GENERATED",
+  "has_watchlist": true,
+  "watchlist": [
+    {
+      "match": "Chicago White Sox vs Cleveland Guardians",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-07T20:00:00Z"
+    },
+    {
+      "match": "Atlanta Braves vs Los Angeles Dodgers",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-07T22:10:00Z"
+    },
+    {
+      "match": "Winnipeg Jets vs Colorado Avalanche",
+      "sport_label": "NHL",
+      "kickoff": "2026-10-07T23:30:00Z"
+    },
+    {
+      "match": "Washington Capitals vs Pittsburgh Penguins",
+      "sport_label": "NHL",
+      "kickoff": "2026-10-07T23:40:00Z"
+    },
+    {
+      "match": "New York Yankees vs Tampa Bay Rays",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-08T00:00:00Z"
+    }
+  ]
+}
