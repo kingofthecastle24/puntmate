@@ -1,0 +1,118 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 242,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1791369138,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD8mrGH7Kmibe1U7Wx1UABlR91JDpsAALKDWsbbxk5RhEDRaTgTky6AQADAgADcwADPQQ",
+            "file_unique_id": "AQADyg1rG28ZOUZ4",
+            "file_size": 935,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD8mrGH7Kmibe1U7Wx1UABlR91JDpsAALKDWsbbxk5RhEDRaTgTky6AQADAgADbQADPQQ",
+            "file_unique_id": "AQADyg1rG28ZOUZy",
+            "file_size": 9515,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD8mrGH7Kmibe1U7Wx1UABlR91JDpsAALKDWsbbxk5RhEDRaTgTky6AQADAgADeAADPQQ",
+            "file_unique_id": "AQADyg1rG28ZOUZ9",
+            "file_size": 39773,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD8mrGH7Kmibe1U7Wx1UABlR91JDpsAALKDWsbbxk5RhEDRaTgTky6AQADAgADeQADPQQ",
+            "file_unique_id": "AQADyg1rG28ZOUZ-",
+            "file_size": 74289,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawAD8mrGH7Kmibe1U7Wx1UABlR91JDpsAALKDWsbbxk5RhEDRaTgTky6AQADAgADdwADPQQ",
+            "file_unique_id": "AQADyg1rG28ZOUZ8",
+            "file_size": 74587,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NRL\n\n\ud83c\udfdf Warriors vs Storm (test 37607902573)\n\nPICK: WARRIORS\nODDS: 2.10 (Head to Head)\nBET TYPE: INVESTOR\n\nWarriors have won four of their last five at home and Storm are missing two regular starters in the forward pack.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 63,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 78,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 104,
+            "length": 18,
+            "type": "bold"
+          },
+          {
+            "offset": 124,
+            "length": 113,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Unsupported post request. Object with ID '17841415246709818' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api",
+      "type": "GraphMethodException",
+      "code": 100,
+      "error_subcode": 33,
+      "fbtrace_id": "AFZnOtc9KCS6YV0wDsEl7LA"
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Unsupported post request. Object with ID '17841415246709818' does not exist, cannot be loaded due to missing permissions, or does not support this operation. Please read the Graph API documentation at https://developers.facebook.com/docs/graph-api",
+      "type": "GraphMethodException",
+      "code": 100,
+      "error_subcode": 33,
+      "fbtrace_id": "AIxRnHTNYZXhydTJTWtPi8J"
+    }
+  },
+  "facebook": {
+    "ok": false,
+    "post_id": null
+  },
+  "facebook_story": {
+    "ok": false,
+    "story_id": null
+  }
+}
