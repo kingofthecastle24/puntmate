@@ -1332,7 +1332,7 @@
     "market": "Head to Head",
     "odds": 1.95,
     "confidence": "LOW",
-    "result": "pending",
+    "result": "unresolved",
     "pnl": null
   },
   {
@@ -1349,7 +1349,7 @@
     "market": "Head to Head",
     "odds": 1.5,
     "confidence": "MODERATE",
-    "result": "pending",
+    "result": "unresolved",
     "pnl": null
   },
   {
