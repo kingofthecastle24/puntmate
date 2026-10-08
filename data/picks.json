@@ -1470,5 +1470,22 @@
     "confidence": "HIGH",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-10-08_icehockey_nhl_Buffalo_Sabres_PUNTER_BET",
+    "date": "2026-10-08",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "icehockey_nhl",
+    "sport": "icehockey_nhl",
+    "match": "Buffalo Sabres vs Dallas Stars",
+    "home_team": "Buffalo Sabres",
+    "away_team": "Dallas Stars",
+    "pick": "DALLAS STARS (DNB)",
+    "market": "Draw No Bet",
+    "odds": 2.02,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

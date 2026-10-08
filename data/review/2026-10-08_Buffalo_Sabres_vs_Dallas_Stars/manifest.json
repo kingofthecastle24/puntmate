@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "17957a6d0b25dac616ed1d02ad2db18da95171f165bf4092e8c5c35de5b4ec52",
+      "bytes": 629
+    },
+    "instagram-caption.txt": {
+      "sha256": "bb17854e51099b3fe29eeaee9fb9a7b71dc107ffd216caeee3a1ffb67e8437c7",
+      "bytes": 664
+    },
+    "post-metadata.json": {
+      "sha256": "faa0828816f6eeaa123bea17c08f03cc94eee84cf9fbb46300974d1fe854c196",
+      "bytes": 13255
+    },
+    "preview.html": {
+      "sha256": "b0b4496f2a794ae808a7a22411cc5ae343943ef3c1262ca53f83970e4512ea7e",
+      "bytes": 18499
+    },
+    "cover.png": {
+      "sha256": "bd33f4add3b07a5552c1ec63f0b78a6cdd893e27cb7c36bbaaab77e167ca1af6",
+      "bytes": 74842
+    },
+    "tip.png": {
+      "sha256": "fcbf01996448289fbfd89b1d42fc0542ecfcea44935c3e42c2b8ec2c8ae51364",
+      "bytes": 88498
+    },
+    "breakdown.png": {
+      "sha256": "b6e6559f57a60fcd1e87a40412dbdb3969b6baf1d83a3cdb3e09cb1d96be6e61",
+      "bytes": 146681
+    },
+    "story.png": {
+      "sha256": "1d1a24516fd913a73912e5d8f4acc4766a3f293fda07246c68ab4d8a99b0ff95",
+      "bytes": 70734
+    }
+  },
+  "pick_id": "2026-10-08_Buffalo_Sabres_vs_Dallas_Stars",
+  "created_at": "2026-10-08T00:07:49.722631+00:00"
+}
