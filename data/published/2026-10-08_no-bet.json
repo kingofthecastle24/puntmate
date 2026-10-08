@@ -1,0 +1,42 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 246,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1791502819,
+        "text": "\ud83d\udd0d PUNTMATE NZ \u2014 NO BET TODAY\n\nNothing cleared the bar today \u2014 no pick meets my criteria, so we're sitting this one out. A no-bet day protects the strike rate; forcing a pick never does.\n\nOn the watchlist today:\n\u2022 UFC: Kyle Clark vs Ali Gazamatov \u2014 Sat 9:00AM NZT\n\u2022 UFC: Aysia Cortez vs Sophie Lang \u2014 Sat 9:00AM NZT\n\u2022 UFC: Kevin Fernandez vs Enrique Pacheco Parra \u2014 Sat 9:00AM NZT\n\u2022 UFC: Joe Thurrott vs Ricky Miller \u2014 Sat 9:00AM NZT\n\u2022 UFC: Mason Carzino-Hartshorn vs Kelvin Martinez \u2014 Sat 9:00AM NZT\n\nBack tomorrow with the numbers.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 29,
+            "type": "bold"
+          },
+          {
+            "offset": 31,
+            "length": 155,
+            "type": "italic"
+          },
+          {
+            "offset": 188,
+            "length": 23,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  }
+}
