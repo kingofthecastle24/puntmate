@@ -1383,7 +1383,7 @@
     "market": "Head to Head",
     "odds": 1.46,
     "confidence": "MODERATE",
-    "result": "pending",
+    "result": "unresolved",
     "pnl": null
   },
   {
@@ -1485,7 +1485,7 @@
     "market": "Draw No Bet",
     "odds": 2.02,
     "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
+    "result": "win",
+    "pnl": 10.2
   }
 ]
