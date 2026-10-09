@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "c3dae63670dd5a14d568c5ebe0f6fb8a9a115c0707e2cd057cb2289c7057f9bd",
+      "bytes": 697
+    },
+    "instagram-caption.txt": {
+      "sha256": "558e1aeb041c38942e24c6bfb35bf1586916628ca2231f34c7088e8877639760",
+      "bytes": 742
+    },
+    "post-metadata.json": {
+      "sha256": "fd85cfb9372338f6ee5228b2810cf1108833966b0ec7a8a9836a49619e3fea4c",
+      "bytes": 22555
+    },
+    "preview.html": {
+      "sha256": "eaaca6310ea32e85b7cbe82e0956ecb5d2c78327fa4a950f9f0e9b958b17f0ec",
+      "bytes": 28530
+    },
+    "cover.png": {
+      "sha256": "1056d2df28e0a66f33fcb81317937be4cef90cfaa1e3483aaeddb9448d2e56c9",
+      "bytes": 77793
+    },
+    "tip.png": {
+      "sha256": "24d308876f3f3eeff98e38b0257f9c644d673e9ef6230909de99dc85139d1230",
+      "bytes": 78899
+    },
+    "breakdown.png": {
+      "sha256": "b133307b01cb1b7ff571ff1ce4de0b5b43d393d8b94d4aebc72ee90414a9a59a",
+      "bytes": 154529
+    },
+    "story.png": {
+      "sha256": "4204f6448b0696c6afe0c06961b4d90a960b2f9d727664f66f13d1454cb25fd4",
+      "bytes": 64907
+    }
+  },
+  "pick_id": "2026-10-09_Arsenal_vs_Leeds_United",
+  "created_at": "2026-10-09T23:58:12.827922+00:00"
+}

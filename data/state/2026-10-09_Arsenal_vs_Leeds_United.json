@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-09_Arsenal_vs_Leeds_United",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-09T23:58:13.138913+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-09T23:58:13.139098+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-09T23:58:13.139290+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

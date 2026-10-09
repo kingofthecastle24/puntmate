@@ -1504,5 +1504,22 @@
     "confidence": "LOW",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-10-09_soccer_epl_Arsenal_PUNTER_BET",
+    "date": "2026-10-09",
+    "bet_type": "PUNTER_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "soccer_epl",
+    "sport": "soccer_epl",
+    "match": "Arsenal vs Leeds United",
+    "home_team": "Arsenal",
+    "away_team": "Leeds United",
+    "pick": "ARSENAL -1.5",
+    "market": "Handicap",
+    "odds": 2.2,
+    "confidence": "LOW",
+    "result": "pending",
+    "pnl": null
   }
 ]
