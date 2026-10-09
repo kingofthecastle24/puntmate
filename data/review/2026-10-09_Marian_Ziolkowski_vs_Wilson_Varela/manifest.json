@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "bbb13bce98df3d272eba5cb37c6cf80dbb4136eed063322c6ff6d25c7993182c",
+      "bytes": 631
+    },
+    "instagram-caption.txt": {
+      "sha256": "cfc568f4c81a1963a5f7a84c73035f6867dd3073826477cfc912f2b187a1fa25",
+      "bytes": 666
+    },
+    "post-metadata.json": {
+      "sha256": "1439c3ca52421dad140a973576e93e82d5f3b7ac1ceab537e7ed83da097d8823",
+      "bytes": 18389
+    },
+    "preview.html": {
+      "sha256": "72a486d092aabe624307a44e12e3f99654299e5b470219d8882735350cc0c1de",
+      "bytes": 23929
+    },
+    "cover.png": {
+      "sha256": "c4ccd62a04004034e7940608cba3021d12320a25fcef5d2320d967ca5531a897",
+      "bytes": 75441
+    },
+    "tip.png": {
+      "sha256": "168077fbcd651c8481c70cd5e97583f45b5d3c8df65d6028c0bc1392330f6229",
+      "bytes": 89703
+    },
+    "breakdown.png": {
+      "sha256": "3fad4014f8da38d9e90ff294b7b90aa71414ced5aa34cefbcff6115d7b99402b",
+      "bytes": 154997
+    },
+    "story.png": {
+      "sha256": "7c2e962a5da55ac514ae6060609be698be8e5e2c725ac6782c3eb13acb7b1062",
+      "bytes": 76746
+    }
+  },
+  "pick_id": "2026-10-09_Marian_Ziolkowski_vs_Wilson_Varela",
+  "created_at": "2026-10-09T23:04:37.583999+00:00"
+}
