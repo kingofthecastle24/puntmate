@@ -1,0 +1,14 @@
+{
+  "files": {
+    "post-metadata.json": {
+      "sha256": "4c826b78ea94175596f7613293ef7032d035b8a62930061e6ac771621c70ab81",
+      "bytes": 10367
+    },
+    "watchlist-post.txt": {
+      "sha256": "139d8b62a6e9ebd24620e49c6b484465c638dd0646bafa25c1e4a92fb7d1b1ca",
+      "bytes": 729
+    }
+  },
+  "pick_id": "2026-10-09_no-bet",
+  "created_at": "2026-10-09T00:15:17.893004+00:00"
+}
