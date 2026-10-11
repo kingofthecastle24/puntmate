@@ -41,6 +41,19 @@ ESPN_SPORT_MAP = {
     "soccer_fifa_world_cup":  "soccer/fifa.world",
     "rugbyleague_nrl":        "rugby-league/nrl",
     "rugbyunion_super_rugby": "rugby/super-rugby-pacific",
+    # 2026-10-11: audited against fetch_odds.SPORTS — these sports had no
+    # ESPN/RSS mapping at all (fell through to the raw-sport-key RSS
+    # fallback below, and were never queried on ESPN). Same best-effort
+    # caveat as the sports above: unverified path guesses, harmless if
+    # wrong (404/empty just falls through to RSS, same as today).
+    "rugbyunion_international": "rugby/international",
+    "aussierules_afl":         "australian-football/afl",
+    "baseball_mlb":            "baseball/mlb",
+    "basketball_nba":          "basketball/nba",
+    "soccer_epl":              "soccer/eng.1",
+    "cricket_international_t20": "cricket/t20i",
+    "boxing_boxing":           "boxing",
+    "icehockey_nhl":           "hockey/nhl",
     "mma_mixed_martial_arts": "mma/ufc",
     "tennis_atp_wimbledon":   "tennis/atp",
     "tennis_wta_wimbledon":   "tennis/wta",
@@ -51,9 +64,17 @@ RSS_SPORT_KEYWORD = {
     "soccer_fifa_world_cup": "FIFA World Cup 2026 football",
     "rugbyleague_nrl": "NRL 2026",
     "rugbyunion_super_rugby": "Super Rugby Pacific",
+    "rugbyunion_international": "Test rugby international",
     "mma_mixed_martial_arts": "UFC MMA",
     "tennis_atp_wimbledon": "Wimbledon ATP tennis",
     "tennis_wta_wimbledon": "Wimbledon WTA tennis",
+    "aussierules_afl": "AFL Aussie Rules",
+    "baseball_mlb": "MLB baseball",
+    "basketball_nba": "NBA basketball",
+    "soccer_epl": "Premier League football",
+    "cricket_international_t20": "T20 cricket international",
+    "boxing_boxing": "boxing",
+    "icehockey_nhl": "NHL hockey",
 }
 
 

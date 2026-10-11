@@ -22,7 +22,7 @@ class BackabilityTests(unittest.TestCase):
         e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=48, implied_probability=50, confidence="HIGH")
         backable, reason = is_backable(e)
         self.assertFalse(backable)
-        self.assertIn("no genuine value", reason)
+        self.assertIn("is below the book's implied probability", reason)
 
     def test_thin_edge_below_the_restored_floor_is_not_backable(self):
         # a 2% edge no longer clears the restored 7% value-betting floor
@@ -30,7 +30,14 @@ class BackabilityTests(unittest.TestCase):
         e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=52, implied_probability=50, confidence="HIGH")
         backable, reason = is_backable(e)
         self.assertFalse(backable)
-        self.assertIn("no genuine value", reason)
+        # BUG FIX regression (2026-10-11, flagged by external audit): 52%
+        # genuinely IS above 50% — the old wording ("is not above") was
+        # simply false here. A thin-but-real edge must say so honestly,
+        # not claim there's no edge at all.
+        self.assertIn("only 2.0 points above", reason)
+        self.assertIn("short of the 7% floor", reason)
+        self.assertNotIn("is below", reason)
+        self.assertNotIn("is not above", reason)
 
     def test_edge_at_the_floor_is_backable(self):
         e = Evidence(evidence_sufficient=True, odds=2.0, our_probability=57, implied_probability=50, confidence="HIGH")
