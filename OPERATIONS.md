@@ -68,3 +68,21 @@ Start a Cowork session with this repo's parent folder connected. Say e.g.
 via the git remote already configured in CI; local sessions clone with the
 same token. Keep changes small, always run `pytest tests/` (104 tests), and
 never bypass the validator/state machine to "make something post".
+
+## Owner DM + month budget (added 2026-10-11, branch feature/owner-dm-and-bet-log)
+Private Telegram DM to the owner for every pick and weekend multi that gets
+published, so the owner can follow exactly what PuntMate posts at flat stakes.
+- Code: `scripts/owner_dm.py`, hooked at the END of `publish()` and in
+  `dry_run_report()` in `publish_pick.py`. It never generates or changes a pick.
+- Secret needed: `OWNER_CHAT_ID` (GitHub Actions secret; reuses TELEGRAM_BOT_TOKEN).
+  Owner must press Start on the bot once. Missing secret = DM skipped, publish unaffected.
+- Config: `config/my_bets.json` -> `single_stake` (2.00), `multi_stake` (5.00),
+  `monthly_budget` (100). Stakes appear in the DM only, never in public copy.
+- A DM is sent ONLY for a bet whose public Telegram post succeeded.
+- Month figures (staked / returned / net / open) are derived from
+  `data/picks.json`, `data/published/` and `data/multi_results.json`. No personal
+  bet data is written to this (public) repo. Budget problems are warnings only.
+- Multis are not in the ledger, so settle them by hand:
+  `python scripts/set_multi_result.py <pick_id> <punter|gambler|degenerate> <win|loss|void>`
+- Dry run (prints the DMs, sends nothing): normal `DRY_RUN=true` publish_pick run.
+- Nothing in this repo touches TAB or any bookmaker.

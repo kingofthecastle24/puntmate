@@ -241,6 +241,16 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
                 results[f"facebook_{tier}_multi"] = {"ok": False, "error": str(e)}
                 print(f"  Facebook {tier} multi error: {e}")
 
+    # Private owner DM (owner_dm.py). Runs strictly AFTER every public post
+    # above, only for bets whose public Telegram post succeeded, and is not
+    # recorded in `results` -- so a DM problem can never change the publish
+    # outcome, the state machine, or the result email.
+    try:
+        import owner_dm
+        owner_dm.notify(metadata, review_dir, results, platforms)
+    except Exception as e:  # noqa: BLE001
+        print(f"::warning::Owner DM step failed (publishing unaffected): {e}")
+
     return results
 
 
@@ -288,6 +298,14 @@ def dry_run_report(metadata, telegram_text, instagram_caption, review_dir=None):
                 print(f"  Would post carousel: {carousel_urls}")
             else:
                 print("  No graphic rendered this run — would skip Instagram, Telegram text only.")
+
+    # Show the private owner DM(s) that a live run would send (nothing is sent).
+    if review_dir:
+        try:
+            import owner_dm
+            owner_dm.notify(metadata, review_dir, {}, metadata.get("intended_platforms", []), dry=True)
+        except Exception as e:  # noqa: BLE001
+            print(f"  (owner DM preview unavailable: {e})")
 
     print("\n" + "=" * 55)
     print("DRY RUN complete — nothing was actually sent.")

@@ -412,6 +412,7 @@ jobs:
           DRY_RUN:             ${{ needs.generate.outputs.dry_run }}
           AUTO_PUBLISH:        ${{ needs.generate.outputs.auto_publish }}
           PICK_ID:              ${{ needs.generate.outputs.pick_id }}
+          OWNER_CHAT_ID:       ${{ secrets.OWNER_CHAT_ID }}
           TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           INSTAGRAM_USER_ID:   ${{ secrets.IG_USER_ID }}
@@ -657,6 +658,7 @@ jobs:
           DRY_RUN:             ${{ needs.generate_weekend.outputs.dry_run }}
           AUTO_PUBLISH:        ${{ needs.generate_weekend.outputs.auto_publish }}
           PICK_ID:             ${{ needs.generate_weekend.outputs.pick_id }}
+          OWNER_CHAT_ID:       ${{ secrets.OWNER_CHAT_ID }}
           TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           INSTAGRAM_USER_ID:   ${{ secrets.IG_USER_ID }}
