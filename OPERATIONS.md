@@ -51,6 +51,42 @@ in check_results.yml, surfaced in the Sunday recap. Start it by setting
 "enabled": true in config/challenge.json (start date stamps itself). Bust
 and completion both stay on the record. Ledger: data/challenge.json.
 
+## Owner private DM + personal bet log (added 2026-10-11)
+A private Telegram DM to Micah for every official pick and weekend multi
+that actually publishes — he follows every one of them, at his own flat
+stakes, so there's no personal filtering and no separate picks. Entirely
+separate from the public posts/ledger/copy validator, which are untouched.
+- `scripts/owner_dm.py` — builds the DM from the exact frozen
+  `data/review/<pick_id>/post-metadata.json` the public post was built
+  from (never regenerated), appends a month-to-date staked/returned/net
+  summary from `my_bets.py`, and sends it. Wired as its own step in
+  `generate.yml`, right after the public publish step, in both the daily
+  and weekend-multi jobs — gated on `has_pick`/`has_{tier}_multi` so it
+  never fires on a No-Bet/Watchlist day. A DM failure is logged and can
+  never affect the public publish outcome.
+- Secret needed: `OWNER_CHAT_ID` (Micah's own Telegram chat id — reuses
+  `TELEGRAM_BOT_TOKEN`). Missing secret = DM skipped, nothing else affected.
+- `config/my_bets.json` — `single_stake` (2.00), `multi_stake` (5.00),
+  `monthly_budget` (100), `tab_balance` (optional, Micah enters it by hand).
+  Staking language is fine in the DM only — never public copy.
+- `data/my_bets.json` — Micah's own log of bets he actually placed (not
+  every published pick is necessarily logged — he adds one by hand after
+  placing it himself on TAB):
+  `python scripts/my_bets.py add <pick_id> [--tier punter|gambler|degenerate]`
+- Resolution is automatic, nightly, in `check_results.yml` right after
+  `check_results.py` — `python scripts/my_bets.py resolve`. Singles AND
+  multi legs are resolved against real scores via the exact same market
+  rules the public ledger uses (`check_results.resolve_market_result`,
+  extracted so both share one source of truth). A multi needs every leg to
+  win (a push leg doesn't block it). Results live ONLY in
+  `data/my_bets.json` — never written into the public `data/picks.json`.
+- `python scripts/my_bets.py summary [--month YYYY-MM]` — staked / returned
+  / net / budget warnings, plus the public record's own P&L rescaled to
+  Micah's stake for comparison. Budget warnings are warnings only — nothing
+  is ever skipped or hidden.
+- Nothing here touches TAB or any bookmaker — Micah places every bet by
+  hand (Claude in Chrome on his Mac), always tapping Place Bet himself.
+
 ## Known limitations / watch items
 - Auto-publish trial is NEW: first unsupervised scheduled run needs a glance.
 - Watchlist + multi are unit-tested but haven't fired live yet.

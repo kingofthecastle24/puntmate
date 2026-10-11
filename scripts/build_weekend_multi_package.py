@@ -112,6 +112,11 @@ def main():
             f.write(text)
         manifest_files.append(text_filename)
         metadata[f"has_{tier_key}_multi"] = True
+        # Frozen structured legs (2026-10-11) — same list build_text_fn used,
+        # kept as data so owner_dm.py/my_bets.py can build the private DM
+        # and resolve each leg's real result without regenerating anything.
+        # Never surfaced in public copy.
+        metadata[f"{tier_key}_multi_legs"] = legs
         intended_platforms.add("telegram")
         if promo_hint:
             metadata[f"{tier_key}_multi_promo_hint"] = promo_hint

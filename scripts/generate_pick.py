@@ -873,6 +873,12 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
             legs.append({
                 "match": m,
                 "sport_label": SPORT_LABELS.get(c["match_meta"]["sport"], c["match_meta"]["sport"]),
+                # sport_key (the raw Odds API sport slug, not the display
+                # label) is never shown in public copy — it's frozen here
+                # purely so a leg's real-world result can be looked up
+                # independently later (see my_bets.py), since sport_label
+                # alone is ambiguous (e.g. "Wimbledon" covers two keys).
+                "sport_key": c["match_meta"]["sport"],
                 "selection": _display_selection(c["market_type"], c["raw"].get("selection"), c["line"]),
                 "market": c["raw"].get("market") or {"h2h": "Head to Head", "spread": "Handicap", "total": "Total"}[c["market_type"]],
                 "odds": f"{float(c['odds_val']):.2f}",

@@ -12,7 +12,7 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-from check_results import resolve_h2h, calculate_pnl
+from check_results import resolve_h2h, calculate_pnl, resolve_market_result
 
 
 class ResolveH2HTests(unittest.TestCase):
@@ -78,6 +78,45 @@ class TotalsSettlingTests(unittest.TestCase):
         import inspect, check_results
         src = inspect.getsource(check_results)
         self.assertIn('("push" if total == line else "loss")', src)
+
+
+class ResolveMarketResultTests(unittest.TestCase):
+    """resolve_market_result (2026-10-11) — extracted from check_and_resolve
+    so my_bets.py (personal flat-stake log) can resolve a bet the same way
+    the public ledger does, for both singles and multi legs. Behaviour must
+    match check_and_resolve's old inline logic exactly — covered by the
+    pre-existing TotalsSettlingTests/ResolveH2HTests above still passing
+    unchanged, plus these direct tests of the new entry point."""
+
+    def test_handicap_is_always_manual(self):
+        self.assertEqual(
+            resolve_market_result("Handicap", "WARRIORS -6.5", "Warriors", "Storm", 24, 12),
+            "manual",
+        )
+
+    def test_total_delegates_to_the_same_push_fix(self):
+        self.assertEqual(
+            resolve_market_result("Total", "UNDER 7", "Warriors", "Storm", 4, 3), "push"
+        )
+        self.assertEqual(
+            resolve_market_result("Total", "OVER 42.5", "Warriors", "Storm", 30, 20), "win"
+        )
+
+    def test_h2h_delegates_to_resolve_h2h(self):
+        self.assertEqual(
+            resolve_market_result("Head to Head", "Warriors", "Warriors", "Storm", 24, 12),
+            "win",
+        )
+
+    def test_incomplete_scores_return_none(self):
+        self.assertIsNone(
+            resolve_market_result("Head to Head", "Warriors", "Warriors", "Storm", None, 12)
+        )
+
+    def test_unparseable_total_text_returns_none(self):
+        self.assertIsNone(
+            resolve_market_result("Total", "neither direction named", "Warriors", "Storm", 10, 10)
+        )
 
 
 class PnlTests(unittest.TestCase):
