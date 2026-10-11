@@ -337,7 +337,15 @@ jobs:
   approve:
     name: "⏳ Awaiting approval to publish"
     needs: generate
-    if: (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true'
+    # needs.generate.result == 'success' (2026-10-11, external audit item 3,
+    # run #192): a job's outputs stay set to whatever an EARLIER successful
+    # step produced even if a LATER step in that same job fails (e.g. the
+    # "Commit ledger, review package & state" push hitting a rebase
+    # conflict) — so has_pick/pick_id could read "true"/a real pick_id even
+    # though generate's overall result is "failure" and the review artifact
+    # this pick_id names was therefore never uploaded. Without this check,
+    # approve/publish would still try to act on that pick_id.
+    if: needs.generate.result == 'success' && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true'
     runs-on: ubuntu-latest
     environment: production   # ← this is the approval gate (Telegram + Instagram + Facebook all wait here)
 
@@ -358,7 +366,13 @@ jobs:
   on_reject:
     name: Record rejection
     needs: [generate, approve]
-    if: always() && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true' && needs.approve.result != 'success'
+    # needs.generate.result == 'success' guard (see approve's comment above):
+    # if generate itself failed, approve never ran (its own gate now requires
+    # the same check) and there is nothing real to reject — without this,
+    # needs.approve.result reads "skipped" (!= 'success'), which would
+    # otherwise look identical to an actual human rejection and send a
+    # misleading "Rejected" email for what was really an operational failure.
+    if: always() && needs.generate.result == 'success' && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true' && needs.approve.result != 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -398,7 +412,13 @@ jobs:
   publish:
     name: Publish approved post
     needs: [generate, approve]
-    if: always() && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && (needs.approve.result == 'success' || needs.generate.outputs.auto_publish == 'true')
+    # needs.generate.result == 'success' guard (2026-10-11, external audit
+    # item 3, run #192 — see approve's comment above for the exact failure
+    # mode this closes): refuses to even attempt the artifact download
+    # below when generate didn't fully succeed, rather than failing loudly
+    # partway through trying to download an artifact that was never
+    # uploaded.
+    if: always() && needs.generate.result == 'success' && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && (needs.approve.result == 'success' || needs.generate.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -595,7 +615,10 @@ jobs:
   approve_weekend:
     name: "⏳ Awaiting approval to publish (Weekend Multi)"
     needs: generate_weekend
-    if: (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true'
+    # Same needs.*.result == 'success' guard as the daily approve job —
+    # see its comment for why (run #192's failure mode applies identically
+    # here).
+    if: needs.generate_weekend.result == 'success' && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true'
     runs-on: ubuntu-latest
     environment: production   # same single approval gate as the daily pick
 
@@ -609,7 +632,8 @@ jobs:
   on_reject_weekend:
     name: Record rejection (Weekend Multi)
     needs: [generate_weekend, approve_weekend]
-    if: always() && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true' && needs.approve_weekend.result != 'success'
+    # Same guard as on_reject — see its comment.
+    if: always() && needs.generate_weekend.result == 'success' && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true' && needs.approve_weekend.result != 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -643,7 +667,9 @@ jobs:
   publish_weekend:
     name: Publish approved weekend multi
     needs: [generate_weekend, approve_weekend]
-    if: always() && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && (needs.approve_weekend.result == 'success' || needs.generate_weekend.outputs.auto_publish == 'true')
+    # Same guard as publish — see its comment (run #192's exact failure
+    # mode, applied to the weekend pipeline).
+    if: always() && needs.generate_weekend.result == 'success' && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && (needs.approve_weekend.result == 'success' || needs.generate_weekend.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
