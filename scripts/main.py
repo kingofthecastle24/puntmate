@@ -33,6 +33,7 @@ import uuid
 from datetime import datetime, timezone
 
 import run_status
+from nz_date import nz_today
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
@@ -179,7 +180,11 @@ def _recently_actioned_slugs(days=4):
     state_dir = os.path.join(REPO_ROOT, "data", "state")
     if not os.path.isdir(state_dir):
         return slugs
-    cutoff = date.today() - timedelta(days=days)
+    # NZ business date, not server-local/UTC "today" (2026-10-11, external
+    # audit item 6) -- state filenames are dated by run_date, which is now
+    # nz_today() too (see run()); comparing against a UTC cutoff would drift
+    # the 4-day window by up to a day depending on DST and time of day.
+    cutoff = date.fromisoformat(nz_today()) - timedelta(days=days)
     for name in os.listdir(state_dir):
         if not name.endswith(".json"):
             continue
@@ -204,7 +209,7 @@ def run():
     from generate_pick import generate_pick_for_matches
 
     run_id = _new_run_id()
-    run_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    run_date = nz_today()
     run_ts = datetime.now(timezone.utc).isoformat()
 
     print("=" * 55)
@@ -215,6 +220,24 @@ def run():
 
     print("\n[1/3] Fetching upcoming match odds...")
     matches = fetch_upcoming_odds()
+
+    # Per-sport fixture counts for THIS run's 24h window (2026-10-11,
+    # external audit item 6: "surface UFC/Test-rugby fixture/odds
+    # availability"). fetch_odds already prints this per sport as it goes,
+    # but that's only visible by reading the raw CI log -- this folds the
+    # same counts into latest_run.json so "0 UFC fixtures today" is
+    # distinguishable at a glance from "UFC fixtures existed but got
+    # dropped/rejected downstream", without requiring a publishing-content
+    # change to surface it in the review email itself (a separate decision
+    # left for review, not made here).
+    fixture_availability = {s: 0 for s in fetch_odds.SPORTS}
+    for m in matches:
+        fixture_availability[m["sport"]] = fixture_availability.get(m["sport"], 0) + 1
+    zero_fixture_priority_sports = sorted(
+        s for s in fetch_odds.PRIORITY_SPORTS if fixture_availability.get(s, 0) == 0
+    )
+    if zero_fixture_priority_sports:
+        print(f"  No fixtures today in: {', '.join(zero_fixture_priority_sports)}")
 
     if not matches:
         # Was this genuinely zero fixtures, or did the Odds API itself fail
@@ -243,6 +266,7 @@ def run():
             "status": status,
             "pick": {"has_pick": False, "status": status, "reasoning": reasoning, "research_warnings": []},
             "odds_api_errors": fetch_odds.LAST_FETCH_ERRORS,
+            "fixture_availability": fixture_availability,
         })
         return
 
@@ -289,6 +313,7 @@ def run():
         "run_ts": run_ts,
         "status": pick.get("status", run_status.NO_VALUE),
         "pick": pick,
+        "fixture_availability": fixture_availability,
     }
 
     if not pick.get("has_pick"):

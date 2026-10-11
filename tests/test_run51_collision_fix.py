@@ -86,8 +86,7 @@ class MainDedupeTests(unittest.TestCase):
         live_pick_id = f"{run_date}_{slugify(SAMPLE_MATCH['match'])}"
         self._seed_state(live_pick_id, PUBLISHED)
 
-        with patch("main.datetime") as mock_dt:
-            mock_dt.now.return_value.strftime.return_value = run_date
+        with patch("main.nz_today", return_value=run_date), patch("main.datetime") as mock_dt:
             mock_dt.now.return_value.isoformat.return_value = f"{run_date}T08:00:00+00:00"
             # run() calls render_card only when has_pick stays True — it
             # should NOT reach that far, so no need to mock the renderer.
@@ -109,8 +108,7 @@ class MainDedupeTests(unittest.TestCase):
         let fail over to the legacy renderer / NO_BET path harmlessly since
         we're not testing rendering here)."""
         run_date = "2026-07-18"
-        with patch("main.datetime") as mock_dt:
-            mock_dt.now.return_value.strftime.return_value = run_date
+        with patch("main.nz_today", return_value=run_date), patch("main.datetime") as mock_dt:
             mock_dt.now.return_value.isoformat.return_value = f"{run_date}T08:00:00+00:00"
             with patch.object(pm_main, "render_card", return_value={"ok": True, "files": {}}):
                 pm_main.run()

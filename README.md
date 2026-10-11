@@ -87,8 +87,40 @@ Instagram account"** rather than claimed as a verified success.
 
 ## Schedule
 
-- 8am NZT daily (main run)
-- 6pm NZT Friday/Saturday/Sunday (weekend evening games)
+- Daily main run: fires at a fixed 20:00 UTC. GitHub Actions cron is
+  always UTC and can't express a time zone, so this is 8am NZT in NZST
+  (roughly Apr-Sep) but 9am NZT in NZDT (roughly Sep-Apr) — a real hour of
+  drift across each DST changeover, not just a rounding note. The
+  pipeline's own "today" doesn't depend on which of those two hours it
+  actually fires at: `run_date` and same-day dedupe are computed from the
+  real Pacific/Auckland calendar date (`scripts/nz_date.py`), not from
+  this cron time, so the drift can't produce a wrong business date or a
+  duplicate/skipped day — it can still shift the actual posting time by
+  an hour twice a year, which is a separate, not-yet-made schedule change.
+- Weekend Punter/Gambler-Degenerate multi: fires 7am NZT Friday/Saturday/
+  Sunday (moved 2026-07-19 from the original 6pm slot — too close to
+  kickoff and outside NZ's actual morning engagement peak), same fixed-UTC
+  DST caveat as above.
+
+### Fixture window & prompt cap
+
+- Each run fetches odds across a **rolling 24-hour window from the run's
+  own fire time** (`fetch_odds.fetch_upcoming_odds(hours_ahead=24)`), not
+  a fixed calendar day — so "today's" fixtures shift along with the daily
+  cron's own UTC/NZT drift (see above), and the weekend multi widens this
+  to ~76h to pool Fri/Sat/Sun together (`generate_weekend_multi.py`).
+- If more than 25 fixtures come back in that window, only the first 25 are
+  put in front of the model (`generate_pick.MAX_MATCHES_IN_PROMPT`) —
+  owner-focus fixtures first, then sport priority — and the run's
+  `research_warnings` records exactly how many fixtures were available and
+  how many were dropped, so a quiet slate and a capped one never look the
+  same in the review email.
+- A sport (e.g. UFC/MMA, international Test rugby) having zero fixtures on
+  a given day is expected, not an error — most sports don't run daily.
+  `fetch_odds.LAST_FETCH_ERRORS` distinguishes that from an actual Odds
+  API failure for that sport (dead key, rate limit, timeout) — see
+  `scripts/run_status.py`'s `ODDS_API_ERROR` status, which only fires on
+  the latter.
 
 ## Tests
 
