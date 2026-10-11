@@ -69,13 +69,54 @@ Actions tab → "PuntMate Social — Generate & Approve" → Run workflow → le
    approval request.
 2. **approve** — you review the email (or the job summary / `preview.html`
    artifact if email isn't configured) and click Approve or Reject in the
-   GitHub Actions UI.
+   GitHub Actions UI. Only runs if **generate** itself fully succeeded
+   (`needs.generate.result == 'success'`) — see Reliability below.
 3. **on_reject** *(only if rejected/cancelled)* — records `REJECTED`, sends a
    rejection email, nothing is published.
 4. **publish** *(only if approved)* — re-verifies every file's SHA-256
    checksum against `manifest.json` (refuses to publish on any mismatch),
    then posts to Telegram and Instagram independently — one platform failing
-   never blocks or undoes another's success — and emails the result.
+   never blocks or undoes another's success — and emails the result. A
+   mixed outcome is recorded and emailed as `PARTIALLY_PUBLISHED`, never
+   silently reported as a plain success; `publish.yml` (Manual Republish)
+   can then resend only the platforms that didn't succeed the first time,
+   without re-posting to ones that already did.
+
+### Reliability
+
+- Every run writes `data/latest_run.json` exactly once, through a single
+  function, on every exit path — including empty fixtures and Odds API
+  failures, which previously wrote nothing at all and left a stale prior
+  day's file in place for the next step to misread as fresh. Each write
+  carries a never-reused `run_id` and one of seven statuses
+  (`scripts/run_status.py`) that separate an honest no-value day
+  (`NO_VALUE`, `INSUFFICIENT_EVIDENCE`) from an operational failure
+  (`BAD_ODDS`, `MODEL_ERROR`, `ODDS_API_ERROR`, `RENDER_ERROR`) —
+  `PICK_READY` is the only status that means a real pick was selected.
+- `build_review_package.py` refuses to build a review package when
+  `latest_run.json`'s `run_id` doesn't match the current job's
+  `GITHUB_RUN_ID` (generate and the review-package build always run in the
+  same workflow run — see `generate.yml`'s module docstring) — a leftover
+  file from a different run can never be silently frozen as today's pick.
+- **approve**, **on_reject** and **publish** (and their weekend
+  equivalents) all require `needs.generate.result == 'success'` before
+  acting on generate's outputs. A job's outputs stay set to whatever an
+  earlier successful step produced even if a later step in that same job
+  fails (e.g. a git push hitting a real rebase conflict) — without this
+  check, publish could still try to download a review artifact that was
+  never uploaded.
+
+### Proposed, not live: conservative mode
+
+`scripts/conservative_mode.py` is a second, independent ranking over the
+exact same candidates `generate_pick.py` already finds (nothing bypasses
+or loosens the existing value/evidence gate) — picks the highest estimated
+win probability among `confidence == "HIGH"` candidates, with no odds
+ceiling or floor, so a short price is never treated as "safe" just for
+being short. It's fully tested but **not wired into `main.py`'s live run**
+— its one open parameter, `CONSERVATIVE_MIN_PROBABILITY`, is a proposed
+default pending Micah's sign-off (see the module's docstring), and nothing
+here publishes anywhere until that's settled.
 
 ### Facebook
 
