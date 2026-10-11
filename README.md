@@ -82,6 +82,28 @@ Actions tab → "PuntMate Social — Generate & Approve" → Run workflow → le
    can then resend only the platforms that didn't succeed the first time,
    without re-posting to ones that already did.
 
+### No-bet days: Watchlist + Degen Watch
+
+On a genuine no-bet day (no candidate clears the value bar), two
+independent, explicitly-unofficial things get posted instead of the real
+pick — automatically, no approval step, same as the real daily pick's
+trial flow:
+
+- **Watchlist** (Telegram only) — today's most notable fixtures, no
+  selections, no odds, nothing framed as advice.
+- **Degen Watch** (Telegram + Instagram) — the candidate closest to
+  clearing the 7% value bar but which still fell short
+  (`generate_pick.select_closest_to_passing`, over the same
+  `rejected_candidates` the run already produces — never a second
+  ledger or a loosened gate). Always labelled "UNOFFICIAL — didn't clear
+  our bar" and "not a PuntMate pick", and always validated through the
+  strictest responsible-gambling language check regardless of the
+  candidate's real risk tier. Never counted toward the public strike
+  rate, RECAP.md, or any ledger — it's content, not a tracked pick.
+  Instagram is skipped (not failed) if the card doesn't render; one
+  platform failing never blocks the other, same guarantee as the real
+  pick.
+
 ### Reliability
 
 - Every run writes `data/latest_run.json` exactly once, through a single

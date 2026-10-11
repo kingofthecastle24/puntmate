@@ -296,6 +296,14 @@ jobs:
               echo "No defensible pick today (NO_BET) — nothing rendered, nothing to approve."
               if [ -f data/latest_run.json ]; then
                 python3 -c "import json; print('Reason:', json.load(open('data/latest_run.json'))['pick'].get('reasoning',''))"
+                python3 -c "
+          import json
+          d = json.load(open('data/latest_run.json'))
+          dw = d.get('degen_watch')
+          if dw:
+              c = dw['candidate']
+              print(f\"Degen Watch (unofficial): {c.get('match','')} / {c.get('selection','')} @ {c.get('odds')} — edge {c['edge_pct']:+.1f}%, short of the {c['min_value_edge_pct']:.0f}% bar.\")
+          "
               fi
             else
               PICK_ID="${{ steps.review_package.outputs.pick_id }}"

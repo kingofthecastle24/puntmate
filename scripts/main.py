@@ -99,6 +99,21 @@ def render_card(pick):
         return {"ok": True, "files": {"carousel": paths}, "warnings": ["used legacy Pillow fallback"]}
 
 
+def render_degen_watch_card(candidate):
+    """Render the Degen Watch card for the no-bet-day candidate closest to
+    clearing the value bar. No legacy-Pillow fallback (unlike render_card)
+    — this is optional, non-critical unofficial content; if it fails to
+    render, the day's genuine NO_BET write must still go through
+    untouched, just without a Degen Watch card. Returns None on failure
+    instead of raising."""
+    try:
+        from render_brand_templates import render_degen_watch
+        return render_degen_watch(candidate, out_dir=CARDS_DIR)
+    except Exception as e:
+        print(f"  ::warning:: Degen Watch card render failed ({e}) — skipping Degen Watch for today.")
+        return None
+
+
 def render_multi_cards(pick, tier, legs):
     """Render one multi tier's graphic (cover/legs/breakdown) via the
     Multi.dc.html brand template. Unlike the single featured pick, there is
@@ -331,6 +346,26 @@ def run():
             }
             for m in matches[:5]
         ]
+
+        # Degen Watch (2026-10-11, Micah): on a genuine no-bet day, still
+        # surface the candidate closest to clearing the value bar -- but
+        # explicitly unofficial, never the real pick, never counted in any
+        # ledger or strike rate. generate_pick.select_closest_to_passing
+        # only ever returns a candidate that had evidence_sufficient=True
+        # (a real edge computation, just short of the 7% floor) -- an
+        # insufficient-evidence rejection never qualifies, since there's no
+        # genuine "closest" number to show for that failure mode.
+        from generate_pick import select_closest_to_passing
+        degen_candidate = select_closest_to_passing(pick.get("rejected_candidates", []))
+        if degen_candidate:
+            degen_render = render_degen_watch_card(degen_candidate)
+            run_data["degen_watch"] = {
+                "candidate": degen_candidate,
+                "card_file": degen_render["file"] if degen_render else None,
+            }
+            print(f"  Degen Watch: {degen_candidate['match']} / {degen_candidate.get('selection','')} "
+                  f"(edge {degen_candidate['edge_pct']:+.1f}%, short of the {degen_candidate['min_value_edge_pct']:.0f}% floor)")
+
         _write_run(run_data)
         print(f"  {len(run_data['watchlist'])}-fixture watchlist included (no cards rendered).")
         return

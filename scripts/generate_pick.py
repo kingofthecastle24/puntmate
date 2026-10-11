@@ -596,7 +596,10 @@ def _classify_candidate(raw, matches, match_news, warnings, rejected=None):
         rejected.append({
             "cause": "not_backable",
             "match": raw.get("match"),
+            "sport_label": match_meta.get("sport_label", ""),
             "market_type": market_type,
+            "selection": raw.get("selection", ""),
+            "odds": evidence.odds,
             "reason": reason,
             "evidence_sufficient": evidence.evidence_sufficient,
             "our_probability": evidence.our_probability,
@@ -671,6 +674,32 @@ def _select_featured(classified, focus_keywords=None, exclude_slugs=None):
         )
     )
     return eligible[0]
+
+
+def select_closest_to_passing(rejected_candidates):
+    """Among today's rejected candidates, returns the one that came
+    closest to clearing the live value bar but still fell short — the
+    highest edge_pct among cause == "not_backable" AND evidence_sufficient
+    rejections. Excludes insufficient-evidence rejections on purpose: a
+    candidate the model itself flagged as not having enough to go on has
+    no genuine edge number worth showing as "closest" — that is a
+    different failure mode entirely, not a near-miss. Returns None when
+    nothing qualifies (e.g. every rejection was insufficient-evidence or
+    unresolved odds, or a real pick existed instead and rejected_candidates
+    only holds non-featured also-rans).
+
+    2026-10-11 (Micah): surfaced as "Degen Watch" on a genuine no-bet
+    day — explicitly unofficial, never the real PuntMate pick, never
+    counted toward the public strike rate or any ledger. See
+    render_brand_templates.build_degen_watch_props for the card and
+    build_review_package.build_degen_watch_text for the Telegram copy."""
+    qualifying = [
+        r for r in rejected_candidates
+        if r.get("cause") == "not_backable" and r.get("evidence_sufficient")
+    ]
+    if not qualifying:
+        return None
+    return max(qualifying, key=lambda r: r["edge_pct"])
 
 
 def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_matches=None):

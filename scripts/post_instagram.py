@@ -248,3 +248,36 @@ def post_picks_to_instagram(picks, image_path):
     print("  → Publishing to Instagram...")
     post_id = _publish_ig_container(container_id)
     return post_id is not None
+
+
+def post_degen_watch_to_instagram(image_path, caption):
+    """Single-image post with a caller-supplied caption — unlike
+    post_picks_to_instagram, never calls build_caption() (that's the daily
+    pick's own caption builder; Degen Watch's caption comes from
+    build_review_package.build_degen_watch_text, already validated through
+    the strictest responsible-gambling language check). Same
+    upload/container/publish flow and LAST_ERROR capture as every other
+    path here (2026-10-11, Micah: unofficial no-bet-day content)."""
+    if not IG_USER_ID or not IG_TOKEN:
+        print("  ⚠️  INSTAGRAM_USER_ID or INSTAGRAM_ACCESS_TOKEN not set — skipping")
+        return False
+
+    if not os.path.exists(image_path):
+        print(f"  ❌ Image not found: {image_path}")
+        return False
+
+    print("  → Uploading Degen Watch card to Imgur...")
+    image_url = _upload_to_imgur(image_path)
+    if not image_url:
+        print("  ⚠️  No image URL — skipping Instagram post")
+        return False
+
+    print("  → Creating Instagram media container...")
+    container_id = _create_ig_container(image_url, caption)
+    if not container_id:
+        return False
+
+    time.sleep(3)
+    print("  → Publishing to Instagram...")
+    post_id = _publish_ig_container(container_id)
+    return post_id is not None
