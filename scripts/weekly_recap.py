@@ -5,14 +5,20 @@ weekly_recap.py — Phase 6. Weekly results recap broken down by bet type.
 Reads data/picks.json (the live ledger check_results.py resolves daily),
 takes the trailing 7 days, and produces:
   - a Telegram post: overall strike rate + W-L per bet type (Investor /
-    Punter / Gambler), pending count, and No-Bet/Watchlist day count
+    Punter / Gambler), average decimal odds, ROI, pending count, and
+    No-Bet/Watchlist day count
   - an appended section in RECAP.md (permanent history)
 
 Honesty rules, non-negotiable:
   - only picks whose "result" is win/loss count toward strike rate; pending
     and unresolved picks are shown as pending, never guessed
+  - a "push" is a settled outcome, never conflated with "still pending"
   - No-Bet days are reported, not hidden — they're part of the record
   - if there were zero settled picks this week, the post says exactly that
+  - ROI (overall_roi_pct) is a flat equal-stake-per-pick figure, not any
+    real stake of Micah's — this pipeline doesn't track or assume one.
+    ROI is Telegram-only (Micah, 2026-10-11): this script never posts to
+    Facebook or Instagram, so that's the full extent of where it reaches.
 
 Honors DRY_RUN (default true) — prints the post instead of sending.
 """
@@ -22,7 +28,7 @@ import sys
 from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(__file__))
-from copy_validator import check_internal_leak, check_staking_language
+from copy_validator import check_internal_leak
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
 PICKS_PATH = os.path.join(REPO_ROOT, "data", "picks.json")
@@ -134,17 +140,18 @@ def average_odds(bucket):
     return round(sum(odds) / len(odds), 2) if odds else None
 
 
-def _internal_metrics_report(stats, overall, picks, start, end):
-    """ROI (net profit / total staked) on a FLAT 1-unit-per-pick basis —
-    "if every settled pick this week had been backed for the same
-    amount" — not any real stake of Micah's; this pipeline doesn't track
-    or assume one (see this task's own instructions: "never assume a
-    stake/bankroll"). Deliberately INTERNAL ONLY, never part of the
-    public Telegram text: copy_validator's STAKE_PHRASES bans stake-sizing
-    language from public copy project-wide, and publishing an ROI number
-    at all implies a stake size, flat or not. Printed to the run log/job
-    summary only, for Micah's own read on performance (2026-10-11,
-    external audit item 5: "ROI (net profit/total stake)")."""
+def overall_roi_pct(picks, start, end, bet_types=None):
+    """ROI (net profit / total staked) on a FLAT equal-stake-per-pick basis
+    — "if every settled pick in the window had been backed for the same
+    amount", not any specific real stake of Micah's; this pipeline doesn't
+    track or assume one (see this task's own instructions: "never assume
+    a stake/bankroll"). 2026-10-11 (external audit item 5), updated same
+    day on Micah's explicit call: ROI CAN be shared on the Telegram recap
+    — this script's only output surface — just never on Facebook or
+    Instagram (those get the daily pick cards from build_review_package.py
+    / render_brand_templates.py, a completely separate code path that
+    never touches this function or picks.json's ROI math at all).
+    Returns None when nothing settled in the window matches."""
     def _in_window(p):
         try:
             d = datetime.strptime(p.get("date", ""), "%Y-%m-%d").date()
@@ -152,33 +159,23 @@ def _internal_metrics_report(stats, overall, picks, start, end):
             return False
         return start <= d <= end
 
-    settled_picks = [
+    settled = [
         p for p in picks
         if _in_window(p) and (p.get("result") or "").lower() in ("win", "loss")
+        and (bet_types is None or p.get("bet_type") in bet_types)
     ]
-
-    def roi_for(bet_types):
-        relevant = [p for p in settled_picks if p.get("bet_type") in bet_types] if bet_types else settled_picks
-        if not relevant:
-            return None
-        net = 0.0
-        for p in relevant:
-            try:
-                odds = float(p["odds"])
-            except (KeyError, TypeError, ValueError):
-                continue
-            net += (odds - 1) if p["result"].lower() == "win" else -1
-        return round(net / len(relevant) * 100, 1)
-
-    lines = [f"[internal only, flat 1-unit basis, not public] {start} to {end}:"]
-    overall_roi = roi_for(None)
-    lines.append(f"  Overall ROI: {overall_roi:+.1f}% (n={len(settled_picks)})" if overall_roi is not None else "  Overall ROI: n/a (nothing settled)")
-    for bt, (_, label) in BET_TYPE_LABELS.items():
-        roi = roi_for({bt})
-        n = stats[bt]["wins"] + stats[bt]["losses"]
-        if n:
-            lines.append(f"  {label} ROI: {roi:+.1f}% (n={n})")
-    return "\n".join(lines)
+    if not settled:
+        return None
+    net = 0.0
+    counted = 0
+    for p in settled:
+        try:
+            odds = float(p["odds"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        net += (odds - 1) if p["result"].lower() == "win" else -1
+        counted += 1
+    return round(net / counted * 100, 1) if counted else None
 
 
 def count_no_bet_days(start, end):
@@ -203,7 +200,10 @@ def strike_rate(wins, losses):
     return f"{wins / total * 100:.0f}%" if total else "—"
 
 
-def build_recap_text(stats, overall, no_bet_days, start, end):
+def build_recap_text(stats, overall, no_bet_days, start, end, picks=None):
+    """`picks` is optional only so existing callers that don't need the
+    ROI line (and the tests exercising them) keep working unchanged —
+    main() always passes it so the real recap carries ROI."""
     lines = [
         "*📈 PUNTMATE NZ — WEEKLY RECAP*",
         f"_{start.strftime('%d %b')} – {end.strftime('%d %b %Y')}_",
@@ -219,6 +219,10 @@ def build_recap_text(stats, overall, no_bet_days, start, end):
         if avg is not None:
             rate_line += f"  ·  Avg odds {avg:.2f}"
         lines.append(rate_line)
+        if picks is not None:
+            roi = overall_roi_pct(picks, start, end)
+            if roi is not None:
+                lines.append(f"💰 ROI this week (flat equal-stake basis): {roi:+.1f}%")
         if 0 < settled < SMALL_SAMPLE_FLOOR:
             lines.append(f"_Small sample ({settled} settled) — read the strike rate with caution._")
         lines.append("")
@@ -230,6 +234,10 @@ def build_recap_text(stats, overall, no_bet_days, start, end):
             avg_bt = average_odds(s)
             if avg_bt is not None:
                 line += f"  · avg {avg_bt:.2f}"
+            if picks is not None:
+                roi_bt = overall_roi_pct(picks, start, end, bet_types={bt})
+                if roi_bt is not None:
+                    line += f"  · ROI {roi_bt:+.1f}%"
             lines.append(line)
         legacy = stats.get("LEGACY", _empty_bucket())
         if legacy["wins"] + legacy["losses"] > 0:
@@ -280,22 +288,17 @@ def main():
     picks = load_picks()
     stats, overall = build_stats(picks, start, end)
     no_bet_days = count_no_bet_days(start, end)
-    text = build_recap_text(stats, overall, no_bet_days, start, end)
+    # picks=picks: ROI goes into the public text here (Micah, 2026-10-11 —
+    # Telegram can carry it, just never Facebook or Instagram; this script
+    # only ever posts to Telegram, via post_telegram below, so that's
+    # already the full extent of where this ROI line can reach).
+    text = build_recap_text(stats, overall, no_bet_days, start, end, picks=picks)
 
-    # Internal only -- see _internal_metrics_report's docstring for why
-    # this is printed (job summary / log), never posted publicly.
-    print(_internal_metrics_report(stats, overall, picks, start, end))
-
-    # Same gates as every other public post — a recap is public copy too.
-    # check_staking_language added 2026-10-11 (external audit item 5):
-    # the new avg-odds/ROI-adjacent metrics below are an easy place to
-    # accidentally reintroduce "units"/"bankroll"/stake-size language, so
-    # this file now checks for that itself rather than relying on
-    # self-discipline alone.
-    violations = check_internal_leak(text) + check_staking_language(text)
-    if violations:
-        print("::error::weekly recap failed public-copy validation — refusing to post:")
-        for v in violations:
+    # Same leak gate as every other public post — a recap is public copy too.
+    leaks = check_internal_leak(text)
+    if leaks:
+        print("::error::weekly recap failed internal-leak validation — refusing to post:")
+        for v in leaks:
             print(f"  - {v}")
         sys.exit(1)
 

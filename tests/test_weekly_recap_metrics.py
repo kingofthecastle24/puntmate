@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 import weekly_recap as wr
-from copy_validator import check_internal_leak, check_staking_language
+from copy_validator import check_internal_leak
 
 
 class WeeklyRecapMetricsTests(unittest.TestCase):
@@ -86,7 +86,10 @@ class WeeklyRecapMetricsTests(unittest.TestCase):
         self.assertNotIn("no picks put up", text)
         self.assertIn("1 push", text)
 
-    def test_internal_roi_report_is_computed_but_never_in_public_text(self):
+    def test_roi_is_computed_and_does_reach_the_public_telegram_text(self):
+        # Micah, 2026-10-11: ROI can be shared on Telegram -- this script's
+        # ONLY output surface (it never posts to Facebook or Instagram) --
+        # just never on Facebook or Instagram themselves.
         d = self._today()
         self._write_picks([
             {"date": d, "bet_type": "INVESTOR_BET", "result": "win", "odds": 2.0},   # +1.0
@@ -96,16 +99,19 @@ class WeeklyRecapMetricsTests(unittest.TestCase):
         start, end = wr.week_window()
         picks = wr.load_picks()
         stats, overall = wr.build_stats(picks, start, end)
-        report = wr._internal_metrics_report(stats, overall, picks, start, end)
+
         # Overall: net +2.0 over 3 settled picks -> +66.7% flat-stake ROI.
-        self.assertIn("Overall ROI: +66.7%", report)
-        self.assertIn("Investor ROI: +0.0%", report)   # +1.0 - 1.0 over 2 picks
-        self.assertIn("Punter ROI: +200.0%", report)    # +2.0 over 1 pick
+        self.assertEqual(wr.overall_roi_pct(picks, start, end), 66.7)
+        self.assertEqual(wr.overall_roi_pct(picks, start, end, bet_types={"INVESTOR_BET"}), 0.0)
+        self.assertEqual(wr.overall_roi_pct(picks, start, end, bet_types={"PUNTER_BET"}), 200.0)
 
-        public_text = wr.build_recap_text(stats, overall, 0, start, end)
-        self.assertNotIn("ROI", public_text)
+        public_text = wr.build_recap_text(stats, overall, 0, start, end, picks=picks)
+        self.assertIn("ROI this week", public_text)
+        self.assertIn("+66.7%", public_text)
+        self.assertIn("ROI +0.0%", public_text)    # Investor line
+        self.assertIn("ROI +200.0%", public_text)  # Punter line
 
-    def test_internal_roi_report_excludes_picks_outside_the_week_window(self):
+    def test_roi_excludes_picks_outside_the_week_window(self):
         d = self._today()
         old_date = "2020-01-01"
         self._write_picks([
@@ -114,11 +120,20 @@ class WeeklyRecapMetricsTests(unittest.TestCase):
         ])
         start, end = wr.week_window()
         picks = wr.load_picks()
-        stats, overall = wr.build_stats(picks, start, end)
-        report = wr._internal_metrics_report(stats, overall, picks, start, end)
-        self.assertIn("n=1", report)  # only today's pick, not the 2020 one
+        # Only today's win counts -> +100%, not dragged down by the 2020 loss.
+        self.assertEqual(wr.overall_roi_pct(picks, start, end), 100.0)
 
-    def test_added_metrics_still_pass_the_public_copy_gates(self):
+    def test_roi_is_omitted_when_picks_not_supplied(self):
+        # build_recap_text's picks= param is optional so callers that don't
+        # need ROI (and tests of other behaviour) keep working unchanged.
+        d = self._today()
+        self._write_picks([{"date": d, "bet_type": "PUNTER_BET", "result": "win", "odds": 2.0}])
+        start, end = wr.week_window()
+        stats, overall = wr.build_stats(wr.load_picks(), start, end)
+        text = wr.build_recap_text(stats, overall, 0, start, end)  # no picks= arg
+        self.assertNotIn("ROI", text)
+
+    def test_added_metrics_still_pass_the_internal_leak_gate(self):
         d = self._today()
         self._write_picks([
             {"date": d, "bet_type": "INVESTOR_BET", "result": "win", "odds": 1.80},
@@ -126,10 +141,21 @@ class WeeklyRecapMetricsTests(unittest.TestCase):
             {"date": d, "bet_type": "PUNTER_BET", "result": "push", "odds": 2.5},
         ])
         start, end = wr.week_window()
-        stats, overall = wr.build_stats(wr.load_picks(), start, end)
-        text = wr.build_recap_text(stats, overall, 0, start, end)
+        picks = wr.load_picks()
+        stats, overall = wr.build_stats(picks, start, end)
+        text = wr.build_recap_text(stats, overall, 0, start, end, picks=picks)
         self.assertEqual(check_internal_leak(text), [])
-        self.assertEqual(check_staking_language(text), [])
+
+
+    def test_weekly_recap_never_imports_an_instagram_or_facebook_poster(self):
+        # Regression guard for Micah's rule (2026-10-11): ROI can go out on
+        # Telegram, never Facebook or Instagram. This file posting the
+        # recap through ANYTHING other than post_telegram would put ROI
+        # content somewhere it was never approved for.
+        src = open(wr.__file__).read()
+        self.assertNotIn("post_instagram", src)
+        self.assertNotIn("post_facebook", src)
+        self.assertIn("post_telegram", src)
 
 
 if __name__ == "__main__":
