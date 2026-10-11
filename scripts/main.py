@@ -10,7 +10,14 @@ Flow:
   4. Render carousel + Story PNGs for the pick (Playwright brand-kit renderer,
      falls back to the legacy Pillow renderer if that fails) — skipped entirely
      for NO_BET, there is nothing to render
-  5. Save data/latest_run.json
+  5. Save data/latest_run.json via _write_run() — the single write point,
+     called on EVERY exit path including empty fixtures and API failures.
+     (2026-10-11, external audit, confirmed against the code: an earlier
+     version of this module returned early on an empty-fixtures day
+     WITHOUT writing anything, leaving a stale prior day's latest_run.json
+     on disk for build_review_package.py and send_preview.py to read as if
+     it were today's. Every run now writes a fresh run_id/run_date/status,
+     so a stale file can never be mistaken for a fresh one downstream.)
 
 This script never posts anything to Telegram, Instagram or Facebook, and
 never sends email. Those happen later: build_review_package.py freezes the
@@ -22,11 +29,41 @@ script that actually posts anywhere.
 import os
 import sys
 import json
+import uuid
 from datetime import datetime, timezone
+
+import run_status
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
 CARDS_DIR = os.path.join(REPO_ROOT, 'data', 'cards')
+
+
+def _new_run_id():
+    """GITHUB_RUN_ID when running in CI; a local fallback otherwise — never
+    reused across invocations, so downstream staleness checks (see
+    _write_run and build_review_package.py) have something to compare."""
+    return os.environ.get("GITHUB_RUN_ID") or f"local-{uuid.uuid4().hex[:12]}"
+
+
+def _write_run(run_data):
+    """The ONLY place latest_run.json gets written. Always fresh — run_id/
+    run_ts/run_date/status are set on every call (2026-10-11, external
+    audit, confirmed against the code): a prior version of this module
+    returned early on an empty-fixtures day WITHOUT writing anything,
+    leaving yesterday's latest_run.json (a different run_date, possibly
+    has_pick=true) sitting on disk untouched. Downstream, build_review_
+    package.py trusted that file's run_date as "today" and would either
+    silently try to re-freeze yesterday's already-PUBLISHED pick_id (crash:
+    workflow_state.InvalidTransitionError, since PUBLISHED is terminal) or,
+    worse, build what looked like a fresh review package from stale data.
+    Every call site below now goes through this so that can't happen again
+    — including the two failure paths that used to return without writing
+    anything at all."""
+    os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
+    with open(LATEST_RUN_PATH, 'w') as f:
+        json.dump(run_data, f, indent=2)
+    print(f"  Saved data/latest_run.json — run_id={run_data['run_id']} status={run_data['status']}")
 
 
 def _legacy_pillow_pick(pick):
@@ -161,20 +198,52 @@ def _recently_actioned_slugs(days=4):
 
 
 def run():
+    import fetch_odds
     from fetch_odds import fetch_upcoming_odds
     from fetch_news import fetch_news
     from generate_pick import generate_pick_for_matches
 
+    run_id = _new_run_id()
+    run_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    run_ts = datetime.now(timezone.utc).isoformat()
+
     print("=" * 55)
     print("PuntMate NZ — Daily Picks Pipeline (prepare only)")
     print(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'))
+    print(f"run_id={run_id}")
     print("=" * 55)
 
     print("\n[1/3] Fetching upcoming match odds...")
     matches = fetch_upcoming_odds()
 
     if not matches:
-        print("  No matches today — nothing to prepare. Staying silent (existing behaviour).")
+        # Was this genuinely zero fixtures, or did the Odds API itself fail
+        # (dead key, rate limit, timeout) for every sport? Those are very
+        # different situations — one is an honest no-bet day, the other is
+        # an operational failure that deserves an actionable alert, not a
+        # quiet "nothing today". fetch_odds.LAST_FETCH_ERRORS distinguishes
+        # them (see that module for why this isn't fetch_upcoming_odds's own
+        # return value).
+        had_api_errors = bool(fetch_odds.LAST_FETCH_ERRORS)
+        status = run_status.ODDS_API_ERROR if had_api_errors else run_status.NO_VALUE
+        reasoning = (
+            f"The Odds API returned errors for {len(fetch_odds.LAST_FETCH_ERRORS)} sport(s) and no "
+            f"fixtures could be fetched at all — see errors below."
+            if had_api_errors else
+            "No fixtures at all across any configured sport today — genuinely nothing to assess."
+        )
+        if had_api_errors:
+            print(f"  ::error::Odds API errors on every sport — {fetch_odds.LAST_FETCH_ERRORS}")
+        else:
+            print("  No matches today — nothing to prepare.")
+        _write_run({
+            "run_id": run_id,
+            "run_date": run_date,
+            "run_ts": run_ts,
+            "status": status,
+            "pick": {"has_pick": False, "status": status, "reasoning": reasoning, "research_warnings": []},
+            "odds_api_errors": fetch_odds.LAST_FETCH_ERRORS,
+        })
         return
 
     print(f"\n[2/3] Fetching + validating research for {len(matches)} match(es)...")
@@ -196,8 +265,6 @@ def run():
         print(f"  Excluding {len(already_posted)} already-posted fixture(s) from featured selection.")
     pick = generate_pick_for_matches(matches, match_news, exclude_matches=already_posted)
 
-    run_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-
     if pick.get("has_pick"):
         existing_state = _already_actioned_today(pick["match"], run_date)
         if existing_state is not None:
@@ -207,6 +274,7 @@ def run():
                   f"instead of re-entering the gate or crashing on a duplicate.")
             pick = {
                 "has_pick": False,
+                "status": run_status.NO_VALUE,
                 "reasoning": (
                     f"{pick['match']} already went through today's pipeline earlier "
                     f"(state: {existing_state.get('state')}) — skipping to avoid a "
@@ -216,8 +284,10 @@ def run():
             }
 
     run_data = {
+        "run_id": run_id,
         "run_date": run_date,
-        "run_ts": datetime.now(timezone.utc).isoformat(),
+        "run_ts": run_ts,
+        "status": pick.get("status", run_status.NO_VALUE),
         "pick": pick,
     }
 
@@ -236,10 +306,8 @@ def run():
             }
             for m in matches[:5]
         ]
-        os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
-        with open(LATEST_RUN_PATH, 'w') as f:
-            json.dump(run_data, f, indent=2)
-        print(f"  Saved NO_BET result + {len(run_data['watchlist'])}-fixture watchlist to data/latest_run.json (no cards rendered).")
+        _write_run(run_data)
+        print(f"  {len(run_data['watchlist'])}-fixture watchlist included (no cards rendered).")
         return
 
     print(f"  -> {pick['match']} | {pick['selection']} @ {pick['odds']} | "
@@ -263,15 +331,17 @@ def run():
     except Exception as e:
         print(f"  ERROR: card rendering failed entirely: {e}")
         # Without cards there is nothing safe to publish — record as NO_BET
-        # equivalent rather than freezing a pick with no images.
+        # equivalent rather than freezing a pick with no images. Distinct
+        # RENDER_ERROR status: this is an operational failure (a real,
+        # backable pick existed), not an honest no-value day — deserves an
+        # actionable alert, not routine no-bet handling.
         pick["has_pick"] = False
+        pick["status"] = run_status.RENDER_ERROR
         pick["reasoning"] = f"Card rendering failed: {e}"
         run_data["pick"] = pick
+        run_data["status"] = run_status.RENDER_ERROR
 
-    os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
-    with open(LATEST_RUN_PATH, 'w') as f:
-        json.dump(run_data, f, indent=2)
-    print("  Saved data/latest_run.json")
+    _write_run(run_data)
 
     print("\nPipeline (prepare stage) complete")
     print("=" * 55)

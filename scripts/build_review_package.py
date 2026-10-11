@@ -301,6 +301,34 @@ def build_no_bet_metadata(reasoning, research_warnings, run_id, post_date, dry_r
     }
 
 
+class StaleRunDataError(RuntimeError):
+    """data/latest_run.json was not written by this invocation's run."""
+
+
+def _assert_not_stale(run_data):
+    """Defense-in-depth against freezing a review package from a stale
+    latest_run.json (2026-10-11, external audit item 2). generate.yml runs
+    main.py and build_review_package.py in the SAME workflow run (see that
+    workflow's module docstring: "no cross-workflow staleness risk") — so
+    in CI, run_data's run_id must equal this job's GITHUB_RUN_ID. A
+    mismatch means main.py never ran (or failed) this invocation and this
+    is leftover data from a previous run; proceeding would freeze
+    yesterday's (or some other run's) pick as if it were fresh. Older
+    latest_run.json files written before this fix carry no "run_id" field
+    at all — that's not treated as stale (nothing to compare against), just
+    logged, so this can't retroactively break anything already on disk."""
+    ci_run_id = os.environ.get("GITHUB_RUN_ID")
+    recorded_run_id = run_data.get("run_id")
+    if not recorded_run_id:
+        print("::warning::data/latest_run.json has no run_id (pre-2026-10-11 format) — cannot verify freshness.")
+        return
+    if ci_run_id and recorded_run_id != ci_run_id:
+        raise StaleRunDataError(
+            f"data/latest_run.json was written by run_id={recorded_run_id!r}, but this job is "
+            f"run_id={ci_run_id!r}. Refusing to build a review package from a different run's data."
+        )
+
+
 def main():
     if not os.path.exists(LATEST_RUN_PATH):
         print("::notice::No data/latest_run.json — nothing to build a review package for.")
@@ -308,6 +336,8 @@ def main():
 
     with open(LATEST_RUN_PATH) as f:
         run_data = json.load(f)
+
+    _assert_not_stale(run_data)
 
     pick = run_data.get("pick")
     post_date = run_data.get("run_date") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
