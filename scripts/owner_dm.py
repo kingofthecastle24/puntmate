@@ -16,7 +16,14 @@ Hard rules (do not weaken):
   * A DM failure can never fail, block or roll back a publish. Everything is
     wrapped; errors are logged as warnings only.
   * Budget warnings are warnings. Nothing is ever skipped or hidden.
-  * Nothing here touches TAB or any bookmaker.
+  * The only bookmaker reference is TAB_NZ_URL below -- a static link to
+    TAB NZ's own homepage (2026-10-12, Micah: wants a one-tap link to place
+    the bet himself). Deliberately NOT a pre-filled betslip link: no data
+    source covers TAB NZ (checked The Odds API and OpticOdds -- both only
+    model TAB Australia/tab.com.au), and tab.co.nz itself blocks automated
+    access, so there is no reliable way to derive a per-match or per-selection
+    URL. This stays a plain, unchanging homepage link until/unless TAB NZ
+    provides real partner/affiliate API access.
 
 Secrets: TELEGRAM_BOT_TOKEN (already used by post_telegram) and OWNER_CHAT_ID.
 No personal bet data is written to the repo -- month figures are derived from
@@ -34,6 +41,7 @@ REPO_ROOT = os.path.join(os.path.dirname(__file__), "..")
 CONFIG_PATH = os.path.join(REPO_ROOT, "config", "my_bets.json")
 TIERS = ("punter", "gambler", "degenerate")
 DEFAULTS = {"single_stake": 2.0, "multi_stake": 5.0, "monthly_budget": 100.0}
+TAB_NZ_URL = "https://www.tab.co.nz"
 
 
 # ── helpers ────────────────────────────────────────────────────────────────
@@ -195,6 +203,7 @@ def build_single_dm(meta, cfg, stats):
         f"Type: {_label(str(meta.get('bet_type', '')).replace('_BET', ''))} | "
         f"Risk: {_label(meta.get('risk'))} | Confidence: {_label(meta.get('confidence'))}",
         f"Stake {money(stake)} returns {money(stake * odds)} if it wins",
+        f"Place it: {TAB_NZ_URL}",
         "",
         stats_block(stats),
     ])
@@ -207,7 +216,7 @@ def build_multi_dm(tier, legs, combined, cfg, stats):
         [f"PuntMate {tier.title()} multi: follow at {money(stake)}", ""]
         + (legs or ["(legs not found in the post)"])
         + ["", f"Combined: {combined:.2f}" if combined else "Combined: unknown",
-           f"Stake {money(stake)} {ret}", "", stats_block(stats)]
+           f"Stake {money(stake)} {ret}", f"Place it: {TAB_NZ_URL}", "", stats_block(stats)]
     )
 
 
