@@ -1,0 +1,60 @@
+# THROWAWAY — read-only check of whether The Odds API returns a usable TAB
+# betslip deep link for an upcoming NZ-relevant fixture. Uses ODDS_API_KEY
+# only (the same key already used daily), makes ONE GET request, prints
+# what it finds, writes nothing, posts nowhere. Branch to be discarded.
+
+name: TEST — TAB deep link check (throwaway)
+
+on:
+  push:
+    branches: [test/tab-deep-link-check]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Query /odds with includeLinks=true for NRL
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          python3 -c "
+          import os, json, requests
+          key = os.environ['ODDS_API_KEY']
+          for sport in ('rugbyleague_nrl', 'rugbyleague_nrl_state_of_origin'):
+              r = requests.get(
+                  f'https://api.the-odds-api.com/v4/sports/{sport}/odds',
+                  params={'apiKey': key, 'regions': 'au', 'markets': 'h2h',
+                          'includeLinks': 'true', 'includeSids': 'true'},
+                  timeout=15,
+              )
+              print('sport:', sport, 'status:', r.status_code)
+              if r.status_code != 200:
+                  print(r.text[:300]); continue
+              data = r.json()
+              print('matches returned:', len(data))
+              if not data:
+                  continue
+              m = data[0]
+              print('match:', m.get('home_team'), 'vs', m.get('away_team'))
+              print('all bookmaker keys:', [bk.get('key') for bk in m.get('bookmakers', [])])
+              found_tab = False
+              for bk in m.get('bookmakers', []):
+                  if bk.get('key') != 'tab':
+                      continue
+                  found_tab = True
+                  print('bookmaker key:', bk.get('key'), '| title:', bk.get('title'))
+                  print('event link:', bk.get('link'))
+                  for mk in bk.get('markets', []):
+                      print('  market:', mk.get('key'), '| market link:', mk.get('link'))
+                      for oc in mk.get('outcomes', []):
+                          print('    outcome:', oc.get('name'), '| bet link:', oc.get('link'), '| sid:', oc.get('sid'))
+              if not found_tab:
+                  print('no bookmaker with key \"tab\" in this response')
+              break
+          "
