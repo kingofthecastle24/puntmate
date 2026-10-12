@@ -1,0 +1,39 @@
+# THROWAWAY — manual, one-off check that the owner DM path (TELEGRAM_BOT_TOKEN
+# + OWNER_CHAT_ID) actually lands. Touches ONLY those two secrets; never
+# imports post_instagram/post_facebook and has no access to any Meta secret,
+# so it cannot post publicly even by accident. Branch is deleted after use —
+# do not merge this into main.
+
+name: TEST — Owner DM live check (throwaway)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  send_test_dm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Send a labelled test DM via the real bot/secrets
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          OWNER_CHAT_ID: ${{ secrets.OWNER_CHAT_ID }}
+        run: |
+          cd scripts
+          python3 -c "
+          import owner_dm
+          text = (
+              'PuntMate TEST DM -- please ignore\n\n'
+              'This confirms the owner DM path (TELEGRAM_BOT_TOKEN + OWNER_CHAT_ID) '
+              'is wired up correctly end to end. Not a real pick, not a real bet.'
+          )
+          ok = owner_dm.send_owner_dm(text)
+          print('send_owner_dm returned:', ok)
+          if not ok:
+              raise SystemExit(1)
+          "
