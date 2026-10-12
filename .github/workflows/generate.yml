@@ -54,7 +54,23 @@ concurrency:
 
 on:
   schedule:
-    # 8am NZT daily (NZT = UTC+12, so 20:00 UTC the day before)
+    # 20:00 UTC daily. GitHub Actions scheduled cron is always UTC and
+    # can't express a time zone, so this fixed UTC time is NOT a fixed NZ
+    # local time: it's 8am NZST (UTC+12, roughly Apr-Sep) but 9am NZDT
+    # (UTC+13, roughly Sep-Apr) -- a full hour of drift across each DST
+    # transition that this comment used to paper over by just saying "8am
+    # NZT" unconditionally (2026-10-11, external audit item 6: confirmed
+    # NZ is currently in NZDT, so this is firing at 9am NZT right now, not
+    # the documented 8am). The pipeline's own notion of "today" no longer
+    # depends on which of those two hours it actually runs at -- main.py's
+    # run_date (and same-day dedupe) is computed from the real Pacific/
+    # Auckland calendar date (see scripts/nz_date.py), not from this UTC
+    # cron time -- so the up-to-1-hour drift doesn't produce a wrong
+    # business date or a duplicate/skipped day. It can still shift the
+    # actual local posting time by an hour twice a year; fixing THAT (e.g.
+    # two DST-companion cron entries with an in-job local-time guard) is a
+    # live-schedule change and is called out separately for review rather
+    # than applied here.
     - cron: '0 20 * * *'
     # 2026-07-19 (Micah): the old 6pm NZT Fri/Sat/Sun slot was too close to
     # kickoff and outside NZ's actual morning social-media peak (general
@@ -62,7 +78,8 @@ on:
     # https://sproutsocial.com/insights/best-times-to-post-on-instagram/).
     # Moved to 7am NZT — just ahead of the main 8am daily pick, so weekend
     # subscribers get the extra weekend content first thing, still well
-    # before any game starts, without colliding with the 8am slot.
+    # before any game starts, without colliding with the 8am slot. Same
+    # fixed-UTC/DST-drift caveat as the daily cron above applies here too.
     # 7am NZT Fri/Sat/Sun = 19:00 UTC the day before (Thu/Fri/Sat in UTC).
     - cron: '0 19 * * 4,5,6'
     # 2026-07-19 (Micah): weekend Punter Multi / Gambler-Degenerate Multi —
@@ -279,6 +296,14 @@ jobs:
               echo "No defensible pick today (NO_BET) — nothing rendered, nothing to approve."
               if [ -f data/latest_run.json ]; then
                 python3 -c "import json; print('Reason:', json.load(open('data/latest_run.json'))['pick'].get('reasoning',''))"
+                python3 -c "
+          import json
+          d = json.load(open('data/latest_run.json'))
+          dw = d.get('degen_watch')
+          if dw:
+              c = dw['candidate']
+              print(f\"Degen Watch (unofficial): {c.get('match','')} / {c.get('selection','')} @ {c.get('odds')} — edge {c['edge_pct']:+.1f}%, short of the {c['min_value_edge_pct']:.0f}% bar.\")
+          "
               fi
             else
               PICK_ID="${{ steps.review_package.outputs.pick_id }}"
@@ -320,7 +345,15 @@ jobs:
   approve:
     name: "⏳ Awaiting approval to publish"
     needs: generate
-    if: (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true'
+    # needs.generate.result == 'success' (2026-10-11, external audit item 3,
+    # run #192): a job's outputs stay set to whatever an EARLIER successful
+    # step produced even if a LATER step in that same job fails (e.g. the
+    # "Commit ledger, review package & state" push hitting a rebase
+    # conflict) — so has_pick/pick_id could read "true"/a real pick_id even
+    # though generate's overall result is "failure" and the review artifact
+    # this pick_id names was therefore never uploaded. Without this check,
+    # approve/publish would still try to act on that pick_id.
+    if: needs.generate.result == 'success' && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true'
     runs-on: ubuntu-latest
     environment: production   # ← this is the approval gate (Telegram + Instagram + Facebook all wait here)
 
@@ -341,7 +374,13 @@ jobs:
   on_reject:
     name: Record rejection
     needs: [generate, approve]
-    if: always() && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true' && needs.approve.result != 'success'
+    # needs.generate.result == 'success' guard (see approve's comment above):
+    # if generate itself failed, approve never ran (its own gate now requires
+    # the same check) and there is nothing real to reject — without this,
+    # needs.approve.result reads "skipped" (!= 'success'), which would
+    # otherwise look identical to an actual human rejection and send a
+    # misleading "Rejected" email for what was really an operational failure.
+    if: always() && needs.generate.result == 'success' && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && needs.generate.outputs.auto_publish != 'true' && needs.approve.result != 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -381,7 +420,13 @@ jobs:
   publish:
     name: Publish approved post
     needs: [generate, approve]
-    if: always() && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && (needs.approve.result == 'success' || needs.generate.outputs.auto_publish == 'true')
+    # needs.generate.result == 'success' guard (2026-10-11, external audit
+    # item 3, run #192 — see approve's comment above for the exact failure
+    # mode this closes): refuses to even attempt the artifact download
+    # below when generate didn't fully succeed, rather than failing loudly
+    # partway through trying to download an artifact that was never
+    # uploaded.
+    if: always() && needs.generate.result == 'success' && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && (needs.approve.result == 'success' || needs.generate.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -579,7 +624,10 @@ jobs:
   approve_weekend:
     name: "⏳ Awaiting approval to publish (Weekend Multi)"
     needs: generate_weekend
-    if: (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true'
+    # Same needs.*.result == 'success' guard as the daily approve job —
+    # see its comment for why (run #192's failure mode applies identically
+    # here).
+    if: needs.generate_weekend.result == 'success' && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true'
     runs-on: ubuntu-latest
     environment: production   # same single approval gate as the daily pick
 
@@ -593,7 +641,8 @@ jobs:
   on_reject_weekend:
     name: Record rejection (Weekend Multi)
     needs: [generate_weekend, approve_weekend]
-    if: always() && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true' && needs.approve_weekend.result != 'success'
+    # Same guard as on_reject — see its comment.
+    if: always() && needs.generate_weekend.result == 'success' && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && needs.generate_weekend.outputs.auto_publish != 'true' && needs.approve_weekend.result != 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -627,7 +676,9 @@ jobs:
   publish_weekend:
     name: Publish approved weekend multi
     needs: [generate_weekend, approve_weekend]
-    if: always() && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && (needs.approve_weekend.result == 'success' || needs.generate_weekend.outputs.auto_publish == 'true')
+    # Same guard as publish — see its comment (run #192's exact failure
+    # mode, applied to the weekend pipeline).
+    if: always() && needs.generate_weekend.result == 'success' && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && (needs.approve_weekend.result == 'success' || needs.generate_weekend.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:

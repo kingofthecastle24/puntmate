@@ -52,10 +52,12 @@ BETSLIP_NIGHT = os.path.join(BRAND_DIR, "PuntMate Bet Post - Betslip Night.dc.ht
 MATCHDAY_PRINT = os.path.join(BRAND_DIR, "PuntMate Bet Post - Matchday Print.dc.html")
 SOCIAL_TEMPLATES = os.path.join(BRAND_DIR, "PuntMate Social Templates.dc.html")
 MULTI_TEMPLATE = os.path.join(BRAND_DIR, "PuntMate Bet Post - Multi.dc.html")
+DEGEN_WATCH_TEMPLATE = os.path.join(BRAND_DIR, "PuntMate Degen Watch.dc.html")
 
 FEED_SLIDE_SIZE = (1080, 1350)
 STORY_SIZE = (1080, 1920)
 MULTI_SLIDE_SIZE = (1080, 1350)
+DEGEN_WATCH_SLIDE_SIZE = (1080, 1350)
 
 # 2026-07-19 (Micah): two independent multi tiers, each with its own tone,
 # palette and illustrative stake -- the Punter Multi is the measured side,
@@ -602,6 +604,71 @@ def render_multi(pick, tier, legs, date_str=None, out_dir=CARDS_DIR):
         warnings.append("Pillow not installed — skipped file-integrity re-check")
 
     return {"ok": True, "tier": tier, "props": props, "files": files, "warnings": warnings}
+
+
+def build_degen_watch_props(candidate, handle="@puntmatenz"):
+    """Map a "closest to passing" rejected-candidate record (the shape
+    generate_pick._classify_candidate appends to rejected_candidates for
+    cause="not_backable") into the Degen Watch template's props. Only ever
+    called for a candidate that has real odds/probabilities to show — the
+    caller (select_closest_to_passing) already filtered out
+    insufficient-evidence rejections, which have no genuine edge to
+    display here."""
+    return {
+        "matchup": candidate["match"],
+        "sportTag": candidate.get("sport_label", ""),
+        "selection": candidate.get("selection", ""),
+        "odds": f"{candidate['odds']:.2f}" if isinstance(candidate.get("odds"), (int, float)) else str(candidate.get("odds", "")),
+        "edge": f"{candidate['edge_pct']:+.1f}%",
+        "ourProbability": f"{candidate['our_probability']:.0f}%",
+        "impliedProbability": f"{candidate['implied_probability']:.0f}%",
+        "handle": handle,
+    }
+
+
+def render_degen_watch(candidate, date_str=None, out_dir=CARDS_DIR):
+    """Render the single-slide Degen Watch card for the no-bet-day
+    candidate closest to clearing the value bar. Filename convention:
+    {date}_degen-watch_{match-slug}.png — a completely separate namespace
+    from the official pick's {date}_{match-slug}_{theme}.png, so a
+    same-day collision between the two is structurally impossible even if
+    they happen to name the same fixture (2026-10-11, Micah: unofficial
+    Degen content on a no-bet day)."""
+    from playwright.sync_api import sync_playwright  # imported here so --help works without playwright installed
+
+    os.makedirs(out_dir, exist_ok=True)
+    date_str = date_str or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    props = build_degen_watch_props(candidate)
+    match_slug = slugify(candidate["match"])
+    out_path = os.path.join(out_dir, f"{date_str}_degen-watch_{match_slug}.png")
+
+    warnings = []
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        render_wrapper_html(DEGEN_WATCH_TEMPLATE, tmp_dir)
+
+        with LocalServer(tmp_dir) as server:
+            with sync_playwright() as pw:
+                browser = pw.chromium.launch()
+                try:
+                    page = browser.new_page(viewport={"width": 1600, "height": 1600}, device_scale_factor=1)
+                    page.goto(f"http://127.0.0.1:{server.port}/{os.path.basename(DEGEN_WATCH_TEMPLATE)}", wait_until="load")
+                    wait_for_dc_boot(page)
+                    set_props_and_settle(page, props)
+                    capture_exports(page, ["degenwatch"], [DEGEN_WATCH_SLIDE_SIZE], [out_path], warnings)
+                    check_no_overlap_and_containment(page, warnings)
+                finally:
+                    browser.close()
+
+    try:
+        from PIL import Image
+        with Image.open(out_path) as im:
+            im.verify()
+    except ImportError:
+        warnings.append("Pillow not installed — skipped file-integrity re-check")
+
+    return {"ok": True, "props": props, "file": out_path, "warnings": warnings}
 
 
 # ---------------------------------------------------------------------------

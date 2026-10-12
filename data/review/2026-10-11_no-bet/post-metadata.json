@@ -1,0 +1,67 @@
+{
+  "has_pick": false,
+  "pick_id": "2026-10-11_no-bet",
+  "run_id": "38184642057",
+  "generated_at": "2026-10-11T23:33:44.989067+00:00",
+  "post_date": "2026-10-11",
+  "classification": "NO_BET",
+  "risk": "NO_BET",
+  "bet_type": "NO_BET",
+  "reasoning": "None of the model's proposed candidates could be resolved to real odds \u2014 treated as no bet.",
+  "research_warnings": [
+    "rejected source (no relevance to fixture): \"How to Watch Dodgers vs. Brewers: NLCS Game 1 TV Channel, Live Stream, Time - FO\"",
+    "rejected source (no relevance to fixture): \"'Who doesn't like beer?' How Brewers owner built model MLB franchise | Exclusive\"",
+    "rejected source (team-name-only match, no sport context): \"Los Angeles Dodgers vs. Milwaukee Brewers: How to watch Game 1 of the NLCS serie\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (team-name-only match, no sport context): \"Buffalo Sabres - Dallas Stars Related Matches: Live Ice Hockey Updates - TNT Spo\"",
+    "rejected source (no relevance to fixture): \"Sabres re-sign Louis Crevier to four-year contract extension - DAZN\"",
+    "rejected source (team-name-only match, no sport context): \"Florida Panthers | NHL, Stanley Cup, History, & Notable Players - Britannica\"",
+    "rejected source (team-name-only match, no sport context): \"Florida Panthers forced to put Aleksander Barkov on long term IR - DAZN\"",
+    "rejected source (no relevance to fixture): \"NHL schedule: Every fixture, start time, DAZN TV schedule - DAZN\"",
+    "rejected source (no relevance to fixture): \"Watch Ice hockey Live - Kayo Sports\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (team-name-only match, no sport context): \"How to get Coventry City 2026-27 tickets: Upcoming fixtures, ticket prices & sea\"",
+    "rejected source (team-name-only match, no sport context): \"PREVIEW | Coventry City vs Newcastle: team news, lineups, predictions (Premier L\"",
+    "rejected source (no relevance to fixture): \"Premier League schedule for 2026-27 season: Dates, how to watch live, details - \"",
+    "rejected source (no relevance to fixture): \"Premier League viewership up 20% among young Americans, Nielsen Sports data show\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "rejected source (team-name-only match, no sport context): \"How to watch the New Jersey Devils on DAZN in the UK - DAZN\"",
+    "rejected source (team-name-only match, no sport context): \"New Jersey Devils - Vegas Golden Knights Live - NHL: Ice Hockey Scores & Highlig\"",
+    "rejected source (team-name-only match, no sport context): \"Detroit Red Wings - Ottawa Senators Live - NHL: Ice Hockey Scores & Highlights -\"",
+    "rejected source (team-name-only match, no sport context): \"Ottawa Senators - Philadelphia Flyers Stats: Ice Hockey Scores & Results - TNT S\"",
+    "rejected source (team-name-only match, no sport context): \"New Jersey Devils - Ottawa Senators Live - NHL: Ice Hockey Scores & Highlights -\"",
+    "rejected source (no relevance to fixture): \"NHL Power Rankings: Who's on top one week in? - DAZN\"",
+    "no validated news sources \u2014 confidence capped at MODERATE (general knowledge may still apply)",
+    "[Milwaukee Brewers vs Los Angeles Dodgers / spread] not backable \u2014 no genuine value \u2014 our estimate (70%) is not above the book's implied probability (64%)",
+    "[Buffalo Sabres vs Florida Panthers / draw_no_bet] not backable \u2014 no genuine value \u2014 our estimate (55%) is not above the book's implied probability (51%)",
+    "[Coventry City vs Newcastle United / double_chance] not backable \u2014 no genuine value \u2014 our estimate (75%) is not above the book's implied probability (71%)",
+    "[New Jersey Devils vs Ottawa Senators / draw_no_bet] not backable \u2014 no genuine value \u2014 our estimate (57%) is not above the book's implied probability (54%)"
+  ],
+  "intended_platforms": [
+    "telegram"
+  ],
+  "workflow_state": "GENERATED",
+  "has_watchlist": true,
+  "watchlist": [
+    {
+      "match": "Milwaukee Brewers vs Los Angeles Dodgers",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-12T00:00:00Z"
+    },
+    {
+      "match": "Buffalo Sabres vs Florida Panthers",
+      "sport_label": "NHL",
+      "kickoff": "2026-10-12T17:10:00Z"
+    },
+    {
+      "match": "Coventry City vs Newcastle United",
+      "sport_label": "PREMIER LEAGUE",
+      "kickoff": "2026-10-12T19:00:00Z"
+    },
+    {
+      "match": "New Jersey Devils vs Ottawa Senators",
+      "sport_label": "NHL",
+      "kickoff": "2026-10-12T23:10:00Z"
+    }
+  ]
+}

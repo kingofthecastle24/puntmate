@@ -158,7 +158,7 @@ class Phase6WeeklyRecapTests(unittest.TestCase):
         start, end = wr.week_window()
         # widen the window so the ONLY thing excluding old picks is the cutoff
         stats, overall = wr.build_stats(wr.load_picks(), start.replace(year=2020), end)
-        self.assertEqual(overall, {"wins": 1, "losses": 0, "pending": 0})
+        self.assertEqual(overall, {"wins": 1, "losses": 0, "pushes": 0, "pending": 0, "odds": []})
 
     def test_missing_record_start_file_means_no_cutoff(self):
         self._write_picks([
@@ -177,8 +177,8 @@ class Phase6WeeklyRecapTests(unittest.TestCase):
         ])
         start, end = wr.week_window()
         stats, overall = wr.build_stats(wr.load_picks(), start, end)
-        self.assertEqual(stats["INVESTOR_BET"], {"wins": 1, "losses": 1, "pending": 0})
-        self.assertEqual(overall, {"wins": 2, "losses": 1, "pending": 1})
+        self.assertEqual(stats["INVESTOR_BET"], {"wins": 1, "losses": 1, "pushes": 0, "pending": 0, "odds": []})
+        self.assertEqual(overall, {"wins": 2, "losses": 1, "pushes": 0, "pending": 1, "odds": []})
         text = wr.build_recap_text(stats, overall, 0, start, end)
         self.assertIn("2W – 1L", text)
         self.assertIn("67%", text)
@@ -190,7 +190,7 @@ class Phase6WeeklyRecapTests(unittest.TestCase):
         self._write_picks([{"date": old_date, "bet_type": "PUNTER_BET", "result": "win"}])
         start, end = wr.week_window()
         stats, overall = wr.build_stats(wr.load_picks(), start, end)
-        self.assertEqual(overall, {"wins": 0, "losses": 0, "pending": 0})
+        self.assertEqual(overall, {"wins": 0, "losses": 0, "pushes": 0, "pending": 0, "odds": []})
 
     def test_no_bet_days_counted_from_state_files(self):
         today = datetime.now(timezone.utc).date().strftime("%Y-%m-%d")

@@ -110,6 +110,19 @@ EXPANDED_MARKET_SPORTS = {
 }
 
 
+# Real API errors from the most recent fetch_upcoming_odds() call — same
+# pattern as post_instagram.LAST_ERROR. Deliberately NOT part of the return
+# value (changing fetch_upcoming_odds's signature would ripple into every
+# caller and every test that mocks it with a bare list) — a caller that
+# cares (main.py) checks this immediately after calling, everyone else is
+# unaffected. A 404 ("not in season") is NOT an error — that is the normal,
+# expected shape of "no fixtures today" for most sports most days. A real
+# HTTP error (401 dead key, 429 rate limit, 5xx) or request-level exception
+# (timeout, connection error) IS — that's the ODDS_API_ERROR signal main.py
+# uses to tell "the API failed" apart from "the API genuinely has nothing".
+LAST_FETCH_ERRORS = []
+
+
 def fetch_upcoming_odds(hours_ahead=24):
     """Fetch odds for all configured sports. Returns list of match dicts.
 
@@ -118,6 +131,8 @@ def fetch_upcoming_odds(hours_ahead=24):
     window (~76-84h) to pool Friday/Saturday/Sunday fixtures together into
     one combined multi build instead of one day's slate at a time -- same
     scanning/extraction/sort logic either way, just a wider net."""
+    global LAST_FETCH_ERRORS
+    LAST_FETCH_ERRORS = []
     all_matches = []
 
     for sport in SPORTS:
@@ -195,8 +210,10 @@ def fetch_upcoming_odds(hours_ahead=24):
 
         except requests.exceptions.HTTPError as e:
             print(f"[{sport}] HTTP {e.response.status_code}: {e}")
+            LAST_FETCH_ERRORS.append({"sport": sport, "status_code": e.response.status_code, "error": str(e)})
         except Exception as e:
             print(f"[{sport}] Error: {e}")
+            LAST_FETCH_ERRORS.append({"sport": sport, "status_code": None, "error": str(e)})
 
     # 2026-07-18 (Micah): sort priority-sports-first (World Cup/NRL/Rugby/
     # MMA), kickoff time as the tie-break within each group. Previously this

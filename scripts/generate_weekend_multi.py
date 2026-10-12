@@ -41,6 +41,9 @@ import sys
 import json
 from datetime import datetime, timezone
 
+sys.path.insert(0, os.path.dirname(__file__))
+from nz_date import nz_today
+
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_WEEKEND_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_weekend_run.json')
 CARDS_DIR = os.path.join(REPO_ROOT, 'data', 'cards')
@@ -80,7 +83,7 @@ def run():
     print(f"\n[1/3] Fetching fixtures across the next {WEEKEND_HOURS_AHEAD}h (the whole weekend)...")
     matches = fetch_upcoming_odds(hours_ahead=WEEKEND_HOURS_AHEAD)
 
-    run_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    run_date = nz_today()
     run_data = {
         "run_date": run_date,
         "run_ts": datetime.now(timezone.utc).isoformat(),

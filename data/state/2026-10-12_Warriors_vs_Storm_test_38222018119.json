@@ -1,0 +1,36 @@
+{
+  "pick_id": "2026-10-12_Warriors_vs_Storm_test_38222018119",
+  "state": "PARTIALLY_PUBLISHED",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-12T08:11:57.023807+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-12T08:11:57.023960+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-12T08:11:57.024131+00:00",
+      "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-12T08:54:20.438725+00:00",
+      "note": "approval confirmed, entering publish"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-12T08:54:20.460513+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-10-12T08:54:54.151098+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": true, \"instagram_story\": true, \"facebook\": false, \"facebook_story\": false}"
+    }
+  ]
+}
