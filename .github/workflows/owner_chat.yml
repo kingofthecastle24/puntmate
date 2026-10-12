@@ -1,0 +1,56 @@
+# .github/workflows/owner_chat.yml
+#
+# Lets Micah settle a weekend multi by messaging the PuntMate bot directly
+# ("/settle punter win") instead of running set_multi_result.py by hand.
+#
+# Deliberately narrow: only TELEGRAM_BOT_TOKEN + OWNER_CHAT_ID are passed in
+# (no Meta secret at all), and scripts/telegram_bot_poll.py never imports
+# post_instagram/post_facebook -- this job has no way to post publicly.
+# Only messages from OWNER_CHAT_ID are ever acted on (see that script).
+#
+# Poll-based, not a live webhook: runs every 5 minutes (GitHub Actions'
+# practical floor for a schedule), so a reply can take a few minutes, not be
+# instant.
+
+name: PuntMate Owner Chat — settle by message
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {}
+
+env:
+  PYTHONPATH: scripts
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Poll for a settle command
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          OWNER_CHAT_ID: ${{ secrets.OWNER_CHAT_ID }}
+        run: |
+          cd scripts
+          python telegram_bot_poll.py
+
+      - name: Commit any settled result + offset state
+        if: always()
+        run: |
+          git add data/multi_results.json data/state/telegram_bot_offset.json 2>/dev/null || true
+          bash scripts/git_push_retry.sh "chore: owner chat settle update [skip ci]" --soft
