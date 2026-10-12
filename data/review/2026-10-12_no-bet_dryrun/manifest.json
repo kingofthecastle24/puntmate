@@ -1,0 +1,22 @@
+{
+  "files": {
+    "post-metadata.json": {
+      "sha256": "5837ca946599d3660b26cb7ff96dd53579082e9c08c1e10af6ceeacd9caec81c",
+      "bytes": 5146
+    },
+    "watchlist-post.txt": {
+      "sha256": "5ab502919eade025e12a6a5c77a4b3570fe801c8ae7e94fa4187c291030bf97c",
+      "bytes": 758
+    },
+    "degen-watch-post.txt": {
+      "sha256": "c67d333c83b2067cdf4ad0b4724619d7f2d1ef7f597fd5424cafa1782bd5b070",
+      "bytes": 637
+    },
+    "degen-watch.png": {
+      "sha256": "7cfbe5ed9dcc0753ad43cde47e2e57159d1b7515d4e72d3a1fca7ba7a76eb7ca",
+      "bytes": 134111
+    }
+  },
+  "pick_id": "2026-10-12_no-bet_dryrun",
+  "created_at": "2026-10-12T09:29:06.544502+00:00"
+}

@@ -1,0 +1,87 @@
+{
+  "has_pick": false,
+  "pick_id": "2026-10-12_no-bet_dryrun",
+  "run_id": "38229951740",
+  "generated_at": "2026-10-12T09:29:06.543619+00:00",
+  "post_date": "2026-10-12",
+  "classification": "NO_BET",
+  "risk": "NO_BET",
+  "bet_type": "NO_BET",
+  "reasoning": "Every candidate's odds resolved fine, but none cleared the evidence/value bar \u2014 treated as no bet.",
+  "research_warnings": [
+    "rejected source (no relevance to fixture): \"As Sabres Seek To End Slide In Atlantic Division Standings, Slew Of Buffalo Forw\"",
+    "rejected source (no relevance to fixture): \"Sabres need to improve their attack game - Audacy\"",
+    "rejected source (no relevance to fixture): \"Panthers Make Sam Reinhart Change Amid Struggles, Injuries - Yahoo Sports\"",
+    "rejected source (no relevance to fixture): \"Atlantic Division opponents meet when Sabres host the Panthers - Daily Jefferson\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (team-name-only match, no sport context): \"Coventry City vs Newcastle United \u2013 Predicted lineup and team news - Yahoo Sport\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (no relevance to fixture): \"Turang homers and Milwaukee's bullpen delivers as the Brewers beat the Dodgers 2\"",
+    "rejected source (no relevance to fixture): \"Brewers lead Dodgers 1-0 ahead of NLCS Game 2\"",
+    "rejected source (no relevance to fixture): \"Advantage, Milwaukee: 3 Takeaways From The Brewers' Game 1 Win Over The Dodgers \"",
+    "only 1 validated source(s) \u2014 confidence capped at MODERATE",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (no relevance to fixture): \"Rays and Guardians play in ALCS Game 1\"",
+    "rejected source (team-name-only match, no sport context): \"Shane McClanahan will not pitch for the Tampa Bay Rays in the postseason - The W\"",
+    "rejected source (no relevance to fixture): \"The Art Of The Out: Pitching And Defense Take Center Stage In Rays-Guardians ALC\"",
+    "rejected source (no relevance to fixture): \"We're Going Back To Cleveland: 3 Takeaways From Guardians' Game 4 Win Over White\"",
+    "rejected source (no relevance to fixture): \"Rays and Guardians play in ALCS Game 1 - FOX Sports\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (no relevance to fixture): \"For Wild\u2019s Matt Boldy and Panthers\u2019 Tkachuks, it\u2019s friends off the ice but foes \"",
+    "rejected source (no relevance to fixture): \"Stanley Cup odds: Florida Panthers, Carolina Hurricanes lead favorites - ESPN\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "[Buffalo Sabres vs Florida Panthers / draw_no_bet] not backable \u2014 edge too thin to back \u2014 our estimate (55%) is only 3.8 points above the book's implied probability (51%) \u2014 short of the 7% floor",
+    "[Coventry City vs Newcastle United / draw_no_bet] not backable \u2014 edge too thin to back \u2014 our estimate (63%) is only 2.9 points above the book's implied probability (60%) \u2014 short of the 7% floor",
+    "[New Jersey Devils vs Ottawa Senators / draw_no_bet] not backable \u2014 edge too thin to back \u2014 our estimate (59%) is only 4.2 points above the book's implied probability (55%) \u2014 short of the 7% floor",
+    "[Tampa Bay Rays vs Cleveland Guardians / h2h] not backable \u2014 edge too thin to back \u2014 our estimate (64%) is only 3.4 points above the book's implied probability (61%) \u2014 short of the 7% floor",
+    "[Milwaukee Brewers vs Los Angeles Dodgers / spread] not backable \u2014 insufficient evidence to support any selection"
+  ],
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed"
+  ],
+  "workflow_state": "GENERATED",
+  "has_watchlist": true,
+  "watchlist": [
+    {
+      "match": "Buffalo Sabres vs Florida Panthers",
+      "sport_label": "NHL",
+      "kickoff": "2026-10-12T17:10:00Z"
+    },
+    {
+      "match": "Coventry City vs Newcastle United",
+      "sport_label": "PREMIER LEAGUE",
+      "kickoff": "2026-10-12T19:00:00Z"
+    },
+    {
+      "match": "Milwaukee Brewers vs Los Angeles Dodgers",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-12T21:10:00Z"
+    },
+    {
+      "match": "New Jersey Devils vs Ottawa Senators",
+      "sport_label": "NHL",
+      "kickoff": "2026-10-12T23:10:00Z"
+    },
+    {
+      "match": "Tampa Bay Rays vs Cleveland Guardians",
+      "sport_label": "MLB",
+      "kickoff": "2026-10-13T00:00:00Z"
+    }
+  ],
+  "has_degen_watch": true,
+  "degen_watch": {
+    "cause": "not_backable",
+    "match": "New Jersey Devils vs Ottawa Senators",
+    "sport_label": "NHL",
+    "market_type": "draw_no_bet",
+    "selection": "New Jersey Devils",
+    "odds": 1.83,
+    "reason": "edge too thin to back \u2014 our estimate (59%) is only 4.2 points above the book's implied probability (55%) \u2014 short of the 7% floor",
+    "evidence_sufficient": true,
+    "our_probability": 59.0,
+    "implied_probability": 54.76434426229508,
+    "edge_pct": 4.24,
+    "min_value_edge_pct": 7.0
+  }
+}
