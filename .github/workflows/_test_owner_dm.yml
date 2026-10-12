@@ -29,9 +29,9 @@ jobs:
           python3 -c "
           import owner_dm
           text = (
-              'PuntMate TEST DM -- please ignore\n\n'
-              'This confirms the owner DM path (TELEGRAM_BOT_TOKEN + OWNER_CHAT_ID) '
-              'is wired up correctly end to end. Not a real pick, not a real bet.'
+              'Hey Micah, this is Claude. Confirming I can message you on '
+              'Telegram directly. All 9 end-to-end test steps passed, '
+              'nothing posted publicly, nothing fake left in data/.'
           )
           ok = owner_dm.send_owner_dm(text)
           print('send_owner_dm returned:', ok)
