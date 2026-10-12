@@ -79,6 +79,47 @@ def resolve_h2h(pick_name, home_team, away_team, home_score, away_score):
         return "loss"
 
 
+def resolve_market_result(market, pick_text, home_team, away_team, home_score, away_score):
+    """Shared market-resolution logic (h2h / handicap / total), extracted
+    2026-10-11 so my_bets.py (personal flat-stake log) can resolve a bet
+    against the exact same rules as the public ledger below — the same
+    real-world match must never resolve two different ways depending on
+    which stake it's tracked at. Pure function, no side effects; behaviour
+    is unchanged from the inline logic this replaced. Returns 'win' /
+    'loss' / 'push' / 'manual', or None if scores are incomplete or the
+    pick text can't be parsed."""
+    if home_score is None or away_score is None:
+        return None  # incomplete
+
+    market_lower = (market or "").lower()
+
+    if 'handicap' in market_lower:
+        # Can't auto-resolve handicap without knowing the line.
+        return "manual"
+
+    if 'total' in market_lower:
+        # Over/Under: pick name contains "Over X.5" or "Under X.5"
+        pick_lower = (pick_text or "").lower()
+        home_s = float(home_score or 0)
+        away_s = float(away_score or 0)
+        total = home_s + away_s
+        # BUG FIX (2026-07-21, found in coverage review): a total landing
+        # EXACTLY on a whole-number line (e.g. UNDER 7 with a 4-3 final) is
+        # a PUSH — stake refunded — not a loss. This mattered immediately:
+        # real picks on the ledger use whole-number lines ("UNDER 7").
+        # Miscounting pushes as losses corrupts the public strike rate.
+        if 'over' in pick_lower:
+            line = float(pick_lower.split('over')[-1].strip())
+            return "win" if total > line else ("push" if total == line else "loss")
+        elif 'under' in pick_lower:
+            line = float(pick_lower.split('under')[-1].strip())
+            return "win" if total < line else ("push" if total == line else "loss")
+        return None
+
+    # Default: H2H
+    return resolve_h2h(pick_text, home_team, away_team, home_score, away_score)
+
+
 def calculate_pnl(result, odds):
     """Calculate P&L for a $10 flat stake."""
     if result == "win":
@@ -158,41 +199,16 @@ def check_and_resolve():
             score_data = score_map[match_key]
             market = pick.get('market', 'Head to Head')
 
-            if 'handicap' in market.lower():
-                # Can't auto-resolve handicap without knowing the line
-                result = "manual"
+            result = resolve_market_result(
+                market, pick['pick'], pick['home_team'], pick['away_team'],
+                score_data['home_score'], score_data['away_score'],
+            )
+            if result == "manual":
                 pnl = None
-            elif 'total' in market.lower():
-                # Over/Under: pick name contains "Over X.5" or "Under X.5"
-                pick_text = pick['pick'].lower()
-                home_s = float(score_data['home_score'] or 0)
-                away_s = float(score_data['away_score'] or 0)
-                total = home_s + away_s
-                # BUG FIX (2026-07-21, found in coverage review): a total
-                # landing EXACTLY on a whole-number line (e.g. UNDER 7 with
-                # a 4-3 final) is a PUSH — stake refunded — not a loss.
-                # This mattered immediately: real picks on the ledger use
-                # whole-number lines ("UNDER 7"). Miscounting pushes as
-                # losses corrupts the public strike rate.
-                if 'over' in pick_text:
-                    line = float(pick_text.split('over')[-1].strip())
-                    result = "win" if total > line else ("push" if total == line else "loss")
-                elif 'under' in pick_text:
-                    line = float(pick_text.split('under')[-1].strip())
-                    result = "win" if total < line else ("push" if total == line else "loss")
-                else:
-                    result = None
-                pnl = calculate_pnl(result, pick['odds']) if result else None
+            elif result:
+                pnl = calculate_pnl(result, pick['odds'])
             else:
-                # Default: H2H
-                result = resolve_h2h(
-                    pick['pick'],
-                    pick['home_team'],
-                    pick['away_team'],
-                    score_data['home_score'],
-                    score_data['away_score']
-                )
-                pnl = calculate_pnl(result, pick['odds']) if result else None
+                pnl = None
 
             if result:
                 # Update in all_picks

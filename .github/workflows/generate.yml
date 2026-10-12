@@ -42,6 +42,9 @@
 # TELEGRAM_CHANNEL_ID, IG_USER_ID, META_PAGE_TOKEN, GMAIL_SENDER_EMAIL,
 # GMAIL_APP_PASSWORD, PUNTMATE_REPORT_EMAIL). Facebook's FB_PAGE_ID secret is
 # no longer used for direct posting but is harmless to leave configured.
+# OWNER_CHAT_ID (added 2026-10-11): Micah's own Telegram chat id, for the
+# private owner DM (scripts/owner_dm.py) — reuses TELEGRAM_BOT_TOKEN, never
+# posted publicly. Missing secret = DM skipped, publish unaffected.
 #
 # NOTE: daily_picks.yml is disabled legacy — leave it that way, this workflow
 # replaces it.
@@ -432,6 +435,23 @@ jobs:
             python publish_watchlist.py
           fi
 
+      # Owner's private DM (2026-10-11) — mirrors the official pick exactly,
+      # at Micah's own flat stake, from the SAME frozen post-metadata.json
+      # publish_pick.py just read. Deliberately separate from the public
+      # publish step above and from workflow_state: it never runs on a
+      # No-Bet/Watchlist day (has_pick gates it, same flag publish_pick.py
+      # itself keys off) and a DM failure can never affect the public state.
+      - name: Send owner's private DM
+        if: needs.generate.outputs.has_pick == 'true'
+        env:
+          DRY_RUN:            ${{ needs.generate.outputs.dry_run }}
+          PICK_ID:             ${{ needs.generate.outputs.pick_id }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          OWNER_CHAT_ID:       ${{ secrets.OWNER_CHAT_ID }}
+        run: |
+          cd scripts
+          python owner_dm.py
+
       - name: Commit publish record + state
         if: always()
         run: |
@@ -671,6 +691,20 @@ jobs:
         run: |
           cd scripts
           python publish_pick.py
+
+      # Owner's private DM for each weekend multi tier that fired — same
+      # script, same frozen post-metadata.json, same no-op-on-nothing-fired
+      # behaviour as the daily pick's step above.
+      - name: Send owner's private DM
+        if: needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true'
+        env:
+          DRY_RUN:            ${{ needs.generate_weekend.outputs.dry_run }}
+          PICK_ID:             ${{ needs.generate_weekend.outputs.pick_id }}
+          TELEGRAM_BOT_TOKEN:  ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          OWNER_CHAT_ID:       ${{ secrets.OWNER_CHAT_ID }}
+        run: |
+          cd scripts
+          python owner_dm.py
 
       - name: Commit publish record + state
         if: always()

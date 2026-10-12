@@ -35,6 +35,17 @@ jobs:
           cd scripts
           python check_results.py
 
+      # Micah's personal flat-stake log (added 2026-10-11) — resolves his own
+      # logged bets (singles AND weekend-multi legs) against the same real
+      # scores, independently of the public ledger above. Never writes to
+      # data/picks.json; see scripts/my_bets.py's module docstring.
+      - name: Resolve my personal bet log
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          cd scripts
+          python my_bets.py resolve
+
       - name: Update challenge ledger
         run: |
           cd scripts
@@ -50,7 +61,7 @@ jobs:
 
       - name: Commit resolved picks
         run: |
-          git add data/picks.json config/challenge.json
+          git add data/picks.json config/challenge.json data/my_bets.json
           # ledger only exists once the challenge has been enabled + run
           [ -f data/challenge.json ] && git add data/challenge.json || true
           bash scripts/git_push_retry.sh "chore: resolve picks $(date -u +%Y-%m-%d) [skip ci]" --soft

@@ -470,6 +470,12 @@ def main():
             f.write(text)
         multi_manifest_extra.append(text_filename)
         metadata[f"has_{tier_key}_multi"] = True
+        # Frozen structured legs (2026-10-11) — the exact same leg list the
+        # text above was built from, kept as data (not just rendered text)
+        # so owner_dm.py/my_bets.py can build the private DM and resolve
+        # each leg's real result without ever re-deriving or regenerating
+        # anything. Never surfaced in public copy.
+        metadata[f"{tier_key}_multi_legs"] = legs
         if promo_hint:
             # Internal-only reference for Micah/the Gmail preview -- e.g.
             # "all 4 legs are MLB, TAB's US-sports 4+ leg promo may apply,
