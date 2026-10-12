@@ -94,11 +94,11 @@
     "media_id": "18081330995707986"
   },
   "facebook": {
-    "ok": false,
-    "post_id": null
+    "ok": true,
+    "post_id": "1173598642506628_122137650849391560"
   },
   "facebook_story": {
-    "ok": false,
-    "story_id": null
+    "ok": true,
+    "story_id": "1416423210054129"
   }
 }
