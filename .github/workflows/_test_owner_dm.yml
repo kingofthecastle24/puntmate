@@ -7,7 +7,8 @@
 name: TEST — Owner DM live check (throwaway)
 
 on:
-  workflow_dispatch: {}
+  push:
+    branches: [test/owner-dm-live-check]
 
 jobs:
   send_test_dm:
