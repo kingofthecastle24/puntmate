@@ -174,6 +174,40 @@ def build_watchlist_text(watchlist, post_date):
     return "\n".join(lines)
 
 
+def build_degen_watch_text(candidate, post_date):
+    """2026-10-11 (Micah): on a genuine no-bet day, still name the
+    candidate closest to clearing our value bar — explicitly unofficial,
+    never framed as a pick. Deliberately NOT validated with risk="NO_BET"
+    (this post DOES carry a selection/odds, unlike the Watchlist, so the
+    no-bet-must-have-no-selection check doesn't apply) and NOT with the
+    candidate's own risk/bet_type either — see build_review_package.main,
+    which always runs this through the strictest GAMBLER_BET
+    responsible-gambling language check regardless of the candidate's
+    real classification, since this is inherently closer to encouraging
+    risky betting than any official pick ever is."""
+    edge = candidate["edge_pct"]
+    floor = candidate["min_value_edge_pct"]
+    lines = [
+        "*🎲 PUNTMATE NZ — DEGEN WATCH*",
+        "",
+        "_⚠️ UNOFFICIAL — this is NOT a PuntMate pick. Nothing cleared our bar today, "
+        "but here's the candidate that came closest, for the degenerates who want to see it anyway._",
+        "",
+        f"*{candidate.get('sport_label','')} — {candidate.get('match','')}*",
+        f"{candidate.get('selection','')} @ {candidate.get('odds')}",
+        "",
+        f"Our read: {candidate['our_probability']:.0f}%  ·  Book implies: {candidate['implied_probability']:.0f}%  "
+        f"·  Edge: {edge:+.1f}% (short of the {floor:.0f}% bar we actually back)",
+        "",
+        "Real edge, just not enough of one. Bet at your own risk — this is entertainment, not advice.",
+        "",
+        "──────────────────",
+        "📲 Join Telegram for daily picks",
+        RESPONSIBLE_LINE,
+    ]
+    return "\n".join(lines)
+
+
 def _combined_odds(legs):
     combined = 1.0
     for leg in legs:
@@ -301,6 +335,34 @@ def build_no_bet_metadata(reasoning, research_warnings, run_id, post_date, dry_r
     }
 
 
+class StaleRunDataError(RuntimeError):
+    """data/latest_run.json was not written by this invocation's run."""
+
+
+def _assert_not_stale(run_data):
+    """Defense-in-depth against freezing a review package from a stale
+    latest_run.json (2026-10-11, external audit item 2). generate.yml runs
+    main.py and build_review_package.py in the SAME workflow run (see that
+    workflow's module docstring: "no cross-workflow staleness risk") — so
+    in CI, run_data's run_id must equal this job's GITHUB_RUN_ID. A
+    mismatch means main.py never ran (or failed) this invocation and this
+    is leftover data from a previous run; proceeding would freeze
+    yesterday's (or some other run's) pick as if it were fresh. Older
+    latest_run.json files written before this fix carry no "run_id" field
+    at all — that's not treated as stale (nothing to compare against), just
+    logged, so this can't retroactively break anything already on disk."""
+    ci_run_id = os.environ.get("GITHUB_RUN_ID")
+    recorded_run_id = run_data.get("run_id")
+    if not recorded_run_id:
+        print("::warning::data/latest_run.json has no run_id (pre-2026-10-11 format) — cannot verify freshness.")
+        return
+    if ci_run_id and recorded_run_id != ci_run_id:
+        raise StaleRunDataError(
+            f"data/latest_run.json was written by run_id={recorded_run_id!r}, but this job is "
+            f"run_id={ci_run_id!r}. Refusing to build a review package from a different run's data."
+        )
+
+
 def main():
     if not os.path.exists(LATEST_RUN_PATH):
         print("::notice::No data/latest_run.json — nothing to build a review package for.")
@@ -308,6 +370,8 @@ def main():
 
     with open(LATEST_RUN_PATH) as f:
         run_data = json.load(f)
+
+    _assert_not_stale(run_data)
 
     pick = run_data.get("pick")
     post_date = run_data.get("run_date") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -335,6 +399,36 @@ def main():
             metadata["watchlist"] = watchlist
             metadata["intended_platforms"] = ["telegram"]
             manifest_files.append("watchlist-post.txt")
+
+        # Degen Watch (2026-10-11, Micah): unofficial, posts to BOTH
+        # Telegram and Instagram — a separate intended-platforms entry
+        # from the Telegram-only watchlist above, since this is the one
+        # no-bet-day post that also needs a rendered card.
+        degen_watch = run_data.get("degen_watch")
+        if degen_watch and degen_watch.get("candidate"):
+            candidate = degen_watch["candidate"]
+            degen_text = build_degen_watch_text(candidate, post_date)
+            # risk=None (this is deliberately NOT a NO_BET-labelled post —
+            # it carries a real selection/odds, unlike the Watchlist, so
+            # the no-bet-must-have-no-selection check doesn't apply), and
+            # bet_type forced to GAMBLER_BET regardless of the candidate's
+            # own classification — the strictest responsible-gambling
+            # language gate, always, for this content.
+            validate_text(degen_text, risk=None, bet_type="GAMBLER_BET", public=True)
+            with open(os.path.join(review_dir, "degen-watch-post.txt"), "w") as f:
+                f.write(degen_text)
+            manifest_files.append("degen-watch-post.txt")
+            metadata["has_degen_watch"] = True
+            metadata["degen_watch"] = candidate
+            metadata["intended_platforms"] = list(set(metadata.get("intended_platforms", []) + ["telegram"]))
+
+            card_file = degen_watch.get("card_file")
+            if card_file and os.path.exists(card_file):
+                shutil.copyfile(card_file, os.path.join(review_dir, "degen-watch.png"))
+                manifest_files.append("degen-watch.png")
+                metadata["intended_platforms"] = list(set(metadata["intended_platforms"] + ["instagram_feed"]))
+            else:
+                print("  ::warning:: Degen Watch card wasn't rendered — Telegram-only for Degen Watch today.")
 
         with open(os.path.join(review_dir, "post-metadata.json"), "w") as f:
             json.dump(metadata, f, indent=2)

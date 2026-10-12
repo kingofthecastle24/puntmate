@@ -5,14 +5,20 @@ weekly_recap.py — Phase 6. Weekly results recap broken down by bet type.
 Reads data/picks.json (the live ledger check_results.py resolves daily),
 takes the trailing 7 days, and produces:
   - a Telegram post: overall strike rate + W-L per bet type (Investor /
-    Punter / Gambler), pending count, and No-Bet/Watchlist day count
+    Punter / Gambler), average decimal odds, ROI, pending count, and
+    No-Bet/Watchlist day count
   - an appended section in RECAP.md (permanent history)
 
 Honesty rules, non-negotiable:
   - only picks whose "result" is win/loss count toward strike rate; pending
     and unresolved picks are shown as pending, never guessed
+  - a "push" is a settled outcome, never conflated with "still pending"
   - No-Bet days are reported, not hidden — they're part of the record
   - if there were zero settled picks this week, the post says exactly that
+  - ROI (overall_roi_pct) is a flat equal-stake-per-pick figure, not any
+    real stake of Micah's — this pipeline doesn't track or assume one.
+    ROI is Telegram-only (Micah, 2026-10-11): this script never posts to
+    Facebook or Instagram, so that's the full extent of where it reaches.
 
 Honors DRY_RUN (default true) — prints the post instead of sending.
 """
@@ -72,19 +78,34 @@ def load_picks():
     return picks
 
 
+def _empty_bucket():
+    return {"wins": 0, "losses": 0, "pushes": 0, "pending": 0, "odds": []}
+
+
 def build_stats(picks, start, end):
-    """Per-bet-type and overall W/L/pending for picks dated within [start, end].
+    """Per-bet-type and overall W/L/push/pending for picks dated within
+    [start, end].
 
     - "manual" (check_results couldn't auto-resolve) and any unknown result
-      counts as pending — never guessed into a W or an L.
+      count as pending — never guessed into a W or an L.
+    - "push" is a real settled outcome (a totals-market tie), not an
+      unresolved one — it used to be miscounted into "pending" here, which
+      made a genuinely-settled push look like it was still awaiting a
+      result (2026-10-11, external audit item 5: "define voids/pushes
+      separately"). It now gets its own bucket: excluded from strike rate
+      (same as before — a push isn't a win or a loss) but no longer
+      conflated with "still waiting."
     - Picks from before the single-pick rebuild have no bet_type; they're
       tracked in an explicit "LEGACY" bucket so overall and per-tier numbers
       always reconcile in public — nothing silently dropped, nothing
       double-counted.
+    - `odds` collects the decimal odds of every settled (win/loss) pick in
+      that bucket, for the average-odds metric below — pending/push picks
+      don't have a realised result to average in.
     """
-    stats = {bt: {"wins": 0, "losses": 0, "pending": 0} for bt in BET_TYPE_LABELS}
-    stats["LEGACY"] = {"wins": 0, "losses": 0, "pending": 0}
-    overall = {"wins": 0, "losses": 0, "pending": 0}
+    stats = {bt: _empty_bucket() for bt in BET_TYPE_LABELS}
+    stats["LEGACY"] = _empty_bucket()
+    overall = _empty_bucket()
     for p in picks:
         try:
             d = datetime.strptime(p.get("date", ""), "%Y-%m-%d").date()
@@ -95,10 +116,66 @@ def build_stats(picks, start, end):
         bt = p.get("bet_type")
         result = (p.get("result") or "pending").lower()
         bucket = stats.get(bt) if bt in BET_TYPE_LABELS else stats["LEGACY"]
-        key = "wins" if result == "win" else "losses" if result == "loss" else "pending"
+        key = "wins" if result == "win" else "losses" if result == "loss" else "pushes" if result == "push" else "pending"
         bucket[key] += 1
         overall[key] += 1
+        if key in ("wins", "losses"):
+            try:
+                odds = float(p.get("odds"))
+                bucket["odds"].append(odds)
+                overall["odds"].append(odds)
+            except (TypeError, ValueError):
+                pass
     return stats, overall
+
+
+# Below this many settled (win+loss) picks, a strike rate is too noisy to
+# read as a real signal — flagged rather than presented bare (2026-10-11,
+# external audit item 5: "flag small samples/uncalibrated probabilities").
+SMALL_SAMPLE_FLOOR = 15
+
+
+def average_odds(bucket):
+    odds = bucket.get("odds") or []
+    return round(sum(odds) / len(odds), 2) if odds else None
+
+
+def overall_roi_pct(picks, start, end, bet_types=None):
+    """ROI (net profit / total staked) on a FLAT equal-stake-per-pick basis
+    — "if every settled pick in the window had been backed for the same
+    amount", not any specific real stake of Micah's; this pipeline doesn't
+    track or assume one (see this task's own instructions: "never assume
+    a stake/bankroll"). 2026-10-11 (external audit item 5), updated same
+    day on Micah's explicit call: ROI CAN be shared on the Telegram recap
+    — this script's only output surface — just never on Facebook or
+    Instagram (those get the daily pick cards from build_review_package.py
+    / render_brand_templates.py, a completely separate code path that
+    never touches this function or picks.json's ROI math at all).
+    Returns None when nothing settled in the window matches."""
+    def _in_window(p):
+        try:
+            d = datetime.strptime(p.get("date", ""), "%Y-%m-%d").date()
+        except ValueError:
+            return False
+        return start <= d <= end
+
+    settled = [
+        p for p in picks
+        if _in_window(p) and (p.get("result") or "").lower() in ("win", "loss")
+        and (bet_types is None or p.get("bet_type") in bet_types)
+    ]
+    if not settled:
+        return None
+    net = 0.0
+    counted = 0
+    for p in settled:
+        try:
+            odds = float(p["odds"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        net += (odds - 1) if p["result"].lower() == "win" else -1
+        counted += 1
+    return round(net / counted * 100, 1) if counted else None
 
 
 def count_no_bet_days(start, end):
@@ -123,26 +200,51 @@ def strike_rate(wins, losses):
     return f"{wins / total * 100:.0f}%" if total else "—"
 
 
-def build_recap_text(stats, overall, no_bet_days, start, end):
+def build_recap_text(stats, overall, no_bet_days, start, end, picks=None):
+    """`picks` is optional only so existing callers that don't need the
+    ROI line (and the tests exercising them) keep working unchanged —
+    main() always passes it so the real recap carries ROI."""
     lines = [
         "*📈 PUNTMATE NZ — WEEKLY RECAP*",
         f"_{start.strftime('%d %b')} – {end.strftime('%d %b %Y')}_",
         "",
     ]
     settled = overall["wins"] + overall["losses"]
-    if settled == 0 and overall["pending"] == 0:
+    total_picks = settled + overall["pushes"] + overall["pending"]
+    if total_picks == 0:
         lines.append("Quiet week — no picks put up. No-bet days protect the record.")
     else:
-        lines.append(f"*Overall: {overall['wins']}W – {overall['losses']}L  ·  Strike rate {strike_rate(overall['wins'], overall['losses'])}*")
+        rate_line = f"*Overall: {overall['wins']}W – {overall['losses']}L  ·  Strike rate {strike_rate(overall['wins'], overall['losses'])}*"
+        avg = average_odds(overall)
+        if avg is not None:
+            rate_line += f"  ·  Avg odds {avg:.2f}"
+        lines.append(rate_line)
+        if picks is not None:
+            roi = overall_roi_pct(picks, start, end)
+            if roi is not None:
+                lines.append(f"💰 ROI this week (flat equal-stake basis): {roi:+.1f}%")
+        if 0 < settled < SMALL_SAMPLE_FLOOR:
+            lines.append(f"_Small sample ({settled} settled) — read the strike rate with caution._")
         lines.append("")
         for bt, (emoji, label) in BET_TYPE_LABELS.items():
             s = stats[bt]
-            if s["wins"] + s["losses"] + s["pending"] == 0:
+            if s["wins"] + s["losses"] + s["pushes"] + s["pending"] == 0:
                 continue
-            lines.append(f"{emoji} {label}: {s['wins']}W – {s['losses']}L  ({strike_rate(s['wins'], s['losses'])})")
-        legacy = stats.get("LEGACY", {"wins": 0, "losses": 0, "pending": 0})
+            line = f"{emoji} {label}: {s['wins']}W – {s['losses']}L  ({strike_rate(s['wins'], s['losses'])})"
+            avg_bt = average_odds(s)
+            if avg_bt is not None:
+                line += f"  · avg {avg_bt:.2f}"
+            if picks is not None:
+                roi_bt = overall_roi_pct(picks, start, end, bet_types={bt})
+                if roi_bt is not None:
+                    line += f"  · ROI {roi_bt:+.1f}%"
+            lines.append(line)
+        legacy = stats.get("LEGACY", _empty_bucket())
         if legacy["wins"] + legacy["losses"] > 0:
             lines.append(f"📁 Pre-rebuild picks: {legacy['wins']}W – {legacy['losses']}L (counted in overall)")
+        if overall["pushes"]:
+            lines.append("")
+            lines.append(f"🔁 {overall['pushes']} push(es) this week — no win or loss, excluded from strike rate.")
         if overall["pending"]:
             lines.append("")
             lines.append(f"⏳ {overall['pending']} pick(s) still to settle — counted next week, never guessed.")
@@ -183,9 +285,14 @@ def append_recap_md(text, start, end):
 
 def main():
     start, end = week_window()
-    stats, overall = build_stats(load_picks(), start, end)
+    picks = load_picks()
+    stats, overall = build_stats(picks, start, end)
     no_bet_days = count_no_bet_days(start, end)
-    text = build_recap_text(stats, overall, no_bet_days, start, end)
+    # picks=picks: ROI goes into the public text here (Micah, 2026-10-11 —
+    # Telegram can carry it, just never Facebook or Instagram; this script
+    # only ever posts to Telegram, via post_telegram below, so that's
+    # already the full extent of where this ROI line can reach).
+    text = build_recap_text(stats, overall, no_bet_days, start, end, picks=picks)
 
     # Same leak gate as every other public post — a recap is public copy too.
     leaks = check_internal_leak(text)

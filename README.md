@@ -69,13 +69,76 @@ Actions tab → "PuntMate Social — Generate & Approve" → Run workflow → le
    approval request.
 2. **approve** — you review the email (or the job summary / `preview.html`
    artifact if email isn't configured) and click Approve or Reject in the
-   GitHub Actions UI.
+   GitHub Actions UI. Only runs if **generate** itself fully succeeded
+   (`needs.generate.result == 'success'`) — see Reliability below.
 3. **on_reject** *(only if rejected/cancelled)* — records `REJECTED`, sends a
    rejection email, nothing is published.
 4. **publish** *(only if approved)* — re-verifies every file's SHA-256
    checksum against `manifest.json` (refuses to publish on any mismatch),
    then posts to Telegram and Instagram independently — one platform failing
-   never blocks or undoes another's success — and emails the result.
+   never blocks or undoes another's success — and emails the result. A
+   mixed outcome is recorded and emailed as `PARTIALLY_PUBLISHED`, never
+   silently reported as a plain success; `publish.yml` (Manual Republish)
+   can then resend only the platforms that didn't succeed the first time,
+   without re-posting to ones that already did.
+
+### No-bet days: Watchlist + Degen Watch
+
+On a genuine no-bet day (no candidate clears the value bar), two
+independent, explicitly-unofficial things get posted instead of the real
+pick — automatically, no approval step, same as the real daily pick's
+trial flow:
+
+- **Watchlist** (Telegram only) — today's most notable fixtures, no
+  selections, no odds, nothing framed as advice.
+- **Degen Watch** (Telegram + Instagram) — the candidate closest to
+  clearing the 7% value bar but which still fell short
+  (`generate_pick.select_closest_to_passing`, over the same
+  `rejected_candidates` the run already produces — never a second
+  ledger or a loosened gate). Always labelled "UNOFFICIAL — didn't clear
+  our bar" and "not a PuntMate pick", and always validated through the
+  strictest responsible-gambling language check regardless of the
+  candidate's real risk tier. Never counted toward the public strike
+  rate, RECAP.md, or any ledger — it's content, not a tracked pick.
+  Instagram is skipped (not failed) if the card doesn't render; one
+  platform failing never blocks the other, same guarantee as the real
+  pick.
+
+### Reliability
+
+- Every run writes `data/latest_run.json` exactly once, through a single
+  function, on every exit path — including empty fixtures and Odds API
+  failures, which previously wrote nothing at all and left a stale prior
+  day's file in place for the next step to misread as fresh. Each write
+  carries a never-reused `run_id` and one of seven statuses
+  (`scripts/run_status.py`) that separate an honest no-value day
+  (`NO_VALUE`, `INSUFFICIENT_EVIDENCE`) from an operational failure
+  (`BAD_ODDS`, `MODEL_ERROR`, `ODDS_API_ERROR`, `RENDER_ERROR`) —
+  `PICK_READY` is the only status that means a real pick was selected.
+- `build_review_package.py` refuses to build a review package when
+  `latest_run.json`'s `run_id` doesn't match the current job's
+  `GITHUB_RUN_ID` (generate and the review-package build always run in the
+  same workflow run — see `generate.yml`'s module docstring) — a leftover
+  file from a different run can never be silently frozen as today's pick.
+- **approve**, **on_reject** and **publish** (and their weekend
+  equivalents) all require `needs.generate.result == 'success'` before
+  acting on generate's outputs. A job's outputs stay set to whatever an
+  earlier successful step produced even if a later step in that same job
+  fails (e.g. a git push hitting a real rebase conflict) — without this
+  check, publish could still try to download a review artifact that was
+  never uploaded.
+
+### Proposed, not live: conservative mode
+
+`scripts/conservative_mode.py` is a second, independent ranking over the
+exact same candidates `generate_pick.py` already finds (nothing bypasses
+or loosens the existing value/evidence gate) — picks the highest estimated
+win probability among `confidence == "HIGH"` candidates, with no odds
+ceiling or floor, so a short price is never treated as "safe" just for
+being short. It's fully tested but **not wired into `main.py`'s live run**
+— its one open parameter, `CONSERVATIVE_MIN_PROBABILITY`, is a proposed
+default pending Micah's sign-off (see the module's docstring), and nothing
+here publishes anywhere until that's settled.
 
 ### Facebook
 
@@ -87,8 +150,40 @@ Instagram account"** rather than claimed as a verified success.
 
 ## Schedule
 
-- 8am NZT daily (main run)
-- 6pm NZT Friday/Saturday/Sunday (weekend evening games)
+- Daily main run: fires at a fixed 20:00 UTC. GitHub Actions cron is
+  always UTC and can't express a time zone, so this is 8am NZT in NZST
+  (roughly Apr-Sep) but 9am NZT in NZDT (roughly Sep-Apr) — a real hour of
+  drift across each DST changeover, not just a rounding note. The
+  pipeline's own "today" doesn't depend on which of those two hours it
+  actually fires at: `run_date` and same-day dedupe are computed from the
+  real Pacific/Auckland calendar date (`scripts/nz_date.py`), not from
+  this cron time, so the drift can't produce a wrong business date or a
+  duplicate/skipped day — it can still shift the actual posting time by
+  an hour twice a year, which is a separate, not-yet-made schedule change.
+- Weekend Punter/Gambler-Degenerate multi: fires 7am NZT Friday/Saturday/
+  Sunday (moved 2026-07-19 from the original 6pm slot — too close to
+  kickoff and outside NZ's actual morning engagement peak), same fixed-UTC
+  DST caveat as above.
+
+### Fixture window & prompt cap
+
+- Each run fetches odds across a **rolling 24-hour window from the run's
+  own fire time** (`fetch_odds.fetch_upcoming_odds(hours_ahead=24)`), not
+  a fixed calendar day — so "today's" fixtures shift along with the daily
+  cron's own UTC/NZT drift (see above), and the weekend multi widens this
+  to ~76h to pool Fri/Sat/Sun together (`generate_weekend_multi.py`).
+- If more than 25 fixtures come back in that window, only the first 25 are
+  put in front of the model (`generate_pick.MAX_MATCHES_IN_PROMPT`) —
+  owner-focus fixtures first, then sport priority — and the run's
+  `research_warnings` records exactly how many fixtures were available and
+  how many were dropped, so a quiet slate and a capped one never look the
+  same in the review email.
+- A sport (e.g. UFC/MMA, international Test rugby) having zero fixtures on
+  a given day is expected, not an error — most sports don't run daily.
+  `fetch_odds.LAST_FETCH_ERRORS` distinguishes that from an actual Odds
+  API failure for that sport (dead key, rate limit, timeout) — see
+  `scripts/run_status.py`'s `ODDS_API_ERROR` status, which only fires on
+  the latter.
 
 ## Tests
 

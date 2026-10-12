@@ -25,9 +25,24 @@ CROSS_SPORT_MARKERS = {
     "soccer_fifa_world_cup": ["nrl", "rugby league", "grand final", "try scorer", "state of origin"],
     "rugbyleague_nrl": ["fifa", "premier league", "la liga", "champions league", "penalty kick"],
     "rugbyunion_super_rugby": ["nrl", "fifa", "champions league"],
+    # 2026-10-11: Test rugby (rugbyunion_international) had NO entry here or
+    # in SPORT_KEYWORDS below at all — every snippet for an All Blacks/
+    # Ireland-style Test match was rejected as "team-name-only, no sport
+    # context" regardless of content, capping confidence at MODERATE and
+    # making INVESTOR_BET (which requires HIGH) structurally unreachable for
+    # this sport. Audited against fetch_odds.SPORTS and fixed alongside the
+    # other sports missing the same mapping (see SPORT_KEYWORDS).
+    "rugbyunion_international": ["nrl", "fifa", "champions league"],
     "mma_mixed_martial_arts": ["nrl", "fifa", "champions league", "grand final"],
     "tennis_atp_wimbledon": ["nrl", "fifa", "grand final"],
     "tennis_wta_wimbledon": ["nrl", "fifa", "grand final"],
+    "aussierules_afl": ["nrl", "fifa", "champions league", "try scorer"],
+    "baseball_mlb": ["nrl", "fifa", "rugby", "offside"],
+    "basketball_nba": ["nrl", "fifa", "rugby", "offside", "try scorer"],
+    "soccer_epl": ["nrl", "rugby league", "grand final", "try scorer"],
+    "cricket_international_t20": ["nrl", "fifa", "rugby", "offside"],
+    "boxing_boxing": ["nrl", "fifa", "rugby union", "try scorer"],
+    "icehockey_nhl": ["nrl", "fifa", "rugby", "offside"],
 }
 
 # Words that indicate genuine sport relevance for each sport key (used as a
@@ -37,9 +52,26 @@ SPORT_KEYWORDS = {
     "soccer_fifa_world_cup": ["world cup", "fifa", "football", "soccer", "match", "goal", "squad", "kickoff"],
     "rugbyleague_nrl": ["nrl", "rugby league", "try", "tackle"],
     "rugbyunion_super_rugby": ["super rugby", "rugby union", "all blacks"],
+    # Test rugby (All Blacks, Ireland, Wallabies, Six Nations/Rugby
+    # Championship fixtures) — deliberately distinct from Super Rugby's
+    # keywords (competition names differ) even though both are rugby union,
+    # since "mentions a sport word" is the only thing standing between a
+    # real headline and a false "no sport context" rejection.
+    "rugbyunion_international": [
+        "test match", "test rugby", "all blacks", "wallabies", "springboks",
+        "ireland rugby", "six nations", "rugby championship", "rugby union",
+        "test series", "lineout", "scrum", "fly-half", "flyhalf",
+    ],
     "mma_mixed_martial_arts": ["ufc", "mma", "octagon", "fight"],
     "tennis_atp_wimbledon": ["wimbledon", "tennis", "atp", "set", "serve"],
     "tennis_wta_wimbledon": ["wimbledon", "tennis", "wta", "set", "serve"],
+    "aussierules_afl": ["afl", "aussie rules", "goal", "mark", "quarter"],
+    "baseball_mlb": ["mlb", "baseball", "innings", "pitcher", "home run", "strikeout"],
+    "basketball_nba": ["nba", "basketball", "quarter", "points", "rebound", "assist"],
+    "soccer_epl": ["premier league", "epl", "football", "goal", "match", "kickoff"],
+    "cricket_international_t20": ["t20", "cricket", "over", "wicket", "innings", "run rate"],
+    "boxing_boxing": ["boxing", "bout", "ring", "knockout", "title fight", "ko"],
+    "icehockey_nhl": ["nhl", "hockey", "goal", "period", "power play", "puck"],
 }
 
 

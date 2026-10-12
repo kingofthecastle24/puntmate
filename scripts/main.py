@@ -10,7 +10,14 @@ Flow:
   4. Render carousel + Story PNGs for the pick (Playwright brand-kit renderer,
      falls back to the legacy Pillow renderer if that fails) — skipped entirely
      for NO_BET, there is nothing to render
-  5. Save data/latest_run.json
+  5. Save data/latest_run.json via _write_run() — the single write point,
+     called on EVERY exit path including empty fixtures and API failures.
+     (2026-10-11, external audit, confirmed against the code: an earlier
+     version of this module returned early on an empty-fixtures day
+     WITHOUT writing anything, leaving a stale prior day's latest_run.json
+     on disk for build_review_package.py and send_preview.py to read as if
+     it were today's. Every run now writes a fresh run_id/run_date/status,
+     so a stale file can never be mistaken for a fresh one downstream.)
 
 This script never posts anything to Telegram, Instagram or Facebook, and
 never sends email. Those happen later: build_review_package.py freezes the
@@ -22,11 +29,42 @@ script that actually posts anywhere.
 import os
 import sys
 import json
+import uuid
 from datetime import datetime, timezone
+
+import run_status
+from nz_date import nz_today
 
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 LATEST_RUN_PATH = os.path.join(REPO_ROOT, 'data', 'latest_run.json')
 CARDS_DIR = os.path.join(REPO_ROOT, 'data', 'cards')
+
+
+def _new_run_id():
+    """GITHUB_RUN_ID when running in CI; a local fallback otherwise — never
+    reused across invocations, so downstream staleness checks (see
+    _write_run and build_review_package.py) have something to compare."""
+    return os.environ.get("GITHUB_RUN_ID") or f"local-{uuid.uuid4().hex[:12]}"
+
+
+def _write_run(run_data):
+    """The ONLY place latest_run.json gets written. Always fresh — run_id/
+    run_ts/run_date/status are set on every call (2026-10-11, external
+    audit, confirmed against the code): a prior version of this module
+    returned early on an empty-fixtures day WITHOUT writing anything,
+    leaving yesterday's latest_run.json (a different run_date, possibly
+    has_pick=true) sitting on disk untouched. Downstream, build_review_
+    package.py trusted that file's run_date as "today" and would either
+    silently try to re-freeze yesterday's already-PUBLISHED pick_id (crash:
+    workflow_state.InvalidTransitionError, since PUBLISHED is terminal) or,
+    worse, build what looked like a fresh review package from stale data.
+    Every call site below now goes through this so that can't happen again
+    — including the two failure paths that used to return without writing
+    anything at all."""
+    os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
+    with open(LATEST_RUN_PATH, 'w') as f:
+        json.dump(run_data, f, indent=2)
+    print(f"  Saved data/latest_run.json — run_id={run_data['run_id']} status={run_data['status']}")
 
 
 def _legacy_pillow_pick(pick):
@@ -59,6 +97,21 @@ def render_card(pick):
         from generate_picks_image import generate_carousel
         paths = generate_carousel(_legacy_pillow_pick(pick), CARDS_DIR)
         return {"ok": True, "files": {"carousel": paths}, "warnings": ["used legacy Pillow fallback"]}
+
+
+def render_degen_watch_card(candidate):
+    """Render the Degen Watch card for the no-bet-day candidate closest to
+    clearing the value bar. No legacy-Pillow fallback (unlike render_card)
+    — this is optional, non-critical unofficial content; if it fails to
+    render, the day's genuine NO_BET write must still go through
+    untouched, just without a Degen Watch card. Returns None on failure
+    instead of raising."""
+    try:
+        from render_brand_templates import render_degen_watch
+        return render_degen_watch(candidate, out_dir=CARDS_DIR)
+    except Exception as e:
+        print(f"  ::warning:: Degen Watch card render failed ({e}) — skipping Degen Watch for today.")
+        return None
 
 
 def render_multi_cards(pick, tier, legs):
@@ -142,7 +195,11 @@ def _recently_actioned_slugs(days=4):
     state_dir = os.path.join(REPO_ROOT, "data", "state")
     if not os.path.isdir(state_dir):
         return slugs
-    cutoff = date.today() - timedelta(days=days)
+    # NZ business date, not server-local/UTC "today" (2026-10-11, external
+    # audit item 6) -- state filenames are dated by run_date, which is now
+    # nz_today() too (see run()); comparing against a UTC cutoff would drift
+    # the 4-day window by up to a day depending on DST and time of day.
+    cutoff = date.fromisoformat(nz_today()) - timedelta(days=days)
     for name in os.listdir(state_dir):
         if not name.endswith(".json"):
             continue
@@ -161,20 +218,71 @@ def _recently_actioned_slugs(days=4):
 
 
 def run():
+    import fetch_odds
     from fetch_odds import fetch_upcoming_odds
     from fetch_news import fetch_news
     from generate_pick import generate_pick_for_matches
 
+    run_id = _new_run_id()
+    run_date = nz_today()
+    run_ts = datetime.now(timezone.utc).isoformat()
+
     print("=" * 55)
     print("PuntMate NZ — Daily Picks Pipeline (prepare only)")
     print(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'))
+    print(f"run_id={run_id}")
     print("=" * 55)
 
     print("\n[1/3] Fetching upcoming match odds...")
     matches = fetch_upcoming_odds()
 
+    # Per-sport fixture counts for THIS run's 24h window (2026-10-11,
+    # external audit item 6: "surface UFC/Test-rugby fixture/odds
+    # availability"). fetch_odds already prints this per sport as it goes,
+    # but that's only visible by reading the raw CI log -- this folds the
+    # same counts into latest_run.json so "0 UFC fixtures today" is
+    # distinguishable at a glance from "UFC fixtures existed but got
+    # dropped/rejected downstream", without requiring a publishing-content
+    # change to surface it in the review email itself (a separate decision
+    # left for review, not made here).
+    fixture_availability = {s: 0 for s in fetch_odds.SPORTS}
+    for m in matches:
+        fixture_availability[m["sport"]] = fixture_availability.get(m["sport"], 0) + 1
+    zero_fixture_priority_sports = sorted(
+        s for s in fetch_odds.PRIORITY_SPORTS if fixture_availability.get(s, 0) == 0
+    )
+    if zero_fixture_priority_sports:
+        print(f"  No fixtures today in: {', '.join(zero_fixture_priority_sports)}")
+
     if not matches:
-        print("  No matches today — nothing to prepare. Staying silent (existing behaviour).")
+        # Was this genuinely zero fixtures, or did the Odds API itself fail
+        # (dead key, rate limit, timeout) for every sport? Those are very
+        # different situations — one is an honest no-bet day, the other is
+        # an operational failure that deserves an actionable alert, not a
+        # quiet "nothing today". fetch_odds.LAST_FETCH_ERRORS distinguishes
+        # them (see that module for why this isn't fetch_upcoming_odds's own
+        # return value).
+        had_api_errors = bool(fetch_odds.LAST_FETCH_ERRORS)
+        status = run_status.ODDS_API_ERROR if had_api_errors else run_status.NO_VALUE
+        reasoning = (
+            f"The Odds API returned errors for {len(fetch_odds.LAST_FETCH_ERRORS)} sport(s) and no "
+            f"fixtures could be fetched at all — see errors below."
+            if had_api_errors else
+            "No fixtures at all across any configured sport today — genuinely nothing to assess."
+        )
+        if had_api_errors:
+            print(f"  ::error::Odds API errors on every sport — {fetch_odds.LAST_FETCH_ERRORS}")
+        else:
+            print("  No matches today — nothing to prepare.")
+        _write_run({
+            "run_id": run_id,
+            "run_date": run_date,
+            "run_ts": run_ts,
+            "status": status,
+            "pick": {"has_pick": False, "status": status, "reasoning": reasoning, "research_warnings": []},
+            "odds_api_errors": fetch_odds.LAST_FETCH_ERRORS,
+            "fixture_availability": fixture_availability,
+        })
         return
 
     print(f"\n[2/3] Fetching + validating research for {len(matches)} match(es)...")
@@ -196,8 +304,6 @@ def run():
         print(f"  Excluding {len(already_posted)} already-posted fixture(s) from featured selection.")
     pick = generate_pick_for_matches(matches, match_news, exclude_matches=already_posted)
 
-    run_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-
     if pick.get("has_pick"):
         existing_state = _already_actioned_today(pick["match"], run_date)
         if existing_state is not None:
@@ -207,6 +313,7 @@ def run():
                   f"instead of re-entering the gate or crashing on a duplicate.")
             pick = {
                 "has_pick": False,
+                "status": run_status.NO_VALUE,
                 "reasoning": (
                     f"{pick['match']} already went through today's pipeline earlier "
                     f"(state: {existing_state.get('state')}) — skipping to avoid a "
@@ -216,9 +323,12 @@ def run():
             }
 
     run_data = {
+        "run_id": run_id,
         "run_date": run_date,
-        "run_ts": datetime.now(timezone.utc).isoformat(),
+        "run_ts": run_ts,
+        "status": pick.get("status", run_status.NO_VALUE),
         "pick": pick,
+        "fixture_availability": fixture_availability,
     }
 
     if not pick.get("has_pick"):
@@ -236,10 +346,28 @@ def run():
             }
             for m in matches[:5]
         ]
-        os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
-        with open(LATEST_RUN_PATH, 'w') as f:
-            json.dump(run_data, f, indent=2)
-        print(f"  Saved NO_BET result + {len(run_data['watchlist'])}-fixture watchlist to data/latest_run.json (no cards rendered).")
+
+        # Degen Watch (2026-10-11, Micah): on a genuine no-bet day, still
+        # surface the candidate closest to clearing the value bar -- but
+        # explicitly unofficial, never the real pick, never counted in any
+        # ledger or strike rate. generate_pick.select_closest_to_passing
+        # only ever returns a candidate that had evidence_sufficient=True
+        # (a real edge computation, just short of the 7% floor) -- an
+        # insufficient-evidence rejection never qualifies, since there's no
+        # genuine "closest" number to show for that failure mode.
+        from generate_pick import select_closest_to_passing
+        degen_candidate = select_closest_to_passing(pick.get("rejected_candidates", []))
+        if degen_candidate:
+            degen_render = render_degen_watch_card(degen_candidate)
+            run_data["degen_watch"] = {
+                "candidate": degen_candidate,
+                "card_file": degen_render["file"] if degen_render else None,
+            }
+            print(f"  Degen Watch: {degen_candidate['match']} / {degen_candidate.get('selection','')} "
+                  f"(edge {degen_candidate['edge_pct']:+.1f}%, short of the {degen_candidate['min_value_edge_pct']:.0f}% floor)")
+
+        _write_run(run_data)
+        print(f"  {len(run_data['watchlist'])}-fixture watchlist included (no cards rendered).")
         return
 
     print(f"  -> {pick['match']} | {pick['selection']} @ {pick['odds']} | "
@@ -263,15 +391,17 @@ def run():
     except Exception as e:
         print(f"  ERROR: card rendering failed entirely: {e}")
         # Without cards there is nothing safe to publish — record as NO_BET
-        # equivalent rather than freezing a pick with no images.
+        # equivalent rather than freezing a pick with no images. Distinct
+        # RENDER_ERROR status: this is an operational failure (a real,
+        # backable pick existed), not an honest no-value day — deserves an
+        # actionable alert, not routine no-bet handling.
         pick["has_pick"] = False
+        pick["status"] = run_status.RENDER_ERROR
         pick["reasoning"] = f"Card rendering failed: {e}"
         run_data["pick"] = pick
+        run_data["status"] = run_status.RENDER_ERROR
 
-    os.makedirs(os.path.dirname(LATEST_RUN_PATH), exist_ok=True)
-    with open(LATEST_RUN_PATH, 'w') as f:
-        json.dump(run_data, f, indent=2)
-    print("  Saved data/latest_run.json")
+    _write_run(run_data)
 
     print("\nPipeline (prepare stage) complete")
     print("=" * 55)

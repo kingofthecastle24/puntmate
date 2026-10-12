@@ -46,7 +46,10 @@ import json
 import os
 import re
 
-from pick_classifier import Evidence, classify, is_backable, RISK_NO_BET, RISK_STANDARD, BET_NO_BET
+import run_status
+
+from pick_classifier import Evidence, classify, is_backable, RISK_NO_BET, RISK_STANDARD, BET_NO_BET, \
+    MIN_VALUE_EDGE_PCT
 from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES
 from text_format import truncate_at_sentence
 
@@ -523,15 +526,31 @@ def _display_selection(market_type, selection, line):
     return selection_upper
 
 
-def _classify_candidate(raw, matches, match_news, warnings):
+def _classify_candidate(raw, matches, match_news, warnings, rejected=None):
     """Resolve + deterministically classify a single raw candidate dict from
-    the model. Returns None (and appends an explanatory warning) if the
-    candidate can't be trusted or classified; otherwise returns a dict
-    bundling the classified verdict with everything needed to build the
-    final pick if this candidate ends up featured."""
+    the model. Returns None (and appends an explanatory warning, plus a
+    structured record to `rejected` if given) if the candidate can't be
+    trusted or classified; otherwise returns a dict bundling the classified
+    verdict with everything needed to build the final pick if this
+    candidate ends up featured.
+
+    `rejected` entries carry a `cause` tag ("hallucinated_match" /
+    "unresolved_odds" / "not_backable") so the caller can tell a real
+    operational failure (odds never resolved) apart from an honest no-value
+    day (odds resolved fine, the value/evidence gate just said no) when
+    deciding the run's overall status (2026-10-11, external audit item 2:
+    "keep estimated probability, bookmaker probability, edge, threshold in
+    the rejection record" — those four numbers are already in the `reason`
+    string from is_backable(), but a structured record keeps them
+    machine-readable too, instead of only ever embedded in prose)."""
+    if rejected is None:
+        rejected = []
+
     match_meta = next((m for m in matches if m["match"] == raw.get("match")), None)
     if not match_meta:
-        warnings.append(f"model hallucinated a match not in the candidate list: {raw.get('match')!r}")
+        reason = f"model hallucinated a match not in the candidate list: {raw.get('match')!r}"
+        warnings.append(reason)
+        rejected.append({"cause": "hallucinated_match", "match": raw.get("match"), "reason": reason})
         return None
 
     market_type = (raw.get("market_type") or "h2h").strip().lower()
@@ -541,7 +560,14 @@ def _classify_candidate(raw, matches, match_news, warnings):
     odds_val, implied_pct = _resolve_selection_odds(match_meta, market_type, raw.get("selection"), line)
 
     if not odds_val or implied_pct is None:
-        warnings.append(f"[{raw.get('match')}] could not resolve odds for candidate selection/market/line — dropped")
+        reason = f"[{raw.get('match')}] could not resolve odds for candidate selection/market/line — dropped"
+        warnings.append(reason)
+        rejected.append({
+            "cause": "unresolved_odds",
+            "match": raw.get("match"),
+            "market_type": market_type,
+            "reason": reason,
+        })
         return None
 
     news_entry = match_news.get(match_meta["match"], {})
@@ -567,6 +593,20 @@ def _classify_candidate(raw, matches, match_news, warnings):
     backable, reason = is_backable(evidence)
     if not backable:
         warnings.append(f"[{raw.get('match')} / {market_type}] not backable — {reason}")
+        rejected.append({
+            "cause": "not_backable",
+            "match": raw.get("match"),
+            "sport_label": match_meta.get("sport_label", ""),
+            "market_type": market_type,
+            "selection": raw.get("selection", ""),
+            "odds": evidence.odds,
+            "reason": reason,
+            "evidence_sufficient": evidence.evidence_sufficient,
+            "our_probability": evidence.our_probability,
+            "implied_probability": evidence.implied_probability,
+            "edge_pct": evidence.edge_pct,
+            "min_value_edge_pct": MIN_VALUE_EDGE_PCT,
+        })
         return None
 
     verdict = classify(evidence)
@@ -634,6 +674,32 @@ def _select_featured(classified, focus_keywords=None, exclude_slugs=None):
         )
     )
     return eligible[0]
+
+
+def select_closest_to_passing(rejected_candidates):
+    """Among today's rejected candidates, returns the one that came
+    closest to clearing the live value bar but still fell short — the
+    highest edge_pct among cause == "not_backable" AND evidence_sufficient
+    rejections. Excludes insufficient-evidence rejections on purpose: a
+    candidate the model itself flagged as not having enough to go on has
+    no genuine edge number worth showing as "closest" — that is a
+    different failure mode entirely, not a near-miss. Returns None when
+    nothing qualifies (e.g. every rejection was insufficient-evidence or
+    unresolved odds, or a real pick existed instead and rejected_candidates
+    only holds non-featured also-rans).
+
+    2026-10-11 (Micah): surfaced as "Degen Watch" on a genuine no-bet
+    day — explicitly unofficial, never the real PuntMate pick, never
+    counted toward the public strike rate or any ledger. See
+    render_brand_templates.build_degen_watch_props for the card and
+    build_review_package.build_degen_watch_text for the Telegram copy."""
+    qualifying = [
+        r for r in rejected_candidates
+        if r.get("cause") == "not_backable" and r.get("evidence_sufficient")
+    ]
+    if not qualifying:
+        return None
+    return max(qualifying, key=lambda r: r["edge_pct"])
 
 
 def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_matches=None):
@@ -740,6 +806,7 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
             "has_pick": False,
             "risk": RISK_NO_BET,
             "bet_type": BET_NO_BET,
+            "status": run_status.MODEL_ERROR,
             "reasoning": "Couldn't complete today's assessment cleanly — no pick rather than a rushed one.",
             "research_warnings": research_warnings,
         }
@@ -760,35 +827,66 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
             "has_pick": False,
             "risk": RISK_NO_BET,
             "bet_type": BET_NO_BET,
+            "status": run_status.MODEL_ERROR,
             "reasoning": "Couldn't complete today's assessment cleanly — no pick rather than a rushed one.",
             "research_warnings": research_warnings,
         }
 
     raw_candidates = result.get("candidates") or []
     if not raw_candidates:
+        # The model itself reviewed real fixtures and proposed nothing — its
+        # own call that today has no defensible angle anywhere. Treated as
+        # NO_VALUE (not INSUFFICIENT_EVIDENCE): the model had the fixtures
+        # and whatever research/general-knowledge context existed, and
+        # still came back empty, which is a value judgement, not a missing-
+        # data one. (The two can look identical from outside — this is a
+        # documented simplification, not a claim the model can self-report
+        # which bucket it's really in.)
         return {
             "has_pick": False,
             "risk": RISK_NO_BET,
             "bet_type": BET_NO_BET,
+            "status": run_status.NO_VALUE,
             "reasoning": result.get("reasoning", "Nothing today clears the bar for a defensible pick."),
             "research_warnings": research_warnings,
         }
 
     classify_warnings = []
+    rejected_candidates = []
     classified = []
     for raw in raw_candidates:
-        c = _classify_candidate(raw, matches, match_news, classify_warnings)
+        c = _classify_candidate(raw, matches, match_news, classify_warnings, rejected_candidates)
         if c is not None:
             classified.append(c)
     research_warnings += classify_warnings
 
     if not classified:
+        # Every candidate was dropped — but NOT all drop reasons mean the
+        # same thing. "unresolved_odds"/"hallucinated_match" are genuine
+        # operational failures (we had nothing real to price). "not_backable"
+        # means odds resolved fine and the value/evidence gate did its job —
+        # that is an honest no-value day, not BAD_ODDS (2026-10-11, external
+        # audit item 2: this exact branch used to call every empty-classified
+        # day "could not resolve odds" even when odds had resolved and the
+        # candidate was simply rejected on evidence or edge).
+        causes = {r["cause"] for r in rejected_candidates}
+        if "not_backable" in causes:
+            insufficient = [r for r in rejected_candidates if r["cause"] == "not_backable" and not r["evidence_sufficient"]]
+            status = run_status.INSUFFICIENT_EVIDENCE if insufficient and len(insufficient) == len(
+                [r for r in rejected_candidates if r["cause"] == "not_backable"]
+            ) else run_status.NO_VALUE
+            reasoning = "Every candidate's odds resolved fine, but none cleared the evidence/value bar — treated as no bet."
+        else:
+            status = run_status.BAD_ODDS
+            reasoning = "None of the model's proposed candidates could be resolved to real odds — treated as no bet."
         return {
             "has_pick": False,
             "risk": RISK_NO_BET,
             "bet_type": BET_NO_BET,
-            "reasoning": "None of the model's proposed candidates could be resolved to real odds — treated as no bet.",
+            "status": status,
+            "reasoning": reasoning,
             "research_warnings": research_warnings,
+            "rejected_candidates": rejected_candidates,
         }
 
     for c in classified:
@@ -805,8 +903,10 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
             "has_pick": False,
             "risk": RISK_NO_BET,
             "bet_type": BET_NO_BET,
+            "status": run_status.NO_VALUE,
             "reasoning": best_reasoning or "No candidate cleared the bar for a defensible pick today.",
             "research_warnings": research_warnings,
+            "rejected_candidates": rejected_candidates,
         }
 
     match_meta = featured["match_meta"]
@@ -918,6 +1018,8 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
 
     return {
         "has_pick": True,
+        "status": run_status.PICK_READY,
+        "rejected_candidates": rejected_candidates,
         "match": match_meta["match"],
         "sport": match_meta["sport"],
         "sport_label": SPORT_LABELS.get(match_meta["sport"], match_meta["sport"]),

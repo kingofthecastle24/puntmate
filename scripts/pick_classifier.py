@@ -139,21 +139,33 @@ class Classification:
 def is_backable(evidence: Evidence) -> tuple:
     """Is this candidate worth featuring AT ALL? Returns (backable, reason).
 
-    This is the single value gate (2026-07-25) — it replaces the old
+    This is the single value gate (2026-07-25, restored to a 7-point floor
+    2026-10-07 — see MIN_VALUE_EDGE_PCT) — it replaces the old
     NO_BET-from-classify_risk behaviour. A candidate is backable when the
-    model had sufficient evidence AND the selection shows at least a
-    non-negative edge over the bookmaker. Everything backable then gets a
-    STANDARD_PICK or RISKY_PICK tier from classify_risk. When NOTHING is
-    backable on a day with real fixtures, that is the genuine "no reliable
-    data / no credible pick" case where the day is skipped — not a routine
-    NO_BET on a game we could have found a protective angle in."""
+    model had sufficient evidence AND the selection clears MIN_VALUE_EDGE_PCT
+    over the bookmaker's de-vigged implied probability. Everything backable
+    then gets a STANDARD_PICK or RISKY_PICK tier from classify_risk. When
+    NOTHING is backable on a day with real fixtures, that is the genuine "no
+    reliable data / no credible pick" case where the day is skipped — not a
+    routine NO_BET on a game we could have found a protective angle in."""
     if not evidence.evidence_sufficient:
         return False, "insufficient evidence to support any selection"
     if evidence.edge_pct < MIN_VALUE_EDGE_PCT:
-        return False, (
-            f"no genuine value — our estimate ({evidence.our_probability:.0f}%) is not above "
-            f"the book's implied probability ({evidence.implied_probability:.0f}%)"
-        )
+        # BUG FIX (2026-10-11, flagged by external audit, confirmed against
+        # the code): this used to say our estimate "is not above" the book's
+        # — false whenever edge_pct was positive but still under the floor
+        # (e.g. our 54% vs their 50% is a genuine +4pp edge, just short of
+        # the 7pp bar). Wording now distinguishes "no edge at all" from "a
+        # real but insufficient edge" instead of claiming the opposite of
+        # what the numbers show.
+        if evidence.edge_pct < 0:
+            comparison = f"({evidence.our_probability:.0f}%) is below the book's implied probability ({evidence.implied_probability:.0f}%)"
+        else:
+            comparison = (
+                f"({evidence.our_probability:.0f}%) is only {evidence.edge_pct:.1f} points above the book's "
+                f"implied probability ({evidence.implied_probability:.0f}%) — short of the {MIN_VALUE_EDGE_PCT:.0f}% floor"
+            )
+        return False, f"edge too thin to back — our estimate {comparison}"
     return True, "backable"
 
 
