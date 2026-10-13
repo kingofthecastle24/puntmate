@@ -1,0 +1,60 @@
+# THROWAWAY — read-only check of The Odds API's full sports catalog (looking
+# for a Rugby League World Cup key) and MMA's actual market availability
+# (totals / round props). Uses ODDS_API_KEY only, makes a couple of GET
+# requests, writes nothing, posts nowhere. Branch to be discarded.
+
+name: TEST — sports catalog check (throwaway)
+
+on:
+  push:
+    branches: [test/sports-catalog-check]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: List full sports catalog, filter for rugby/world cup/mma
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          python3 -c "
+          import os, requests
+          key = os.environ['ODDS_API_KEY']
+          r = requests.get('https://api.the-odds-api.com/v4/sports', params={'apiKey': key, 'all': 'true'}, timeout=15)
+          print('status:', r.status_code)
+          data = r.json()
+          print('total sports:', len(data))
+          for s in data:
+              k, t, g, active = s.get('key',''), s.get('title',''), s.get('group',''), s.get('active')
+              if any(term in k.lower() or term in t.lower() for term in ('rugby', 'world cup', 'world_cup', 'mma')):
+                  print(f'{k:40s} | {t:35s} | group={g:20s} | active={active}')
+          "
+      - name: Check MMA markets (h2h + totals) for an upcoming card
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          python3 -c "
+          import os, requests
+          key = os.environ['ODDS_API_KEY']
+          r = requests.get('https://api.the-odds-api.com/v4/sports/mma_mixed_martial_arts/odds',
+                            params={'apiKey': key, 'regions': 'au', 'markets': 'h2h,totals', 'oddsFormat': 'decimal'}, timeout=15)
+          print('status:', r.status_code)
+          data = r.json()
+          print('fights returned:', len(data))
+          if data:
+              m = data[0]
+              print('fight:', m.get('home_team'), 'vs', m.get('away_team'))
+              market_keys = set()
+              for bk in m.get('bookmakers', []):
+                  for mkt in bk.get('markets', []):
+                      market_keys.add(mkt['key'])
+                      if mkt['key'] == 'totals':
+                          print('  totals bookmaker:', bk.get('key'), mkt.get('outcomes'))
+              print('market keys seen across all bookmakers for this fight:', market_keys)
+          "
