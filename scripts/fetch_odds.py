@@ -109,6 +109,22 @@ EXPANDED_MARKET_SPORTS = {
     "rugbyunion_international",
 }
 
+# Sports whose FINAL result can genuinely be a draw (soccer, rugby, AFL —
+# regular-season draws stand as the result punters actually bet on).
+# Everything else in SPORTS always produces a winner (NHL/NBA/MLB go to
+# overtime/shootout/extra innings; tennis, MMA and boxing have no draw at
+# all) (2026-10-13, Micah: found a "Winnipeg Jets or Draw" pick that isn't a
+# real market anywhere — fixed below at the source, where "draw" prices get
+# captured, rather than only in generate_pick.py's derived markets, so a
+# stray 3-way price from one AU bookmaker (most likely a mislabelled
+# regulation-time/60-minute sub-market, not the real game result) can never
+# produce a selection like this for a sport that can't actually draw).
+DRAW_POSSIBLE_SPORTS = {
+    "soccer_fifa_world_cup", "soccer_epl",
+    "rugbyleague_nrl", "rugbyunion_super_rugby", "rugbyunion_international",
+    "aussierules_afl",
+}
+
 
 # Real API errors from the most recent fetch_upcoming_odds() call — same
 # pattern as post_instagram.LAST_ERROR. Deliberately NOT part of the return
@@ -166,7 +182,7 @@ def fetch_upcoming_odds(hours_ahead=24):
 
                 # Only matches within the configured lookahead window.
                 if 0 < hours_away < hours_ahead:
-                    best_odds = extract_best_odds(match)
+                    best_odds = extract_best_odds(match, sport)
                     if not best_odds:
                         continue
 
@@ -230,13 +246,23 @@ def fetch_upcoming_odds(hours_ahead=24):
     return all_matches
 
 
-def extract_best_odds(match):
-    """Line-shop across all bookmakers to find the best available h2h price."""
+def extract_best_odds(match, sport):
+    """Line-shop across all bookmakers to find the best available h2h price.
+
+    `sport` gates whether a "Draw" outcome is even looked for: for a sport
+    where the real final result can never be a draw (NHL, NBA, MLB, tennis,
+    MMA, boxing — see DRAW_POSSIBLE_SPORTS), a bookmaker's "Draw" price (if
+    one appears at all) does not describe the actual game outcome and must
+    never be captured, or everything downstream (implied probs, the derived
+    draw_no_bet/double_chance markets, a plain h2h draw pick) would treat a
+    non-existent market as real.
+    """
     if not match.get('bookmakers'):
         return None
 
     best = {"home": 0.0, "away": 0.0, "draw": None}
     home, away = match['home_team'], match['away_team']
+    draw_possible = sport in DRAW_POSSIBLE_SPORTS
 
     for bk in match['bookmakers']:
         for mkt in bk.get('markets', []):
@@ -249,7 +275,7 @@ def extract_best_odds(match):
                     best['home'] = max(best['home'], p)
                 elif name == away:
                     best['away'] = max(best['away'], p)
-                elif name.lower() == 'draw':
+                elif draw_possible and name.lower() == 'draw':
                     best['draw'] = max(best['draw'] or 0, p) or None
 
     return best if best['home'] > 0 and best['away'] > 0 else None
