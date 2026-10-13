@@ -1,0 +1,112 @@
+{
+  "has_pick": false,
+  "pick_id": "2026-10-13_no-bet",
+  "run_id": "38334429828",
+  "generated_at": "2026-10-13T01:58:18.835073+00:00",
+  "post_date": "2026-10-13",
+  "classification": "NO_BET",
+  "risk": "NO_BET",
+  "bet_type": "NO_BET",
+  "reasoning": "Every candidate's odds resolved fine, but none cleared the evidence/value bar \u2014 treated as no bet.",
+  "research_warnings": [
+    "rejected source (no relevance to fixture): \"Dana White\u2019s Contender Series Season 10, Week 10 Preview & Predictions - Combat \"",
+    "rejected source (no relevance to fixture): \"Dana White\u2019s Contender Series Season 10, Week 10 Preview & Predictions - Combat \"",
+    "rejected source (team-name-only match, no sport context): \"Aline Pereira vs. Smilia Sundell prediction, odds, pick for Contender Series Wee\"",
+    "rejected source (team-name-only match, no sport context): \"Aline Pereira Draws Smilla Sundell on DWCS Next Month - Cageside Press\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (no relevance to fixture): \"Dana White's Contender Series 96 weigh-in results - Yahoo Sports\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (no relevance to fixture): \"Tim St\u00fctzle and the Senators beat the Devils 4-1 to keep their hot start going\"",
+    "rejected source (no relevance to fixture): \"\"Gotta Take It Up A Notch\": Red Wings Looking For More Production From Nate Dani\"",
+    "rejected source (team-name-only match, no sport context): \"Detroit Red Wings Have a Much Bigger Problem Than Their 1-3-1 Record - Sports Il\"",
+    "rejected source (no relevance to fixture): \"How to watch Senators vs. Devils: TV channel and streaming options for October 1\"",
+    "rejected source (no relevance to fixture): \"J.T. Compher Could Return Tuesday Against New Jersey - Yahoo Sports\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (team-name-only match, no sport context): \"Florida Panthers vs. Buffalo Sabres: Game Highlights\"",
+    "rejected source (no relevance to fixture): \"Blue Jackets Monday Gathering: What happened to the late-round draft sleepers? -\"",
+    "rejected source (team-name-only match, no sport context): \"Florida Panthers @ Columbus Blue Jackets: Live game updates, stats, play-by-play\"",
+    "rejected source (team-name-only match, no sport context): \"Florida Panthers vs. Buffalo Sabres: Game Highlights\"",
+    "rejected source (no relevance to fixture): \"Canadiens Call Up Promising Prospect Center Before Sabres Game - Yahoo Sports\"",
+    "rejected source (no relevance to fixture): \"The Hurricanes\u2019 fast start: Repeat performance, or smoke and mirrors? - The New \"",
+    "rejected source (no relevance to fixture): \"Flyers fans call for coach Rick Tocchet's firing after winless start - DAZN\"",
+    "rejected source (no relevance to fixture): \"Flyers bring 7-game losing streak into matchup with the Kraken - FOX Sports\"",
+    "rejected source (no relevance to fixture): \"Rangers Looking To Unlock Pavel Dorofeyev's Scoring Potential With New Line Chan\"",
+    "rejected source (no relevance to fixture): \"Lightning Second Line a Major Factor in Win Streak - Sports Illustrated\"",
+    "rejected source (no relevance to fixture): \"Tim St\u00fctzle and the Senators beat the Devils 4-1 to keep their hot start going\"",
+    "rejected source (no relevance to fixture): \"How to watch Senators vs. Devils: TV channel and streaming options for October 1\"",
+    "rejected source (team-name-only match, no sport context): \"St. Louis Blues @ Ottawa Senators: Live game updates, stats, play-by-play - Yaho\"",
+    "rejected source (no relevance to fixture): \"How Islanders helped superfan, 18, beat near-fatal rare cancer: \u2018Treated me like\"",
+    "rejected source (team-name-only match, no sport context): \"Is Ty Mueller Ready For An Extended Look With The Vancouver Canucks? - Yahoo Spo\"",
+    "rejected source (team-name-only match, no sport context): \"Vancouver Canucks @ New York Islanders Odds - FanDuel Sportsbook\"",
+    "rejected source (no relevance to fixture): \"Blackhawks star Connor Bedard 'trending' to return as soon as Tuesday from offse\"",
+    "rejected source (no relevance to fixture): \"Blackhawks' Connor Bedard Is Likely To Play Tuesday Night Vs Penguins - Yahoo Sp\"",
+    "rejected source (no relevance to fixture): \"Hellebuyck reportedly wants to return to Winnipeg, but his teammates don't want \"",
+    "rejected source (team-name-only match, no sport context): \"Dallas Stars veteran forward Matt Duchene will miss about 3 months after surgery\"",
+    "rejected source (team-name-only match, no sport context): \"Dallas Stars veteran forward Matt Duchene will miss about 3 months after surgery\"",
+    "rejected source (no relevance to fixture): \"3 things to know about Stars-Avalanche: Dallas aims for its third win of the sea\"",
+    "rejected source (no relevance to fixture): \"New Nashville Defenseman Jayden Struble Stands Out In First Predators Game - Yah\"",
+    "rejected source (no relevance to fixture): \"Predators Acquire Defenseman From the Montreal Canadiens - Yahoo Sports\"",
+    "rejected source (team-name-only match, no sport context): \"Nashville Predators vs Vegas Golden Knights \u00bb Best Odds and Stats - Odds Scanner\"",
+    "rejected source (no relevance to fixture): \"William Nylander is still levelling up for the Maple Leafs: Monday Morning Leafs\"",
+    "rejected source (no relevance to fixture): \"Maple Leafs Handed Roster Boost Before Mammoth Game - Yahoo Sports\"",
+    "rejected source (team-name-only match, no sport context): \"Could Anaheim Ducks rookie Nikita Klepov be this season\u2019s Ben Kindel? - The New \"",
+    "rejected source (team-name-only match, no sport context): \"Calgary Flames set wrong kind of franchise history - Yahoo Sports\"",
+    "rejected source (team-name-only match, no sport context): \"Anaheim Ducks vs Calgary Flames \u00bb Best Odds and Stats - Odds Scanner\"",
+    "[Pakistan vs Sri Lanka / h2h] not backable \u2014 edge too thin to back \u2014 our estimate (74%) is only 3.5 points above the book's implied probability (71%) \u2014 short of the 7% floor",
+    "[Columbus Blue Jackets vs Florida Panthers / double_chance] not backable \u2014 edge too thin to back \u2014 our estimate (65%) is only 1.2 points above the book's implied probability (64%) \u2014 short of the 7% floor",
+    "[New York Islanders vs Vancouver Canucks / draw_no_bet] not backable \u2014 edge too thin to back \u2014 our estimate (70%) is only 1.7 points above the book's implied probability (68%) \u2014 short of the 7% floor",
+    "[Anaheim Ducks vs Calgary Flames / draw_no_bet] not backable \u2014 edge too thin to back \u2014 our estimate (69%) is only 1.0 points above the book's implied probability (68%) \u2014 short of the 7% floor",
+    "[Montr\u00e9al Canadiens vs Buffalo Sabres / draw_no_bet] not backable \u2014 edge too thin to back \u2014 our estimate (64%) is only 2.1 points above the book's implied probability (62%) \u2014 short of the 7% floor",
+    "[Carolina Hurricanes vs Washington Capitals / draw_no_bet] not backable \u2014 edge too thin to back \u2014 our estimate (62%) is only 2.6 points above the book's implied probability (59%) \u2014 short of the 7% floor",
+    "[Philadelphia Flyers vs Seattle Kraken / double_chance] not backable \u2014 edge too thin to back \u2014 our estimate (61%) is only 2.0 points above the book's implied probability (59%) \u2014 short of the 7% floor",
+    "[Winnipeg Jets vs Minnesota Wild / draw_no_bet] not backable \u2014 edge too thin to back \u2014 our estimate (54%) is only 4.5 points above the book's implied probability (49%) \u2014 short of the 7% floor"
+  ],
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed"
+  ],
+  "workflow_state": "GENERATED",
+  "has_watchlist": true,
+  "watchlist": [
+    {
+      "match": "Greg Foster vs Jason Asher",
+      "sport_label": "UFC",
+      "kickoff": "2026-10-13T23:15:00Z"
+    },
+    {
+      "match": "Davi Cabral vs Douglas da Lapa",
+      "sport_label": "UFC",
+      "kickoff": "2026-10-13T23:40:00Z"
+    },
+    {
+      "match": "Will Rentz vs Luis Francischinelli",
+      "sport_label": "UFC",
+      "kickoff": "2026-10-14T00:05:00Z"
+    },
+    {
+      "match": "Aline Pereira vs Smilla Sundell",
+      "sport_label": "UFC",
+      "kickoff": "2026-10-14T00:30:00Z"
+    },
+    {
+      "match": "Ilias Bulaid vs Erick Visconde",
+      "sport_label": "UFC",
+      "kickoff": "2026-10-14T00:55:00Z"
+    }
+  ],
+  "has_degen_watch": true,
+  "degen_watch": {
+    "cause": "not_backable",
+    "match": "Winnipeg Jets vs Minnesota Wild",
+    "sport_label": "NHL",
+    "market_type": "draw_no_bet",
+    "selection": "Winnipeg Jets",
+    "odds": 2.02,
+    "reason": "edge too thin to back \u2014 our estimate (54%) is only 4.5 points above the book's implied probability (49%) \u2014 short of the 7% floor",
+    "evidence_sufficient": true,
+    "our_probability": 54.0,
+    "implied_probability": 49.49231970840927,
+    "edge_pct": 4.51,
+    "min_value_edge_pct": 7.0
+  }
+}

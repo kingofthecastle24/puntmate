@@ -1,0 +1,22 @@
+{
+  "files": {
+    "post-metadata.json": {
+      "sha256": "b4e0c1b6da0a30aa243e30dfe7223fc77f4554e1289ff6fb21d2a70e187d210e",
+      "bytes": 9187
+    },
+    "watchlist-post.txt": {
+      "sha256": "44d0cb5f90f334f9d7c06a5667d08811e05f96ce74ce887ffc1489310356caed",
+      "bytes": 721
+    },
+    "degen-watch-post.txt": {
+      "sha256": "867e6415e2037f87e6e8f9cc7ca61203ac717caa8254415b6f40b3a748e2cc2d",
+      "bytes": 628
+    },
+    "degen-watch.png": {
+      "sha256": "3f3b16ddaaf9f44bab3912c0824d571a92a4586d106838f7e265faa6da959794",
+      "bytes": 127118
+    }
+  },
+  "pick_id": "2026-10-13_no-bet",
+  "created_at": "2026-10-13T01:58:18.836024+00:00"
+}
