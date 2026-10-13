@@ -1,0 +1,86 @@
+{
+  "telegram_watchlist": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 258,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1791856720,
+        "text": "\ud83d\udd0d PUNTMATE NZ \u2014 NO BET TODAY\n\nNothing cleared the bar today \u2014 no pick meets my criteria, so we're sitting this one out. A no-bet day protects the strike rate; forcing a pick never does.\n\nOn the watchlist today:\n\u2022 UFC: Greg Foster vs Jason Asher \u2014 Wed 11:15AM NZT\n\u2022 UFC: Davi Cabral vs Douglas da Lapa \u2014 Wed 11:40AM NZT\n\u2022 UFC: Will Rentz vs Luis Francischinelli \u2014 Wed 12:05PM NZT\n\u2022 UFC: Aline Pereira vs Smilla Sundell \u2014 Wed 12:30PM NZT\n\u2022 UFC: Ilias Bulaid vs Erick Visconde \u2014 Wed 12:55PM NZT\n\nBack tomorrow with the numbers.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 29,
+            "type": "bold"
+          },
+          {
+            "offset": 31,
+            "length": 155,
+            "type": "italic"
+          },
+          {
+            "offset": 188,
+            "length": 23,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  },
+  "telegram_degen_watch": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 259,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1791856720,
+        "text": "\ud83c\udfb2 PUNTMATE NZ \u2014 DEGEN WATCH\n\n\u26a0\ufe0f UNOFFICIAL \u2014 this is NOT a PuntMate pick. Nothing cleared our bar today, but here's the candidate that came closest, for the degenerates who want to see it anyway.\n\nNHL \u2014 Winnipeg Jets vs Minnesota Wild\nWinnipeg Jets @ 2.02\n\nOur read: 54%  \u00b7  Book implies: 49%  \u00b7  Edge: +4.5% (short of the 7% bar we actually back)\n\nReal edge, just not enough of one. Bet at your own risk \u2014 this is entertainment, not advice.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "entities": [
+          {
+            "offset": 0,
+            "length": 28,
+            "type": "bold"
+          },
+          {
+            "offset": 30,
+            "length": 166,
+            "type": "italic"
+          },
+          {
+            "offset": 198,
+            "length": 37,
+            "type": "bold"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_degen_watch": {
+    "ok": false,
+    "error": null
+  }
+}
