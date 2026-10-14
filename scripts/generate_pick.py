@@ -49,7 +49,7 @@ import re
 import run_status
 
 from pick_classifier import Evidence, classify, is_backable, RISK_NO_BET, RISK_STANDARD, BET_NO_BET, \
-    MIN_VALUE_EDGE_PCT
+    BET_INVESTOR, MIN_VALUE_EDGE_PCT, GAMBLER_MIN_VALUE_EDGE_PCT, INVESTOR_MIN_PROB_PCT, PUNTER_MIN_PROB_PCT
 from copy_validator import validate_text, CopyValidationError, BANNED_TONE_PHRASES, STAKE_PHRASES
 from text_format import truncate_at_sentence
 
@@ -553,6 +553,17 @@ def _classify_candidate(raw, matches, match_news, warnings, rejected=None):
         rejected.append({"cause": "hallucinated_match", "match": raw.get("match"), "reason": reason})
         return None
 
+    # Confidence/ceiling only needs match_meta (for the news lookup), not
+    # resolved odds -- computed here, before the odds-resolution check, so
+    # an unresolved_odds record can carry it too (2026-10-14, item 2: "the
+    # Oct 14 rejection records have confidence: null" -- every rejection
+    # cause should carry enough to understand a No Bet day, not just
+    # not_backable).
+    news_entry = match_news.get(match_meta["match"], {})
+    ceiling = news_entry.get("confidence_ceiling", "MODERATE")
+    model_confidence = (raw.get("confidence") or "LOW").upper()
+    confidence = model_confidence if CONFIDENCE_RANK.get(model_confidence, 0) <= CONFIDENCE_RANK.get(ceiling, 0) else ceiling
+
     market_type = (raw.get("market_type") or "h2h").strip().lower()
     if market_type not in VALID_MARKET_TYPES:
         market_type = "h2h"
@@ -567,13 +578,14 @@ def _classify_candidate(raw, matches, match_news, warnings, rejected=None):
             "match": raw.get("match"),
             "market_type": market_type,
             "reason": reason,
+            "confidence": confidence,
+            "confidence_ceiling": ceiling,
+            "raw_selection": raw.get("selection", ""),
+            "raw_line": line,
+            "home_team": match_meta.get("home_team", ""),
+            "away_team": match_meta.get("away_team", ""),
         })
         return None
-
-    news_entry = match_news.get(match_meta["match"], {})
-    ceiling = news_entry.get("confidence_ceiling", "MODERATE")
-    model_confidence = (raw.get("confidence") or "LOW").upper()
-    confidence = model_confidence if CONFIDENCE_RANK.get(model_confidence, 0) <= CONFIDENCE_RANK.get(ceiling, 0) else ceiling
 
     evidence = Evidence(
         evidence_sufficient=bool(raw.get("evidence_sufficient", False)),
@@ -585,12 +597,19 @@ def _classify_candidate(raw, matches, match_news, warnings, rejected=None):
         protective_market=market_type in PROTECTIVE_MARKETS,
     )
 
-    # Backability gate (2026-07-25): a candidate with insufficient evidence or
-    # no genuine value over the book is dropped here — it is NOT featured and
-    # NOT classified NO_BET. Everything that survives is a real STANDARD_PICK
-    # or RISKY_PICK. When nothing survives on a real slate, the day is a
+    # Classify first (2026-10-14, item 1): the per-lane gate needs to know
+    # which lane (investor/punter/gambler) a candidate is in before it can
+    # gate on it -- bet-type no longer falls out of the gate, it decides
+    # which bar the gate applies.
+    verdict = classify(evidence)
+
+    # Backability gate (2026-07-25, made per-lane 2026-10-14): a candidate
+    # with insufficient evidence, a negative edge, or one that misses its
+    # lane's bar is dropped here — it is NOT featured and NOT classified
+    # NO_BET. Everything that survives is a real STANDARD_PICK or
+    # RISKY_PICK. When nothing survives on a real slate, the day is a
     # genuine skip (handled by the caller), not a routine no-bet.
-    backable, reason = is_backable(evidence)
+    backable, reason = is_backable(evidence, verdict.bet_type)
     if not backable:
         warnings.append(f"[{raw.get('match')} / {market_type}] not backable — {reason}")
         rejected.append({
@@ -605,11 +624,22 @@ def _classify_candidate(raw, matches, match_news, warnings, rejected=None):
             "our_probability": evidence.our_probability,
             "implied_probability": evidence.implied_probability,
             "edge_pct": evidence.edge_pct,
+            "confidence": confidence,
+            "confidence_ceiling": ceiling,
+            "bet_type": verdict.bet_type,
+            # lane_min_prob_pct / gambler_min_value_edge_pct (2026-10-14):
+            # the per-lane gate replaced the single flat floor. min_value_
+            # edge_pct is kept too -- Degen Watch (main.py, build_review_
+            # package.py) and existing tests read it to describe "how close"
+            # a rejected candidate came; it's still the right number for a
+            # gambler-lane reject, and harmless (if a little incomplete) for
+            # an investor/punter one, where lane_min_prob_pct is the number
+            # that actually mattered.
+            "lane_min_prob_pct": INVESTOR_MIN_PROB_PCT if verdict.bet_type == BET_INVESTOR else PUNTER_MIN_PROB_PCT,
+            "gambler_min_value_edge_pct": GAMBLER_MIN_VALUE_EDGE_PCT,
             "min_value_edge_pct": MIN_VALUE_EDGE_PCT,
         })
         return None
-
-    verdict = classify(evidence)
 
     return {
         "raw": raw,

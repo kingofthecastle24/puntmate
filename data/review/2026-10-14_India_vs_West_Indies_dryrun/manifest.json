@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "001d6587d194aeae4a64bec3711866a09bc86cc5e4c30cfc116a14c3e2821323",
+      "bytes": 615
+    },
+    "instagram-caption.txt": {
+      "sha256": "3aa3947f8491b593c336e5458b38c2773fcec906cbc80b7e2fdf94d95076e20c",
+      "bytes": 687
+    },
+    "post-metadata.json": {
+      "sha256": "f1f088267400063e26fae025d024b82d60e88f4632b824899979f6b01a4b7c50",
+      "bytes": 4104
+    },
+    "preview.html": {
+      "sha256": "d01ebdbc490b43e388f829b0d0b239af171d0fa050e51c7873e0f37cd857ada0",
+      "bytes": 8793
+    },
+    "cover.png": {
+      "sha256": "c0784dd4c136599d920c570d2d9d782016beae49e13e0985d6b9b5c1281b74f6",
+      "bytes": 76780
+    },
+    "tip.png": {
+      "sha256": "f64fde7f7d67a04820c4f0036b0c24520040015d96e762173f0751bd5053704e",
+      "bytes": 67700
+    },
+    "breakdown.png": {
+      "sha256": "c8450b5efd8594ad606f481ceef0d04b20c32f9f73e6dabea3836f6837c1ff6e",
+      "bytes": 138485
+    },
+    "story.png": {
+      "sha256": "4bb6904070b88a8928290a69f6c19de0bac11a255ed89750da2fb0a48d6a6985",
+      "bytes": 58037
+    }
+  },
+  "pick_id": "2026-10-14_India_vs_West_Indies_dryrun",
+  "created_at": "2026-10-14T08:00:56.631139+00:00"
+}

@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-14_India_vs_West_Indies_dryrun",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-14T08:00:56.924427+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-14T08:00:56.924584+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-14T08:00:56.924748+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}

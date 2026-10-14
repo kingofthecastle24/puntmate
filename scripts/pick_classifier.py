@@ -24,15 +24,19 @@ favourite's evidence is thin. There is no fixed pairing.
 
 Being outside the "preferred" odds range for a bet type does NOT by itself
 force NO_BET — odds only ever push a pick toward RISKY_PICK or toward a
-different bet-type bucket. Only insufficient evidence or an edge below the
-minimum threshold produces NO_BET.
+different bet-type bucket. Only insufficient evidence or failing the lane's
+gate (see is_backable) produces NO_BET.
 
 Note: an earlier design (Phase 3) had a second, lower edge floor
 (RISKY_MIN_EDGE_PCT) that let a shakier-but-real edge through as RISKY_PICK
-instead of NO_BET. That is NOT how is_backable works today — there is a
-single MIN_VALUE_EDGE_PCT floor (see below) below which a candidate is
-dropped outright, full stop. RISKY_MIN_EDGE_PCT is kept only so old imports/
-tests don't break; it is not read anywhere in this module's logic.
+instead of NO_BET. RISKY_MIN_EDGE_PCT is kept only so old imports/tests
+don't break; it is not read anywhere in this module's logic.
+
+Per-lane gate (2026-10-14, see is_backable and GAMBLER_MIN_VALUE_EDGE_PCT /
+INVESTOR_MIN_PROB_PCT / PUNTER_MIN_PROB_PCT below): is_backable is no longer
+one flat edge floor for every candidate. Investor and punter lanes select
+on the model's own win probability; the gambler lane alone keeps the old
+value-edge bar. Every lane still requires a non-negative edge.
 """
 
 from dataclasses import dataclass, field
@@ -65,28 +69,33 @@ CONFIDENCE_LEVELS = ("HIGH", "MODERATE", "LOW")
 # nudges toward RISKY_PICK (not NO_BET) — see classify_risk.
 MIN_EDGE_PCT = 5.0
 
-# Backable floor. A candidate is only worth featuring when the evidence is
-# sufficient AND it clears a genuine value bar over the book — this is the
-# ONLY value gate now; it decides whether a candidate can be featured at all
-# (is_backable), NOT its risk tier.
+# Per-lane gate (2026-10-14, Micah: "I don't care about value, I care about
+# being right - it should be based on level of confidence"). Eight straight
+# No Bet days (7-14 Oct) under the old flat 7%-edge-for-everyone floor killed
+# the whole funnel: no weekday picks, nothing compounding, no stake built for
+# the weekend multi. Three advisors argued it out (see the spec this change
+# came from): the investor/punter lanes now select on the model's own win
+# probability (what Micah actually watches — strike rate), while the gambler
+# lane keeps the old value-edge bar, since long-shot mispricing there is a
+# real thing worth protecting. Every lane still requires sufficient evidence
+# AND a non-negative edge — the one sanity rule kept from the old design:
+# never back a selection the model itself rates below the book, under any
+# philosophy.
 #
-# 2026-07-25 -> 2026-09-05: this was dropped to 0.0 (any non-negative edge)
-# on 2026-07-25 alongside the market-widening change, on the theory that a
-# credible, better-protected selection (draw-no-bet, double chance, handicap,
-# total) should be findable on almost any day rather than skipping to NO_BET.
-# In practice a >=0% bar is not a real edge requirement — our_probability is
-# an LLM's own subjective, uncalibrated read, and the book's implied
-# probability here is already de-vigged (fair value, not the raw overround
-# price — see fetch_odds.calc_implied_probs), so "our estimate is 0.1pp above
-# the sharp market's fair price" is just noise around an efficient number,
-# not skill. The real ledger backed this up: 45.8% win rate / -$3.90 before
-# this date vs 55.6% win rate but -$10.70 (worse $ result, on fewer, shorter-
-# priced picks) after it. Restored to the 7% floor PICK_ANALYST_SKILL.md has
-# always documented ("Edge % >= 7% (ideally 10%+)... Quality over quantity.
-# No pick is better than a forced pick.") — the code had drifted from the
-# project's own stated philosophy. Expect fewer picks and more NO_BET days;
-# that is the intended trade-off, not a bug.
-MIN_VALUE_EDGE_PCT = 7.0
+# History: 2026-07-25 -> 2026-09-05 this floor was dropped to 0.0 (any
+# non-negative edge), then restored to 7% on 2026-10-07 after the ledger
+# showed a worse $ result (55.6% win rate but -$10.70, vs 45.8%/-$3.90
+# before) on fewer, shorter-priced picks. That 7% floor now lives on as
+# GAMBLER_MIN_VALUE_EDGE_PCT, for the gambler lane only.
+GAMBLER_MIN_VALUE_EDGE_PCT = 7.0
+MIN_VALUE_EDGE_PCT = GAMBLER_MIN_VALUE_EDGE_PCT  # kept for old imports/tests
+
+# Per-lane model-probability floors (0-100 scale, same as
+# Evidence.our_probability). These are starting numbers — the plan is to
+# review them against real strike rate after a couple of weeks of data
+# (calibration review) and adjust the constants, not the design.
+INVESTOR_MIN_PROB_PCT = 70.0
+PUNTER_MIN_PROB_PCT = 60.0
 
 # Retained for backward-compatible imports/tests; no longer a NO_BET gate.
 RISKY_MIN_EDGE_PCT = 2.5
@@ -136,40 +145,50 @@ class Classification:
     reasons: list
 
 
-def is_backable(evidence: Evidence) -> tuple:
+def is_backable(evidence: Evidence, bet_type: str) -> tuple:
     """Is this candidate worth featuring AT ALL? Returns (backable, reason).
 
-    This is the single value gate (2026-07-25, restored to a 7-point floor
-    2026-10-07 — see MIN_VALUE_EDGE_PCT) — it replaces the old
-    NO_BET-from-classify_risk behaviour. A candidate is backable when the
-    model had sufficient evidence AND the selection clears MIN_VALUE_EDGE_PCT
-    over the bookmaker's de-vigged implied probability. Everything backable
-    then gets a STANDARD_PICK or RISKY_PICK tier from classify_risk. When
+    The gate is per-lane (2026-10-14): investor and punter lanes select on
+    the model's own win probability (Micah: "I care about being right"),
+    the gambler lane keeps the old value-edge bar. Every lane requires
+    sufficient evidence and a non-negative edge — we never back a selection
+    the model itself rates below the book, whatever the philosophy. When
     NOTHING is backable on a day with real fixtures, that is the genuine "no
-    reliable data / no credible pick" case where the day is skipped — not a
-    routine NO_BET on a game we could have found a protective angle in."""
+    reliable data / no credible pick" case where the day is skipped."""
     if not evidence.evidence_sufficient:
         return False, "insufficient evidence to support any selection"
-    if evidence.edge_pct < MIN_VALUE_EDGE_PCT:
-        # BUG FIX (2026-10-11, flagged by external audit, confirmed against
-        # the code): this used to say our estimate "is not above" the book's
-        # — false whenever edge_pct was positive but still under the floor
-        # (e.g. our 54% vs their 50% is a genuine +4pp edge, just short of
-        # the 7pp bar). Wording now distinguishes "no edge at all" from "a
-        # real but insufficient edge" instead of claiming the opposite of
-        # what the numbers show.
-        if evidence.edge_pct < 0:
-            comparison = f"({evidence.our_probability:.0f}%) is below the book's implied probability ({evidence.implied_probability:.0f}%)"
-        else:
-            comparison = (
+
+    if evidence.edge_pct < 0:
+        # BUG FIX (2026-10-11, flagged by external audit): this used to say
+        # our estimate "is not above" the book's — false whenever edge_pct
+        # was positive but still under a floor. Kept honest here too: this
+        # branch only ever fires on a genuinely negative edge now.
+        return False, (
+            f"edge too thin to back — our estimate ({evidence.our_probability:.0f}%) "
+            f"is below the book's implied probability ({evidence.implied_probability:.0f}%)"
+        )
+
+    if bet_type == BET_GAMBLER:
+        if evidence.edge_pct < GAMBLER_MIN_VALUE_EDGE_PCT:
+            return False, (
+                f"edge too thin to back for a gambler pick — our estimate "
                 f"({evidence.our_probability:.0f}%) is only {evidence.edge_pct:.1f} points above the book's "
-                f"implied probability ({evidence.implied_probability:.0f}%) — short of the {MIN_VALUE_EDGE_PCT:.0f}% floor"
+                f"implied probability ({evidence.implied_probability:.0f}%) — short of the "
+                f"{GAMBLER_MIN_VALUE_EDGE_PCT:.0f}% floor"
             )
-        return False, f"edge too thin to back — our estimate {comparison}"
+        return True, "backable"
+
+    floor = INVESTOR_MIN_PROB_PCT if bet_type == BET_INVESTOR else PUNTER_MIN_PROB_PCT
+    if evidence.our_probability < floor:
+        lane = "investor" if bet_type == BET_INVESTOR else "punter"
+        return False, (
+            f"model confidence ({evidence.our_probability:.0f}%) is below the "
+            f"{floor:.0f}% bar for {lane} picks"
+        )
     return True, "backable"
 
 
-def classify_risk(evidence: Evidence) -> tuple:
+def classify_risk(evidence: Evidence, bet_type: str) -> tuple:
     """Returns (risk, reasons) — always STANDARD_PICK or RISKY_PICK, never
     NO_BET (backability is decided separately by is_backable). A pick is
     STANDARD unless one or more risk signals apply.
@@ -177,7 +196,13 @@ def classify_risk(evidence: Evidence) -> tuple:
     Protective markets (draw-no-bet, double chance, handicaps, totals) are
     lower-variance: a slim edge on one is fine, and a bigger price on one is
     not automatically risky — so handicap/total/DNB/double-chance picks are
-    NOT auto-classified risky (Micah 2026-07-25)."""
+    NOT auto-classified risky (Micah 2026-07-25).
+
+    2026-10-14: the investor lane now selects on model probability, not
+    edge size (see is_backable), so a small edge is the norm there, not a
+    risk signal — flagging it would mark nearly every investor pick RISKY,
+    which is just noise. The thin-edge signal is skipped for BET_INVESTOR
+    only; punter and gambler keep it."""
     reasons = []
     riskier_signals = 0
 
@@ -199,8 +224,9 @@ def classify_risk(evidence: Evidence) -> tuple:
 
     # A thin edge nudges a WIN-market pick toward risky. On a protective
     # (lower-variance) market a slim edge is acceptable as a standard pick,
-    # so the thin-edge signal does not apply there.
-    if evidence.edge_pct < MIN_EDGE_PCT and not evidence.protective_market:
+    # and on the investor lane a small edge is expected by design (see the
+    # docstring above), so the thin-edge signal does not apply to either.
+    if evidence.edge_pct < MIN_EDGE_PCT and not evidence.protective_market and bet_type != BET_INVESTOR:
         riskier_signals += 1
         reasons.append(
             f"edge {evidence.edge_pct:.1f}% is below the standard {MIN_EDGE_PCT:.0f}% bar on a win market"
@@ -215,11 +241,18 @@ def classify_risk(evidence: Evidence) -> tuple:
 
 def classify_bet_type(risk: str, evidence: Evidence) -> str:
     """Bet-type is a separate axis from risk — it describes the STYLE of the
-    bet (tone on the public post), not how defensible it is."""
+    bet (tone on the public post), not how defensible it is.
+
+    2026-10-14 (Micah, decided): Investor no longer requires the HIGH
+    confidence label. The research validator caps confidence at MODERATE
+    whenever fewer than 3 sources validate, which was starving the lane
+    Micah most wants flowing even on a genuinely strong 70%+ pick. Investor
+    is now purely odds + the model's own win probability; the confidence
+    label still shows on the post, it just doesn't gate the lane."""
     if risk == RISK_NO_BET:
         return BET_NO_BET
 
-    if evidence.odds <= INVESTOR_ODDS_MAX and evidence.confidence == "HIGH":
+    if evidence.odds <= INVESTOR_ODDS_MAX and evidence.our_probability >= INVESTOR_MIN_PROB_PCT:
         return BET_INVESTOR
 
     if evidence.odds >= GAMBLER_ODDS_MIN:
@@ -229,7 +262,13 @@ def classify_bet_type(risk: str, evidence: Evidence) -> str:
 
 
 def classify(evidence: Evidence) -> Classification:
-    risk, reasons = classify_risk(evidence)
+    # Bet type no longer depends on risk (the RISK_NO_BET branch above is
+    # dead here — classify() is only ever called on a real candidate), so
+    # compute it first: is_backable's per-lane gate (called by the caller,
+    # generate_pick.py) needs to know the lane before it can gate on it, and
+    # classify_risk's thin-edge exemption needs it too.
+    bet_type = classify_bet_type(RISK_STANDARD, evidence)
+    risk, reasons = classify_risk(evidence, bet_type)
     bet_type = classify_bet_type(risk, evidence)
     return Classification(
         risk=risk,

@@ -191,7 +191,7 @@ class GeneratePickTests(unittest.TestCase):
                 "selection": "Warriors",
                 "line": -6.5,
                 "market": "Handicap",
-                "our_probability": 58,
+                "our_probability": 62,  # punter lane (odds 1.90): needs >= 60% model probability
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": [],
@@ -221,7 +221,7 @@ class GeneratePickTests(unittest.TestCase):
                 "selection": "Over",
                 "line": 42.5,
                 "market": "Total",
-                "our_probability": 58,  # de-vigged fair "over" is ~50.8% -> edge ~7.2%, clears the 7% floor
+                "our_probability": 62,  # punter lane (odds 1.87): needs >= 60% model probability
                 "evidence_sufficient": True,
                 "confidence": "MODERATE",
                 "uncertainty_flags": [],
@@ -327,7 +327,8 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
                     "reasoning": "Spain at a big price have a live path through this bracket.",
                 },
                 # Listed SECOND but SHOULD win -- Investor-tier: short odds,
-                # high confidence, clears the edge bar.
+                # model probability clears the 70% investor floor (2026-10-14:
+                # investor selects on probability, not edge or confidence).
                 {
                     "match": "Warriors vs Broncos",
                     "sport": "rugbyleague_nrl",
@@ -335,7 +336,7 @@ class Phase2InvestorPreferenceTests(unittest.TestCase):
                     "selection": "Warriors",
                     "line": None,
                     "market": "Head to Head",
-                    "our_probability": 65,
+                    "our_probability": 72,
                     "evidence_sufficient": True,
                     "confidence": "HIGH",
                     "uncertainty_flags": [],

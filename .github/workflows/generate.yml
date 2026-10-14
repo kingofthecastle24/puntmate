@@ -8,6 +8,13 @@
 #
 # Flow (all in one workflow run, so "publish" always uses the exact frozen
 # artifact "approve" reviewed — no cross-workflow staleness risk):
+#   0. schedule_guard — (Item 5, 2026-10-14) every scheduled trigger below
+#                  fires as two DST-companion crons (6:50am NZ-local buffer,
+#                  one built for NZDT, one for NZST); this job checks which
+#                  one is actually correct for today's real NZ offset and
+#                  lets only that one through generate/generate_weekend's
+#                  own `if:` — the other is a clean no-op. Bypassed entirely
+#                  for workflow_dispatch.
 #   1. generate  — fetch odds, fetch+validate research, select ONE pick (or
 #                  NO_BET), render carousel + Story PNGs, build the frozen
 #                  review package (data/review/<pick_id>/ — telegram-post.txt,
@@ -28,13 +35,16 @@
 #                  scripts/workflow_state.py) and sends the rejection email.
 #   4. publish   — downloads THIS run's frozen artifact, re-verifies every
 #                  checksum against manifest.json (refuses to publish on any
-#                  mismatch), then posts to Telegram + Instagram (feed +
-#                  Story) independently — one platform failing never blocks
-#                  or rolls back another. Facebook is never posted to
-#                  directly (deprecated permission — see publish_pick.py);
-#                  it's reported as "expected via linked Instagram account".
-#                  Sends the result email. Honors DRY_RUN — logs what would
-#                  be sent without calling any API.
+#                  mismatch), holds until exactly 7:00am NZT on a scheduled
+#                  run (Item 5, 2026-10-14, Micah decided: picks land at
+#                  7:00am NZ time — skipped for workflow_dispatch; see
+#                  scripts/hold_until_send_time.py), then posts to Telegram +
+#                  Instagram (feed + Story) independently — one platform
+#                  failing never blocks or rolls back another. Facebook is
+#                  never posted to directly (deprecated permission — see
+#                  publish_pick.py); it's reported as "expected via linked
+#                  Instagram account". Sends the result email. Honors
+#                  DRY_RUN — logs what would be sent without calling any API.
 #
 # Setup: Settings → Environments → production → Required reviewers → add your
 # GitHub username. Secrets needed: see .env.example / README "Configuration"
@@ -54,34 +64,34 @@ concurrency:
 
 on:
   schedule:
-    # 20:00 UTC daily. GitHub Actions scheduled cron is always UTC and
-    # can't express a time zone, so this fixed UTC time is NOT a fixed NZ
-    # local time: it's 8am NZST (UTC+12, roughly Apr-Sep) but 9am NZDT
-    # (UTC+13, roughly Sep-Apr) -- a full hour of drift across each DST
-    # transition that this comment used to paper over by just saying "8am
-    # NZT" unconditionally (2026-10-11, external audit item 6: confirmed
-    # NZ is currently in NZDT, so this is firing at 9am NZT right now, not
-    # the documented 8am). The pipeline's own notion of "today" no longer
-    # depends on which of those two hours it actually runs at -- main.py's
-    # run_date (and same-day dedupe) is computed from the real Pacific/
-    # Auckland calendar date (see scripts/nz_date.py), not from this UTC
-    # cron time -- so the up-to-1-hour drift doesn't produce a wrong
-    # business date or a duplicate/skipped day. It can still shift the
-    # actual local posting time by an hour twice a year; fixing THAT (e.g.
-    # two DST-companion cron entries with an in-job local-time guard) is a
-    # live-schedule change and is called out separately for review rather
-    # than applied here.
-    - cron: '0 20 * * *'
+    # 2026-10-14 (Item 5, Micah decided: picks land at 7:00am NZ time).
+    # GitHub Actions scheduled cron is always UTC and can't express a time
+    # zone, so no single fixed UTC time is 7:00am NZ-local year-round --
+    # NZ alternates between NZST (UTC+12, roughly Apr-Sep) and NZDT
+    # (UTC+13, roughly Sep-Apr). Every logical trigger below therefore
+    # fires as TWO companion cron entries, ten minutes apart in NZ-local
+    # terms from each other by design (6:50am-local buffer, one hour
+    # apart in UTC): one correct for NZDT, one for NZST. The
+    # schedule_guard job checks the real NZ-local hour at run time and
+    # lets through only the entry that's actually correct for TODAY's
+    # regime -- the other is a clean no-op (see schedule_guard job and
+    # scripts/schedule_guard.py). The 6:50am-local buffer (not 7:00am
+    # itself) leaves room for odds/research/Claude/render before the
+    # publish job's own hold (scripts/hold_until_send_time.py) paces the
+    # actual public post to land at exactly 7:00:00 NZT.
+    #
+    # Daily pick — every day, 6:50am NZ-local buffer:
+    - cron: '50 17 * * *'   # 6:50am NZDT (UTC+13)
+    - cron: '50 18 * * *'   # 6:50am NZST (UTC+12)
     # 2026-07-19 (Micah): the old 6pm NZT Fri/Sat/Sun slot was too close to
     # kickoff and outside NZ's actual morning social-media peak (general
     # engagement data points to ~6-8am as the daily surge window — see
     # https://sproutsocial.com/insights/best-times-to-post-on-instagram/).
-    # Moved to 7am NZT — just ahead of the main 8am daily pick, so weekend
-    # subscribers get the extra weekend content first thing, still well
-    # before any game starts, without colliding with the 8am slot. Same
-    # fixed-UTC/DST-drift caveat as the daily cron above applies here too.
-    # 7am NZT Fri/Sat/Sun = 19:00 UTC the day before (Thu/Fri/Sat in UTC).
-    - cron: '0 19 * * 4,5,6'
+    # Moved to the same 7am NZT target as the daily pick (deliberately
+    # overlapping with it), so weekend subscribers get the extra weekend
+    # content first thing, still well before any game starts.
+    - cron: '50 17 * * 4,5,6'   # 6:50am NZDT, Fri/Sat/Sun NZT
+    - cron: '50 18 * * 4,5,6'   # 6:50am NZST, Fri/Sat/Sun NZT
     # 2026-07-19 (Micah): weekend Punter Multi / Gambler-Degenerate Multi —
     # a SEPARATE trigger, Friday only, so the whole weekend's fixtures can
     # be pooled into one combined multi build (see generate_weekend_multi.py)
@@ -90,7 +100,8 @@ on:
     # dedicated job set (generate_weekend/approve_weekend/etc, gated on
     # github.event.schedule below), completely independent of the regular
     # daily pick that also runs at this time.
-    - cron: '0 19 * * 4'
+    - cron: '50 17 * * 4'   # 6:50am NZDT, Friday NZT
+    - cron: '50 18 * * 4'   # 6:50am NZST, Friday NZT
   workflow_dispatch:
     inputs:
       dry_run:
@@ -115,10 +126,37 @@ env:
 
 jobs:
   # ─────────────────────────────────────────────────────────────────────────────
+  # Job 0: DST-regime guard (Item 5) — see the schedule block's comment above.
+  # Cheap and fast; runs for every trigger (schedule AND workflow_dispatch),
+  # but its output is only consulted by schedule-triggered runs below --
+  # workflow_dispatch always bypasses it (see generate/generate_weekend's if:).
+  # ─────────────────────────────────────────────────────────────────────────────
+  schedule_guard:
+    name: "Confirm today's DST-adjusted schedule fire"
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.check.outputs.proceed }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Check NZ local time
+        id: check
+        run: |
+          RESULT=$(python3 scripts/schedule_guard.py)
+          echo "proceed=$RESULT" >> "$GITHUB_OUTPUT"
+          echo "NZ-local-hour-6 check: $RESULT (event: ${{ github.event_name }}, cron: ${{ github.event.schedule }})"
+
+  # ─────────────────────────────────────────────────────────────────────────────
   # Job 1: Generate one pick, render cards, freeze the review package, email preview.
   # ─────────────────────────────────────────────────────────────────────────────
   generate:
     name: Generate, render & freeze review package
+    needs: schedule_guard
+    # 2026-10-14 (Item 5): run on manual dispatch unconditionally, or on a
+    # schedule fire only when schedule_guard confirms this is today's
+    # correct DST-regime cron -- its companion (one hour off for today's
+    # actual offset) is a clean no-op instead of a duplicate run.
+    if: github.event_name == 'workflow_dispatch' || needs.schedule_guard.outputs.proceed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -428,7 +466,11 @@ jobs:
     # uploaded.
     if: always() && needs.generate.result == 'success' && (needs.generate.outputs.has_pick == 'true' || needs.generate.outputs.has_watchlist == 'true') && (needs.approve.result == 'success' || needs.generate.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # 2026-10-14 (Item 5): generate fires ~10min ahead of 7:00am NZT (the
+    # 6:50am-local buffer crons), and the hold step below can wait most
+    # of that gap out -- 10 minutes was already tight for odds/research/
+    # Claude/render plus this job's own setup+publish+commit steps.
+    timeout-minutes: 15
     permissions:
       contents: write   # needed to commit data/published/<pick_id>.json + state
 
@@ -451,6 +493,17 @@ jobs:
 
       - name: Install dependencies
         run: pip install requests
+
+      # 2026-10-14 (Item 5, Micah decided: picks land at 7:00am NZ time).
+      # generate fired early (the 6:50am-local buffer) to leave room for
+      # odds/research/render -- this is what actually paces the PUBLIC
+      # POST to land at exactly 7:00:00 NZT, not whenever the pipeline
+      # happens to finish. Skipped for manual dispatch so a human testing
+      # the pipeline isn't made to wait on a wall-clock target that
+      # doesn't apply to them.
+      - name: Hold until 7:00am NZT
+        if: github.event_name != 'workflow_dispatch'
+        run: python3 scripts/hold_until_send_time.py
 
       - name: Publish (or simulate, if dry run)
         env:
@@ -503,7 +556,14 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   generate_weekend:
     name: Weekend Multi — generate, render & freeze
-    if: github.event.schedule == '0 19 * * 4' || (github.event_name == 'workflow_dispatch' && inputs.run_weekend_multi == true)
+    needs: schedule_guard
+    # 2026-10-14 (Item 5): the weekend-multi trigger now fires as two
+    # DST-companion crons (see the schedule block above) -- only proceed
+    # on the one schedule_guard confirms is correct for today's regime.
+    # Manual dispatch with run_weekend_multi is unaffected by the guard.
+    if: >-
+      ((github.event.schedule == '50 17 * * 4' || github.event.schedule == '50 18 * * 4') && needs.schedule_guard.outputs.proceed == 'true')
+      || (github.event_name == 'workflow_dispatch' && inputs.run_weekend_multi == true)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -680,7 +740,8 @@ jobs:
     # mode, applied to the weekend pipeline).
     if: always() && needs.generate_weekend.result == 'success' && (needs.generate_weekend.outputs.has_punter_multi == 'true' || needs.generate_weekend.outputs.has_gambler_multi == 'true' || needs.generate_weekend.outputs.has_degenerate_multi == 'true') && (needs.approve_weekend.result == 'success' || needs.generate_weekend.outputs.auto_publish == 'true')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Same rationale as the daily publish job's timeout bump (Item 5).
+    timeout-minutes: 15
     permissions:
       contents: write
 
@@ -703,6 +764,11 @@ jobs:
 
       - name: Install dependencies
         run: pip install requests
+
+      # Same 7:00am NZT publish-time hold as the daily publish job (Item 5).
+      - name: Hold until 7:00am NZT
+        if: github.event_name != 'workflow_dispatch'
+        run: python3 scripts/hold_until_send_time.py
 
       - name: Publish (or simulate, if dry run)
         env:
