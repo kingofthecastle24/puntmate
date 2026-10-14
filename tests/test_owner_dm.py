@@ -163,6 +163,8 @@ class NotifyTests(unittest.TestCase):
             self.assertIn("TEAM A (Head to Head) @ 1.60", text)
             self.assertIn("returns $3.20 if it wins", text)
             self.assertIn("Staked $2.00 of $100.00 budget", text)  # current bet counted once
+            self.assertIn(f"Place it: {owner_dm.TAB_NZ_URL}", text)
+            self.assertEqual(owner_dm.TAB_NZ_URL, "https://www.tab.co.nz")
 
     def test_no_dm_when_telegram_not_an_intended_platform(self):
         with tempfile.TemporaryDirectory() as root:
@@ -191,6 +193,7 @@ class NotifyTests(unittest.TestCase):
             self.assertIn("Combined: 3.00", sent[0])
             self.assertIn("returns $15.00 if every leg wins", sent[0])
             self.assertIn("Staked $5.00 of $100.00 budget", sent[0])
+            self.assertIn(f"Place it: {owner_dm.TAB_NZ_URL}", sent[0])
 
     def test_dry_run_prints_and_never_sends(self):
         with tempfile.TemporaryDirectory() as root:
@@ -223,6 +226,15 @@ class NotifyTests(unittest.TestCase):
                             ["telegram"], send=sent.append, repo_root=root)
             self.assertEqual(len(sent), 1)  # still sent
             self.assertIn("WARNING: Staked", sent[0])
+
+
+class TabNzUrlTests(unittest.TestCase):
+    def test_tab_url_is_the_nz_site_not_the_au_one(self):
+        # Regression guard (2026-10-12): every third-party odds vendor
+        # checked (The Odds API, OpticOdds) models "TAB" as TAB Australia
+        # (tab.com.au) -- this must stay tab.co.nz, Micah's actual account.
+        self.assertIn("tab.co.nz", owner_dm.TAB_NZ_URL)
+        self.assertNotIn("tab.com.au", owner_dm.TAB_NZ_URL)
 
 
 class SetMultiResultTests(unittest.TestCase):
