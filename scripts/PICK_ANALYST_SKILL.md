@@ -8,13 +8,13 @@ This skill turns Claude into the PuntMate NZ pick analyst. Use it to interactive
 
 ## Core Philosophy
 
-**Value betting, not winner prediction.** Our edge is identifying where the bookmaker has mispriced the market. We only pick when:
+**Per-lane, not one flat value bar (2026-10-14).** A single "edge ≥ 7% for everyone" floor optimised for something Micah doesn't actually care about and produced eight straight No Bet days. Investor and Punter now select on how confident the model genuinely is (its own win probability) — the strike rate Micah watches — while Gambler alone keeps the old value-edge bar, since long-shot mispricing there is real and worth protecting:
 
-- Our estimated true probability of an outcome > implied probability in the odds
-- Edge % ≥ 7% (ideally 10%+)
-- The pick can be explained simply in 1–2 sentences
+- **Investor / Punter**: pick when the model's own win probability clears the lane's floor (Investor ≥ 70%, Punter ≥ 60%) AND the edge is non-negative — never back a selection the model itself rates below the book.
+- **Gambler**: pick only when edge % ≥ 7% (ideally 10%+), same as before.
+- The pick can be explained simply in 1–2 sentences.
 
-Quality over quantity. No pick is better than a forced pick.
+Quality over quantity still holds — it's just measured by confidence for two lanes and by value for the third, not one number for all three.
 
 ---
 
@@ -66,15 +66,23 @@ Using sports knowledge, form, context:
 
 Produce an honest % estimate. **Do not anchor to the odds.**
 
-### Step 4 — Calculate edge
+### Step 4 — Calculate edge and decide the lane
 
 ```
 edge_pct = our_estimate - implied_probability
 ```
 
-If edge < 7%: no pick. Stay silent.
+Lane is decided by odds first (Investor: odds ≤ 2.20, Gambler: odds ≥ 2.50, else Punter), then gated:
 
-### Step 5 — Confidence mapping
+- **Investor**: our_estimate ≥ 70% AND edge_pct ≥ 0. No pick if either fails.
+- **Punter**: our_estimate ≥ 60% AND edge_pct ≥ 0. No pick if either fails.
+- **Gambler**: edge_pct ≥ 7% (ideally 10%+). No pick if it fails.
+
+If nothing clears its lane: no pick. Stay silent.
+
+### Step 5 — Confidence mapping (Gambler lane only)
+
+Investor/Punter's confidence label is shown on the post but no longer decides the lane or the pick — it's purely descriptive now. For a Gambler-lane pick, edge still maps to a label:
 
 | Edge % | Confidence | Label | Risk Tag |
 |--------|-----------|-------|----------|
@@ -86,9 +94,9 @@ If edge < 7%: no pick. Stay silent.
 
 ### Step 6 — Tier assignment
 
-- **Investor**: High confidence (4–5), odds typically < 2.50. Bookmaker clearly wrong.
-- **Punter**: Solid value, moderate confidence. Good odds.
-- **Gambler**: Big edge at big odds (rare, max 1× per week — handle with care).
+- **Investor**: odds ≤ 2.20 and model probability ≥ 70%. Confidence label no longer required.
+- **Punter**: everything else that clears the ≥ 60% probability floor.
+- **Gambler**: odds ≥ 2.50 and edge ≥ 7% (rare, max 1× per week — handle with care).
 
 ---
 
@@ -198,7 +206,7 @@ Handle: @puntmatenz on every card.
 ## Quick Reference Card
 
 ```
-Minimum edge to post:  7%
+Minimum bar to post:   Investor >= 70% model prob, Punter >= 60% model prob, Gambler >= 7% edge
 Max picks per day:     2 (investor + punter, or 1 if gambler)
 Post timing:           Pre-game only (2–6 hrs before kickoff)
 Results post:          Every Sunday

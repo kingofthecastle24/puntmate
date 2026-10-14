@@ -110,14 +110,29 @@ Three independent layers. No AI tokens are spent on card generation or posting.
 
 ### Triggers
 
-`generate.yml` runs on two cron schedules:
+`generate.yml` runs on six cron schedules (2026-10-14, Item 5: picks land
+at 7:00am NZ time). GitHub Actions cron is always UTC and can't express a
+time zone, so every logical trigger fires as TWO companion crons — one
+correct for NZDT, one for NZST — 6:50am NZ-local buffer ahead of the
+7:00am send time either way. The `schedule_guard` job checks the real NZ
+time at run time and lets through only the one that's actually correct
+for today's DST regime; see the schedule block's comment in
+`generate.yml` and `scripts/schedule_guard.py`.
 
-| Cron | NZT time | Purpose |
+| Cron | NZT time (when active) | Purpose |
 |------|----------|---------|
-| `0 20 * * *` | 8:00am daily | Morning picks |
-| `0 6 * * 5,6,0` | 6:00pm Fri/Sat/Sun | Evening game coverage |
+| `50 17 * * *` | 6:50am NZDT buffer | Morning picks (daily) |
+| `50 18 * * *` | 6:50am NZST buffer | Morning picks (daily) |
+| `50 17 * * 4,5,6` | 6:50am NZDT buffer | Extra weekend slot, Fri/Sat/Sun |
+| `50 18 * * 4,5,6` | 6:50am NZST buffer | Extra weekend slot, Fri/Sat/Sun |
+| `50 17 * * 4` | 6:50am NZDT buffer | Weekend Punter/Gambler multi, Friday |
+| `50 18 * * 4` | 6:50am NZST buffer | Weekend Punter/Gambler multi, Friday |
 
-Also triggerable manually: GitHub → Actions tab → "PuntMate Social — Generate & Approve" → Run workflow.
+The actual public post is paced to land at exactly 7:00:00am NZT by the
+publish job's hold step (`scripts/hold_until_send_time.py`), not by the
+cron time itself.
+
+Also triggerable manually: GitHub → Actions tab → "PuntMate Social — Generate & Approve" → Run workflow (bypasses the DST guard and the 7am hold).
 
 ### Step-by-step
 
@@ -610,16 +625,17 @@ Edit: `scripts/fetch_odds.py`
 
 ### Change the posting schedule
 
-Edit: `.github/workflows/generate.yml`
-
-```yaml
-on:
-  schedule:
-    - cron: '0 20 * * *'   # 8am NZT daily
-    - cron: '0 6 * * 5,6,0' # 6pm NZT Fri/Sat/Sun
-```
-
-NZT = UTC+12. To convert: NZT time → subtract 12 hours → UTC cron time.
+Edit: `.github/workflows/generate.yml` — the `on: schedule:` block (see
+Section 3's "Triggers" table above for the current six entries). Each
+logical trigger needs a DST-companion PAIR, not a single cron line, or
+it'll drift an hour off every time NZ crosses the NZST/NZDT boundary (the
+exact bug Item 5 fixed). To move the target time itself (currently
+7:00am NZT): change `hour=7` in `scripts/hold_until_send_time.py`'s
+`seconds_until_nz_time(7, 0)` call, change `TARGET_HOUR` in
+`scripts/schedule_guard.py` to the new buffer hour (keep it comfortably
+ahead of the new target, e.g. one hour), and update both cron pairs'
+`:50` buffer time (in UTC: target NZDT hour = new target − 13h + 1h
+buffer; target NZST hour = new target − 12h + 1h buffer).
 
 ### Add Instagram posting (complete setup)
 

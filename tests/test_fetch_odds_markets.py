@@ -6,11 +6,47 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 from fetch_odds import (
     extract_spread_odds, extract_totals_odds, calc_two_way_implied_probs,
     fetch_upcoming_odds, TOTALS_ONLY_SPORTS,
+    extract_best_odds, DRAW_POSSIBLE_SPORTS,
 )
 
 
 def _match(bookmakers):
     return {"home_team": "Warriors", "away_team": "Storm", "bookmakers": bookmakers}
+
+
+class DrawCaptureTests(unittest.TestCase):
+    """Regression test for the "Winnipeg Jets or Draw" bug (2026-10-13,
+    Micah): a stray 3-way price from one AU bookmaker on an NHL game got
+    treated as a real draw, producing a "Double Chance" selection that
+    can't exist for a sport where the final result is never a draw.
+    extract_best_odds must only capture a Draw price for a sport in
+    DRAW_POSSIBLE_SPORTS -- everything else always has a winner."""
+
+    def _match_with_draw_price(self):
+        return _match([
+            {"markets": [{"key": "h2h", "outcomes": [
+                {"name": "Warriors", "price": 1.80},
+                {"name": "Storm", "price": 2.20},
+                {"name": "Draw", "price": 15.0},
+            ]}]},
+        ])
+
+    def test_draw_is_captured_for_a_sport_that_can_really_draw(self):
+        for sport in DRAW_POSSIBLE_SPORTS:
+            result = extract_best_odds(self._match_with_draw_price(), sport)
+            self.assertEqual(result["draw"], 15.0, msg=f"sport={sport}")
+
+    def test_draw_is_never_captured_for_nhl_even_if_a_bookmaker_quotes_one(self):
+        result = extract_best_odds(self._match_with_draw_price(), "icehockey_nhl")
+        self.assertIsNone(result["draw"])
+        self.assertEqual(result["home"], 1.80)
+        self.assertEqual(result["away"], 2.20)
+
+    def test_draw_is_never_captured_for_other_always_has_a_winner_sports(self):
+        for sport in ("basketball_nba", "baseball_mlb", "tennis_atp_wimbledon",
+                      "mma_mixed_martial_arts", "boxing_boxing"):
+            result = extract_best_odds(self._match_with_draw_price(), sport)
+            self.assertIsNone(result["draw"], msg=f"sport={sport}")
 
 
 class SpreadOddsTests(unittest.TestCase):

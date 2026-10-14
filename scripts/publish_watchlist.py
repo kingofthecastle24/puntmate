@@ -135,9 +135,13 @@ def main():
 
         if degen_card_path:
             try:
-                from post_instagram import post_degen_watch_to_instagram, LAST_ERROR
+                from post_instagram import post_degen_watch_to_instagram
                 ok_ig = post_degen_watch_to_instagram(degen_card_path, degen_text)
-                results["instagram_degen_watch"] = {"ok": bool(ok_ig), "error": None if ok_ig else LAST_ERROR}
+                if not ok_ig:
+                    import post_instagram
+                    results["instagram_degen_watch"] = {"ok": False, "error": post_instagram.LAST_ERROR}
+                else:
+                    results["instagram_degen_watch"] = {"ok": True}
             except Exception as e:
                 results["instagram_degen_watch"] = {"ok": False, "error": str(e)}
                 print(f"  Instagram (Degen Watch) error: {e}")
