@@ -33,9 +33,9 @@ class CarouselErrorCaptureTests(unittest.TestCase):
         post_instagram.IG_USER_ID = "17840000000000000"
         post_instagram.IG_TOKEN = "test-token"
 
-    @patch("post_instagram.requests.post")
-    def test_dead_token_records_error_with_fix_hint(self, mock_post):
-        mock_post.return_value = _meta_error_response()
+    @patch("post_instagram.requests.request")
+    def test_dead_token_records_error_with_fix_hint(self, mock_request):
+        mock_request.return_value = _meta_error_response()
         ok = post_instagram.post_carousel_to_instagram(
             slide_paths=["a.png"], caption="cap",
             slide_urls=["https://example.com/a.png"],
@@ -46,10 +46,10 @@ class CarouselErrorCaptureTests(unittest.TestCase):
         # the code-190 fix hint is what makes the record actionable
         self.assertIn("META_PAGE_TOKEN", post_instagram.LAST_ERROR.get("fix", ""))
 
-    @patch("post_instagram.requests.post")
-    def test_success_leaves_no_error(self, mock_post):
+    @patch("post_instagram.requests.request")
+    def test_success_leaves_no_error(self, mock_request):
         ok_resp = MagicMock(); ok_resp.json.return_value = {"id": "123"}
-        mock_post.return_value = ok_resp
+        mock_request.return_value = ok_resp
         with patch("post_instagram.time.sleep"):
             post_instagram.post_carousel_to_instagram(
                 slide_paths=["a.png"], caption="cap",

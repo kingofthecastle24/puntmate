@@ -128,7 +128,7 @@ def _call(endpoint, data):
 
 def post_photo(image_url, caption):
     """Photo post on the Page feed from a public image URL (the same
-    Imgur-hosted card URLs the Instagram publish already uses)."""
+    pre-hosted card URLs the Instagram publish already uses)."""
     if not _configured():
         return None
     result = _call("photos", {"url": image_url, "caption": caption})
