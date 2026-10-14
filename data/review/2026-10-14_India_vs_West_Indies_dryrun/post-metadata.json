@@ -1,0 +1,59 @@
+{
+  "has_pick": true,
+  "pick_id": "2026-10-14_India_vs_West_Indies_dryrun",
+  "run_id": "38531969181",
+  "generated_at": "2026-10-14T08:00:56.630747+00:00",
+  "post_date": "2026-10-14",
+  "match": "India vs West Indies",
+  "sport": "cricket_international_t20",
+  "sport_label": "T20 Cricket",
+  "market": "Head to Head",
+  "selection": "INDIA",
+  "odds": "1.33",
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "BET TYPE: INVESTOR",
+  "bet_type_reason": "This one's about as close to a sure thing as sport gets \u2014 the numbers stack up and the price still pays. India are 2-1 up in the series and West Indies have already fallen short in a chase against them, which tells you the batting depth gap is doing exactly what you'd expect at home. India in home T20 conditions, on true subcontinental decks, are about as reliable as it gets in this format and 1.33 slightly underrates them.",
+  "classification": "RISKY_PICK",
+  "risk": "RISKY_PICK",
+  "confidence": "MODERATE",
+  "confidence_label": "MODERATE",
+  "final_explanation": "India are 2-1 up in the series and West Indies have already fallen short in a chase against them, which tells you the batting depth gap is doing exactly what you'd expect at home. India in home T20 conditions, on true subcontinental decks, are about as reliable as it gets in this format and 1.33 slightly underrates them.",
+  "public_caution": "Keep this one light \u2014 the value's there but so is the uncertainty.",
+  "research_warnings": [
+    "rejected source (team-name-only match, no sport context): \"Washington Capitals vs Montreal Canadiens \u00bb Best Odds and Stats - Odds Scanner\"",
+    "rejected source (no relevance to fixture): \"Shohei Ohtani will be in Dodgers' Game 3 NLCS lineup, Dave Roberts says\"",
+    "rejected source (no relevance to fixture): \"Roberts: Shohei Ohtani Will Be In Dodgers Lineup For Game 3 vs. Brewers - FOX Sp\"",
+    "rejected source (no relevance to fixture): \"Shohei Ohtani will be in Dodgers' Game 3 lineup against Brewers - Bozeman Daily \"",
+    "rejected source (no relevance to fixture): \"Crew Puts The Dodgers On The Ropes: 5 Takeaways From The Brewers' NLCS Game 2 Wi\"",
+    "only 1 validated source(s) \u2014 confidence capped at MODERATE",
+    "rejected source (no relevance to fixture): \"Stars fall to Avalanche in game where bitter history between two sides was on fu\"",
+    "rejected source (no relevance to fixture): \"How to watch Avalanche vs. Stars: TV channel and streaming options for October 1\"",
+    "only 2 validated source(s) \u2014 confidence capped at MODERATE",
+    "[Los Angeles Dodgers vs Milwaukee Brewers / total] not backable \u2014 model confidence (56%) is below the 60% bar for punter picks",
+    "uncertainty_flag (internal only, not shown publicly): 'T20 is a short format \u2014 one burst with the bat can flip it'",
+    "uncertainty_flag (internal only, not shown publicly): 'Dew at a night game in Hyderabad can make chasing easier'"
+  ],
+  "theme": "night",
+  "carousel_paths": [
+    "data/review/2026-10-14_India_vs_West_Indies_dryrun/cover.png",
+    "data/review/2026-10-14_India_vs_West_Indies_dryrun/tip.png",
+    "data/review/2026-10-14_India_vs_West_Indies_dryrun/breakdown.png"
+  ],
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-14_India_vs_West_Indies_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-14_India_vs_West_Indies_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-14_India_vs_West_Indies_night_3_breakdown.png"
+  ],
+  "story_path": "data/review/2026-10-14_India_vs_West_Indies_dryrun/story.png",
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-14_India_vs_West_Indies_night_story.png",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story",
+    "facebook"
+  ],
+  "workflow_state": "GENERATED",
+  "has_punter_multi": false,
+  "has_gambler_multi": false,
+  "has_degenerate_multi": false
+}
