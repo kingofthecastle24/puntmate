@@ -109,6 +109,18 @@ EXPANDED_MARKET_SPORTS = {
     "rugbyunion_international",
 }
 
+# Totals (total rounds, over/under) only — no handicap/spread market exists
+# for MMA (2026-10-13, Micah: wants round markets for UFC). The Odds API's
+# own docs call this "limited coverage... from some bookmakers," confirmed
+# live: a real card of 41 upcoming fights had zero bookmakers quoting totals
+# on the one fight checked. Still worth requesting -- cheap, harmless when
+# absent (extract_totals_odds already returns None with nothing to show),
+# and it picks up a genuine rounds line automatically on the fights/cards
+# where a bookmaker does quote one, with no further code needed.
+TOTALS_ONLY_SPORTS = {
+    "mma_mixed_martial_arts",
+}
+
 # Sports whose FINAL result can genuinely be a draw (soccer, rugby, AFL —
 # regular-season draws stand as the result punters actually bet on).
 # Everything else in SPORTS always produces a winner (NHL/NBA/MLB go to
@@ -154,7 +166,13 @@ def fetch_upcoming_odds(hours_ahead=24):
     for sport in SPORTS:
         try:
             wants_extra_markets = sport in EXPANDED_MARKET_SPORTS
-            markets = "h2h,spreads,totals" if wants_extra_markets else "h2h"
+            wants_totals_only = sport in TOTALS_ONLY_SPORTS
+            if wants_extra_markets:
+                markets = "h2h,spreads,totals"
+            elif wants_totals_only:
+                markets = "h2h,totals"
+            else:
+                markets = "h2h"
 
             url = f"{BASE_URL}/sports/{sport}/odds"
             params = {
@@ -202,6 +220,7 @@ def fetch_upcoming_odds(hours_ahead=24):
                         spread = extract_spread_odds(match)
                         if spread:
                             markets_extra["spreads"] = spread
+                    if wants_extra_markets or wants_totals_only:
                         total = extract_totals_odds(match)
                         if total:
                             markets_extra["totals"] = total

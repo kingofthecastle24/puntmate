@@ -1,9 +1,11 @@
 import os, sys, unittest
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch, MagicMock
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 from fetch_odds import (
     extract_spread_odds, extract_totals_odds, calc_two_way_implied_probs,
+    fetch_upcoming_odds, TOTALS_ONLY_SPORTS,
     extract_best_odds, DRAW_POSSIBLE_SPORTS,
 )
 
@@ -238,6 +240,90 @@ class PrioritySportOrderingTests(unittest.TestCase):
 
         self.assertEqual(len(matches_default), 0)  # 30h away -> outside the default 24h window
         self.assertEqual(len(matches_wide), 1)      # -> inside a 76h weekend window
+
+
+class MmaTotalsOnlyTests(unittest.TestCase):
+    """2026-10-13 (Micah): wants round/totals markets for UFC. MMA has no
+    handicap market, so it gets its own TOTALS_ONLY_SPORTS set rather than
+    joining EXPANDED_MARKET_SPORTS (which also requests+extracts spreads)."""
+
+    def test_mma_is_totals_only_not_expanded(self):
+        import fetch_odds
+        self.assertIn("mma_mixed_martial_arts", TOTALS_ONLY_SPORTS)
+        self.assertNotIn("mma_mixed_martial_arts", fetch_odds.EXPANDED_MARKET_SPORTS)
+
+    def test_mma_request_asks_for_totals_but_not_spreads(self):
+        import fetch_odds
+        now = datetime.now(timezone.utc)
+        kickoff = (now + timedelta(hours=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        seen_params = {}
+
+        def fake_get(url, params=None, timeout=None):
+            resp = MagicMock()
+            resp.status_code = 200
+            resp.headers = {}
+            if "mma_mixed_martial_arts" in url:
+                seen_params["markets"] = params["markets"]
+                resp.json.return_value = [{
+                    "commence_time": kickoff,
+                    "home_team": "Foster",
+                    "away_team": "Asher",
+                    "bookmakers": [{"markets": [
+                        {"key": "h2h", "outcomes": [
+                            {"name": "Foster", "price": 1.80},
+                            {"name": "Asher", "price": 2.10},
+                        ]},
+                        {"key": "totals", "outcomes": [
+                            {"name": "Over", "point": 2.5, "price": 1.90},
+                            {"name": "Under", "point": 2.5, "price": 1.90},
+                        ]},
+                    ]}],
+                }]
+            else:
+                resp.json.return_value = []
+            resp.raise_for_status = lambda: None
+            return resp
+
+        with patch.object(fetch_odds.requests, "get", side_effect=fake_get):
+            matches = fetch_odds.fetch_upcoming_odds()
+
+        self.assertEqual(seen_params["markets"], "h2h,totals")
+        mma = next(m for m in matches if m["sport"] == "mma_mixed_martial_arts")
+        self.assertEqual(mma["markets_extra"]["totals"]["over"]["point"], 2.5)
+        self.assertNotIn("spreads", mma["markets_extra"])
+
+    def test_mma_fight_with_no_totals_quoted_has_no_markets_extra(self):
+        """Confirms the realistic, common case (per the live check, 2026-10-13:
+        a real 41-fight card had zero bookmakers quoting totals on the fight
+        checked) doesn't break anything -- it's just absent, same as today."""
+        import fetch_odds
+        now = datetime.now(timezone.utc)
+        kickoff = (now + timedelta(hours=5)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        def fake_get(url, params=None, timeout=None):
+            resp = MagicMock()
+            resp.status_code = 200
+            resp.headers = {}
+            if "mma_mixed_martial_arts" in url:
+                resp.json.return_value = [{
+                    "commence_time": kickoff,
+                    "home_team": "Foster",
+                    "away_team": "Asher",
+                    "bookmakers": [{"markets": [{"key": "h2h", "outcomes": [
+                        {"name": "Foster", "price": 1.80},
+                        {"name": "Asher", "price": 2.10},
+                    ]}]}],
+                }]
+            else:
+                resp.json.return_value = []
+            resp.raise_for_status = lambda: None
+            return resp
+
+        with patch.object(fetch_odds.requests, "get", side_effect=fake_get):
+            matches = fetch_odds.fetch_upcoming_odds()
+
+        mma = next(m for m in matches if m["sport"] == "mma_mixed_martial_arts")
+        self.assertEqual(mma["markets_extra"], {})
 
 
 if __name__ == "__main__":
