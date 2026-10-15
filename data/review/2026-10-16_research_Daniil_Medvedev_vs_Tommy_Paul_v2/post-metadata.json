@@ -1,0 +1,49 @@
+{
+  "match": "Daniil Medvedev vs Tommy Paul",
+  "sport": "tennis_atp_shanghai",
+  "sport_label": "ATP SHANGHAI",
+  "market": "Match winner",
+  "selection": "Daniil Medvedev",
+  "odds": 1.44,
+  "kickoff": "2026-10-16T10:00:00Z",
+  "final_explanation": "Medvedev leads 4-1 overall and 3-0 on hard courts. His Shanghai form and quick-court game make him the pick, but Paul is a serious test.",
+  "source_type": "research_based",
+  "research_sources": [
+    "https://www.atptour.com/en/news/shanghai-2026-schedule",
+    "https://en.rolexshanghaimasters.com/en/media/news/day-10-preview-medvedev-v-paul",
+    "https://www.sportinglife.com/tennis/news/tennis-betting-tips-best-bets-for-the-quarter-finals-of-the-shanghai-masters/234840",
+    "https://www.bwin.it/it/news/tennis/pronostici-tennis-oggi-quote-scommesse-15-10-2026",
+    "https://www.tennis.com/tournaments/rolex-shanghai-masters/matches/d-medvedev-vs-t-paul-2026-10-16"
+  ],
+  "odds_source_url": "https://www.bwin.it/it/news/tennis/pronostici-tennis-oggi-quote-scommesse-15-10-2026",
+  "research_checked_at": "2026-10-15T17:19:01.883134+00:00",
+  "revision": 2,
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "Medvedev leads 4-1 overall and 3-0 on hard courts. His Shanghai form and quick-court game make him the pick, but Paul is a serious test.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.44\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-16_research_Daniil_Medvedev_vs_Tommy_Paul_v2",
+  "post_date": "2026-10-16",
+  "generated_at": "2026-10-15T17:22:14.070188+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-16_Daniil_Medvedev_vs_Tommy_Paul_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-16_Daniil_Medvedev_vs_Tommy_Paul_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-16_Daniil_Medvedev_vs_Tommy_Paul_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-16_Daniil_Medvedev_vs_Tommy_Paul_night_story.png"
+}
