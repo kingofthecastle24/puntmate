@@ -30,7 +30,7 @@ import os
 import sys
 import json
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import run_status
 from nz_date import nz_today
@@ -221,7 +221,9 @@ def run():
     import fetch_odds
     from fetch_odds import fetch_upcoming_odds
     from fetch_news import fetch_news
-    from generate_pick import generate_pick_for_matches
+    from generate_pick import generate_pick_for_matches, build_research_only_pick
+    import research_shortlist
+    import quota_budget
 
     run_id = _new_run_id()
     run_date = nz_today()
@@ -233,59 +235,132 @@ def run():
     print(f"run_id={run_id}")
     print("=" * 55)
 
-    print("\n[1/3] Fetching upcoming match odds...")
-    matches = fetch_upcoming_odds()
+    # 2026-10-15 redesign ("research first, price second"): run #206 burned
+    # the account's entire monthly free-tier allowance (500/500) by
+    # scanning all 14 registered sports on every single run. Stage 1 now
+    # researches broadly across whatever's actually in season worldwide
+    # BEFORE any paid Odds API call, and shortlists at most two sport keys
+    # for Stage 2 to actually query -- see research_shortlist.py and
+    # quota_budget.py for why.
+    window_start_dt = datetime.now(timezone.utc)
+    window_end_dt = window_start_dt + timedelta(hours=24)
+    quota_budget.ensure_current_period()
+    period_key = quota_budget.CURRENT_PERIOD_KEY
+    registry = fetch_odds.build_registry()
+    already_posted = _recently_actioned_slugs()
 
-    # Per-sport fixture counts for THIS run's 24h window (2026-10-11,
-    # external audit item 6: "surface UFC/Test-rugby fixture/odds
-    # availability"). fetch_odds already prints this per sport as it goes,
-    # but that's only visible by reading the raw CI log -- this folds the
-    # same counts into latest_run.json so "0 UFC fixtures today" is
-    # distinguishable at a glance from "UFC fixtures existed but got
-    # dropped/rejected downstream", without requiring a publishing-content
-    # change to surface it in the review email itself (a separate decision
-    # left for review, not made here).
-    fixture_availability = {s: 0 for s in fetch_odds.SPORTS}
+    print("\n[1/4] Stage 1 — researching today's fixture slate across sports in season worldwide...")
+    try:
+        research_record = research_shortlist.run_research_shortlist(
+            run_id, run_date, window_start_dt.isoformat(), window_end_dt.isoformat(),
+            registry, already_actioned_slugs=already_posted,
+        )
+    except Exception as e:  # noqa: BLE001 — a research failure must degrade, never crash the run
+        print(f"  ::warning:: Stage 1 research failed unexpectedly: {e}")
+        research_record = {"selected_sport_keys": [], "candidates": [], "warnings": [f"research failed: {e}"]}
+
+    selected_keys = research_record.get("selected_sport_keys", [])
+    fallback_reason = None
+    reservation_id = None
+    matches = []
+
+    if not selected_keys:
+        fallback_reason = run_status.FALLBACK_NO_SPORT_SELECTED
+        print("  Stage 1 selected no sport worth pricing today.")
+    else:
+        total_cost = sum(fetch_odds.sport_credit_cost(k) for k in selected_keys)
+        reservation_id = quota_budget.reserve(
+            period_key, quota_budget.ODDS, total_cost,
+            note=f"run {run_id}: {', '.join(selected_keys)}",
+        )
+        if reservation_id is None:
+            fallback_reason = run_status.FALLBACK_QUOTA_EXHAUSTED
+            print(f"  ::warning:: Stage 1 selected {selected_keys} but the odds credit budget has no "
+                  f"room for {total_cost} more credit(s) this period — skipping the paid odds call.")
+        else:
+            print(f"\n[2/4] Stage 2 — querying the odds API for the shortlisted sport(s): {selected_keys}")
+            matches = fetch_upcoming_odds(selected_keys, hours_ahead=24)
+            quota_budget.confirm(period_key, reservation_id)
+            if fetch_odds.LAST_QUOTA_REMAINING is not None:
+                quota_budget.reconcile_provider_headers(period_key, remaining=fetch_odds.LAST_QUOTA_REMAINING)
+
+    # Per-sport fixture counts for the sport(s) THIS run actually queried
+    # (2026-10-11, external audit item 6; narrowed 2026-10-15 — under the
+    # two-stage design most sports are never queried at all most days, so
+    # a count of 0 for an un-queried sport would misleadingly look
+    # identical to "queried, found nothing"; this dict now only ever
+    # contains keys Stage 2 actually asked the Odds API about).
+    fixture_availability = {s: 0 for s in selected_keys}
     for m in matches:
         fixture_availability[m["sport"]] = fixture_availability.get(m["sport"], 0) + 1
-    zero_fixture_priority_sports = sorted(
-        s for s in fetch_odds.PRIORITY_SPORTS if fixture_availability.get(s, 0) == 0
-    )
-    if zero_fixture_priority_sports:
-        print(f"  No fixtures today in: {', '.join(zero_fixture_priority_sports)}")
 
     if not matches:
-        # Was this genuinely zero fixtures, or did the Odds API itself fail
-        # (dead key, rate limit, timeout) for every sport? Those are very
-        # different situations — one is an honest no-bet day, the other is
-        # an operational failure that deserves an actionable alert, not a
-        # quiet "nothing today". fetch_odds.LAST_FETCH_ERRORS distinguishes
-        # them (see that module for why this isn't fetch_upcoming_odds's own
-        # return value).
+        # Was this genuinely zero fixtures, a quota/mapping fallback, or did
+        # the Odds API itself fail (dead key, rate limit, timeout) for every
+        # queried sport? fetch_odds.LAST_FETCH_ERRORS distinguishes a real
+        # operational failure from an honest no-value day; fallback_reason
+        # (set above) distinguishes a Stage-1/budget constraint from either.
         had_api_errors = bool(fetch_odds.LAST_FETCH_ERRORS)
-        status = run_status.ODDS_API_ERROR if had_api_errors else run_status.NO_VALUE
-        reasoning = (
-            f"The Odds API returned errors for {len(fetch_odds.LAST_FETCH_ERRORS)} sport(s) and no "
-            f"fixtures could be fetched at all — see errors below."
-            if had_api_errors else
-            "No fixtures at all across any configured sport today — genuinely nothing to assess."
-        )
         if had_api_errors:
+            status = run_status.ODDS_API_ERROR
+            content_mode = run_status.MODE_STATUS_ONLY
+            reasoning = (
+                f"The Odds API returned errors for {len(fetch_odds.LAST_FETCH_ERRORS)} sport(s) and no "
+                f"fixtures could be fetched at all — see errors below."
+            )
             print(f"  ::error::Odds API errors on every sport — {fetch_odds.LAST_FETCH_ERRORS}")
+        elif fallback_reason == run_status.FALLBACK_QUOTA_EXHAUSTED:
+            status = run_status.NO_VALUE
+            content_mode = run_status.MODE_STATUS_ONLY
+            reasoning = (
+                f"Stage 1 found {len(research_record.get('candidates', []))} candidate(s) worth pricing "
+                f"today, but the odds credit budget had no room left this period — staying honest "
+                f"rather than guessing at odds we can't afford to check."
+            )
+        elif fallback_reason == run_status.FALLBACK_NO_SPORT_SELECTED:
+            status = run_status.NO_VALUE
+            content_mode = run_status.MODE_NO_BET
+            reasoning = "Stage 1 research found nothing worth pricing across any sport in season today — genuinely nothing to assess."
         else:
+            status = run_status.NO_VALUE
+            content_mode = run_status.MODE_NO_BET
+            reasoning = "No fixtures at all across today's shortlisted sport(s) — genuinely nothing to assess."
             print("  No matches today — nothing to prepare.")
+
+        # A verified research lead that couldn't be odds-gated this run is
+        # surfaced the same way as Degen Watch — internal, unofficial,
+        # never counted in any ledger or strike rate, never auto-published
+        # as the real pick (see generate_pick.build_research_only_pick's
+        # docstring for why the renderer/copy-validator wiring for this is
+        # a deliberate follow-up, not done here).
+        research_lead = None
+        if content_mode != run_status.MODE_GATED_PICK:
+            for cand in research_record.get("candidates", []):
+                lead = build_research_only_pick(cand)
+                if lead:
+                    research_lead = lead
+                    content_mode = run_status.MODE_RESEARCH_ONLY
+                    break
+
         _write_run({
             "run_id": run_id,
             "run_date": run_date,
             "run_ts": run_ts,
             "status": status,
-            "pick": {"has_pick": False, "status": status, "reasoning": reasoning, "research_warnings": []},
+            "content_mode": content_mode,
+            "fallback_reason": fallback_reason,
+            "pick": {"has_pick": False, "status": status, "reasoning": reasoning, "research_warnings": research_record.get("warnings", [])},
             "odds_api_errors": fetch_odds.LAST_FETCH_ERRORS,
             "fixture_availability": fixture_availability,
+            "research": {
+                "selected_sport_keys": selected_keys,
+                "candidate_count": len(research_record.get("candidates", [])),
+            },
+            "research_lead": research_lead,
         })
         return
 
-    print(f"\n[2/3] Fetching + validating research for {len(matches)} match(es)...")
+    print(f"\n[3/4] Fetching + validating research for {len(matches)} match(es)...")
     match_news = {}
     for m in matches:
         try:
@@ -298,8 +373,7 @@ def run():
             print(f"  Research fetch failed for {m['match']}: {e}")
             match_news[m["match"]] = {"text": "", "accepted_count": 0, "warnings": [f"fetch error: {e}"], "confidence_ceiling": "LOW"}
 
-    print(f"\n[3/3] Selecting one official pick...")
-    already_posted = _recently_actioned_slugs()
+    print(f"\n[4/4] Selecting one official pick...")
     if already_posted:
         print(f"  Excluding {len(already_posted)} already-posted fixture(s) from featured selection.")
     pick = generate_pick_for_matches(matches, match_news, exclude_matches=already_posted)
@@ -327,6 +401,8 @@ def run():
         "run_date": run_date,
         "run_ts": run_ts,
         "status": pick.get("status", run_status.NO_VALUE),
+        "content_mode": run_status.MODE_GATED_PICK if pick.get("has_pick") else run_status.MODE_NO_BET,
+        "fallback_reason": None,  # Stage 2 ran and produced a verdict either way -- no fallback needed
         "pick": pick,
         "fixture_availability": fixture_availability,
     }

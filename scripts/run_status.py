@@ -31,3 +31,26 @@ ALL_STATUSES = {
 # bet on today" — used to decide whether a run deserves an actionable alert
 # (see main.py) rather than being treated as routine no-bet content.
 OPERATIONAL_FAILURE_STATUSES = {BAD_ODDS, MODEL_ERROR, ODDS_API_ERROR, RENDER_ERROR}
+
+# Content modes (2026-10-15 redesign, Section 7) — a SEPARATE axis from
+# the status constants above. `status` says whether the pipeline operated
+# normally; `content_mode` says what kind of public content (if any) this
+# run's "pick" represents, so a reader (or the copy validator) can tell a
+# real odds-backed pick apart from a research-only lead or a plain status
+# update without re-deriving it from several other fields.
+MODE_GATED_PICK = "GATED_PICK"          # odds-backed snapshot, existing classifier gate passed
+MODE_NO_BET = "NO_BET"                  # no qualifying gated candidate today
+MODE_RESEARCH_ONLY = "RESEARCH_ONLY"    # a verified research lead exists but isn't odds-gated (surfaced internally; see main.py's research_lead — public rendering/copy for this mode is a follow-up, not yet wired)
+MODE_STATUS_ONLY = "STATUS_ONLY"        # no verified fixture/anchor or a research failure — honest no-pick update, no card
+
+ALL_CONTENT_MODES = {MODE_GATED_PICK, MODE_NO_BET, MODE_RESEARCH_ONLY, MODE_STATUS_ONLY}
+
+# Why Stage 2 (the odds-backed gate) didn't run this cycle, even though
+# Stage 1 (research_shortlist.py) did — distinguishes a genuinely quiet
+# day from a budget/operational constraint, which is the entire point of
+# carrying a fallback_reason at all (Section 7: "distinguish quota
+# exhaustion, invalid key, outage, mapping failure, no fixtures and gate
+# rejection").
+FALLBACK_NO_SPORT_SELECTED = "no_sport_selected"      # Stage 1 found nothing worth mapping to a sport key
+FALLBACK_QUOTA_EXHAUSTED = "quota_exhausted"          # Stage 1 selected sports but the odds credit budget had no room
+FALLBACK_RESEARCH_FAILED = "research_failed"          # Stage 1 itself errored or returned unusable output

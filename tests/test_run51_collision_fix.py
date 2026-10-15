@@ -25,7 +25,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
 import main as pm_main
 import send_preview
+import quota_budget
 from workflow_state import transition, GENERATED, PUBLISHED, AWAITING_APPROVAL
+
+RESEARCH_RECORD_MLB_SELECTED = {"selected_sport_keys": ["baseball_mlb"], "candidates": [], "warnings": []}
 
 
 SAMPLE_MATCH = {
@@ -58,9 +61,14 @@ class MainDedupeTests(unittest.TestCase):
         pm_main.REPO_ROOT = self.tmp
         pm_main.LATEST_RUN_PATH = os.path.join(self.tmp, "data", "latest_run.json")
         pm_main.CARDS_DIR = os.path.join(self.tmp, "data", "cards")
+        self._orig_budget_path = quota_budget.BUDGET_PATH
+        quota_budget.BUDGET_PATH = os.path.join(self.tmp, "quota_budget.json")
+        quota_budget.start_new_period(quota_budget.CURRENT_PERIOD_KEY, quota_budget.CURRENT_PERIOD_RESET_UTC,
+                                       confirmed_provider_remaining=500)
 
     def tearDown(self):
         pm_main.REPO_ROOT, pm_main.LATEST_RUN_PATH, pm_main.CARDS_DIR = self._orig
+        quota_budget.BUDGET_PATH = self._orig_budget_path
         shutil.rmtree(self.tmp, ignore_errors=True)
 
     def _seed_state(self, pick_id, state):
@@ -77,6 +85,7 @@ class MainDedupeTests(unittest.TestCase):
                     transition(self.tmp, pick_id, PUBLISHING)
                     transition(self.tmp, pick_id, PUBLISHED)
 
+    @patch("research_shortlist.run_research_shortlist", return_value=dict(RESEARCH_RECORD_MLB_SELECTED))
     @patch("generate_pick.generate_pick_for_matches", return_value=dict(SAMPLE_PICK))
     @patch("fetch_news.fetch_news", return_value={"warnings": []})
     @patch("fetch_odds.fetch_upcoming_odds", return_value=[SAMPLE_MATCH])
@@ -99,6 +108,7 @@ class MainDedupeTests(unittest.TestCase):
         self.assertIn("already went through today's pipeline", saved["pick"]["reasoning"])
         self.assertIn("watchlist", saved)  # falls through the normal NO_BET+watchlist path
 
+    @patch("research_shortlist.run_research_shortlist", return_value=dict(RESEARCH_RECORD_MLB_SELECTED))
     @patch("generate_pick.generate_pick_for_matches", return_value=dict(SAMPLE_PICK))
     @patch("fetch_news.fetch_news", return_value={"warnings": []})
     @patch("fetch_odds.fetch_upcoming_odds", return_value=[SAMPLE_MATCH])

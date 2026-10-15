@@ -477,7 +477,13 @@ def main():
     # anything is frozen. If it doesn't, we abort loudly rather than freeze
     # unsafe copy.
     validate_post(
-        {"risk": pick["risk"], "bet_type": pick["bet_type"], "classification": pick["risk"], "selection": pick["selection"]},
+        {
+            "risk": pick["risk"],
+            "bet_type": pick["bet_type"],
+            "classification": pick["risk"],
+            "selection": pick["selection"],
+            "content_mode": pick.get("content_mode"),
+        },
         telegram_text, instagram_caption,
     )
 
@@ -513,6 +519,9 @@ def main():
         "final_explanation": pick["final_explanation"],
         "public_caution": pick.get("public_caution"),
         "research_warnings": pick.get("research_warnings", []),
+        "content_mode": pick.get("content_mode"),
+        "fallback_reason": pick.get("fallback_reason"),
+        "public_market_anchor": pick.get("public_market_anchor"),
         "theme": theme,
         "carousel_paths": [os.path.join("data", "review", pick_id, review_image_names[k]) for k in ("cover", "tip", "breakdown") if k in review_image_names],
         "carousel_urls": carousel_urls,

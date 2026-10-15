@@ -53,6 +53,14 @@ jobs:
           git add data/picks.json config/challenge.json
           # ledger only exists once the challenge has been enabled + run
           [ -f data/challenge.json ] && git add data/challenge.json || true
+          # 2026-10-15 redesign: check_results.py now reserves SCORES credits
+          # from the same durable quota_budget.json generate.yml's odds calls
+          # use — must be committed here too, or the SCORES side of the
+          # budget resets to "fresh" every run instead of tracking spend
+          # across the month. git_push_retry.sh's rebase-retry already
+          # handles the rare case where generate.yml commits to the same
+          # file around the same time (see quota_budget.py's own docstring).
+          git add data/quota_budget.json 2>/dev/null || true
           bash scripts/git_push_retry.sh "chore: resolve picks $(date -u +%Y-%m-%d) [skip ci]" --soft
 
       - name: Log run summary

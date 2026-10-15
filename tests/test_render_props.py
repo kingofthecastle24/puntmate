@@ -73,5 +73,59 @@ class BuildPropsTests(unittest.TestCase):
         self.assertEqual(props["insight"], short)
 
 
+class ResearchOnlyPropsTests(unittest.TestCase):
+    """2026-10-15 redesign, Section 7: a RESEARCH_ONLY lead must never
+    show a model probability/edge, or claim an Investor/Punter/Gambler
+    tier or a confidence level it didn't earn through the real gate --
+    enforced here at the prop-mapping layer, with zero changes to the
+    approved .dc.html templates themselves."""
+
+    def _research_only_pick(self, **overrides):
+        base = {
+            "content_mode": "RESEARCH_ONLY",
+            "match": "Warriors vs Storm",
+            "sport": "rugbyleague_nrl",
+            "sport_label": "NRL",
+            "selection": "WARRIORS",
+            "market": "h2h",
+            "odds": 1.9,
+            "bet_type": None,
+            "risk": None,
+            "confidence": None,
+            "confidence_label": None,
+            "final_explanation": "Warriors have won four straight at home.",
+        }
+        base.update(overrides)
+        return base
+
+    def test_never_carries_bet_type_or_tier_wording(self):
+        props = build_props(self._research_only_pick())
+        tagline_lower = props["riskTagline"].lower()
+        for banned in ("investor", "punter", "gambler", "bet type:"):
+            self.assertNotIn(banned, tagline_lower)
+
+    def test_tagline_is_honest_about_not_being_gated(self):
+        props = build_props(self._research_only_pick())
+        self.assertIn("not a gated pick", props["riskTagline"].lower())
+
+    def test_cover_theme_never_becomes_a_value_claim(self):
+        # "Value Alert" is a real enum option on the approved templates --
+        # must never be selected for a research-only lead.
+        props = build_props(self._research_only_pick())
+        self.assertNotEqual(props["coverTheme"], "Value Alert")
+
+    def test_confidence_label_renders_naturally_in_the_fixed_template_text(self):
+        # The templates render exactly "{confidenceLabel} RISK" -- must
+        # still read sensibly, and "HIGH RISK" is literally true for an
+        # ungated lead.
+        props = build_props(self._research_only_pick())
+        self.assertEqual(props["confidenceLabel"], "HIGH")
+
+    def test_gated_pick_is_unaffected_by_the_research_only_branch(self):
+        gated = build_props(_pick())  # content_mode absent -> normal gated path
+        self.assertIn("Bet type: Investor", gated["riskTagline"])
+        self.assertEqual(gated["confidenceLabel"], "HIGH")
+
+
 if __name__ == "__main__":
     unittest.main()

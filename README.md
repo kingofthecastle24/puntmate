@@ -168,10 +168,14 @@ Instagram account"** rather than claimed as a verified success.
 ### Fixture window & prompt cap
 
 - Each run fetches odds across a **rolling 24-hour window from the run's
-  own fire time** (`fetch_odds.fetch_upcoming_odds(hours_ahead=24)`), not
-  a fixed calendar day — so "today's" fixtures shift along with the daily
-  cron's own UTC/NZT drift (see above), and the weekend multi widens this
-  to ~76h to pool Fri/Sat/Sun together (`generate_weekend_multi.py`).
+  own fire time** (`fetch_odds.fetch_upcoming_odds(sport_keys, hours_ahead=24)`),
+  not a fixed calendar day — so "today's" fixtures shift along with the
+  daily cron's own UTC/NZT drift (see above), and the weekend multi widens
+  this to ~76h to pool Fri/Sat/Sun together (`generate_weekend_multi.py`).
+  2026-10-15: `sport_keys` is required — the daily run now queries only
+  the <=2 sports `research_shortlist.py` shortlisted that day (an empty
+  list costs zero credits), not the full registry; see
+  `quota_budget.py` for why.
 - If more than 25 fixtures come back in that window, only the first 25 are
   put in front of the model (`generate_pick.MAX_MATCHES_IN_PROMPT`) —
   owner-focus fixtures first, then sport priority — and the run's

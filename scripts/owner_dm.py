@@ -255,7 +255,13 @@ def notify(metadata, review_dir, results, platforms, send=send_owner_dm,
         return dry or (results.get(key) or {}).get("ok") is True
 
     out = []
+    # 2026-10-15 redesign, Section 7: a RESEARCH_ONLY lead never passed the
+    # real odds-backed gate, so it must never trigger a personal
+    # follow-at-$X stake suggestion -- that would read to Micah as if it
+    # had. Only a GATED_PICK (or legacy metadata with no content_mode at
+    # all, i.e. pre-redesign picks) reaches this DM.
     if metadata.get("has_pick") and not metadata.get("is_weekend_multi") \
+            and metadata.get("content_mode") != "RESEARCH_ONLY" \
             and "telegram" in platforms and public_ok("telegram"):
         cur = [{"id": pid, "kind": "single", "stake": cfg["single_stake"],
                 "odds": float(metadata["odds"]), "result": "open"}]

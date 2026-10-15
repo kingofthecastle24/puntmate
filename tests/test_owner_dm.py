@@ -166,6 +166,30 @@ class NotifyTests(unittest.TestCase):
             self.assertIn(f"Place it: {owner_dm.TAB_NZ_URL}", text)
             self.assertEqual(owner_dm.TAB_NZ_URL, "https://www.tab.co.nz")
 
+    def test_no_dm_for_research_only_content(self):
+        # 2026-10-15 redesign, Section 7: a RESEARCH_ONLY lead never passed
+        # the real gate, so it must never trigger a personal
+        # follow-at-$X stake suggestion -- even though has_pick is True and
+        # the public Telegram post succeeded.
+        with tempfile.TemporaryDirectory() as root:
+            make_repo(root)
+            meta = dict(self._meta_single())
+            meta["content_mode"] = "RESEARCH_ONLY"
+            sent = []
+            owner_dm.notify(meta, root, {"telegram": {"ok": True}},
+                            ["telegram"], send=sent.append, repo_root=root)
+            self.assertEqual(sent, [])
+
+    def test_gated_pick_without_content_mode_still_sends(self):
+        # Legacy / pre-redesign metadata has no content_mode key at all --
+        # must not be mistaken for RESEARCH_ONLY.
+        with tempfile.TemporaryDirectory() as root:
+            make_repo(root)
+            sent = []
+            owner_dm.notify(self._meta_single(), root, {"telegram": {"ok": True}},
+                            ["telegram"], send=sent.append, repo_root=root)
+            self.assertEqual(len(sent), 1)
+
     def test_no_dm_when_telegram_not_an_intended_platform(self):
         with tempfile.TemporaryDirectory() as root:
             make_repo(root)
