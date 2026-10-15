@@ -66,31 +66,63 @@ class NzTodayDstTests(unittest.TestCase):
 
 
 class DstRegimeFireTests(unittest.TestCase):
-    """2026-10-14 (Item 5): generate.yml's '50 17 * * *' / '50 18 * * *'
-    companion crons -- exactly one should read True (today's correct
-    DST-regime fire) and the other False, on both sides of the transition."""
+    """The chosen cron depends on NZ offset, not runner start time."""
 
-    def test_nzdt_correct_companion_cron_reads_true(self):
-        # '50 17 * * *' fires 17:50 UTC -> 06:50 the next day in NZDT.
-        now_utc = datetime(2026, 10, 11, 17, 50, tzinfo=timezone.utc)
-        self.assertTrue(is_todays_dst_regime_fire(6, now_utc))
+    def assert_companion(self, now_utc, correct_hour):
+        # All daily, weekend-extra and Friday-multi schedules use the
+        # same hour pair, so all three must make the same DST decision.
+        for day_field in ("*", "4,5,6", "4"):
+            for hour in (17, 18):
+                cron = f"50 {hour} * * {day_field}"
+                with self.subTest(now=now_utc, cron=cron):
+                    self.assertEqual(
+                        is_todays_dst_regime_fire(6, cron, now_utc),
+                        hour == correct_hour,
+                    )
 
-    def test_nzdt_wrong_companion_cron_reads_false(self):
-        # '50 18 * * *' fires 18:50 UTC -> 07:50 the next day in NZDT --
-        # an hour too late for the 6:50am-local buffer during NZDT.
-        now_utc = datetime(2026, 10, 11, 18, 50, tzinfo=timezone.utc)
-        self.assertFalse(is_todays_dst_regime_fire(6, now_utc))
+    def test_nzdt_punctual_and_delayed_runs(self):
+        for now_utc in (
+            datetime(2026, 10, 14, 17, 50, tzinfo=timezone.utc),
+            datetime(2026, 10, 14, 18, 50, tzinfo=timezone.utc),
+            # Actual 15 Oct guard execution times: 09:59 and 10:58 NZDT.
+            datetime(2026, 10, 14, 20, 59, 26, tzinfo=timezone.utc),
+            datetime(2026, 10, 14, 21, 58, 6, tzinfo=timezone.utc),
+        ):
+            self.assert_companion(now_utc, 17)
 
-    def test_nzst_correct_companion_cron_reads_true(self):
-        # '50 18 * * *' fires 18:50 UTC -> 06:50 the next day in NZST.
-        now_utc = datetime(2026, 7, 11, 18, 50, tzinfo=timezone.utc)
-        self.assertTrue(is_todays_dst_regime_fire(6, now_utc))
+    def test_nzst_punctual_and_delayed_runs(self):
+        for now_utc in (
+            datetime(2026, 7, 14, 17, 50, tzinfo=timezone.utc),
+            datetime(2026, 7, 14, 18, 50, tzinfo=timezone.utc),
+            datetime(2026, 7, 14, 21, 59, tzinfo=timezone.utc),
+            datetime(2026, 7, 14, 22, 58, tzinfo=timezone.utc),
+        ):
+            self.assert_companion(now_utc, 18)
 
-    def test_nzst_wrong_companion_cron_reads_false(self):
-        # '50 17 * * *' fires 17:50 UTC -> 05:50 the next day in NZST --
-        # an hour too early for the 6:50am-local buffer during NZST.
-        now_utc = datetime(2026, 7, 11, 17, 50, tzinfo=timezone.utc)
-        self.assertFalse(is_todays_dst_regime_fire(6, now_utc))
+    def test_spring_forward_changes_companion_at_offset_transition(self):
+        self.assert_companion(datetime(2026, 9, 26, 13, 59, tzinfo=timezone.utc), 18)
+        self.assert_companion(datetime(2026, 9, 26, 14, 0, tzinfo=timezone.utc), 17)
+        self.assert_companion(datetime(2026, 9, 26, 20, 59, tzinfo=timezone.utc), 17)
+
+    def test_fall_back_changes_companion_at_offset_transition(self):
+        self.assert_companion(datetime(2026, 4, 4, 13, 59, tzinfo=timezone.utc), 17)
+        self.assert_companion(datetime(2026, 4, 4, 14, 0, tzinfo=timezone.utc), 18)
+        self.assert_companion(datetime(2026, 4, 4, 21, 59, tzinfo=timezone.utc), 18)
+
+    def test_missing_or_non_fixed_cron_fails_closed(self):
+        now_utc = datetime(2026, 10, 14, 20, 59, tzinfo=timezone.utc)
+        for cron in (None, "", "50", "50 * * * *", "50 17,18 * * *",
+                     "50 24 * * *", "50 -1 * * *", "50 17 * * * extra"):
+            with self.subTest(cron=cron):
+                self.assertFalse(is_todays_dst_regime_fire(6, cron, now_utc))
+
+    def test_workflow_passes_cron_and_keeps_manual_bypass(self):
+        path = os.path.join(os.path.dirname(__file__), "..", ".github", "workflows", "generate.yml")
+        with open(path) as source:
+            workflow = source.read()
+        self.assertIn("SCHEDULED_CRON: ${{ github.event.schedule }}", workflow)
+        self.assertIn("if: github.event_name == 'workflow_dispatch' || needs.schedule_guard.outputs.proceed == 'true'", workflow)
+
 
 
 class SecondsUntilNzTimeTests(unittest.TestCase):
