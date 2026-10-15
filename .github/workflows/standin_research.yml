@@ -21,6 +21,10 @@ on:
         description: Meta token repaired and ready for Story publishing
         type: boolean
         default: false
+      facebook_ready:
+        description: Existing Facebook token verified for approved Story retry only
+        type: boolean
+        default: false
       facebook_approved:
         description: Final Facebook Story photo reviewed and approved by Micah
         type: boolean
@@ -45,6 +49,7 @@ jobs:
       PICK_ID: ${{ inputs.pick_id }}
       DRY_RUN: ${{ inputs.dry_run }}
       META_READY: ${{ inputs.meta_ready }}
+      FACEBOOK_READY: ${{ inputs.facebook_ready }}
       FACEBOOK_APPROVED: ${{ inputs.facebook_approved }}
       AUTO_PUBLISH: 'true'
       RESEND_FAILED: 'true'
@@ -316,7 +321,7 @@ jobs:
                   except Exception as e:results['telegram']={'ok':False,'error':str(e)}
               for platform in ('instagram_story','facebook_story'):
                   if platform not in platforms:continue
-                  if os.environ.get('META_READY')!='true':
+                  if (platform=='instagram_story' and os.environ.get('META_READY')!='true') or (platform=='facebook_story' and os.environ.get('FACEBOOK_READY')!='true'):
                       results[platform]={'ok':False,'held':True,'note':'Awaiting Meta token repair'};continue
                   if platform=='facebook_story' and os.environ.get('FACEBOOK_APPROVED')!='true':
                       results[platform]={'ok':False,'held':True,'note':'Awaiting final Facebook Story photo approval'};continue
