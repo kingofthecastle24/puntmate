@@ -72,7 +72,7 @@ on:
     # fires as TWO companion cron entries, ten minutes apart in NZ-local
     # terms from each other by design (6:50am-local buffer, one hour
     # apart in UTC): one correct for NZDT, one for NZST. The
-    # schedule_guard job checks the real NZ-local hour at run time and
+    # schedule_guard job checks the scheduled cron hour against today's real NZ offset and
     # lets through only the entry that's actually correct for TODAY's
     # regime -- the other is a clean no-op (see schedule_guard job and
     # scripts/schedule_guard.py). The 6:50am-local buffer (not 7:00am
@@ -139,12 +139,14 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Check NZ local time
+      - name: Check scheduled cron against NZ offset
         id: check
+        env:
+          SCHEDULED_CRON: ${{ github.event.schedule }}
         run: |
           RESULT=$(python3 scripts/schedule_guard.py)
           echo "proceed=$RESULT" >> "$GITHUB_OUTPUT"
-          echo "NZ-local-hour-6 check: $RESULT (event: ${{ github.event_name }}, cron: ${{ github.event.schedule }})"
+          echo "NZ DST-companion cron check: $RESULT (event: ${{ github.event_name }}, cron: ${{ github.event.schedule }})"
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Job 1: Generate one pick, render cards, freeze the review package, email preview.
