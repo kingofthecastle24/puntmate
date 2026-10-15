@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-16_research_RLWC_Weekend_Multi",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-15T18:00:05.156962+00:00",
+      "note": "One-off RLWC research multi; render review required"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-15T18:00:05.157162+00:00",
+      "note": "One-off RLWC research multi; render review required"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-15T18:00:05.157373+00:00",
+      "note": "One-off RLWC research multi; render review required"
+    }
+  ]
+}

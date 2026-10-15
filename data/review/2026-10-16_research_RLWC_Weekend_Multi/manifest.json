@@ -1,0 +1,30 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "e48029ff797d418e5cbbd166b267983138d3d510d839bad349d07dcce05a81c0",
+      "bytes": 69086
+    },
+    "instagram-caption.txt": {
+      "sha256": "e7ecd12295e596d7a4c40e21630790f417a3283bbed6d141afb95e5fb9441e23",
+      "bytes": 637
+    },
+    "cover.png": {
+      "sha256": "aae749d65254de2f1da1dca6ed9ab1a0f30c91c4eb794bdc33918a4e366b9f2b",
+      "bytes": 54807
+    },
+    "post-metadata.json": {
+      "sha256": "06507b4534ecedc5cc06d474d0582fc14687bee597d6ea63f826fe97f04acc6b",
+      "bytes": 3354
+    },
+    "breakdown.png": {
+      "sha256": "53156549a92b7d34d691ca2a178e8b789373248cd8b5f105abc16d13c8f61af6",
+      "bytes": 113655
+    },
+    "telegram-post.txt": {
+      "sha256": "e7ecd12295e596d7a4c40e21630790f417a3283bbed6d141afb95e5fb9441e23",
+      "bytes": 637
+    }
+  },
+  "pick_id": "2026-10-16_research_RLWC_Weekend_Multi",
+  "created_at": "2026-10-15T18:00:02.543633+00:00"
+}
