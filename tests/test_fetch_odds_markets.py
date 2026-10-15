@@ -206,7 +206,7 @@ class PrioritySportOrderingTests(unittest.TestCase):
             return resp
 
         with patch.object(fetch_odds.requests, "get", side_effect=fake_get):
-            matches = fetch_odds.fetch_upcoming_odds()
+            matches = fetch_odds.fetch_upcoming_odds(fetch_odds.SPORTS)
 
         sports_in_order = [m["sport"] for m in matches]
         # NRL match kicks off LATER than the MLB match but must still sort first.
@@ -235,8 +235,8 @@ class PrioritySportOrderingTests(unittest.TestCase):
             return resp
 
         with patch.object(fetch_odds.requests, "get", side_effect=fake_get):
-            matches_default = fetch_odds.fetch_upcoming_odds()
-            matches_wide = fetch_odds.fetch_upcoming_odds(hours_ahead=76)
+            matches_default = fetch_odds.fetch_upcoming_odds(fetch_odds.SPORTS)
+            matches_wide = fetch_odds.fetch_upcoming_odds(fetch_odds.SPORTS, hours_ahead=76)
 
         self.assertEqual(len(matches_default), 0)  # 30h away -> outside the default 24h window
         self.assertEqual(len(matches_wide), 1)      # -> inside a 76h weekend window
@@ -285,7 +285,7 @@ class MmaTotalsOnlyTests(unittest.TestCase):
             return resp
 
         with patch.object(fetch_odds.requests, "get", side_effect=fake_get):
-            matches = fetch_odds.fetch_upcoming_odds()
+            matches = fetch_odds.fetch_upcoming_odds(fetch_odds.SPORTS)
 
         self.assertEqual(seen_params["markets"], "h2h,totals")
         mma = next(m for m in matches if m["sport"] == "mma_mixed_martial_arts")
@@ -320,7 +320,7 @@ class MmaTotalsOnlyTests(unittest.TestCase):
             return resp
 
         with patch.object(fetch_odds.requests, "get", side_effect=fake_get):
-            matches = fetch_odds.fetch_upcoming_odds()
+            matches = fetch_odds.fetch_upcoming_odds(fetch_odds.SPORTS)
 
         mma = next(m for m in matches if m["sport"] == "mma_mixed_martial_arts")
         self.assertEqual(mma["markets_extra"], {})

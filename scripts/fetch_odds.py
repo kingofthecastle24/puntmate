@@ -138,6 +138,21 @@ DRAW_POSSIBLE_SPORTS = {
 }
 
 
+def sport_credit_cost(sport):
+    """The Odds API bills per sport query x markets x regions, not per
+    match (2026-10-15 redesign, Section 2). This run always queries one
+    region ("au"), so the cost is just how many markets this sport asks
+    for: 3 for h2h+spreads+totals, 2 for h2h+totals, 1 for h2h alone —
+    used by callers (research_shortlist.py, main.py) to reserve the right
+    number of credits via quota_budget.py BEFORE calling
+    fetch_upcoming_odds, not after."""
+    if sport in EXPANDED_MARKET_SPORTS:
+        return 3
+    if sport in TOTALS_ONLY_SPORTS:
+        return 2
+    return 1
+
+
 # Real API errors from the most recent fetch_upcoming_odds() call — same
 # pattern as post_instagram.LAST_ERROR. Deliberately NOT part of the return
 # value (changing fetch_upcoming_odds's signature would ripple into every
@@ -151,8 +166,20 @@ DRAW_POSSIBLE_SPORTS = {
 LAST_FETCH_ERRORS = []
 
 
-def fetch_upcoming_odds(hours_ahead=24):
-    """Fetch odds for all configured sports. Returns list of match dicts.
+def fetch_upcoming_odds(sport_keys, hours_ahead=24):
+    """Fetch odds for exactly `sport_keys`. Returns list of match dicts.
+
+    sport_keys (2026-10-15 redesign, "research first, price second"):
+    REQUIRED, no full-registry default any more. Run #206 burned the
+    account's entire monthly free-tier allowance (500/500) by scanning
+    all 14 registered sports on every single run -- this signature change
+    is what makes that structurally impossible: the caller must name
+    exactly which sports to query (normally the <=2 sports
+    research_shortlist.py selected for today), and an EMPTY list makes
+    zero HTTP requests and costs zero credits, full stop. Pass SPORTS
+    explicitly for the old "scan everything" behaviour (still used by
+    callers not yet migrated to the two-stage pipeline, e.g.
+    generate_weekend_multi.py — see that module's own TODO).
 
     hours_ahead (2026-07-19, Micah): defaults to 24 for the ordinary daily
     run. The weekend multi job (generate_weekend_multi.py) passes a wider
@@ -163,7 +190,7 @@ def fetch_upcoming_odds(hours_ahead=24):
     LAST_FETCH_ERRORS = []
     all_matches = []
 
-    for sport in SPORTS:
+    for sport in sport_keys:
         try:
             wants_extra_markets = sport in EXPANDED_MARKET_SPORTS
             wants_totals_only = sport in TOTALS_ONLY_SPORTS
@@ -413,5 +440,5 @@ def calc_two_way_implied_probs(price_a, price_b):
 
 
 if __name__ == "__main__":
-    matches = fetch_upcoming_odds()
+    matches = fetch_upcoming_odds(SPORTS)
     print(json.dumps(matches, indent=2))

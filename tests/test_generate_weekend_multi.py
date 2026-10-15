@@ -49,7 +49,8 @@ class GenerateWeekendMultiTests(unittest.TestCase):
         mock_fetch.return_value = WEEKEND_MATCHES
         gwm.run()
 
-        mock_fetch.assert_called_once_with(hours_ahead=gwm.WEEKEND_HOURS_AHEAD)
+        import fetch_odds
+        mock_fetch.assert_called_once_with(fetch_odds.SPORTS, hours_ahead=gwm.WEEKEND_HOURS_AHEAD)
         with open(gwm.LATEST_WEEKEND_RUN_PATH) as f:
             saved = json.load(f)
         self.assertEqual(len(saved["punter_multi_legs"]), 3)

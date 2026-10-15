@@ -70,6 +70,7 @@ def _weekend_anchor_pick(run_date):
 
 
 def run():
+    import fetch_odds
     from fetch_odds import fetch_upcoming_odds
     from fetch_news import fetch_news
     from generate_pick import generate_pick_for_matches
@@ -81,7 +82,13 @@ def run():
     print("=" * 55)
 
     print(f"\n[1/3] Fetching fixtures across the next {WEEKEND_HOURS_AHEAD}h (the whole weekend)...")
-    matches = fetch_upcoming_odds(hours_ahead=WEEKEND_HOURS_AHEAD)
+    # TODO (2026-10-15 redesign, deferred): still scans the full registry
+    # rather than going through research_shortlist.py's <=2-sport
+    # selection + quota_budget.py reservation like main.py now does — the
+    # daily pick is the pipeline actually exhausting the account's
+    # allowance, so that's where Stage 1 landed first. Fixing this is
+    # explicitly out of scope for this PR; see its description.
+    matches = fetch_upcoming_odds(fetch_odds.SPORTS, hours_ahead=WEEKEND_HOURS_AHEAD)
 
     run_date = nz_today()
     run_data = {
