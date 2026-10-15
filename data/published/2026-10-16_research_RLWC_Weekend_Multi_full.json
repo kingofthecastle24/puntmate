@@ -1,0 +1,151 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": [
+        {
+          "message_id": 266,
+          "sender_chat": {
+            "id": -1004413052011,
+            "title": "PuntMate NZ",
+            "username": "puntmatenz",
+            "type": "channel"
+          },
+          "chat": {
+            "id": -1004413052011,
+            "title": "PuntMate NZ",
+            "username": "puntmatenz",
+            "type": "channel"
+          },
+          "date": 1792087560,
+          "media_group_id": "14336700484500233",
+          "photo": [
+            {
+              "file_id": "AgACAgEAAxUHatEWCGC4hHZIheps1HDA4NJGgiAAAusMaxvvoZFGzKhI4EO39LwBAAMCAANzAAM9BA",
+              "file_unique_id": "AQAD6wxrG--hkUZ4",
+              "file_size": 758,
+              "width": 51,
+              "height": 90
+            },
+            {
+              "file_id": "AgACAgEAAxUHatEWCGC4hHZIheps1HDA4NJGgiAAAusMaxvvoZFGzKhI4EO39LwBAAMCAANtAAM9BA",
+              "file_unique_id": "AQAD6wxrG--hkUZy",
+              "file_size": 8739,
+              "width": 180,
+              "height": 320
+            },
+            {
+              "file_id": "AgACAgEAAxUHatEWCGC4hHZIheps1HDA4NJGgiAAAusMaxvvoZFGzKhI4EO39LwBAAMCAAN4AAM9BA",
+              "file_unique_id": "AQAD6wxrG--hkUZ9",
+              "file_size": 32129,
+              "width": 450,
+              "height": 800
+            },
+            {
+              "file_id": "AgACAgEAAxUHatEWCGC4hHZIheps1HDA4NJGgiAAAusMaxvvoZFGzKhI4EO39LwBAAMCAAN5AAM9BA",
+              "file_unique_id": "AQAD6wxrG--hkUZ-",
+              "file_size": 68611,
+              "width": 720,
+              "height": 1280
+            },
+            {
+              "file_id": "AgACAgEAAxUHatEWCGC4hHZIheps1HDA4NJGgiAAAusMaxvvoZFGzKhI4EO39LwBAAMCAAN3AAM9BA",
+              "file_unique_id": "AQAD6wxrG--hkUZ8",
+              "file_size": 101412,
+              "width": 1080,
+              "height": 1920
+            }
+          ],
+          "caption": "\ud83c\udfc9 PUNTMATE NZ - WORLD CUP WEEKEND MULTI\n\nPapua New Guinea to beat Lebanon @ 1.34\nSat 17 Oct, 5:25pm NZDT\n\nTonga to beat England @ 1.61\nSat 17 Oct, 10:05pm NZDT\n\nFiji to beat Cook Islands @ 1.18\nSun 18 Oct, 6:05pm NZDT\n\nIndicative combined odds: ~2.55\nMatch winner markets, including extra time. Public PandaBet prices, not a TAB quote; odds can change.\n\nPNG's home advantage and Fiji's experienced spine are the base. Tonga's forward pack gets the nod against England, but that is the danger leg. All three must win.\n\nFor entertainment & informational purposes only. Not advice. 18+.\n\n#PuntMateNZ #RLWC2026 #RugbyLeague #WeekendMulti",
+          "caption_entities": [
+            {
+              "offset": 586,
+              "length": 11,
+              "type": "hashtag"
+            },
+            {
+              "offset": 598,
+              "length": 9,
+              "type": "hashtag"
+            },
+            {
+              "offset": 608,
+              "length": 12,
+              "type": "hashtag"
+            },
+            {
+              "offset": 621,
+              "length": 13,
+              "type": "hashtag"
+            }
+          ]
+        },
+        {
+          "message_id": 267,
+          "sender_chat": {
+            "id": -1004413052011,
+            "title": "PuntMate NZ",
+            "username": "puntmatenz",
+            "type": "channel"
+          },
+          "chat": {
+            "id": -1004413052011,
+            "title": "PuntMate NZ",
+            "username": "puntmatenz",
+            "type": "channel"
+          },
+          "date": 1792087560,
+          "media_group_id": "14336700484500233",
+          "photo": [
+            {
+              "file_id": "AgACAgEAAxUHatEWCGF-dGCzqum70TXa6BlkBu0AAuwMaxvvoZFGjiFYoZdCUrYBAAMCAANzAAM9BA",
+              "file_unique_id": "AQAD7AxrG--hkUZ4",
+              "file_size": 804,
+              "width": 51,
+              "height": 90
+            },
+            {
+              "file_id": "AgACAgEAAxUHatEWCGF-dGCzqum70TXa6BlkBu0AAuwMaxvvoZFGjiFYoZdCUrYBAAMCAANtAAM9BA",
+              "file_unique_id": "AQAD7AxrG--hkUZy",
+              "file_size": 10567,
+              "width": 180,
+              "height": 320
+            },
+            {
+              "file_id": "AgACAgEAAxUHatEWCGF-dGCzqum70TXa6BlkBu0AAuwMaxvvoZFGjiFYoZdCUrYBAAMCAAN4AAM9BA",
+              "file_unique_id": "AQAD7AxrG--hkUZ9",
+              "file_size": 44044,
+              "width": 450,
+              "height": 800
+            },
+            {
+              "file_id": "AgACAgEAAxUHatEWCGF-dGCzqum70TXa6BlkBu0AAuwMaxvvoZFGjiFYoZdCUrYBAAMCAAN5AAM9BA",
+              "file_unique_id": "AQAD7AxrG--hkUZ-",
+              "file_size": 92638,
+              "width": 720,
+              "height": 1280
+            },
+            {
+              "file_id": "AgACAgEAAxUHatEWCGF-dGCzqum70TXa6BlkBu0AAuwMaxvvoZFGjiFYoZdCUrYBAAMCAAN3AAM9BA",
+              "file_unique_id": "AQAD7AxrG--hkUZ8",
+              "file_size": 138811,
+              "width": 1080,
+              "height": 1920
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "held": true,
+    "note": "Awaiting Meta token repair"
+  },
+  "facebook_story": {
+    "ok": false,
+    "held": true,
+    "note": "Awaiting Meta token repair"
+  }
+}
