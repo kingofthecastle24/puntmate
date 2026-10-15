@@ -6,7 +6,7 @@ on:
       action:
         description: Prepare a frozen package, or publish an inspected package
         type: choice
-        options: [prepare, publish, prepare-multi, prepare-story, publish-multi]
+        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi]
         default: prepare
         required: true
       pick_json:
@@ -17,6 +17,10 @@ on:
         description: Exact frozen package ID (publish only)
         type: string
         required: false
+      meta_ready:
+        description: Meta token repaired and ready for Story publishing
+        type: boolean
+        default: false
       facebook_approved:
         description: Final Facebook Story photo reviewed and approved by Micah
         type: boolean
@@ -40,6 +44,7 @@ jobs:
       PICK_JSON: ${{ inputs.pick_json }}
       PICK_ID: ${{ inputs.pick_id }}
       DRY_RUN: ${{ inputs.dry_run }}
+      META_READY: ${{ inputs.meta_ready }}
       FACEBOOK_APPROVED: ${{ inputs.facebook_approved }}
       AUTO_PUBLISH: 'true'
       RESEND_FAILED: 'true'
@@ -216,8 +221,31 @@ jobs:
           write_manifest(build_manifest(str(d),[f.name for f in d.iterdir() if f.name!='manifest.json'],extra={'pick_id':pid,'created_at':datetime.now(timezone.utc).isoformat()}),str(d/'manifest.json'))
           for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL):transition(os.getcwd(),pid,state,note='Story-only correction requested by Micah; inspect actual story PNG')
           PYSTORY
+      - name: Include the requested breakdown and description
+        if: inputs.action == 'prepare-details'
+        run: |
+          python - <<'PYDETAILS'
+          import json, os, shutil
+          from pathlib import Path
+          from PIL import Image, ImageDraw
+          from manifest import build_manifest, write_manifest
+          from workflow_state import transition, GENERATED, PREVIEW_READY, AWAITING_APPROVAL
+          from datetime import datetime, timezone
+          pid='2026-10-16_research_RLWC_Weekend_Multi_full'
+          d=Path('data/review',pid)
+          assert not d.exists()
+          shutil.copytree('data/review/2026-10-16_research_RLWC_Weekend_Multi_story',d)
+          im=Image.open(d/'story.png').convert('RGB');draw=ImageDraw.Draw(im);draw.rectangle((0,360,1080,1680),fill='#0b120f')
+          x=Image.open(d/'breakdown.png').convert('RGB');x.thumbnail((1080,1300));im.paste(x,((1080-x.width)//2,360));im.save(d/'story-breakdown.png')
+          m=json.loads((d/'post-metadata.json').read_text())
+          base='https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/main/'+str(d)+'/'
+          m.update(pick_id=pid,story_url=base+'story.png',story_urls=[base+'story.png',base+'story-breakdown.png'])
+          (d/'post-metadata.json').write_text(json.dumps(m,indent=2))
+          write_manifest(build_manifest(str(d),[f.name for f in d.iterdir() if f.name!='manifest.json'],extra={'pick_id':pid,'created_at':datetime.now(timezone.utc).isoformat()}),str(d/'manifest.json'))
+          for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL):transition(os.getcwd(),pid,state,note='Micah approved corrected photo and requested breakdown plus description')
+          PYDETAILS
       - name: Commit only stand-in packages, cards and state
-        if: inputs.action == 'prepare' || inputs.action == 'prepare-multi' || inputs.action == 'prepare-story'
+        if: inputs.action == 'prepare' || inputs.action == 'prepare-multi' || inputs.action == 'prepare-story' || inputs.action == 'prepare-details'
         run: |
           git config user.name 'PuntMate Bot'
           git config user.email 'puntmatenz@gmail.com'
@@ -245,7 +273,7 @@ jobs:
           assert m['source_type']=='research_based'
           if os.environ['ACTION'] == 'publish-multi':
               assert m.get('kind') == 'rlwc_multi' and today == '2026-10-16'
-              assert pid == '2026-10-16_research_RLWC_Weekend_Multi_story'
+              assert pid == '2026-10-16_research_RLWC_Weekend_Multi_full'
               assert m['intended_platforms']==['telegram','instagram_story','facebook_story']
           else:
               assert not m.get('kind')
@@ -275,17 +303,40 @@ jobs:
           import publish_pick as p
           original=p.publish
           def publish(review_dir,metadata,telegram_text,instagram_caption,results):
+              import json, requests
+              from pathlib import Path
               platforms=metadata.get('intended_platforms',[])
-              original(review_dir,{**metadata,'intended_platforms':[x for x in platforms if x!='facebook_story']},telegram_text,instagram_caption,results)
-              if 'facebook_story' in platforms:
-                  if os.environ.get('FACEBOOK_APPROVED')!='true':
-                      results['facebook_story']={'skipped':True,'note':'Awaiting final Facebook Story photo approval'}
-                  else:
+              if 'telegram' in platforms:
+                  try:
+                      import post_telegram as tg
+                      with open(Path(review_dir)/'story.png','rb') as f1, open(Path(review_dir)/'story-breakdown.png','rb') as f2:
+                          media=[{'type':'photo','media':'attach://first','caption':telegram_text},{'type':'photo','media':'attach://second'}]
+                          r=requests.post('https://api.telegram.org/bot'+tg.BOT_TOKEN+'/sendMediaGroup',data={'chat_id':tg.CHANNEL_ID,'media':json.dumps(media)},files={'first':f1,'second':f2},timeout=40).json()
+                      results['telegram']={'ok':bool(r.get('ok')),'detail':r}
+                  except Exception as e:results['telegram']={'ok':False,'error':str(e)}
+              for platform in ('instagram_story','facebook_story'):
+                  if platform not in platforms:continue
+                  if os.environ.get('META_READY')!='true':
+                      results[platform]={'skipped':True,'note':'Awaiting Meta token repair'};continue
+                  if platform=='facebook_story' and os.environ.get('FACEBOOK_APPROVED')!='true':
+                      results[platform]={'skipped':True,'note':'Awaiting final Facebook Story photo approval'};continue
+                  previous=p._prior_publish_record(metadata['pick_id']).get(platform,{})
+                  done=list(previous.get('frames',[]))
+                  for i,url in enumerate(metadata['story_urls']):
+                      if i<len(done) and done[i].get('ok'):continue
                       try:
-                          import post_facebook
-                          sid=post_facebook.post_story(metadata['story_url'])
-                          results['facebook_story']={'ok':sid is not None,'story_id':sid}
-                      except Exception as e:results['facebook_story']={'ok':False,'error':str(e)}
+                          if platform=='instagram_story':
+                              import post_instagram_story as mod
+                              mid=mod.post_story_to_instagram(url)
+                              result={'ok':mid is not None,'media_id':mid,'error':getattr(mod,'LAST_ERROR',None)}
+                          else:
+                              import post_facebook as mod
+                              mid=mod.post_story(url);result={'ok':mid is not None,'story_id':mid}
+                      except Exception as e:result={'ok':False,'error':str(e)}
+                      if i<len(done):done[i]=result
+                      else:done.append(result)
+                      if not result['ok']:break
+                  results[platform]={'ok':len(done)==2 and all(x.get('ok') for x in done),'frames':done}
           p.publish=publish
           p.main()
           PYPUBLISH
