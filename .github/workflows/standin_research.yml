@@ -6,7 +6,7 @@ on:
       action:
         description: Prepare a frozen package, or publish an inspected package
         type: choice
-        options: [prepare, publish, prepare-multi, publish-multi]
+        options: [prepare, publish, prepare-multi, prepare-story, publish-multi]
         default: prepare
         required: true
       pick_json:
@@ -17,6 +17,10 @@ on:
         description: Exact frozen package ID (publish only)
         type: string
         required: false
+      facebook_approved:
+        description: Final Facebook Story photo reviewed and approved by Micah
+        type: boolean
+        default: false
       dry_run:
         description: Simulate publishing without sending any posts
         type: boolean
@@ -36,6 +40,7 @@ jobs:
       PICK_JSON: ${{ inputs.pick_json }}
       PICK_ID: ${{ inputs.pick_id }}
       DRY_RUN: ${{ inputs.dry_run }}
+      FACEBOOK_APPROVED: ${{ inputs.facebook_approved }}
       AUTO_PUBLISH: 'true'
       RESEND_FAILED: 'true'
     steps:
@@ -174,8 +179,42 @@ jobs:
           for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL): transition(os.getcwd(),pid,state,note='One-off RLWC research multi; render review required')
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('Prepared '+pid+'; inspect all three PNGs before live publish.')
           PYMULTI
+      - name: Prepare story-only multi revision
+        if: inputs.action == 'prepare-story'
+        run: |
+          python - <<'PYSTORY'
+          import json, os, shutil
+          from pathlib import Path
+          from PIL import Image, ImageDraw, ImageFont
+          from manifest import build_manifest, write_manifest
+          from workflow_state import transition, GENERATED, PREVIEW_READY, AWAITING_APPROVAL
+          from datetime import datetime, timezone
+          pid='2026-10-16_research_RLWC_Weekend_Multi_story'
+          src=Path('data/review/2026-10-16_research_RLWC_Weekend_Multi')
+          d=Path('data/review',pid)
+          assert not d.exists()
+          shutil.copytree(src,d)
+          im=Image.new('RGB',(1080,1920),'#0b120f'); draw=ImageDraw.Draw(im)
+          font='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+          bold='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+          def text(y,s,size=32,color='#eaf7ef',b=False):
+              f=ImageFont.truetype(bold if b else font,size);draw.text((80,y),s,font=f,fill=color)
+          text(215,'PUNTMATE NZ',44,'#24df7a',True)
+          text(280,'WORLD CUP WEEKEND MULTI',37,b=True)
+          legs=Image.open(d/'tip.png').convert('RGB');legs.thumbnail((1080,1300));im.paste(legs,((1080-legs.width)//2,360))
+          text(1695,'PNG: Sat 5:25pm   Tonga: Sat 10:05pm',27)
+          text(1734,'Fiji: Sun 6:05pm  |  NZDT  |  17-18 Oct',27)
+          text(1785,'Indicative PandaBet odds, not TAB. Odds may change.',23,'#8fa69a')
+          text(1820,'All 3 must win. Tonga is the danger leg. 18+.',23,'#8fa69a')
+          im.save(d/'story.png')
+          m=json.loads((d/'post-metadata.json').read_text())
+          m.update(pick_id=pid,intended_platforms=['telegram','instagram_story','facebook_story'],story_url='https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/main/'+str(d/'story.png'))
+          (d/'post-metadata.json').write_text(json.dumps(m,indent=2))
+          write_manifest(build_manifest(str(d),[f.name for f in d.iterdir() if f.name!='manifest.json'],extra={'pick_id':pid,'created_at':datetime.now(timezone.utc).isoformat()}),str(d/'manifest.json'))
+          for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL):transition(os.getcwd(),pid,state,note='Story-only correction requested by Micah; inspect actual story PNG')
+          PYSTORY
       - name: Commit only stand-in packages, cards and state
-        if: inputs.action == 'prepare' || inputs.action == 'prepare-multi'
+        if: inputs.action == 'prepare' || inputs.action == 'prepare-multi' || inputs.action == 'prepare-story'
         run: |
           git config user.name 'PuntMate Bot'
           git config user.email 'puntmatenz@gmail.com'
@@ -203,8 +242,8 @@ jobs:
           assert m['source_type']=='research_based'
           if os.environ['ACTION'] == 'publish-multi':
               assert m.get('kind') == 'rlwc_multi' and today == '2026-10-16'
-              assert pid == '2026-10-16_research_RLWC_Weekend_Multi'
-              assert m['intended_platforms']==['telegram','instagram_feed','facebook']
+              assert pid == '2026-10-16_research_RLWC_Weekend_Multi_story'
+              assert m['intended_platforms']==['telegram','instagram_story','facebook_story']
           else:
               assert not m.get('kind')
               assert m['intended_platforms']==['telegram','instagram_feed','instagram_story'], 'Unexpected platform'
@@ -224,7 +263,30 @@ jobs:
           INSTAGRAM_USER_ID: ${{ secrets.IG_USER_ID }}
           META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
-        run: python scripts/publish_pick.py
+        run: |
+          if [ "$ACTION" != "publish-multi" ]; then
+            python scripts/publish_pick.py
+          else
+            python - <<'PYPUBLISH'
+          import os
+          import publish_pick as p
+          original=p.publish
+          def publish(review_dir,metadata,telegram_text,instagram_caption,results):
+              platforms=metadata.get('intended_platforms',[])
+              original(review_dir,{**metadata,'intended_platforms':[x for x in platforms if x!='facebook_story']},telegram_text,instagram_caption,results)
+              if 'facebook_story' in platforms:
+                  if os.environ.get('FACEBOOK_APPROVED')!='true':
+                      results['facebook_story']={'skipped':True,'note':'Awaiting final Facebook Story photo approval'}
+                  else:
+                      try:
+                          import post_facebook
+                          sid=post_facebook.post_story(metadata['story_url'])
+                          results['facebook_story']={'ok':sid is not None,'story_id':sid}
+                      except Exception as e:results['facebook_story']={'ok':False,'error':str(e)}
+          p.publish=publish
+          p.main()
+          PYPUBLISH
+          fi
       - name: Persist platform receipts and state
         if: always() && (inputs.action == 'publish' || inputs.action == 'publish-multi') && inputs.dry_run == false
         run: |
