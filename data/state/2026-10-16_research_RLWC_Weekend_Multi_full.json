@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-16_research_RLWC_Weekend_Multi_full",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-15T18:04:48.586703+00:00",
+      "note": "Micah approved corrected photo and requested breakdown plus description"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-15T18:04:48.586924+00:00",
+      "note": "Micah approved corrected photo and requested breakdown plus description"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-15T18:04:48.587135+00:00",
+      "note": "Micah approved corrected photo and requested breakdown plus description"
+    }
+  ]
+}
