@@ -80,11 +80,22 @@ jobs:
           p['bet_type_reason'] = p['final_explanation']
           date = local.date().isoformat()
           pick_id = date + '_research_' + renderer.slugify(p['match'])
+          revision = p.get('revision', 1)
+          assert isinstance(revision, int) and 1 <= revision <= 9
+          if revision > 1:
+              pick_id += '_v' + str(revision)
           assert not Path('data/review',pick_id).exists(), 'Frozen package already exists; inspect it or use its exact ID'
           def kickoff_display(iso):
               dt = datetime.fromisoformat(iso.replace('Z','+00:00')).astimezone(ZoneInfo('Pacific/Auckland'))
               return dt.strftime('%a %d %b').upper(), dt.strftime('%a %d %b, %-I:%M%p').lower() + ' NZDT'
           renderer.kickoff_display = kickoff_display
+          original_build_props = renderer.build_props
+          def standin_props(pick, handle='@puntmatenz'):
+              props = original_build_props(pick, handle)
+              # Template appends RISK to this prop; confidence remains in its own chip.
+              props['confidenceLabel'] = 'LOW'
+              return props
+          renderer.build_props = standin_props
           result = renderer.render_pick(p, date_str=date)
           assert result['ok'], result
           p['render_warnings'] = result.get('warnings', [])
