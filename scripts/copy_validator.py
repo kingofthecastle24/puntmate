@@ -162,6 +162,29 @@ RG_BANNED_FOR_GAMBLER = [
     "free money",
 ]
 
+# RESEARCH_ONLY (2026-10-15 redesign, Section 7): this content never went
+# through the real odds-backed gate, so it must never be WORDED as if it
+# did -- no probability/edge number, no value claim, no tier-approved
+# language, no certainty language. check_research_only_claims below is the
+# deterministic backstop for this; it runs only when content_mode ==
+# "RESEARCH_ONLY" is explicitly passed in, same opt-in shape as the
+# bet_type-gated check_gambler_rg above.
+RESEARCH_ONLY_BANNED_PHRASES = [
+    "investor bet", "punter bet", "gambler bet", "investor pick", "punter pick",
+    "gambler pick", "bet type: investor", "bet type: punter", "bet type: gambler",
+    "sure thing", "can't lose", "guaranteed", "lock of the day", "free money",
+    "value bet", "value play", "clear edge", "strong value", "good value",
+    "model probability", "win probability", "edge of", "% edge",
+    "approved pick", "passed the gate", "cleared the bar",
+]
+# A bare percentage next to "edge"/"probability"/"confidence" wording, or a
+# decimal-odds-shaped "X.XX" value claim phrase -- phrase lists can't
+# anticipate every numeric phrasing, so this catches the general shape too.
+RESEARCH_ONLY_BANNED_PATTERNS = [
+    re.compile(r"\b\d{1,3}\s*%\s*(edge|probability|confidence|chance of winning)\b", re.IGNORECASE),
+    re.compile(r"\bedge\s*(of\s*)?[:\-]?\s*\+?\d{1,3}(\.\d+)?\s*%", re.IGNORECASE),
+]
+
 
 class CopyValidationError(ValueError):
     def __init__(self, violations):
@@ -220,6 +243,20 @@ def check_gambler_rg(text, bet_type):
     return [f"responsible-gambling violation for GAMBLER_BET: '{p}'" for p in hits]
 
 
+def check_research_only_claims(text, content_mode):
+    """RESEARCH_ONLY copy must never read as if it passed the real
+    odds-backed gate -- no probability/edge number, no tier-approved
+    language, no value/certainty claim (Section 7)."""
+    if content_mode != "RESEARCH_ONLY":
+        return []
+    violations = [f"gated-claim phrase in RESEARCH_ONLY copy: '{p}'" for p in _contains_any(text, RESEARCH_ONLY_BANNED_PHRASES)]
+    for pattern in RESEARCH_ONLY_BANNED_PATTERNS:
+        match = pattern.search(text)
+        if match:
+            violations.append(f"gated-claim pattern in RESEARCH_ONLY copy: '{match.group(0)}'")
+    return violations
+
+
 def check_single_pick(post_metadata):
     """Guard against multiple picks / multiple bet types being expressed in
     one post — the pipeline must always settle on exactly one."""
@@ -233,7 +270,7 @@ def check_single_pick(post_metadata):
     return violations
 
 
-def validate_text(text, risk=None, bet_type=None, public=True):
+def validate_text(text, risk=None, bet_type=None, public=True, content_mode=None):
     """Validate a single piece of copy (Telegram message, IG caption, etc).
     Raises CopyValidationError if anything is wrong."""
     violations = []
@@ -245,6 +282,7 @@ def validate_text(text, risk=None, bet_type=None, public=True):
         violations += check_gambler_rg(text, bet_type)
     if public:
         violations += check_internal_leak(text)
+    violations += check_research_only_claims(text, content_mode)
     if violations:
         raise CopyValidationError(violations)
     return text
@@ -256,6 +294,7 @@ def validate_post(post_metadata, telegram_text, instagram_caption):
     violations = []
     risk = post_metadata.get("risk") or post_metadata.get("classification")
     bet_type = post_metadata.get("bet_type")
+    content_mode = post_metadata.get("content_mode")
 
     violations += check_single_pick(post_metadata)
     violations += check_no_bet_has_no_selection(post_metadata)
@@ -264,7 +303,7 @@ def validate_post(post_metadata, telegram_text, instagram_caption):
         if not text:
             continue
         try:
-            validate_text(text, risk=risk, bet_type=bet_type, public=True)
+            validate_text(text, risk=risk, bet_type=bet_type, public=True, content_mode=content_mode)
         except CopyValidationError as e:
             violations += [f"[{label}] {v}" for v in e.violations]
 

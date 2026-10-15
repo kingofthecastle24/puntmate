@@ -799,7 +799,16 @@ def build_research_only_pick(candidate, now_utc=None):
         "implied_probability": None,
         "edge_pct": None,
         "risk": None,
+        # Never INVESTOR_BET/PUNTER_BET/GAMBLER_BET -- this never went
+        # through the gate that those labels mean. bet_type_label/
+        # bet_type_reason are set (not None) purely so this dict satisfies
+        # build_telegram_text/build_instagram_caption/build_review_package's
+        # required-field shape without a KeyError; copy_validator's
+        # check_research_only_claims is the actual enforcement that this
+        # wording never reads as a tier/value claim.
         "bet_type": None,
+        "bet_type_label": "RESEARCH LEAD — NOT A GATED PICK",
+        "bet_type_reason": candidate.get("research_reason", ""),
         "final_explanation": candidate.get("research_reason", ""),
         "confidence": None,
         "confidence_label": None,

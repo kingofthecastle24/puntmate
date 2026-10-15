@@ -53,6 +53,13 @@ class BuildResearchOnlyPickTests(unittest.TestCase):
         for field in ("our_probability", "implied_probability", "edge_pct", "risk", "bet_type"):
             self.assertIsNone(pick[field])
 
+    def test_carries_the_fields_the_public_copy_builders_require(self):
+        # build_telegram_text/build_instagram_caption index these directly
+        # -- missing them would KeyError, not degrade gracefully.
+        pick = build_research_only_pick(_candidate(), now_utc=NOW)
+        self.assertIn("NOT A GATED PICK", pick["bet_type_label"])
+        self.assertTrue(pick["bet_type_reason"])
+
     def test_missing_anchor_returns_none(self):
         self.assertIsNone(build_research_only_pick(_candidate(market_anchor=None), now_utc=NOW))
 

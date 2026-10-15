@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 from copy_validator import (
     validate_text, validate_post, CopyValidationError,
     check_no_bet_contradiction, check_gambler_rg, check_staking_language, check_tone,
-    check_internal_leak,
+    check_internal_leak, check_research_only_claims,
 )
 
 
@@ -121,6 +121,49 @@ class IncidentInternalLeakTests(unittest.TestCase):
         for text in legit:
             with self.subTest(text=text):
                 self.assertEqual(check_internal_leak(text), [])
+
+
+class ResearchOnlyClaimsTests(unittest.TestCase):
+    """2026-10-15 redesign, Section 7: RESEARCH_ONLY copy never went
+    through the real odds-backed gate, so it must never read as if it
+    did -- no probability/edge number, no tier-approved language, no
+    value/certainty claim."""
+
+    def test_only_applies_when_content_mode_is_research_only(self):
+        # The exact same phrase is fine outside RESEARCH_ONLY -- this check
+        # is opt-in, like check_gambler_rg's bet_type gate.
+        self.assertEqual(check_research_only_claims("Bet Type: Investor, clear edge here.", None), [])
+        self.assertEqual(check_research_only_claims("Bet Type: Investor, clear edge here.", "GATED_PICK"), [])
+
+    def test_tier_label_rejected(self):
+        hits = check_research_only_claims("This is an Investor Bet — Bet Type: Investor.", "RESEARCH_ONLY")
+        self.assertTrue(len(hits) > 0)
+
+    def test_value_claim_rejected(self):
+        hits = check_research_only_claims("Clear edge here, this is a strong value play.", "RESEARCH_ONLY")
+        self.assertTrue(len(hits) > 0)
+
+    def test_certainty_claim_rejected(self):
+        hits = check_research_only_claims("This is a sure thing, can't lose.", "RESEARCH_ONLY")
+        self.assertTrue(len(hits) > 0)
+
+    def test_numeric_edge_percentage_rejected(self):
+        hits = check_research_only_claims("Our model gives this a 74% win probability.", "RESEARCH_ONLY")
+        self.assertTrue(len(hits) > 0)
+
+    def test_edge_number_pattern_rejected(self):
+        hits = check_research_only_claims("Edge of +4.4% here on the home side.", "RESEARCH_ONLY")
+        self.assertTrue(len(hits) > 0)
+
+    def test_honest_research_lead_copy_passes_clean(self):
+        text = "Research lead — not a gated pick. Warriors have won four straight at home, worth a look before you back it yourself."
+        self.assertEqual(check_research_only_claims(text, "RESEARCH_ONLY"), [])
+
+    def test_validate_text_enforces_it_end_to_end(self):
+        with self.assertRaises(CopyValidationError):
+            validate_text("Bet Type: Investor — clear edge here.", content_mode="RESEARCH_ONLY")
+        # Same text is fine without the RESEARCH_ONLY content_mode.
+        validate_text("Bet Type: Investor — clear edge here.", risk="STANDARD_PICK")
 
 
 if __name__ == "__main__":

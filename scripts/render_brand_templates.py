@@ -213,22 +213,35 @@ def build_props(pick, handle="@puntmatenz"):
     except (TypeError, ValueError):
         odds_str = str(pick.get("odds", ""))
 
-    confidence_label = (pick.get("confidence_label") or pick.get("confidence") or "Medium")
-    if isinstance(confidence_label, (int, float)):
-        confidence_label = "Medium"
-    confidence_label = str(confidence_label).upper()
     insight_text = (pick.get("final_explanation") or pick.get("bet_type_reason") or pick.get("reasoning") or "").strip()
 
-    bet_type = pick.get("bet_type", "")
-    risk = pick.get("risk", "")
-    risk_label = risk.replace("_", " ").title() if risk else ""
-    bet_type_short = bet_type.replace("_BET", "").title() if bet_type else ""
-    risk_tagline_parts = [p for p in (
-        f"Bet type: {bet_type_short}" if bet_type_short else "",
-        risk_label,
-        f"{confidence_label.title()} confidence",
-    ) if p]
-    risk_tagline = " · ".join(risk_tagline_parts) or "Low risk · Steady returns · Long game"
+    # RESEARCH_ONLY (2026-10-15 redesign, Section 7): never claim the model
+    # gate's probability/edge/confidence or an Investor/Punter/Gambler tier
+    # for a lead that didn't go through it. "HIGH RISK" here is literally
+    # true (it's un-gated) and reads naturally in the template's fixed
+    # "{confidenceLabel} RISK" text -- not a repurposed confidence claim.
+    # No template changes: coverTheme stays "Daily Pick" (never "Value
+    # Alert", which WOULD read as a value claim) and riskTagline still
+    # rides the same free-text chip row every other pick already uses.
+    if pick.get("content_mode") == "RESEARCH_ONLY":
+        confidence_label = "HIGH"
+        risk_tagline = "Research lead · Not a gated pick · Verify before backing"
+    else:
+        confidence_label = (pick.get("confidence_label") or pick.get("confidence") or "Medium")
+        if isinstance(confidence_label, (int, float)):
+            confidence_label = "Medium"
+        confidence_label = str(confidence_label).upper()
+
+        bet_type = pick.get("bet_type", "")
+        risk = pick.get("risk", "")
+        risk_label = risk.replace("_", " ").title() if risk else ""
+        bet_type_short = bet_type.replace("_BET", "").title() if bet_type else ""
+        risk_tagline_parts = [p for p in (
+            f"Bet type: {bet_type_short}" if bet_type_short else "",
+            risk_label,
+            f"{confidence_label.title()} confidence",
+        ) if p]
+        risk_tagline = " · ".join(risk_tagline_parts) or "Low risk · Steady returns · Long game"
 
     # Game date on the cards (owner request 2026-07-18): the approved
     # templates have no dedicated date field, so — same approach as bet-type
