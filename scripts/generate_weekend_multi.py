@@ -23,14 +23,24 @@ the same 3-leg floor and never-forced rule as before.
 Meant to run once, on the Friday 7am NZT job (see .github/workflows/
 generate.yml), ahead of that day's regular daily pick.
 
-Flow (mirrors main.py):
-  1. Fetch odds across the widened weekend window (fetch_odds.fetch_upcoming_odds
-     with hours_ahead=WEEKEND_HOURS_AHEAD)
-  2. Fetch + validate research for every fixture, same as the daily run
-  3. generate_pick_for_matches(..., build_multis=True) -> punter_multi_legs /
-     gambler_multi_legs pooled across the whole weekend
-  4. Render each qualifying tier's graphic (reuses main.py's render_multi_cards)
-  5. Save data/latest_weekend_run.json
+Flow (mirrors main.py; 2026-10-15 redesign — "research first, price
+second" — applied here too):
+  1. Stage 1 — research_shortlist.py discovers fixtures across sports in
+     season worldwide over the widened 96h weekend window and shortlists
+     at most two registered sport keys.
+  2. Stage 2 — reserve ODDS credits via quota_budget.py for exactly those
+     sport(s), then fetch_odds.fetch_upcoming_odds(selected_keys,
+     hours_ahead=WEEKEND_HOURS_AHEAD). Zero sports selected, or no budget
+     room, means zero odds calls, same as the daily run.
+  3. Fetch + validate research for every fixture, same as the daily run
+  4. generate_pick_for_matches(..., build_multis=True) -> punter_multi_legs /
+     gambler_multi_legs pooled across the whole weekend. Pooling from at
+     most two sports' fixtures (not 14) means fewer candidates and more
+     weekends with no qualifying multi -- an accepted tradeoff of the
+     redesign (Section 6), not a bug: "fewer candidates may mean no
+     qualifying multi."
+  5. Render each qualifying tier's graphic (reuses main.py's render_multi_cards)
+  6. Save data/latest_weekend_run.json
 
 Never posts anything to any platform. build_weekend_multi_package.py (the
 freeze step) and publish_pick.py handle everything after this, through the
@@ -39,7 +49,7 @@ same approval-gated flow as the daily pick.
 import os
 import sys
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(__file__))
 from nz_date import nz_today
@@ -73,41 +83,90 @@ def run():
     import fetch_odds
     from fetch_odds import fetch_upcoming_odds
     from fetch_news import fetch_news
-    from generate_pick import generate_pick_for_matches
+    from generate_pick import generate_pick_for_matches, build_research_only_pick
     from main import render_multi_cards  # reuse the exact same render/skip-on-failure logic
+    import research_shortlist
+    import quota_budget
+    import run_status
 
     print("=" * 55)
     print("PuntMate NZ — Weekend Multi Pipeline (prepare only)")
     print(datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC'))
     print("=" * 55)
 
-    print(f"\n[1/3] Fetching fixtures across the next {WEEKEND_HOURS_AHEAD}h (the whole weekend)...")
-    # TODO (2026-10-15 redesign, deferred): still scans the full registry
-    # rather than going through research_shortlist.py's <=2-sport
-    # selection + quota_budget.py reservation like main.py now does — the
-    # daily pick is the pipeline actually exhausting the account's
-    # allowance, so that's where Stage 1 landed first. Fixing this is
-    # explicitly out of scope for this PR; see its description.
-    matches = fetch_upcoming_odds(fetch_odds.SPORTS, hours_ahead=WEEKEND_HOURS_AHEAD)
-
     run_date = nz_today()
+    window_start_dt = datetime.now(timezone.utc)
+    window_end_dt = window_start_dt + timedelta(hours=WEEKEND_HOURS_AHEAD)
+    quota_budget.ensure_current_period()
+    period_key = quota_budget.CURRENT_PERIOD_KEY
+    registry = fetch_odds.build_registry()
+
+    print(f"\n[1/4] Stage 1 — researching the weekend's fixture slate (next {WEEKEND_HOURS_AHEAD}h) across sports in season worldwide...")
+    try:
+        research_record = research_shortlist.run_research_shortlist(
+            f"weekend-{run_date}", run_date, window_start_dt.isoformat(), window_end_dt.isoformat(), registry,
+        )
+    except Exception as e:  # noqa: BLE001 — a research failure must degrade, never crash the run
+        print(f"  ::warning:: Stage 1 research failed unexpectedly: {e}")
+        research_record = {"selected_sport_keys": [], "candidates": [], "warnings": [f"research failed: {e}"]}
+
+    selected_keys = research_record.get("selected_sport_keys", [])
+    fallback_reason = None
+    matches = []
+
+    if not selected_keys:
+        fallback_reason = run_status.FALLBACK_NO_SPORT_SELECTED
+        print("  Stage 1 selected no sport worth pricing this weekend.")
+    else:
+        total_cost = sum(fetch_odds.sport_credit_cost(k) for k in selected_keys)
+        reservation_id = quota_budget.reserve(
+            period_key, quota_budget.ODDS, total_cost,
+            note=f"weekend {run_date}: {', '.join(selected_keys)}",
+        )
+        if reservation_id is None:
+            fallback_reason = run_status.FALLBACK_QUOTA_EXHAUSTED
+            print(f"  ::warning:: Stage 1 selected {selected_keys} but the odds credit budget has no "
+                  f"room for {total_cost} more credit(s) this period — skipping the paid odds call.")
+        else:
+            print(f"\n[2/4] Stage 2 — querying the odds API for the shortlisted sport(s): {selected_keys}")
+            matches = fetch_upcoming_odds(selected_keys, hours_ahead=WEEKEND_HOURS_AHEAD)
+            quota_budget.confirm(period_key, reservation_id)
+            if fetch_odds.LAST_QUOTA_REMAINING is not None:
+                quota_budget.reconcile_provider_headers(period_key, remaining=fetch_odds.LAST_QUOTA_REMAINING)
+
     run_data = {
         "run_date": run_date,
         "run_ts": datetime.now(timezone.utc).isoformat(),
         "hours_ahead": WEEKEND_HOURS_AHEAD,
         "fixture_count": len(matches),
+        "fallback_reason": fallback_reason,
+        "research": {
+            "selected_sport_keys": selected_keys,
+            "candidate_count": len(research_record.get("candidates", [])),
+        },
     }
 
     if not matches:
         print("  No fixtures in the weekend window — nothing to prepare.")
         run_data["punter_multi_legs"] = []
         run_data["gambler_multi_legs"] = []
+        run_data["degenerate_multi_legs"] = []
+        # Research-only watchlist (Section 6: "not a validated multi with
+        # fabricated combined odds") -- every candidate with a genuinely
+        # verified, fresh public anchor, surfaced for informational
+        # purposes only, same no-ledger treatment as the daily run's
+        # research_lead / Degen Watch. Never auto-published, never a
+        # substitute for a real 3+-leg gated multi.
+        run_data["research_leads"] = [
+            lead for lead in (build_research_only_pick(c) for c in research_record.get("candidates", []))
+            if lead
+        ]
         os.makedirs(os.path.dirname(LATEST_WEEKEND_RUN_PATH), exist_ok=True)
         with open(LATEST_WEEKEND_RUN_PATH, 'w') as f:
             json.dump(run_data, f, indent=2)
         return
 
-    print(f"\n[2/3] Fetching + validating research for {len(matches)} fixture(s)...")
+    print(f"\n[3/4] Fetching + validating research for {len(matches)} fixture(s)...")
     match_news = {}
     for m in matches:
         try:
@@ -120,7 +179,7 @@ def run():
             print(f"  Research fetch failed for {m['match']}: {e}")
             match_news[m["match"]] = {"text": "", "accepted_count": 0, "warnings": [f"fetch error: {e}"], "confidence_ceiling": "LOW"}
 
-    print("\n[3/3] Assembling the weekend Punter / Gambler / Degenerate multis...")
+    print("\n[4/4] Assembling the weekend Punter / Gambler / Degenerate multis...")
     pick = generate_pick_for_matches(matches, match_news, build_multis=True)
 
     punter_legs = pick.get("punter_multi_legs") or []
