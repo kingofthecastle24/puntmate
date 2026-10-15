@@ -6,7 +6,7 @@ on:
       action:
         description: Prepare a frozen package, or publish an inspected package
         type: choice
-        options: [prepare, publish]
+        options: [prepare, publish, prepare-multi, publish-multi]
         default: prepare
         required: true
       pick_json:
@@ -46,7 +46,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install requests Pillow playwright
-      - if: inputs.action == 'prepare'
+      - if: inputs.action == 'prepare' || inputs.action == 'prepare-multi'
         run: playwright install --with-deps chromium
       - name: Validate and prepare research-only frozen package
         if: inputs.action == 'prepare'
@@ -121,8 +121,61 @@ jobs:
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
               f.write('Prepared research-based package: '+pick_id+'\n\nInspect all four PNGs and captions before dispatching publish.\n')
           PY
+      - name: Prepare one-off RLWC research multi
+        if: inputs.action == 'prepare-multi'
+        run: |
+          python - <<'PYMULTI'
+          import json, os, shutil
+          from pathlib import Path
+          from datetime import datetime, timezone
+          from zoneinfo import ZoneInfo
+          from decimal import Decimal
+          import render_brand_templates as renderer
+          from copy_validator import validate_text
+          from manifest import build_manifest, write_manifest
+          from workflow_state import transition, GENERATED, PREVIEW_READY, AWAITING_APPROVAL
+          now = datetime.now(timezone.utc)
+          today = now.astimezone(ZoneInfo('Pacific/Auckland')).date().isoformat()
+          p = json.loads(os.environ['PICK_JSON'])
+          assert p['kind'] == 'rlwc_multi' and p['source_type'] == 'research_based'
+          assert today == '2026-10-16', 'One-off multi only'
+          assert len(p['legs']) == 3
+          assert [x['selection'] for x in p['legs']] == ['Papua New Guinea','Tonga','Fiji']
+          checked = datetime.fromisoformat(p['research_checked_at'].replace('Z','+00:00'))
+          assert 0 <= (now-checked).total_seconds() < 7200
+          for leg in p['legs']:
+              dt = datetime.fromisoformat(leg['kickoff'].replace('Z','+00:00'))
+              assert 0 < (dt-now).total_seconds() < 7*86400
+              assert 1 < float(leg['odds']) < 3
+          pid = today + '_research_RLWC_Weekend_Multi'
+          assert not Path('data/review',pid).exists(), 'Frozen multi already exists'
+          combined = Decimal('1')
+          for leg in p['legs']: combined *= Decimal(str(leg['odds']))
+          original = renderer.build_multi_props
+          def props(legs,tier,handle='@puntmatenz'):
+              x = original(legs,tier,handle)
+              x.update(analysis=p['analysis'],combinedOdds='~'+format(combined,'.2f'),stake='$10',stakeReturn='All 3 legs must win',multiType='World Cup Multi',coverKicker='WORLD CUP WEEKEND MULTI',riskTagline='Tonga is the danger leg · All 3 must win · Indicative public odds')
+              return x
+          renderer.build_multi_props = props
+          result = renderer.render_multi({'match':'RLWC Weekend Multi'},'punter',p['legs'],date_str=today)
+          assert result['ok']
+          d = Path('data/review',pid); d.mkdir(parents=True)
+          for key,src in result['files'].items():
+              shutil.copyfile(src,d/('tip.png' if key=='legs' else key+'.png'))
+          text = p['caption']
+          validate_text(text,risk='STANDARD_PICK',bet_type='PUNTER_BET',public=True)
+          (d/'telegram-post.txt').write_text(text)
+          (d/'instagram-caption.txt').write_text(text)
+          base='https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/main/'
+          urls=[base+str(Path(result['files'][k]).resolve().relative_to(Path.cwd())) for k in ('cover','legs','breakdown')]
+          meta=dict(p,has_pick=True,pick_id=pid,post_date=today,generated_at=now.isoformat(),kickoff=p['legs'][0]['kickoff'],match='RLWC Weekend Multi',selection='Papua New Guinea + Tonga + Fiji',odds=float(combined),market='Match winner multi',bet_type='PUNTER_BET',risk='STANDARD_PICK',confidence='Medium',confidence_label='Medium',carousel_urls=urls,intended_platforms=['telegram','instagram_feed','facebook'],render_warnings=result.get('warnings',[]),stake_guidance_nzd=10)
+          (d/'post-metadata.json').write_text(json.dumps(meta,indent=2))
+          write_manifest(build_manifest(str(d),[f.name for f in d.iterdir()],extra={'pick_id':pid,'created_at':now.isoformat()}),str(d/'manifest.json'))
+          for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL): transition(os.getcwd(),pid,state,note='One-off RLWC research multi; render review required')
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('Prepared '+pid+'; inspect all three PNGs before live publish.')
+          PYMULTI
       - name: Commit only stand-in packages, cards and state
-        if: inputs.action == 'prepare'
+        if: inputs.action == 'prepare' || inputs.action == 'prepare-multi'
         run: |
           git config user.name 'PuntMate Bot'
           git config user.email 'puntmatenz@gmail.com'
@@ -131,7 +184,7 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
       - name: Validate exact package before publish
-        if: inputs.action == 'publish'
+        if: inputs.action == 'publish' || inputs.action == 'publish-multi'
         run: |
           python - <<'PY'
           import json, os, re
@@ -148,15 +201,23 @@ jobs:
           m = json.loads((d/'post-metadata.json').read_text())
           assert m['pick_id']==pid and m['post_date']==today
           assert m['source_type']=='research_based'
-          assert m['intended_platforms']==['telegram','instagram_feed','instagram_story'], 'Unexpected platform'
+          if os.environ['ACTION'] == 'publish-multi':
+              assert m.get('kind') == 'rlwc_multi' and today == '2026-10-16'
+              assert pid == '2026-10-16_research_RLWC_Weekend_Multi'
+              assert m['intended_platforms']==['telegram','instagram_feed','facebook']
+          else:
+              assert not m.get('kind')
+              assert m['intended_platforms']==['telegram','instagram_feed','instagram_story'], 'Unexpected platform'
           assert datetime.fromisoformat(m['kickoff'].replace('Z','+00:00')) > now, 'Fixture already started'
           assert 0 <= (now-datetime.fromisoformat(m['research_checked_at'].replace('Z','+00:00'))).total_seconds() < 7200, 'Research stale'
           ok, errors = verify_manifest(load_manifest(str(d/'manifest.json')),str(d))
           assert ok, errors
           PY
       - name: Publish verified frozen files (or dry run)
-        if: inputs.action == 'publish'
+        if: inputs.action == 'publish' || inputs.action == 'publish-multi'
         env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
@@ -165,7 +226,7 @@ jobs:
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
         run: python scripts/publish_pick.py
       - name: Persist platform receipts and state
-        if: always() && inputs.action == 'publish' && inputs.dry_run == false
+        if: always() && (inputs.action == 'publish' || inputs.action == 'publish-multi') && inputs.dry_run == false
         run: |
           git config user.name 'PuntMate Bot'
           git config user.email 'puntmatenz@gmail.com'
