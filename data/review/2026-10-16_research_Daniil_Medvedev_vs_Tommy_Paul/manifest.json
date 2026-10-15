@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "815d77f7d09d04ddb5512f9bfddd5193efc05992f0e6f09488a07c5c37a6582a",
+      "bytes": 78744
+    },
+    "instagram-caption.txt": {
+      "sha256": "c206fae28c618e5319c5d2800886218ad7d0402d2a7e5588a0ff2ed132222c6c",
+      "bytes": 409
+    },
+    "cover.png": {
+      "sha256": "3066d87c9735de3fd9e1b608bfb368bd7a544e0d3ae60b1a8000b971b9d1f882",
+      "bytes": 77096
+    },
+    "post-metadata.json": {
+      "sha256": "2a4503fd3877e71fdeadecfdb7800782c0ee6e584a7ef901798c8581055d87b8",
+      "bytes": 2537
+    },
+    "breakdown.png": {
+      "sha256": "30ac389ffb48b29e25b2ac39a870eed72c3c7234dea6ab3d1b3fa64cd0a24076",
+      "bytes": 107101
+    },
+    "telegram-post.txt": {
+      "sha256": "5f135ec14324ce9aa7351898efdf7ffa57758f1cd86783b267ab63ccb1ce1133",
+      "bytes": 443
+    },
+    "story.png": {
+      "sha256": "1058666a326522d4463614b704dcaecc0662445f820ca6f348b202fcd16e7bc0",
+      "bytes": 64818
+    }
+  },
+  "pick_id": "2026-10-16_research_Daniil_Medvedev_vs_Tommy_Paul",
+  "created_at": "2026-10-15T17:19:48.108739+00:00"
+}

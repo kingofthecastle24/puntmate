@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-16_research_Daniil_Medvedev_vs_Tommy_Paul",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-15T17:19:52.841052+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-15T17:19:52.841196+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-15T17:19:52.841359+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}
