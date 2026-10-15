@@ -317,9 +317,9 @@ jobs:
               for platform in ('instagram_story','facebook_story'):
                   if platform not in platforms:continue
                   if os.environ.get('META_READY')!='true':
-                      results[platform]={'skipped':True,'note':'Awaiting Meta token repair'};continue
+                      results[platform]={'ok':False,'held':True,'note':'Awaiting Meta token repair'};continue
                   if platform=='facebook_story' and os.environ.get('FACEBOOK_APPROVED')!='true':
-                      results[platform]={'skipped':True,'note':'Awaiting final Facebook Story photo approval'};continue
+                      results[platform]={'ok':False,'held':True,'note':'Awaiting final Facebook Story photo approval'};continue
                   previous=p._prior_publish_record(metadata['pick_id']).get(platform,{})
                   done=list(previous.get('frames',[]))
                   for i,url in enumerate(metadata['story_urls']):
