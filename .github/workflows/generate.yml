@@ -214,9 +214,26 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ODDS_API_KEY:      ${{ secrets.ODDS_API_KEY }}
+          # Optional override for Stage 1's research model (research_shortlist.py
+          # defaults to claude-sonnet-5-5 if unset). The existing gate call in
+          # generate_pick.py stays pinned to claude-opus-5 regardless.
+          RESEARCH_MODEL: ${{ vars.RESEARCH_MODEL }}
         run: |
           cd scripts
           python main.py
+
+      # 2026-10-15 redesign: quota_budget.json and data/research/<run_id>.json
+      # are Stage 1's durable state (the credit budget that stops the account
+      # ever re-exhausting its allowance, and the research record behind
+      # today's sport selection) — committed on EVERY run, has_pick or not,
+      # unlike the review package below. Without this, the budget would
+      # silently reset to "fresh" on every single run instead of actually
+      # tracking spend across the month.
+      - name: Commit quota budget + research record
+        if: always() && steps.mode.outputs.force_test_pick != 'true'
+        run: |
+          git add data/quota_budget.json data/research/ 2>/dev/null || true
+          bash scripts/git_push_retry.sh "chore: record research + quota budget for ${{ steps.mode.outputs.dry_run == 'true' && 'dry-run' || 'run' }} $(date -u +%Y-%m-%d) [skip ci]" --soft
 
       # TEST ONLY (force_test_pick=true) — skips real odds/research/Claude and
       # writes a synthetic pick instead, then renders it through the exact

@@ -60,6 +60,28 @@ DEFAULT_LIMITS = {ODDS: 336, SCORES: 124}
 UNALLOCATED_RESERVE = 40
 
 
+# The ONE period this redesign inherits a confirmed, concrete fact about
+# (Section 2): the free-tier account sat at 0/500 remaining as of 14-15
+# Oct 2026, and the provider's own next reset is Sunday 1 Nov 2026, 1pm
+# NZDT = 00:00 UTC. The account's actual monthly cycle start isn't known
+# (free-tier resets aren't necessarily calendar-month-aligned), so this
+# period is keyed by an opaque label rather than a guessed start time.
+# Opening the NEXT period after this one requires a provider-confirmed
+# remaining count via start_new_period() — never assumed from the clock
+# alone (see that function's docstring) — so no constant is defined here
+# for whatever comes after 1 Nov; that reconciliation happens when it
+# happens, against real data, not a hardcoded guess made today.
+CURRENT_PERIOD_KEY = "2026-10-exhausted"
+CURRENT_PERIOD_RESET_UTC = "2026-11-01T00:00:00+00:00"
+
+
+def ensure_current_period():
+    """Idempotently seed CURRENT_PERIOD_KEY as exhausted if it doesn't
+    exist yet. Safe to call at the top of every pipeline run — a no-op
+    once the period record already exists."""
+    return init_exhausted_period(CURRENT_PERIOD_KEY, CURRENT_PERIOD_RESET_UTC)
+
+
 def _now_iso(now_utc=None):
     return (now_utc or datetime.now(timezone.utc)).isoformat()
 

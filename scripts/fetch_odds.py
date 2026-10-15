@@ -138,6 +138,37 @@ DRAW_POSSIBLE_SPORTS = {
 }
 
 
+def build_registry():
+    """The current seasonal sport registry, in the shape
+    research_shortlist.py needs for mapping a Stage 1 candidate back to a
+    real Odds API query key (2026-10-15 redesign, Section 3). Derived
+    directly from SPORTS/SPORT_LABELS/EXPANDED_MARKET_SPORTS/
+    TOTALS_ONLY_SPORTS so the registry Stage 1 sees can never drift from
+    what fetch_upcoming_odds will actually accept."""
+    registry = {}
+    for sport in SPORTS:
+        if sport in EXPANDED_MARKET_SPORTS:
+            markets = "h2h,spreads,totals"
+        elif sport in TOTALS_ONLY_SPORTS:
+            markets = "h2h,totals"
+        else:
+            markets = "h2h"
+        registry[sport] = {
+            "label": SPORT_LABELS.get(sport, sport.upper().replace('_', ' ')),
+            "markets": markets,
+            "max_credits": sport_credit_cost(sport),
+        }
+    return registry
+
+
+# The x-requests-remaining header from the LAST successful response of the
+# most recent fetch_upcoming_odds() call (2026-10-15 redesign) -- lets a
+# caller feed quota_budget.reconcile_provider_headers() the provider's own
+# count without spending a separate quota-free check every run. None until
+# at least one call in the most recent fetch_upcoming_odds() succeeded.
+LAST_QUOTA_REMAINING = None
+
+
 def sport_credit_cost(sport):
     """The Odds API bills per sport query x markets x regions, not per
     match (2026-10-15 redesign, Section 2). This run always queries one
@@ -186,8 +217,9 @@ def fetch_upcoming_odds(sport_keys, hours_ahead=24):
     window (~76-84h) to pool Friday/Saturday/Sunday fixtures together into
     one combined multi build instead of one day's slate at a time -- same
     scanning/extraction/sort logic either way, just a wider net."""
-    global LAST_FETCH_ERRORS
+    global LAST_FETCH_ERRORS, LAST_QUOTA_REMAINING
     LAST_FETCH_ERRORS = []
+    LAST_QUOTA_REMAINING = None
     all_matches = []
 
     for sport in sport_keys:
@@ -269,6 +301,8 @@ def fetch_upcoming_odds(sport_keys, hours_ahead=24):
 
             quota = response.headers.get('x-requests-remaining', 'unknown')
             print(f"[{sport}] {added} matches today. Quota remaining: {quota}")
+            if quota != 'unknown':
+                LAST_QUOTA_REMAINING = quota
 
         except requests.exceptions.HTTPError as e:
             print(f"[{sport}] HTTP {e.response.status_code}: {e}")

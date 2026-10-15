@@ -1,15 +1,31 @@
 """
 check_results.py — Resolves pending picks against completed scores.
 Run via check_results.yml workflow at 11pm NZT (11am UTC) daily.
-Uses The Odds API /scores endpoint (free tier, no extra quota cost).
+Uses The Odds API /scores endpoint.
+
+2026-10-15 (redesign, Section 6): this endpoint is NOT free — it costs 2
+credits per sport query, the same as any other Odds API call (the old
+comment above calling it "free tier, no extra quota cost" was simply
+wrong, and rotating through all 14 registered sports with unrestricted
+polling could cost 14 x 2 x 31 = 868 credits/month before a single odds
+call — more than the account's entire allowance). Distinct sport /scores
+calls are now capped at MAX_DAILY_SPORT_SCORE_CALLS per NZ day, reserved
+through quota_budget.py's SCORES bucket exactly like Stage 2's odds calls
+reserve ODDS credits, and a sport that doesn't make the cap today is
+retried tomorrow via a fair urgency ordering (closest to falling out of
+the API's 3-day scores history window goes first), not a fixed rotation.
 
 Flat stake: $10 NZD per pick.
 """
 
 import json
 import os
+import sys
 import requests
 from datetime import date, datetime, timezone
+
+sys.path.insert(0, os.path.dirname(__file__))
+import quota_budget
 
 ODDS_API_KEY = os.environ.get('ODDS_API_KEY', '')
 BASE_URL = "https://api.the-odds-api.com/v4"
@@ -17,6 +33,12 @@ BASE_URL = "https://api.the-odds-api.com/v4"
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 PICKS_PATH = os.path.join(REPO_ROOT, 'data', 'picks.json')
 FLAT_STAKE = 10.0  # NZD
+
+# The real per-call cost (Section 6: "despite the code comment calling it
+# free") and the hard daily cap on distinct sports checked — see the
+# module docstring for why both exist.
+SCORES_CREDIT_COST = 2
+MAX_DAILY_SPORT_SCORE_CALLS = 2
 
 # The Odds API's /scores endpoint only returns completed games from the last
 # `daysFrom` days (max 3), so a pick whose match never resolves within that
@@ -89,6 +111,19 @@ def calculate_pnl(result, odds):
         return 0.0  # push
 
 
+def _urgency(sport_picks, today):
+    """Days until the OLDEST pending pick for this sport falls out of the
+    scores endpoint's 3-day history window -- the sport with the highest
+    value here is the one that most urgently needs to be checked today."""
+    days = []
+    for p in sport_picks:
+        try:
+            days.append((today - date.fromisoformat(p['date'])).days)
+        except ValueError:
+            days.append(0)
+    return max(days) if days else 0
+
+
 def check_and_resolve():
     if not os.path.exists(PICKS_PATH):
         print("No picks.json found — nothing to resolve")
@@ -110,11 +145,41 @@ def check_and_resolve():
         sk = pick['sport_key']
         by_sport.setdefault(sk, []).append(pick)
 
-    resolved_count = 0
     today = datetime.now(timezone.utc).date()
 
-    for sport_key, sport_picks in by_sport.items():
+    # Fair rotation, not a fixed order: the sport(s) closest to losing
+    # their pending picks out of the 3-day history window go first, so a
+    # day that can't afford to check every sport still checks the most
+    # urgent ones (Section 6).
+    ordered_sports = sorted(by_sport.keys(), key=lambda sk: -_urgency(by_sport[sk], today))
+
+    quota_budget.ensure_current_period()
+    period_key = quota_budget.CURRENT_PERIOD_KEY
+
+    resolved_count = 0
+    checked_sports = 0
+    skipped_sports = []
+
+    for sport_key in ordered_sports:
+        sport_picks = by_sport[sport_key]
+
+        if checked_sports >= MAX_DAILY_SPORT_SCORE_CALLS:
+            print(f"  [{sport_key}] daily sport-score cap ({MAX_DAILY_SPORT_SCORE_CALLS}) reached — "
+                  f"checking tomorrow instead.")
+            skipped_sports.append(sport_key)
+            continue
+
+        reservation_id = quota_budget.reserve(
+            period_key, quota_budget.SCORES, SCORES_CREDIT_COST, note=f"scores check: {sport_key}",
+        )
+        if reservation_id is None:
+            print(f"  ::warning:: [{sport_key}] scores credit budget has no room left this period — skipping.")
+            skipped_sports.append(sport_key)
+            continue
+
+        checked_sports += 1
         scores = fetch_scores(sport_key)
+        quota_budget.confirm(period_key, reservation_id)
         if not scores:
             print(f"  [{sport_key}] No scores returned")
             continue
@@ -205,11 +270,46 @@ def check_and_resolve():
                 pnl_str = f"${pnl:+.2f}" if pnl is not None else "manual"
                 print(f"  ✅ {pick['match']}: {result.upper()} ({pnl_str})")
 
+    # A pick whose sport didn't make today's cap, and is getting close to
+    # falling out of the scores endpoint's 3-day history window, is
+    # flagged settlement_pending_external -- distinct from the 'pending'
+    # result itself (still retried normally tomorrow) and from 'unresolved'
+    # (a genuine data-matching failure): this is "we didn't even get to
+    # check, because of the daily budget cap, not because the data wasn't
+    # there" (Section 6: "Mark missed/uncertain results
+    # settlement_pending_external and report them"). Recomputed fresh
+    # every run from current pending state, not left stuck on from a
+    # previous run once a pick actually resolves.
+    still_pending_ids = {p['id'] for p in all_picks if p['result'] == 'pending'}
+    for sport_key in skipped_sports:
+        for pick in by_sport[sport_key]:
+            if pick['id'] not in still_pending_ids:
+                continue
+            try:
+                days_pending = (today - date.fromisoformat(pick['date'])).days
+            except ValueError:
+                days_pending = 0
+            urgent = days_pending >= STALE_PENDING_DAYS - 1
+            for p in all_picks:
+                if p['id'] == pick['id']:
+                    if urgent:
+                        p['settlement_pending_external'] = True
+                        print(f"::warning::[{sport_key}] {pick['match']} is {days_pending}d pending and "
+                              f"wasn't checked this run (daily sport-score cap) — flagged "
+                              f"settlement_pending_external.")
+                    else:
+                        p.pop('settlement_pending_external', None)
+                    break
+    for p in all_picks:
+        if p['result'] == 'pending' and p.get('sport_key') not in skipped_sports:
+            p.pop('settlement_pending_external', None)
+
     # Save updated picks
     with open(PICKS_PATH, 'w') as f:
         json.dump(all_picks, f, indent=2)
 
-    print(f"\n✅ Resolved {resolved_count} pick(s)")
+    print(f"\n✅ Resolved {resolved_count} pick(s)"
+          + (f" — {len(skipped_sports)} sport(s) deferred to tomorrow ({', '.join(skipped_sports)})" if skipped_sports else ""))
     return resolved_count
 
 

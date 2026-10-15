@@ -13,6 +13,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 import main as pm_main
 import fetch_odds
 import run_status
+import quota_budget
+
+RESEARCH_RECORD_NRL_SELECTED = {"selected_sport_keys": ["rugbyleague_nrl"], "candidates": [], "warnings": []}
+RESEARCH_RECORD_NONE_SELECTED = {"selected_sport_keys": [], "candidates": [], "warnings": []}
 
 
 class EmptyFixturesWriteTests(unittest.TestCase):
@@ -21,14 +25,20 @@ class EmptyFixturesWriteTests(unittest.TestCase):
         self._orig = (pm_main.REPO_ROOT, pm_main.LATEST_RUN_PATH, pm_main.CARDS_DIR)
         pm_main.LATEST_RUN_PATH = os.path.join(self.tmp, "data", "latest_run.json")
         pm_main.CARDS_DIR = os.path.join(self.tmp, "data", "cards")
+        self._orig_budget_path = quota_budget.BUDGET_PATH
+        quota_budget.BUDGET_PATH = os.path.join(self.tmp, "quota_budget.json")
+        quota_budget.start_new_period(quota_budget.CURRENT_PERIOD_KEY, quota_budget.CURRENT_PERIOD_RESET_UTC,
+                                       confirmed_provider_remaining=500)
 
     def tearDown(self):
         pm_main.REPO_ROOT, pm_main.LATEST_RUN_PATH, pm_main.CARDS_DIR = self._orig
+        quota_budget.BUDGET_PATH = self._orig_budget_path
         fetch_odds.LAST_FETCH_ERRORS = []
         shutil.rmtree(self.tmp, ignore_errors=True)
 
+    @patch("research_shortlist.run_research_shortlist", return_value=dict(RESEARCH_RECORD_NRL_SELECTED))
     @patch("fetch_odds.fetch_upcoming_odds", return_value=[])
-    def test_genuinely_zero_fixtures_still_writes_a_fresh_run_with_no_value_status(self, _mock):
+    def test_genuinely_zero_fixtures_still_writes_a_fresh_run_with_no_value_status(self, _mock, _research):
         fetch_odds.LAST_FETCH_ERRORS = []  # no errors -> genuinely nothing today
         pm_main.run()
 
@@ -42,8 +52,9 @@ class EmptyFixturesWriteTests(unittest.TestCase):
         self.assertIn("run_date", saved)
         self.assertEqual(saved["odds_api_errors"], [])
 
+    @patch("research_shortlist.run_research_shortlist", return_value=dict(RESEARCH_RECORD_NRL_SELECTED))
     @patch("fetch_odds.fetch_upcoming_odds", return_value=[])
-    def test_odds_api_failure_on_every_sport_is_an_operational_failure_not_no_value(self, _mock):
+    def test_odds_api_failure_on_every_sport_is_an_operational_failure_not_no_value(self, _mock, _research):
         # Simulate every sport's fetch raising (dead key / rate limit) --
         # fetch_upcoming_odds itself still returns [] (it swallows per-sport
         # errors) but populates LAST_FETCH_ERRORS, which main.py must check.
@@ -61,8 +72,9 @@ class EmptyFixturesWriteTests(unittest.TestCase):
         self.assertFalse(saved["pick"]["has_pick"])
         self.assertEqual(len(saved["odds_api_errors"]), 2)
 
+    @patch("research_shortlist.run_research_shortlist", return_value=dict(RESEARCH_RECORD_NRL_SELECTED))
     @patch("fetch_odds.fetch_upcoming_odds", return_value=[])
-    def test_api_outage_after_a_prior_successful_run_cannot_reuse_yesterdays_pick(self, _mock):
+    def test_api_outage_after_a_prior_successful_run_cannot_reuse_yesterdays_pick(self, _mock, _research):
         # Seed yesterday's successful run on disk, exactly as a real prior
         # day's latest_run.json would look.
         os.makedirs(os.path.dirname(pm_main.LATEST_RUN_PATH), exist_ok=True)

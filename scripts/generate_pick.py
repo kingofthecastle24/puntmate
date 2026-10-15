@@ -732,6 +732,84 @@ def select_closest_to_passing(rejected_candidates):
     return max(qualifying, key=lambda r: r["edge_pct"])
 
 
+RESEARCH_ANCHOR_MAX_AGE_SECONDS = 60 * 60  # Section 9 safety default: public anchor age <= 60 minutes
+
+
+def build_research_only_pick(candidate, now_utc=None):
+    """Build a RESEARCH_ONLY lead from a Stage 1 (research_shortlist.py)
+    candidate whose odds couldn't be gated this run (no sport selected,
+    quota exhausted, or the mapped sport wasn't queried). Returns None if
+    the candidate doesn't actually have what a lead needs -- a verified,
+    fresh public market anchor and a fixture that hasn't started -- never
+    a best-effort guess.
+
+    Deliberately NEVER sets our_probability/implied_probability/edge_pct,
+    bet_type or risk -- those are odds-gated-path concepts (Section 7:
+    "Do not present the pick as having passed the model gate... or call
+    it investor/punter/gambler-approved"). This builder only produces the
+    DATA; main.py currently surfaces its result as an internal
+    `research_lead` (same no-ledger, not-the-official-pick treatment as
+    Degen Watch) rather than auto-publishing it -- wiring a RESEARCH_ONLY
+    card/caption through the renderer and copy_validator is a follow-up,
+    not done here, so this never reaches render_card/publish_pick on its
+    own.
+    """
+    from datetime import datetime, timezone as _tz
+    now_utc = now_utc or datetime.now(_tz.utc)
+
+    anchor = candidate.get("market_anchor")
+    if not anchor or not isinstance(anchor, dict):
+        return None
+    url = anchor.get("url", "")
+    if not isinstance(url, str) or not url.startswith("https://"):
+        return None
+    try:
+        price = float(anchor["price"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    if price <= 1.0:
+        return None
+    try:
+        observed = datetime.fromisoformat(str(anchor["observed_at_utc"]).replace("Z", "+00:00"))
+        kickoff = datetime.fromisoformat(str(candidate["kickoff_utc"]).replace("Z", "+00:00"))
+    except (KeyError, TypeError, ValueError):
+        return None
+    if (now_utc - observed).total_seconds() > RESEARCH_ANCHOR_MAX_AGE_SECONDS:
+        return None
+    if kickoff <= now_utc:
+        return None
+
+    participants = candidate.get("participants") or []
+    home = participants[0] if len(participants) > 0 else ""
+    away = participants[1] if len(participants) > 1 else ""
+
+    return {
+        "has_pick": True,
+        "content_mode": "RESEARCH_ONLY",
+        "match": f"{home} vs {away}" if home and away else candidate.get("fixture_id", ""),
+        "sport": candidate.get("sport_key") or "",
+        "sport_label": candidate.get("sport_name", ""),
+        "home_team": home,
+        "away_team": away,
+        "kickoff": candidate["kickoff_utc"],
+        "selection": candidate.get("proposed_selection", ""),
+        "market": candidate.get("market_type", ""),
+        "odds": price,
+        "our_probability": None,
+        "implied_probability": None,
+        "edge_pct": None,
+        "risk": None,
+        "bet_type": None,
+        "final_explanation": candidate.get("research_reason", ""),
+        "confidence": None,
+        "confidence_label": None,
+        "uncertainty_flags": candidate.get("uncertainty_flags", []),
+        "research_warnings": [],
+        "public_market_anchor": anchor,
+        "fixture_id": candidate.get("fixture_id"),
+    }
+
+
 def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_matches=None):
     """
     matches: list of match dicts from fetch_odds.fetch_upcoming_odds()
