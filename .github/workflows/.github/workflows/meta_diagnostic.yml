@@ -1,0 +1,38 @@
+name: PuntMate Read-only Meta Diagnostic
+'on':
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: pip install requests
+    - name: Read-only masked Meta token diagnosis
+      env:
+        DIAG_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+        DIAG_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+        DIAG_IG_ID: ${{ secrets.IG_USER_ID }}
+      run: "python - <<'PYDIAG'\nimport os,json,requests\nfrom pathlib import Path\ntoken=os.environ.get('DIAG_TOKEN','')\n\
+        assert token, 'FACEBOOK_PAGE_TOKEN is not configured'\nprint('::add-mask::'+token)\nbase='https://graph.facebook.com/v21.0/'\n\
+        output={'secret_tested':'FACEBOOK_PAGE_TOKEN','read_only':True,'configured_page_id':os.environ.get('DIAG_PAGE_ID'),'configured_ig_id':os.environ.get('DIAG_IG_ID')}\n\
+        def get(path,fields=None,extra=None):\n    params={'access_token':token}\n    if fields:params['fields']=fields\n\
+        \    if extra:params.update(extra)\n    try:\n        r=requests.get(base+path,params=params,timeout=25)\n       \
+        \ data=r.json()\n        if 'error' in data:\n            e=data['error'];return {'ok':False,'http_status':r.status_code,'error':{k:e.get(k)\
+        \ for k in ('message','type','code','error_subcode')}}\n        return {'ok':r.ok,'http_status':r.status_code,'data':data}\n\
+        \    except Exception as e:return {'ok':False,'error_type':type(e).__name__}\noutput['identity']=get('me','id,name')\n\
+        page=os.environ.get('DIAG_PAGE_ID','') or 'me'\noutput['page_and_instagram']=get(page,'id,name,instagram_business_account{id,username}')\n\
+        output['permissions']=get('me/permissions')\nraw=get('debug_token',extra={'input_token':token})\nif raw.get('ok'):\n\
+        \    d=raw.get('data',{}).get('data',{})\n    output['token_metadata']={'ok':True,**{k:d.get(k) for k in ('is_valid','type','app_id','application','expires_at','data_access_expires_at','issued_at','scopes','granular_scopes','profile_id','user_id')\
+        \ if k in d}}\nelse:output['token_metadata']=raw\ntext=json.dumps(output,indent=2)\nassert token not in text, 'Refusing\
+        \ to output credential'\nprint(text)\nPath('data/diagnostics').mkdir(parents=True,exist_ok=True)\nPath('data/diagnostics/meta-readonly.json').write_text(text)\n\
+        with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('### Read-only Meta diagnostic\\n```json\\n'+text+'\\\
+        n```\\n')\nPYDIAG\n"
+    - uses: actions/upload-artifact@v4
+      with:
+        name: meta-readonly-diagnostic
+        path: data/diagnostics/meta-readonly.json
