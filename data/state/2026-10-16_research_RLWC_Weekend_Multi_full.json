@@ -31,6 +31,11 @@
       "state": "PARTIALLY_PUBLISHED",
       "at": "2026-10-15T18:06:00.760742+00:00",
       "note": "{\"telegram\": true, \"instagram_story\": false, \"facebook_story\": false}"
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-10-15T18:22:24.637112+00:00",
+      "note": "manual resend of ['instagram_story', 'facebook_story']: {\"instagram_story\": false, \"facebook_story\": true}"
     }
   ]
 }

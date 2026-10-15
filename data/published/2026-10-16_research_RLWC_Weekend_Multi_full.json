@@ -144,8 +144,16 @@
     "note": "Awaiting Meta token repair"
   },
   "facebook_story": {
-    "ok": false,
-    "held": true,
-    "note": "Awaiting Meta token repair"
+    "ok": true,
+    "frames": [
+      {
+        "ok": true,
+        "story_id": "1415358966808678"
+      },
+      {
+        "ok": true,
+        "story_id": "985790567143452"
+      }
+    ]
   }
 }
