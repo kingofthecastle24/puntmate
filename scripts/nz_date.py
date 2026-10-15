@@ -44,22 +44,25 @@ def nz_now_iso(now_utc=None):
     return now_utc.astimezone(NZ_TZ).isoformat()
 
 
-def is_todays_dst_regime_fire(target_hour, now_utc=None):
-    """2026-10-14 (Item 5, Micah decided: picks land at 7:00am NZ time).
-    generate.yml fires TWO companion crons for the same logical trigger,
-    one built for NZDT (UTC+13) and one for NZST (UTC+12), exactly one
-    hour apart in UTC -- since a GitHub Actions cron can't express a time
-    zone, there is no single fixed UTC time that is correct across both
-    regimes. On any given day only ONE of the two actually lands in the
-    intended NZ-local hour; the other is either an hour early or an hour
-    late for today's real offset. `target_hour` is the NZ-local hour the
-    CALLING cron entry was built for (e.g. 6 for a 6:50am-local buffer
-    ahead of a 7:00am send time); this returns True only when that is
-    also the hour it is RIGHT NOW in Auckland, so exactly one of the two
-    companion runs proceeds and the other is a clean no-op -- no manual
-    DST-date bookkeeping needed."""
+def is_todays_dst_regime_fire(target_hour, scheduled_cron, now_utc=None):
+    """Choose the cron companion for today's Auckland UTC offset.
+
+    GitHub can start a scheduled workflow hours late. Compare the UTC hour
+    in github.event.schedule with the hour required for target_hour in NZ,
+    never with the wall-clock hour when the runner happens to start.
+    Only a fixed numeric hour in a five-field cron is supported. Missing
+    or malformed schedules fail closed; manual dispatch bypasses the job
+    condition in generate.yml and does not need a scheduled cron.
+    """
+    fields = (scheduled_cron or "").split()
+    if len(fields) != 5 or not fields[1].isascii() or not fields[1].isdigit():
+        return False
+    cron_hour = int(fields[1])
+    if not 0 <= cron_hour <= 23:
+        return False
     now_utc = now_utc or datetime.now(timezone.utc)
-    return now_utc.astimezone(NZ_TZ).hour == target_hour
+    offset_hours = now_utc.astimezone(NZ_TZ).utcoffset().total_seconds() / 3600
+    return cron_hour == (target_hour - offset_hours) % 24
 
 
 def seconds_until_nz_time(hour, minute=0, now_utc=None, max_wait_seconds=1800):
