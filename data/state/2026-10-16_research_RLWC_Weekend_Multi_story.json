@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-16_research_RLWC_Weekend_Multi_story",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-15T18:02:54.695394+00:00",
+      "note": "Story-only correction requested by Micah; inspect actual story PNG"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-15T18:02:54.695600+00:00",
+      "note": "Story-only correction requested by Micah; inspect actual story PNG"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-15T18:02:54.695790+00:00",
+      "note": "Story-only correction requested by Micah; inspect actual story PNG"
+    }
+  ]
+}

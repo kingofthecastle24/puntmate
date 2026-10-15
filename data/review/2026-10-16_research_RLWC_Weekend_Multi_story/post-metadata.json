@@ -1,0 +1,70 @@
+{
+  "kind": "rlwc_multi",
+  "source_type": "research_based",
+  "legs": [
+    {
+      "match": "PNG vs Lebanon",
+      "selection": "Papua New Guinea",
+      "odds": 1.34,
+      "kickoff": "2026-10-17T04:25:00Z",
+      "market": "Match winner incl. extra time",
+      "sport_label": "RLWC 2026"
+    },
+    {
+      "match": "England vs Tonga",
+      "selection": "Tonga",
+      "odds": 1.61,
+      "kickoff": "2026-10-17T09:05:00Z",
+      "market": "Match winner incl. extra time",
+      "sport_label": "RLWC 2026"
+    },
+    {
+      "match": "Fiji vs Cook Islands",
+      "selection": "Fiji",
+      "odds": 1.18,
+      "kickoff": "2026-10-18T05:05:00Z",
+      "market": "Match winner incl. extra time",
+      "sport_label": "RLWC 2026"
+    }
+  ],
+  "caption": "\ud83c\udfc9 PUNTMATE NZ - WORLD CUP WEEKEND MULTI\n\nPapua New Guinea to beat Lebanon @ 1.34\nSat 17 Oct, 5:25pm NZDT\n\nTonga to beat England @ 1.61\nSat 17 Oct, 10:05pm NZDT\n\nFiji to beat Cook Islands @ 1.18\nSun 18 Oct, 6:05pm NZDT\n\nIndicative combined odds: ~2.55\nMatch winner markets, including extra time. Public PandaBet prices, not a TAB quote; odds can change.\n\nPNG's home advantage and Fiji's experienced spine are the base. Tonga's forward pack gets the nod against England, but that is the danger leg. All three must win.\n\nFor entertainment & informational purposes only. Not advice. 18+.\n\n#PuntMateNZ #RLWC2026 #RugbyLeague #WeekendMulti\n",
+  "analysis": "PNG have home advantage and Fiji have Koroisau and Wakeham guiding them. Tonga's pack gets the nod, but England are the danger leg. All three must win. Indicative public odds, not a TAB quote.",
+  "research_checked_at": "2026-10-15T17:58:27.005379+00:00",
+  "research_sources": [
+    "https://www.rlwc2026.com/draws-and-pools",
+    "https://www.nrl.com/news/2026/10/13/world-cup-team-lists-mens-round-1/",
+    "https://www.espn.com/nrl/story/_/id/50171393/rugby-league-world-cup-teams-line-ups-tips-odds-everything-need-know-weekend",
+    "https://www.pandabet.com.au/Sport/Rugby_League/World_Cup/Matches"
+  ],
+  "odds_source_url": "https://www.pandabet.com.au/Sport/Rugby_League/World_Cup/Matches",
+  "has_pick": true,
+  "pick_id": "2026-10-16_research_RLWC_Weekend_Multi_story",
+  "post_date": "2026-10-16",
+  "generated_at": "2026-10-15T18:00:02.543633+00:00",
+  "kickoff": "2026-10-17T04:25:00Z",
+  "match": "RLWC Weekend Multi",
+  "selection": "Papua New Guinea + Tonga + Fiji",
+  "odds": 2.545732,
+  "market": "Match winner multi",
+  "bet_type": "PUNTER_BET",
+  "risk": "STANDARD_PICK",
+  "confidence": "Medium",
+  "confidence_label": "Medium",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-16_RLWC_Weekend_Multi_night_punter_multi_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-16_RLWC_Weekend_Multi_night_punter_multi_2_legs.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-16_RLWC_Weekend_Multi_night_punter_multi_3_breakdown.png"
+  ],
+  "intended_platforms": [
+    "telegram",
+    "instagram_story",
+    "facebook_story"
+  ],
+  "render_warnings": [
+    "possible overflow: <SPAN> \"MULTI.\" +-341px/+21px",
+    "possible overflow: <SPAN> \"~2.55\" +0px/+17px",
+    "possible overflow: <SPAN> \"~2.55\" +0px/+9px"
+  ],
+  "stake_guidance_nzd": 10,
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-16_research_RLWC_Weekend_Multi_story/story.png"
+}
