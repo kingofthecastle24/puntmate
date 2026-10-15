@@ -1,0 +1,172 @@
+name: PuntMate Stand-in Research
+run-name: Stand-in ${{ inputs.action }} - ${{ inputs.pick_id || 'new research pick' }}
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Prepare a frozen package, or publish an inspected package
+        type: choice
+        options: [prepare, publish]
+        default: prepare
+        required: true
+      pick_json:
+        description: Real researched pick JSON (prepare only; no secrets)
+        type: string
+        required: false
+      pick_id:
+        description: Exact frozen package ID (publish only)
+        type: string
+        required: false
+      dry_run:
+        description: Simulate publishing without sending any posts
+        type: boolean
+        default: true
+concurrency:
+  group: puntmate-social-pipeline
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  standin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: scripts
+      ACTION: ${{ inputs.action }}
+      PICK_JSON: ${{ inputs.pick_json }}
+      PICK_ID: ${{ inputs.pick_id }}
+      DRY_RUN: ${{ inputs.dry_run }}
+      AUTO_PUBLISH: 'true'
+      RESEND_FAILED: 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests Pillow playwright
+      - if: inputs.action == 'prepare'
+        run: playwright install --with-deps chromium
+      - name: Validate and prepare research-only frozen package
+        if: inputs.action == 'prepare'
+        run: |
+          python - <<'PY'
+          import json, os, re, shutil
+          from pathlib import Path
+          from datetime import datetime, timezone
+          from zoneinfo import ZoneInfo
+          import render_brand_templates as renderer
+          from build_review_package import build_telegram_text, build_instagram_caption
+          from copy_validator import validate_post
+          from manifest import build_manifest, write_manifest
+          from workflow_state import transition, GENERATED, PREVIEW_READY, AWAITING_APPROVAL
+          now = datetime.now(timezone.utc)
+          local = now.astimezone(ZoneInfo('Pacific/Auckland'))
+          assert local.date().isoformat() < '2026-11-01', 'Stand-in authorization window ended'
+          p = json.loads(os.environ['PICK_JSON'])
+          required = ['match','sport','sport_label','market','selection','odds','kickoff','final_explanation','research_sources','odds_source_url','research_checked_at']
+          assert all(p.get(k) for k in required), 'Missing required pick evidence'
+          assert p.get('source_type') == 'research_based', 'Research source type required'
+          assert not any(p.get(k) for k in ('synthetic','test','is_test','force_test_pick')), 'No synthetic picks'
+          kickoff = datetime.fromisoformat(p['kickoff'].replace('Z','+00:00'))
+          checked = datetime.fromisoformat(p['research_checked_at'].replace('Z','+00:00'))
+          assert 0 < (kickoff-now).total_seconds() <= 86400, 'Fixture must be in next 24h'
+          assert 0 <= (now-checked).total_seconds() < 7200, 'Research is stale'
+          assert 1 < float(p['odds']) <= 2.2, 'Conservative odds required'
+          assert len(p['research_sources']) >= 2 and all(s.startswith('https://') for s in p['research_sources'])
+          assert p['odds_source_url'].startswith('https://')
+          p.update(has_pick=True, bet_type='INVESTOR_BET', bet_type_label='Investor Bet', risk='STANDARD_PICK', confidence='High', confidence_label='High')
+          p['bet_type_reason'] = p['final_explanation']
+          date = local.date().isoformat()
+          pick_id = date + '_research_' + renderer.slugify(p['match'])
+          assert not Path('data/review',pick_id).exists(), 'Frozen package already exists; inspect it or use its exact ID'
+          def kickoff_display(iso):
+              dt = datetime.fromisoformat(iso.replace('Z','+00:00')).astimezone(ZoneInfo('Pacific/Auckland'))
+              return dt.strftime('%a %d %b').upper(), dt.strftime('%a %d %b, %-I:%M%p').lower() + ' NZDT'
+          renderer.kickoff_display = kickoff_display
+          result = renderer.render_pick(p, date_str=date)
+          assert result['ok'], result
+          p['render_warnings'] = result.get('warnings', [])
+          review = Path('data/review',pick_id)
+          review.mkdir(parents=True)
+          for key, src in result['files'].items():
+              shutil.copyfile(src,review/(key+'.png'))
+          telegram, instagram = build_telegram_text(p), build_instagram_caption(p)
+          validate_post({'risk':p['risk'],'bet_type':p['bet_type'],'classification':p['risk'],'selection':p['selection']},telegram,instagram)
+          (review/'telegram-post.txt').write_text(telegram)
+          (review/'instagram-caption.txt').write_text(instagram)
+          # Public graphics stay in normal PuntMate style; provenance stays in metadata.
+          meta = dict(p, pick_id=pick_id, post_date=date, generated_at=now.isoformat(), intended_platforms=['telegram','instagram_feed','instagram_story'], source_type='research_based', stake_guidance_nzd=10, workflow_state='AWAITING_APPROVAL')
+          base = 'https://raw.githubusercontent.com/' + os.environ['GITHUB_REPOSITORY'] + '/main/'
+          # Normalize any absolute renderer paths before constructing public URLs.
+          meta['carousel_urls'] = [base+str(Path(result['files'][k]).resolve().relative_to(Path.cwd())) for k in ('cover','tip','breakdown')]
+          meta['story_url'] = base+str(Path(result['files']['story']).resolve().relative_to(Path.cwd()))
+          (review/'post-metadata.json').write_text(json.dumps(meta,indent=2))
+          names = [f.name for f in review.iterdir() if f.is_file()]
+          write_manifest(build_manifest(str(review),names,extra={'pick_id':pick_id,'created_at':now.isoformat()}),str(review/'manifest.json'))
+          for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL):
+              transition(os.getcwd(),pick_id,state,note='Research-based stand-in; visual review before live dispatch')
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
+              f.write('Prepared research-based package: '+pick_id+'\n\nInspect all four PNGs and captions before dispatching publish.\n')
+          PY
+      - name: Commit only stand-in packages, cards and state
+        if: inputs.action == 'prepare'
+        run: |
+          git config user.name 'PuntMate Bot'
+          git config user.email 'puntmatenz@gmail.com'
+          git add data/review/*_research_* data/state/*_research_*.json data/cards/
+          git diff --cached --quiet || git commit -m 'chore: freeze stand-in research package [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Validate exact package before publish
+        if: inputs.action == 'publish'
+        run: |
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          from datetime import datetime, timezone
+          from zoneinfo import ZoneInfo
+          from manifest import load_manifest, verify_manifest
+          now = datetime.now(timezone.utc)
+          today = now.astimezone(ZoneInfo('Pacific/Auckland')).date().isoformat()
+          assert today < '2026-11-01', 'Stand-in authorization window ended'
+          pid = os.environ['PICK_ID']
+          assert re.fullmatch(r'\d{4}-\d{2}-\d{2}_research_[A-Za-z0-9_]+',pid), 'Invalid research package ID'
+          d = Path('data/review',pid)
+          m = json.loads((d/'post-metadata.json').read_text())
+          assert m['pick_id']==pid and m['post_date']==today
+          assert m['source_type']=='research_based'
+          assert m['intended_platforms']==['telegram','instagram_feed','instagram_story'], 'Unexpected platform'
+          assert datetime.fromisoformat(m['kickoff'].replace('Z','+00:00')) > now, 'Fixture already started'
+          assert 0 <= (now-datetime.fromisoformat(m['research_checked_at'].replace('Z','+00:00'))).total_seconds() < 7200, 'Research stale'
+          ok, errors = verify_manifest(load_manifest(str(d/'manifest.json')),str(d))
+          assert ok, errors
+          PY
+      - name: Publish verified frozen files (or dry run)
+        if: inputs.action == 'publish'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          INSTAGRAM_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+        run: python scripts/publish_pick.py
+      - name: Persist platform receipts and state
+        if: always() && inputs.action == 'publish' && inputs.dry_run == false
+        run: |
+          git config user.name 'PuntMate Bot'
+          git config user.email 'puntmatenz@gmail.com'
+          git add data/published/*_research_*.json data/state/*_research_*.json 2>/dev/null || true
+          git diff --cached --quiet || git commit -m 'chore: record stand-in publish results [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: standin-research-evidence
+          path: |
+            data/review/*_research_*/
+            data/published/*_research_*.json
+            data/state/*_research_*.json
