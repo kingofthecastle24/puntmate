@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-17_research_Alexander_Zverev_vs_Alejandro_Davidovich_Fokina",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-16T17:19:39.490516+00:00",
       "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-16T17:20:44.553598+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-16T17:20:44.553795+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-10-16T17:20:46.823031+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false}"
     }
   ]
 }
