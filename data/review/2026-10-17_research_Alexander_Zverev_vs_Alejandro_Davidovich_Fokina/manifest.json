@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "848b1ef16b435a267ff355f18e0bdef3df567fed9e38654b5e2b5f4d1cd8ea71",
+      "bytes": 86035
+    },
+    "instagram-caption.txt": {
+      "sha256": "e794a73b38f82c7d92621e22b11933363ba44936827acf35ef8a7a18f4466872",
+      "bytes": 459
+    },
+    "cover.png": {
+      "sha256": "4973afcace8d93895002103d9f770153db0da7719e1e288f1d322f8d6c35c89c",
+      "bytes": 76959
+    },
+    "post-metadata.json": {
+      "sha256": "4cf3181f52a053818ad345636f6618b9ee0fab1b212663ba05e4776420bca41b",
+      "bytes": 2833
+    },
+    "breakdown.png": {
+      "sha256": "e4d68b10ffff912c58dfe0396c285943d8071669c96f765ffcf1e2adfd412daa",
+      "bytes": 122431
+    },
+    "telegram-post.txt": {
+      "sha256": "44c98d48021c19aa83c2f74bf909bfe44e5bdba5a9f43a8e0248efbc53b8f784",
+      "bytes": 493
+    },
+    "story.png": {
+      "sha256": "dcd9ddf6e3eb191595f5696af0d67b224e6464a8411865a47926ecd549c740f1",
+      "bytes": 75079
+    }
+  },
+  "pick_id": "2026-10-17_research_Alexander_Zverev_vs_Alejandro_Davidovich_Fokina",
+  "created_at": "2026-10-16T17:19:35.397887+00:00"
+}

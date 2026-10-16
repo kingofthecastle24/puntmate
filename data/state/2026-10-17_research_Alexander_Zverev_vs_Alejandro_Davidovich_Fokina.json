@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-17_research_Alexander_Zverev_vs_Alejandro_Davidovich_Fokina",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-16T17:19:39.490244+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-16T17:19:39.490368+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-16T17:19:39.490516+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}

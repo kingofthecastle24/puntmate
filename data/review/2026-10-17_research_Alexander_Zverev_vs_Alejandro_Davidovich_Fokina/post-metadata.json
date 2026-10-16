@@ -1,0 +1,49 @@
+{
+  "match": "Alexander Zverev vs Alejandro Davidovich Fokina",
+  "sport": "tennis_atp_shanghai",
+  "sport_label": "ATP SHANGHAI",
+  "market": "Match winner",
+  "selection": "Alexander Zverev",
+  "odds": 1.28,
+  "kickoff": "2026-10-17T08:30:00Z",
+  "final_explanation": "Zverev leads the matchup 6-1 and beat De Minaur 6-4, 6-4 in 78 minutes. His serve suits Shanghai. A reported ankle niggle and a rested Davidovich Fokina are the risks.",
+  "source_type": "research_based",
+  "research_sources": [
+    "https://www.atptour.com/en/news/shanghai-2026-schedule",
+    "https://en.rolexshanghaimasters.com/en/media/news/zverev-de-minaur-shanghai-2026-qf",
+    "https://en.rolexshanghaimasters.com/en/media/news/fokina-advances-to-semifinals-after-gea-retirement",
+    "https://tenngrand.com/shanghai-tennis-preview-pick-prediction-zverev-vs-davidovich-fokina/",
+    "https://www.oddssafari.com/matches/tennis/atp-shanghai/zverev-a.-vs-davidovich-fokina-a./9220585",
+    "https://www.statsinsider.com.au/news/alexander-zverev-vs-alejandro-davidovich-fokina-prediction-atp-shanghai-masters-2026"
+  ],
+  "odds_source_url": "https://www.oddssafari.com/matches/tennis/atp-shanghai/zverev-a.-vs-davidovich-fokina-a./9220585",
+  "research_checked_at": "2026-10-16T17:18:46.710407+00:00",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "Zverev leads the matchup 6-1 and beat De Minaur 6-4, 6-4 in 78 minutes. His serve suits Shanghai. A reported ankle niggle and a rested Davidovich Fokina are the risks.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.28\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-17_research_Alexander_Zverev_vs_Alejandro_Davidovich_Fokina",
+  "post_date": "2026-10-17",
+  "generated_at": "2026-10-16T17:19:35.397887+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-17_Alexander_Zverev_vs_Alejandro_Davidovich_Fokina_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-17_Alexander_Zverev_vs_Alejandro_Davidovich_Fokina_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-17_Alexander_Zverev_vs_Alejandro_Davidovich_Fokina_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-17_Alexander_Zverev_vs_Alejandro_Davidovich_Fokina_night_story.png"
+}
