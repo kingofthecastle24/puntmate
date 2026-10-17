@@ -1,0 +1,111 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 271,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1792257823,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAQ9q068fGpnZOX0hQWm3PD-a_rtirgACVw5rGzHcmEYJMujOcYyDMQEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADVw5rGzHcmEZ4",
+            "file_size": 824,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAQ9q068fGpnZOX0hQWm3PD-a_rtirgACVw5rGzHcmEYJMujOcYyDMQEAAwIAA20AAz0E",
+            "file_unique_id": "AQADVw5rGzHcmEZy",
+            "file_size": 7429,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAQ9q068fGpnZOX0hQWm3PD-a_rtirgACVw5rGzHcmEYJMujOcYyDMQEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADVw5rGzHcmEZ9",
+            "file_size": 32164,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAQ9q068fGpnZOX0hQWm3PD-a_rtirgACVw5rGzHcmEYJMujOcYyDMQEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADVw5rGzHcmEZ-",
+            "file_size": 61108,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAQ9q068fGpnZOX0hQWm3PD-a_rtirgACVw5rGzHcmEYJMujOcYyDMQEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADVw5rGzHcmEZ8",
+            "file_size": 61285,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 RLWC 2026\n\n\ud83c\udfdf Fiji vs Cook Islands\n\nPICK: Fiji\nODDS: 1.16 (Match winner)\nInvestor Bet\n\nFiji have won three straight against Cook Islands, including 44-24 last year and 56-6 in 2024, and regain captain Api Koroisau. Cook Islands are without Val Holmes and Marata Niukore. Fiji missing fullback Jahream Bula is the risk.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 26,
+            "type": "bold"
+          },
+          {
+            "offset": 53,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 64,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 90,
+            "length": 12,
+            "type": "bold"
+          },
+          {
+            "offset": 104,
+            "length": 231,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Monday, 12-Oct-26 02:00:00 PDT. The current time is Saturday, 17-Oct-26 10:23:43 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AZyXzE9BXs5l-wt-o4mI9te",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Monday, 12-Oct-26 02:00:00 PDT. The current time is Saturday, 17-Oct-26 10:23:43 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "A2yzApKQWNHfhyB4Mqe6dWY"
+    }
+  }
+}
