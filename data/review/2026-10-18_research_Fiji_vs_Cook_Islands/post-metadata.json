@@ -1,0 +1,47 @@
+{
+  "match": "Fiji vs Cook Islands",
+  "sport": "rugby_league_rlwc",
+  "sport_label": "RLWC 2026",
+  "market": "Match winner",
+  "selection": "Fiji",
+  "odds": 1.16,
+  "kickoff": "2026-10-18T05:05:00Z",
+  "final_explanation": "Fiji have won three straight against Cook Islands, including 44-24 last year and 56-6 in 2024, and regain captain Api Koroisau. Cook Islands are without Val Holmes and Marata Niukore. Fiji missing fullback Jahream Bula is the risk.",
+  "source_type": "research_based",
+  "research_sources": [
+    "https://www.freetips.com/rugby-league/fiji-vs-cook-islands-tips-20261015-0031/",
+    "https://insights.betfred.com/rugby-league/rugby-league-world-cup/fiji-vs-cook-islands-prediction-betting-tips-sunday-18-october-2026/",
+    "https://www.rlwc2026.com/draws-and-pools",
+    "https://en.wikipedia.org/wiki/2026_Men%27s_Rugby_League_World_Cup"
+  ],
+  "odds_source_url": "https://www.betnova.com.au/Sport/Rugby_League/World_Cup/Matches",
+  "research_checked_at": "2026-10-17T17:19:45.262993+00:00",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "Fiji have won three straight against Cook Islands, including 44-24 last year and 56-6 in 2024, and regain captain Api Koroisau. Cook Islands are without Val Holmes and Marata Niukore. Fiji missing fullback Jahream Bula is the risk.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.16\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-18_research_Fiji_vs_Cook_Islands",
+  "post_date": "2026-10-18",
+  "generated_at": "2026-10-17T17:20:56.498616+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-18_Fiji_vs_Cook_Islands_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-18_Fiji_vs_Cook_Islands_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-18_Fiji_vs_Cook_Islands_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-18_Fiji_vs_Cook_Islands_night_story.png"
+}

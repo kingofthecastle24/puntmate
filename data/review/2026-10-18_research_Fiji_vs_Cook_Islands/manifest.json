@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "ce032971fa73e5576b909e72e50f026512b528406cf08692b5a1fb1f5f3abc28",
+      "bytes": 68758
+    },
+    "instagram-caption.txt": {
+      "sha256": "7d9552494eec58de70228960c6be558aac813fe52de36962e5bb7b6cd59b353a",
+      "bytes": 478
+    },
+    "cover.png": {
+      "sha256": "23b70f06a22f3fe52cf4959ce4954615f6cd060fa89492b20b4a5778d44c23b0",
+      "bytes": 77842
+    },
+    "post-metadata.json": {
+      "sha256": "602df335b328d07e33284729cdd664284c00a23e7e05a7ae572e0da467e526c9",
+      "bytes": 2505
+    },
+    "breakdown.png": {
+      "sha256": "02492de71a7d21f006670867c622f98b733d5c3b940b34928ee2f63916c896dc",
+      "bytes": 116856
+    },
+    "telegram-post.txt": {
+      "sha256": "04330d87c2bb677085924e74d297969ea0faeaad52b3e9ac28838b6b19bd12e8",
+      "bytes": 515
+    },
+    "story.png": {
+      "sha256": "995a1e65d42474dbd13c30958ecb2c3069ea908f4637829b4ae8f2b702a23cec",
+      "bytes": 53216
+    }
+  },
+  "pick_id": "2026-10-18_research_Fiji_vs_Cook_Islands",
+  "created_at": "2026-10-17T17:20:56.498616+00:00"
+}

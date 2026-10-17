@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-18_research_Fiji_vs_Cook_Islands",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-17T17:20:58.839363+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-17T17:20:58.839495+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-17T17:20:58.839641+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}
