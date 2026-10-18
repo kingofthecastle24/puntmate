@@ -251,3 +251,25 @@ Every result on the record, wins and losses alike.
 📲 Join Telegram for daily picks
 ⚠️ For entertainment & informational purposes only. Not advice. 18+.
 ```
+
+
+## Week 2026-10-12 → 2026-10-18 (auto-generated)
+
+```
+*📈 PUNTMATE NZ — WEEKLY RECAP*
+_12 Oct – 18 Oct 2026_
+
+*Overall: 0W – 0L  ·  Strike rate —*
+
+📊 Investor: 0W – 0L  (—)
+
+⏳ 1 pick(s) still to settle — counted next week, never guessed.
+
+🔍 3 no-bet day(s) this week — nothing cleared the bar, so nothing was forced.
+
+Every result on the record, wins and losses alike.
+
+──────────────────
+📲 Join Telegram for daily picks
+⚠️ For entertainment & informational purposes only. Not advice. 18+.
+```
