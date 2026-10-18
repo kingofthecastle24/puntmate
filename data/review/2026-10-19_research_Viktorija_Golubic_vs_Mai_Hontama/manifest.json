@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "173a98c6e7eec637812aac2eec1bbfe9df1143740d7ada48eba29547eb1ea6e1",
+      "bytes": 83631
+    },
+    "instagram-caption.txt": {
+      "sha256": "3fc91525580635882826e44c242867e1bd0f264e23fc7a145f12dbeaab1b694d",
+      "bytes": 456
+    },
+    "cover.png": {
+      "sha256": "7f95237e24e826637e35d0d877bd2336b351f37274231bf6a62599190e20beec",
+      "bytes": 77503
+    },
+    "post-metadata.json": {
+      "sha256": "273b042dbfcfbcc3c4b75d035cca589fdd760831ad33f9171b58689c473855da",
+      "bytes": 2546
+    },
+    "breakdown.png": {
+      "sha256": "412629dd2291ff7f091b614ed4a2908447caf334aaa7ad7ea1235ac459ba80f5",
+      "bytes": 125880
+    },
+    "telegram-post.txt": {
+      "sha256": "2e1b1396988c97a3e31e61a0d129404a03e3d7f7b2f88966f3dd68ee79e5bd8c",
+      "bytes": 493
+    },
+    "story.png": {
+      "sha256": "94833ccf7e422b90582c714b5173f483e3a1d0c563faf323c9047a2abe1a13b0",
+      "bytes": 74160
+    }
+  },
+  "pick_id": "2026-10-19_research_Viktorija_Golubic_vs_Mai_Hontama",
+  "created_at": "2026-10-18T17:18:47.302341+00:00"
+}

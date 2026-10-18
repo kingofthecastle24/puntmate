@@ -1,0 +1,47 @@
+{
+  "match": "Viktorija Golubic vs Mai Hontama",
+  "sport": "tennis_wta_osaka",
+  "sport_label": "WTA OSAKA",
+  "market": "Match winner",
+  "selection": "Viktorija Golubic",
+  "odds": 1.28,
+  "kickoff": "2026-10-19T02:30:00Z",
+  "final_explanation": "Golubic is ranked 72 to Hontama's 164 and won their only meeting. Home wildcard Hontama has lost her last two. Golubic's own two defeats came against top-20 opponents and are the risk.",
+  "source_type": "research_based",
+  "research_sources": [
+    "https://tennistonic.com/tennis-news/1066963/h2h-prediction-of-viktorija-golubic-vs-mai-hontama-in-osaka-with-odds-preview-pick-19th-october-2026/",
+    "https://agatha.gg/wta/hontama-vs-golubic-2026-10-19",
+    "https://www.tennis.com/tournaments/kinoshita-group-japan-open/matches/v-golubic-vs-m-hontama-2026-10-19",
+    "https://wtafiles.wtatennis.com/pdf/draws/2026/405/OP.pdf"
+  ],
+  "odds_source_url": "https://www.unibet.fr/paris-tennis/wta/osaka/3390643/v-golubic-vs-m-hontama",
+  "research_checked_at": "2026-10-18T17:17:56.002409+00:00",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "Golubic is ranked 72 to Hontama's 164 and won their only meeting. Home wildcard Hontama has lost her last two. Golubic's own two defeats came against top-20 opponents and are the risk.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.28\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-19_research_Viktorija_Golubic_vs_Mai_Hontama",
+  "post_date": "2026-10-19",
+  "generated_at": "2026-10-18T17:18:47.302341+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-19_Viktorija_Golubic_vs_Mai_Hontama_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-19_Viktorija_Golubic_vs_Mai_Hontama_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-19_Viktorija_Golubic_vs_Mai_Hontama_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-19_Viktorija_Golubic_vs_Mai_Hontama_night_story.png"
+}
