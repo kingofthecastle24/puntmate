@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-19_research_Viktorija_Golubic_vs_Mai_Hontama",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-18T17:19:01.095290+00:00",
       "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-18T17:20:22.709989+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-18T17:20:22.710239+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-10-18T17:20:24.741719+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false}"
     }
   ]
 }
