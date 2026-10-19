@@ -15,6 +15,7 @@ copy_validator bans from every other public surface. This version:
     other public post
 """
 
+import hashlib
 import json
 import os
 import sys
@@ -30,6 +31,11 @@ CHANNEL_ID = os.environ['TELEGRAM_CHANNEL_ID']
 REPO_ROOT = os.path.join(os.path.dirname(__file__), '..')
 PICKS_PATH = os.path.join(REPO_ROOT, 'data', 'picks.json')
 RECORD_START_PATH = os.path.join(REPO_ROOT, 'config', 'record_start_date')
+# Settled stand-in (research) picks. They never go through picks.json, so they
+# are kept in their own ledger and merged in here.
+STANDIN_PATH = os.path.join(REPO_ROOT, 'data', 'standin_results.json')
+# Fingerprint of the last results post, so we only post when something changed.
+STATE_PATH = os.path.join(REPO_ROOT, 'data', 'state', 'results_post_state.json')
 
 TIER_LABELS = {
     "INVESTOR_BET": ("📊", "Investor"),
@@ -51,6 +57,9 @@ def load_record_picks():
         return []
     with open(PICKS_PATH) as f:
         picks = json.load(f)
+    if os.path.exists(STANDIN_PATH):
+        with open(STANDIN_PATH) as f:
+            picks = picks + json.load(f)
     cutoff = record_start_date()
     if cutoff:
         picks = [p for p in picks if p.get("date", "") >= cutoff]
@@ -108,19 +117,46 @@ def _send(text):
     return resp.json()
 
 
+def fingerprint(text):
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+
+def last_posted_fingerprint():
+    try:
+        with open(STATE_PATH) as f:
+            return json.load(f).get('fingerprint')
+    except (OSError, ValueError):
+        return None
+
+
+def save_fingerprint(fp):
+    os.makedirs(os.path.dirname(STATE_PATH), exist_ok=True)
+    with open(STATE_PATH, 'w') as f:
+        json.dump({'fingerprint': fp}, f)
+
+
 def post_results():
     text = build_results_text(load_record_picks())
     if text is None:
         print("No settled picks on the fresh record yet — nothing to post.")
+        return
+    fp = fingerprint(text)
+    if fp == last_posted_fingerprint():
+        print("Results unchanged since the last post — not reposting.")
         return
     try:
         validate_text(text, risk="STANDARD_PICK", public=True)
     except CopyValidationError as e:
         print(f"::error::results post failed copy validation — refusing to post: {e}")
         raise SystemExit(1)
-    _send(text)
+    resp = _send(text)
+    if not resp.get('ok'):
+        print(f"::error::Telegram rejected the results post: {resp}")
+        raise SystemExit(1)
+    save_fingerprint(fp)
     print("Results posted to Telegram")
 
 
 if __name__ == "__main__":
     post_results()
+
