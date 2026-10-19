@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-20_research_Ann_Li_vs_Emerson_Jones",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-19T17:20:18.758779+00:00",
       "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-19T17:22:33.395358+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-19T17:22:33.395588+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-10-19T17:22:35.265423+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false}"
     }
   ]
 }
