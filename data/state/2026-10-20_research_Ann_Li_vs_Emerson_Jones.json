@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-20_research_Ann_Li_vs_Emerson_Jones",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-19T17:20:18.758364+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-19T17:20:18.758569+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-19T17:20:18.758779+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}

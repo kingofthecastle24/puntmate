@@ -1,0 +1,34 @@
+{
+  "files": {
+    "cover.png": {
+      "sha256": "97edd91e783b2276dd9abc60e4a009123d035cff52a3dd63400281ccb7e8a6f7",
+      "bytes": 78891
+    },
+    "telegram-post.txt": {
+      "sha256": "93ec3a66ddd0d2f9c20e46921578f64af9c25f01c5c4d11c530a5d7dcddf6617",
+      "bytes": 474
+    },
+    "post-metadata.json": {
+      "sha256": "daa592a4c3413401de32ca537f233fefef538c73590dea6d5a74fc68cf427bfd",
+      "bytes": 2302
+    },
+    "story.png": {
+      "sha256": "2a9d8e83eb044a7f58b68350fe043c96bed197ea4ecfceef45cdc72ab7aa1918",
+      "bytes": 56972
+    },
+    "breakdown.png": {
+      "sha256": "5188a7876e14f1ca6ed2c3a0fdacc8ea6dbac581d4f4eb92c841d930d03b8cb9",
+      "bytes": 113648
+    },
+    "instagram-caption.txt": {
+      "sha256": "e7d35c6922eed75db0850026500a355d89746ddaaae693314e127847679a04a2",
+      "bytes": 447
+    },
+    "tip.png": {
+      "sha256": "94b090bd85c774e1a4fd4f74615c0d6fe9c6305f8911e8369558cdcfb3c4983a",
+      "bytes": 71842
+    }
+  },
+  "pick_id": "2026-10-20_research_Ann_Li_vs_Emerson_Jones",
+  "created_at": "2026-10-19T17:20:14.916300+00:00"
+}

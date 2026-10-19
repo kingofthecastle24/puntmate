@@ -1,0 +1,46 @@
+{
+  "match": "Ann Li vs Emerson Jones",
+  "sport": "tennis",
+  "sport_label": "WTA Osaka - Round of 32",
+  "market": "Match Winner",
+  "selection": "Ann Li",
+  "odds": 1.31,
+  "kickoff": "2026-10-20T02:30:00Z",
+  "final_explanation": "World No.25 Li is in career form - a Wuhan quarterfinal last week with a win over Sabalenka - and meets 18-year-old qualifier Jones (No.134) in their first career meeting.",
+  "research_sources": [
+    "https://www.sportytrader.com/us/picks/ann-li-emerson-jones-380471/",
+    "https://wtafiles.wtatennis.com/pdf/draws/2026/405/OP.pdf",
+    "https://www.tennis.com/tournaments/kinoshita-group-japan-open/matches/v-golubic-vs-m-hontama-2026-10-19"
+  ],
+  "odds_source_url": "https://www.unibet.fr/paris-tennis/wta/osaka/3391073/a-li-vs-e-jones",
+  "research_checked_at": "2026-10-19T17:19:00Z",
+  "source_type": "research_based",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "World No.25 Li is in career form - a Wuhan quarterfinal last week with a win over Sabalenka - and meets 18-year-old qualifier Jones (No.134) in their first career meeting.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.31\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-20_research_Ann_Li_vs_Emerson_Jones",
+  "post_date": "2026-10-20",
+  "generated_at": "2026-10-19T17:20:14.916300+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-20_Ann_Li_vs_Emerson_Jones_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-20_Ann_Li_vs_Emerson_Jones_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-20_Ann_Li_vs_Emerson_Jones_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-20_Ann_Li_vs_Emerson_Jones_night_story.png"
+}
