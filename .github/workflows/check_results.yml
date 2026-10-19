@@ -53,8 +53,10 @@ jobs:
           git add data/picks.json config/challenge.json
           # ledger only exists once the challenge has been enabled + run
           [ -f data/challenge.json ] && git add data/challenge.json || true
+          [ -f data/state/results_post_state.json ] && git add data/state/results_post_state.json || true
           bash scripts/git_push_retry.sh "chore: resolve picks $(date -u +%Y-%m-%d) [skip ci]" --soft
 
       - name: Log run summary
         if: always()
         run: echo "Results check completed at $(date -u)"
+
