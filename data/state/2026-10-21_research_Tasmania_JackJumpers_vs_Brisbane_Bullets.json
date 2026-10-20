@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-21_research_Tasmania_JackJumpers_vs_Brisbane_Bullets",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-20T17:21:10.226141+00:00",
       "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-20T17:23:05.190250+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-20T17:23:05.190481+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-10-20T17:23:07.189850+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false}"
     }
   ]
 }

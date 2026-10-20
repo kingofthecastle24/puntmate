@@ -1,0 +1,111 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 278,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1792516986,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARZq16N652Cta0Pia2N8QO1Mn2JbYgAC9wxrG9b1wUYm3FEwm69CQwEAAwIAA3MAAz0E",
+            "file_unique_id": "AQAD9wxrG9b1wUZ4",
+            "file_size": 1118,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARZq16N652Cta0Pia2N8QO1Mn2JbYgAC9wxrG9b1wUYm3FEwm69CQwEAAwIAA20AAz0E",
+            "file_unique_id": "AQAD9wxrG9b1wUZy",
+            "file_size": 11464,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARZq16N652Cta0Pia2N8QO1Mn2JbYgAC9wxrG9b1wUYm3FEwm69CQwEAAwIAA3gAAz0E",
+            "file_unique_id": "AQAD9wxrG9b1wUZ9",
+            "file_size": 48323,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARZq16N652Cta0Pia2N8QO1Mn2JbYgAC9wxrG9b1wUYm3FEwm69CQwEAAwIAA3cAAz0E",
+            "file_unique_id": "AQAD9wxrG9b1wUZ8",
+            "file_size": 87947,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARZq16N652Cta0Pia2N8QO1Mn2JbYgAC9wxrG9b1wUYm3FEwm69CQwEAAwIAA3kAAz0E",
+            "file_unique_id": "AQAD9wxrG9b1wUZ-",
+            "file_size": 88499,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NBL Australia\n\n\ud83c\udfdf Tasmania JackJumpers vs Brisbane Bullets\n\nPICK: Tasmania JackJumpers\nODDS: 1.21 (Match Winner)\nInvestor Bet\n\nTop-of-the-ladder Tasmania are on a three-game win streak and unbeaten at home, hosting a Brisbane side yet to win on the road this season.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 30,
+            "type": "bold"
+          },
+          {
+            "offset": 77,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 104,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 130,
+            "length": 12,
+            "type": "bold"
+          },
+          {
+            "offset": 144,
+            "length": 139,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Monday, 12-Oct-26 02:00:00 PDT. The current time is Tuesday, 20-Oct-26 10:23:06 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AKux7K51ZJbOMCPbQrNtGfr",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Monday, 12-Oct-26 02:00:00 PDT. The current time is Tuesday, 20-Oct-26 10:23:07 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "A7WSVuoHZ34xLWyigLIkfN1"
+    }
+  }
+}
