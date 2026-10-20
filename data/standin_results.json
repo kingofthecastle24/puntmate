@@ -2,5 +2,6 @@
   {"date": "2026-10-16", "match": "Daniil Medvedev vs Tommy Paul", "pick": "Daniil Medvedev", "odds": 1.44, "result": "win", "bet_type": "INVESTOR_BET"},
   {"date": "2026-10-17", "match": "Alexander Zverev vs Alejandro Davidovich Fokina", "pick": "Alexander Zverev", "odds": 1.28, "result": "loss", "bet_type": "INVESTOR_BET"},
   {"date": "2026-10-18", "match": "Fiji vs Cook Islands", "pick": "Fiji", "odds": 1.16, "result": "win", "bet_type": "INVESTOR_BET"},
-  {"date": "2026-10-19", "match": "Viktorija Golubic vs Mai Hontama", "pick": "Viktorija Golubic", "odds": 1.28, "result": "win", "bet_type": "INVESTOR_BET"}
+  {"date": "2026-10-19", "match": "Viktorija Golubic vs Mai Hontama", "pick": "Viktorija Golubic", "odds": 1.28, "result": "win", "bet_type": "INVESTOR_BET"},
+  {"date": "2026-10-20", "match": "Ann Li vs Emerson Jones", "pick": "Ann Li", "odds": 1.31, "result": "win", "bet_type": "INVESTOR_BET"}
 ]
