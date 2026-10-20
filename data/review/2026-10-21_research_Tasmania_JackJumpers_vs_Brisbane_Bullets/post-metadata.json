@@ -1,0 +1,46 @@
+{
+  "match": "Tasmania JackJumpers vs Brisbane Bullets",
+  "sport": "basketball",
+  "sport_label": "NBL Australia",
+  "market": "Match Winner",
+  "selection": "Tasmania JackJumpers",
+  "odds": 1.21,
+  "kickoff": "2026-10-21T08:30:00Z",
+  "final_explanation": "Top-of-the-ladder Tasmania are on a three-game win streak and unbeaten at home, hosting a Brisbane side yet to win on the road this season.",
+  "research_sources": [
+    "https://en.wikipedia.org/wiki/2026%E2%80%9327_Tasmania_JackJumpers_season",
+    "https://fancrew.com.au/teams/brisbane-bullets",
+    "https://www.nbl.com.au/matches/tasmania-jackjumpers-v-brisbane-bullets-men-21-10-2026"
+  ],
+  "odds_source_url": "https://www.unibet.fr/paris-basketball/australie/nbl/3367756/tasmania-vs-brisbane",
+  "research_checked_at": "2026-10-20T17:20:00Z",
+  "source_type": "research_based",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "Top-of-the-ladder Tasmania are on a three-game win streak and unbeaten at home, hosting a Brisbane side yet to win on the road this season.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.21\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-21_research_Tasmania_JackJumpers_vs_Brisbane_Bullets",
+  "post_date": "2026-10-21",
+  "generated_at": "2026-10-20T17:21:06.575511+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-21_Tasmania_JackJumpers_vs_Brisbane_Bullets_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-21_Tasmania_JackJumpers_vs_Brisbane_Bullets_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-21_Tasmania_JackJumpers_vs_Brisbane_Bullets_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-21_Tasmania_JackJumpers_vs_Brisbane_Bullets_night_story.png"
+}

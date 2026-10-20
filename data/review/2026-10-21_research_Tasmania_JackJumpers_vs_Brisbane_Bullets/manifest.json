@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "39fed52d0510408905bf8675c78d416975b6e1a3c50ed00134257ef61e354907",
+      "bytes": 94530
+    },
+    "instagram-caption.txt": {
+      "sha256": "6007bf9ff19a4d69a0efa1bbceb296c27d4159c00ca712e8375f98f1fa9c951e",
+      "bytes": 430
+    },
+    "cover.png": {
+      "sha256": "1f6cc2164d3c185640f75fc40fab94621d3ebb8851e9a2544d3467086bf6bb94",
+      "bytes": 77782
+    },
+    "post-metadata.json": {
+      "sha256": "98f1f5bee378046d29a434efcdb526e01837d30b80da1e9b337913733f3ee969",
+      "bytes": 2339
+    },
+    "breakdown.png": {
+      "sha256": "9dc1761839ebc568e1b5be9234e4b59cceda8b58edc5418e2c44100489a301de",
+      "bytes": 120020
+    },
+    "telegram-post.txt": {
+      "sha256": "0e1173b871ccfd774b50782f3ac7f32b75a8762612b4af4e9168568f879b59d4",
+      "bytes": 463
+    },
+    "story.png": {
+      "sha256": "4a48da3dbad6ab3173e44b9f7b17ad5352be77e4b2dea55bae43d520e403fc02",
+      "bytes": 76523
+    }
+  },
+  "pick_id": "2026-10-21_research_Tasmania_JackJumpers_vs_Brisbane_Bullets",
+  "created_at": "2026-10-20T17:21:06.575511+00:00"
+}
