@@ -1,0 +1,111 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 280,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1792603362,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARhq2PTiuKqliIJHjE-kg-6OrkYsmgACgwxrG9b1yUYmqarkCq6XIAEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADgwxrG9b1yUZ4",
+            "file_size": 1009,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARhq2PTiuKqliIJHjE-kg-6OrkYsmgACgwxrG9b1yUYmqarkCq6XIAEAAwIAA20AAz0E",
+            "file_unique_id": "AQADgwxrG9b1yUZy",
+            "file_size": 9828,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARhq2PTiuKqliIJHjE-kg-6OrkYsmgACgwxrG9b1yUYmqarkCq6XIAEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADgwxrG9b1yUZ9",
+            "file_size": 42656,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARhq2PTiuKqliIJHjE-kg-6OrkYsmgACgwxrG9b1yUYmqarkCq6XIAEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADgwxrG9b1yUZ-",
+            "file_size": 79604,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACARhq2PTiuKqliIJHjE-kg-6OrkYsmgACgwxrG9b1yUYmqarkCq6XIAEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADgwxrG9b1yUZ8",
+            "file_size": 79628,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NBA\n\n\ud83c\udfdf Toronto Raptors vs Chicago Bulls\n\nPICK: Toronto Raptors\nODDS: 1.2 (Match Winner)\nInvestor Bet\n\nToronto open the NBA season at home as heavy favourites - books hang the Raptors near 1.20 with a 9.5-point handicap - against a Chicago side with two players ruled out.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 59,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 81,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 106,
+            "length": 12,
+            "type": "bold"
+          },
+          {
+            "offset": 120,
+            "length": 169,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "Error validating access token: Session has expired on Monday, 12-Oct-26 02:00:00 PDT. The current time is Wednesday, 21-Oct-26 10:22:42 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AtA1iUOKSWiRBC7Z0sgvi9t",
+      "fix": "Meta access token invalid/expired \u2014 mint a new long-lived Page token and update the META_PAGE_TOKEN GitHub secret."
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "Error validating access token: Session has expired on Monday, 12-Oct-26 02:00:00 PDT. The current time is Wednesday, 21-Oct-26 10:22:42 PDT.",
+      "type": "OAuthException",
+      "code": 190,
+      "error_subcode": 463,
+      "fbtrace_id": "AmMQZm9Ff1_TlTtP_qvLzwc"
+    }
+  }
+}
