@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "d5c01542e6e570c57cc69841d725a0e62a55df6aea8a999b36f06898a7af57f2",
+      "bytes": 86156
+    },
+    "instagram-caption.txt": {
+      "sha256": "157044abad8f7ddf444fc7c9925c42d8c0dbd34022a8d9a7f9731a786c514231",
+      "bytes": 427
+    },
+    "cover.png": {
+      "sha256": "ed223fb7191e62387a9563df0e7f41028acea6889674989cd7ff585ae32088fc",
+      "bytes": 75374
+    },
+    "post-metadata.json": {
+      "sha256": "5a064696fe4bf0db89a9e5690a9eb7e3296a802658ff6dbdd9eeadaa58945a11",
+      "bytes": 2246
+    },
+    "breakdown.png": {
+      "sha256": "a7e2a01cc8acef06df18888a9a6fee7b68d8faa61d2e9b6de516a93a21ab986a",
+      "bytes": 119459
+    },
+    "telegram-post.txt": {
+      "sha256": "e9022511f1d2982bf003c210651ab8984a347f57e565ca48970f01bde59e5998",
+      "bytes": 469
+    },
+    "story.png": {
+      "sha256": "5695b2e826bb0e772ed32df9827a61e2411062db251e88532e1e4ca769e84bcd",
+      "bytes": 69891
+    }
+  },
+  "pick_id": "2026-10-22_research_Toronto_Raptors_vs_Chicago_Bulls",
+  "created_at": "2026-10-21T17:20:27.142473+00:00"
+}

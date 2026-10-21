@@ -1,0 +1,45 @@
+{
+  "match": "Toronto Raptors vs Chicago Bulls",
+  "sport": "basketball",
+  "sport_label": "NBA",
+  "market": "Match Winner",
+  "selection": "Toronto Raptors",
+  "odds": 1.2,
+  "kickoff": "2026-10-21T23:30:00Z",
+  "final_explanation": "Toronto open the NBA season at home as heavy favourites - books hang the Raptors near 1.20 with a 9.5-point handicap - against a Chicago side with two players ruled out.",
+  "research_sources": [
+    "https://statz.ai/nba/games/toronto-raptors-vs-chicago-bulls-2026-10-21/preview",
+    "https://www.unibet.fr/paris-basketball/usa/nba"
+  ],
+  "odds_source_url": "https://www.unibet.fr/paris-basketball/usa/nba/3389583/tor-raptors-vs-chi-bulls",
+  "research_checked_at": "2026-10-21T17:19:30Z",
+  "source_type": "research_based",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "Toronto open the NBA season at home as heavy favourites - books hang the Raptors near 1.20 with a 9.5-point handicap - against a Chicago side with two players ruled out.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.20\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-22_research_Toronto_Raptors_vs_Chicago_Bulls",
+  "post_date": "2026-10-22",
+  "generated_at": "2026-10-21T17:20:27.142473+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-22_Toronto_Raptors_vs_Chicago_Bulls_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-22_Toronto_Raptors_vs_Chicago_Bulls_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-22_Toronto_Raptors_vs_Chicago_Bulls_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-22_Toronto_Raptors_vs_Chicago_Bulls_night_story.png"
+}
