@@ -1,0 +1,45 @@
+{
+  "match": "Oklahoma City Thunder vs Denver Nuggets",
+  "sport": "basketball",
+  "sport_label": "NBA",
+  "market": "Match Winner",
+  "selection": "Oklahoma City Thunder",
+  "odds": 1.29,
+  "kickoff": "2026-10-23T01:30:00Z",
+  "final_explanation": "OKC are 1-0 after an opening road win and took last season's series with Denver 3-1; the Nuggets open their season on the road at the Thunder's home opener, with the spread near 8.5.",
+  "research_sources": [
+    "https://sportsmole.co.uk/basketball/preview/denver-nuggets-vs-oklahoma-city-thunder-player-props-injury-report-and-prediction--nba_607345.html",
+    "https://exa.ai/library/sports/nba?date=2026-10-22"
+  ],
+  "odds_source_url": "https://www.unibet.fr/paris-basketball/usa/nba/3371279/okc-thunder-vs-den-nuggets",
+  "research_checked_at": "2026-10-22T17:19:30Z",
+  "source_type": "research_based",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "OKC are 1-0 after an opening road win and took last season's series with Denver 3-1; the Nuggets open their season on the road at the Thunder's home opener, with the spread near 8.5.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.29\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-23_research_Oklahoma_City_Thunder_vs_Denver_Nuggets",
+  "post_date": "2026-10-23",
+  "generated_at": "2026-10-22T17:27:44.842215+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-23_Oklahoma_City_Thunder_vs_Denver_Nuggets_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-23_Oklahoma_City_Thunder_vs_Denver_Nuggets_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-23_Oklahoma_City_Thunder_vs_Denver_Nuggets_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-23_Oklahoma_City_Thunder_vs_Denver_Nuggets_night_story.png"
+}

@@ -1,0 +1,34 @@
+{
+  "files": {
+    "cover.png": {
+      "sha256": "e6022bd82a69d751cc28101a704b973f3150631f491e0c6458b4c09ddc6b9fd7",
+      "bytes": 75083
+    },
+    "telegram-post.txt": {
+      "sha256": "335a67c5170ec0581bbda8955df032013f69e88884e7b728cc826e614308e5ec",
+      "bytes": 496
+    },
+    "post-metadata.json": {
+      "sha256": "d974edb6cd5ea75c3c4902b29b36145db51f0f714979547b8f61229c01ce67fb",
+      "bytes": 2390
+    },
+    "story.png": {
+      "sha256": "dbfdc6ac5fcb8181f998da26b66735b139670886dc747e79721ae5aab6a26ffd",
+      "bytes": 78571
+    },
+    "breakdown.png": {
+      "sha256": "bb4cd4ff17f5b14ed766de11b03d89cfd9e503828334271b13d1dfe858633644",
+      "bytes": 121213
+    },
+    "instagram-caption.txt": {
+      "sha256": "dd6b6e7466f7d98fd6f826a68f7901356557157b5b78b0d9e17903c1d1503bd9",
+      "bytes": 454
+    },
+    "tip.png": {
+      "sha256": "4ba15438782f6ee85f655fbf5bb2717d537625245efdfdf51f5d3e14bdfc38b7",
+      "bytes": 94967
+    }
+  },
+  "pick_id": "2026-10-23_research_Oklahoma_City_Thunder_vs_Denver_Nuggets",
+  "created_at": "2026-10-22T17:27:44.842215+00:00"
+}

@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-23_research_Oklahoma_City_Thunder_vs_Denver_Nuggets",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-22T17:27:47.258646+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-22T17:27:47.258740+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-22T17:27:47.258837+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}
