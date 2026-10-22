@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-23_research_Oklahoma_City_Thunder_vs_Denver_Nuggets",
-  "state": "AWAITING_APPROVAL",
+  "state": "PARTIALLY_PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-22T17:27:47.258837+00:00",
       "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-22T17:29:12.634413+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-22T17:29:12.634661+00:00",
+      "note": null
+    },
+    {
+      "state": "PARTIALLY_PUBLISHED",
+      "at": "2026-10-22T17:29:14.857679+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": false, \"instagram_story\": false}"
     }
   ]
 }
