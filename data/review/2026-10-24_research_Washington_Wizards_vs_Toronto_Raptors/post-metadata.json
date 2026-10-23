@@ -1,0 +1,45 @@
+{
+  "match": "Washington Wizards vs Toronto Raptors",
+  "sport": "basketball",
+  "sport_label": "NBA",
+  "market": "Moneyline",
+  "selection": "Toronto Raptors",
+  "odds": "1.27",
+  "kickoff": "2026-10-23T23:00:00Z",
+  "final_explanation": "Toronto have opened the season 2-0 with statement wins, 138-118 over Atlanta and 135-92 over Cleveland, while Washington are 0-2 after losing their home opener to Milwaukee and are missing Dybantsa, Vukcevic and Watkins. The Raptors carry no one on the injury report and their two-way form is the strongest in the league right now.",
+  "research_sources": [
+    "https://www.espn.com/nba/injuries",
+    "https://www.espn.com/nba/scoreboard/_/date/20251023"
+  ],
+  "odds_source_url": "https://www.unibet.fr/paris-basketball/usa/nba",
+  "research_checked_at": "2026-10-23T17:22:00Z",
+  "source_type": "research_based",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "Toronto have opened the season 2-0 with statement wins, 138-118 over Atlanta and 135-92 over Cleveland, while Washington are 0-2 after losing their home opener to Milwaukee and are missing Dybantsa, Vukcevic and Watkins. The Raptors carry no one on the injury report and their two-way form is the strongest in the league right now.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.27\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-24_research_Washington_Wizards_vs_Toronto_Raptors",
+  "post_date": "2026-10-24",
+  "generated_at": "2026-10-23T17:33:49.007164+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-24_Washington_Wizards_vs_Toronto_Raptors_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-24_Washington_Wizards_vs_Toronto_Raptors_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-24_Washington_Wizards_vs_Toronto_Raptors_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-24_Washington_Wizards_vs_Toronto_Raptors_night_story.png"
+}

@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-24_research_Washington_Wizards_vs_Toronto_Raptors",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-23T17:33:51.217147+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-23T17:33:51.217280+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-23T17:33:51.217408+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}

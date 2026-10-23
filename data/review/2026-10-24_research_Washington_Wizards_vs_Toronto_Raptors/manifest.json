@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "fe0985bce77faa3d2695ceda1dfa4ef9a5026cf9002a100a46711544975baf35",
+      "bytes": 88709
+    },
+    "instagram-caption.txt": {
+      "sha256": "134d43d36d774e44f189e0d41876013cf7b7967225f07e3a1f7f875841508b10",
+      "bytes": 592
+    },
+    "cover.png": {
+      "sha256": "741051184405a47047d64e14f8dd993e90c87bf5e904a2d734bdaf7438ac0588",
+      "bytes": 75661
+    },
+    "post-metadata.json": {
+      "sha256": "afcac172bfe7996ddf8cc3128522ce4d3773210c651be8fe098c2c7b06e417d0",
+      "bytes": 2527
+    },
+    "breakdown.png": {
+      "sha256": "10be14a8596a87c9a273a21faa907a01afca5b814c04da9b5394c857a5cc512e",
+      "bytes": 156199
+    },
+    "telegram-post.txt": {
+      "sha256": "b76227379a5b1b5ad75a7f50a6714092009dafd4383ba483763a0f0754ded9c4",
+      "bytes": 634
+    },
+    "story.png": {
+      "sha256": "10056653369595348b2f808e7b3a330e6543e24c282f7df45a05a0f3ddc2953a",
+      "bytes": 68973
+    }
+  },
+  "pick_id": "2026-10-24_research_Washington_Wizards_vs_Toronto_Raptors",
+  "created_at": "2026-10-23T17:33:49.007164+00:00"
+}
