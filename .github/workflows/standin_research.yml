@@ -136,7 +136,7 @@ jobs:
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
               f.write('Prepared research-based package: '+pick_id+'\n\nInspect all four PNGs and captions before dispatching publish.\n')
           PY
-      - name: Prepare one-off RLWC research multi
+      - name: Prepare weekend research multi
         if: inputs.action == 'prepare-multi'
         run: |
           python - <<'PYMULTI'
@@ -145,49 +145,69 @@ jobs:
           from datetime import datetime, timezone
           from zoneinfo import ZoneInfo
           from decimal import Decimal
+          from PIL import Image, ImageDraw, ImageFont
           import render_brand_templates as renderer
           from copy_validator import validate_text
           from manifest import build_manifest, write_manifest
           from workflow_state import transition, GENERATED, PREVIEW_READY, AWAITING_APPROVAL
           now = datetime.now(timezone.utc)
           today = now.astimezone(ZoneInfo('Pacific/Auckland')).date().isoformat()
+          assert today < '2026-11-01', 'Stand-in authorization window ended'
           p = json.loads(os.environ['PICK_JSON'])
-          assert p['kind'] == 'rlwc_multi' and p['source_type'] == 'research_based'
-          assert today == '2026-10-16', 'One-off multi only'
-          assert len(p['legs']) == 3
-          assert [x['selection'] for x in p['legs']] == ['Papua New Guinea','Tonga','Fiji']
+          assert p.get('kind') == 'research_multi' and p.get('source_type') == 'research_based'
+          assert not any(p.get(k) for k in ('synthetic','test','is_test','force_test_pick')), 'No synthetic picks'
+          legs = p['legs']
+          assert 2 <= len(legs) <= 4, 'Multi needs 2-4 legs'
           checked = datetime.fromisoformat(p['research_checked_at'].replace('Z','+00:00'))
           assert 0 <= (now-checked).total_seconds() < 7200
-          for leg in p['legs']:
+          for leg in legs:
+              assert all(leg.get(k) for k in ('match','selection','odds','kickoff')), 'Leg missing fields'
               dt = datetime.fromisoformat(leg['kickoff'].replace('Z','+00:00'))
               assert 0 < (dt-now).total_seconds() < 7*86400
               assert 1 < float(leg['odds']) < 3
-          pid = today + '_research_RLWC_Weekend_Multi'
-          assert not Path('data/review',pid).exists(), 'Frozen multi already exists'
           combined = Decimal('1')
-          for leg in p['legs']: combined *= Decimal(str(leg['odds']))
+          for leg in legs: combined *= Decimal(str(leg['odds']))
+          pid = today + '_research_Weekend_Multi_full'
+          d = Path('data/review',pid)
+          assert not d.exists(), 'Frozen multi already exists; inspect it or use its exact ID'
+          d.mkdir(parents=True)
           original = renderer.build_multi_props
-          def props(legs,tier,handle='@puntmatenz'):
-              x = original(legs,tier,handle)
-              x.update(analysis=p['analysis'],combinedOdds='~'+format(combined,'.2f'),stake='$10',stakeReturn='All 3 legs must win',multiType='World Cup Multi',coverKicker='WORLD CUP WEEKEND MULTI',riskTagline='Tonga is the danger leg · All 3 must win · Indicative public odds')
+          def props(ls,tier,handle='@puntmatenz'):
+              x = original(ls,tier,handle)
+              x.update(analysis=p['analysis'],combinedOdds='~'+format(combined,'.2f'),stake='$10',stakeReturn='All '+str(len(legs))+' legs must win',multiType='Weekend Multi',coverKicker='WEEKEND MULTI',riskTagline=p.get('risk_tagline','All legs must win - Indicative public odds'))
               return x
           renderer.build_multi_props = props
-          result = renderer.render_multi({'match':'RLWC Weekend Multi'},'punter',p['legs'],date_str=today)
-          assert result['ok']
-          d = Path('data/review',pid); d.mkdir(parents=True)
-          for key,src in result['files'].items():
-              shutil.copyfile(src,d/('tip.png' if key=='legs' else key+'.png'))
+          result = renderer.render_multi({'match':'Weekend Multi'},'punter',legs,date_str=today)
+          assert result['ok'], result
+          for key,srcf in result['files'].items():
+              shutil.copyfile(srcf,d/('tip.png' if key=='legs' else key+'.png'))
+          im=Image.new('RGB',(1080,1920),'#0b120f'); draw=ImageDraw.Draw(im)
+          font='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
+          bold='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+          def text(y,s,size=32,color='#eaf7ef',b=False):
+              f=ImageFont.truetype(bold if b else font,size);draw.text((80,y),s,font=f,fill=color)
+          logo=Image.open('brand/Logo/puntmate-icon-badge.png').convert('RGBA').resize((112,112),Image.Resampling.LANCZOS)
+          im.paste(logo,(70,190),logo)
+          draw.text((205,218),'PUNTMATE NZ',font=ImageFont.truetype(bold,44),fill='#24df7a')
+          text(315,'WEEKEND MULTI',37,b=True)
+          legsimg=Image.open(d/'tip.png').convert('RGB');legsimg.thumbnail((1080,1300));im.paste(legsimg,((1080-legsimg.width)//2,360))
+          text(1695,p['story_line1'],27)
+          text(1734,p['story_line2'],27)
+          text(1785,'Indicative public odds, not TAB. Odds may change.',23,'#8fa69a')
+          text(1820,'All '+str(len(legs))+' must win. 18+.',23,'#8fa69a')
+          im.save(d/'story.png')
+          im2=Image.open(d/'story.png').convert('RGB');draw2=ImageDraw.Draw(im2);draw2.rectangle((0,360,1080,1680),fill='#0b120f')
+          ximg=Image.open(d/'breakdown.png').convert('RGB');ximg.thumbnail((1080,1300));im2.paste(ximg,((1080-ximg.width)//2,360));im2.save(d/'story-breakdown.png')
           text = p['caption']
           validate_text(text,risk='STANDARD_PICK',bet_type='PUNTER_BET',public=True)
           (d/'telegram-post.txt').write_text(text)
           (d/'instagram-caption.txt').write_text(text)
-          base='https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/main/'
-          urls=[base+str(Path(result['files'][k]).resolve().relative_to(Path.cwd())) for k in ('cover','legs','breakdown')]
-          meta=dict(p,has_pick=True,pick_id=pid,post_date=today,generated_at=now.isoformat(),kickoff=p['legs'][0]['kickoff'],match='RLWC Weekend Multi',selection='Papua New Guinea + Tonga + Fiji',odds=float(combined),market='Match winner multi',bet_type='PUNTER_BET',risk='STANDARD_PICK',confidence='Medium',confidence_label='Medium',carousel_urls=urls,intended_platforms=['telegram','instagram_feed','facebook'],render_warnings=result.get('warnings',[]),stake_guidance_nzd=10)
+          base='https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/main/'+str(d)+'/'
+          meta=dict(p,has_pick=True,pick_id=pid,post_date=today,generated_at=now.isoformat(),kickoff=legs[0]['kickoff'],match='Weekend Multi',selection=' + '.join(l['selection'] for l in legs),odds=float(combined),market='Match winner multi',bet_type='PUNTER_BET',risk='STANDARD_PICK',confidence='Medium',confidence_label='Medium',carousel_urls=[base+'cover.png',base+'tip.png',base+'breakdown.png'],story_url=base+'story.png',story_urls=[base+'story.png',base+'story-breakdown.png'],intended_platforms=['telegram','instagram_story'],render_warnings=result.get('warnings',[]),stake_guidance_nzd=10)
           (d/'post-metadata.json').write_text(json.dumps(meta,indent=2))
-          write_manifest(build_manifest(str(d),[f.name for f in d.iterdir()],extra={'pick_id':pid,'created_at':now.isoformat()}),str(d/'manifest.json'))
-          for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL): transition(os.getcwd(),pid,state,note='One-off RLWC research multi; render review required')
-          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('Prepared '+pid+'; inspect all three PNGs before live publish.')
+          write_manifest(build_manifest(str(d),[f.name for f in d.iterdir() if f.name!='manifest.json'],extra={'pick_id':pid,'created_at':now.isoformat()}),str(d/'manifest.json'))
+          for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL): transition(os.getcwd(),pid,state,note='Weekend research multi; render review required')
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('Prepared '+pid+'; inspect all PNGs before live publish.')
           PYMULTI
       - name: Prepare story-only multi revision
         if: inputs.action == 'prepare-story'
@@ -277,9 +297,9 @@ jobs:
           assert m['pick_id']==pid and m['post_date']==today
           assert m['source_type']=='research_based'
           if os.environ['ACTION'] == 'publish-multi':
-              assert m.get('kind') == 'rlwc_multi' and today == '2026-10-16'
-              assert pid == '2026-10-16_research_RLWC_Weekend_Multi_full'
-              assert m['intended_platforms']==['telegram','instagram_story','facebook_story']
+              assert m.get('kind') == 'research_multi'
+              assert pid == today + '_research_Weekend_Multi_full'
+              assert m['intended_platforms']==['telegram','instagram_story']
           else:
               assert not m.get('kind')
               assert m['intended_platforms']==['telegram','instagram_feed','instagram_story'], 'Unexpected platform'
