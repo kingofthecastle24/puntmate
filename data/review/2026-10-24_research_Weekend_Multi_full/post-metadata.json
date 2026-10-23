@@ -1,0 +1,75 @@
+{
+  "kind": "research_multi",
+  "source_type": "research_based",
+  "research_checked_at": "2026-10-23T20:09:00Z",
+  "odds_source_url": "https://www.unibet.fr/paris-basketball/usa/nba",
+  "research_sources": [
+    "https://www.espn.com/nba/injuries",
+    "https://www.espn.com/nba/scoreboard/_/date/20251023",
+    "https://www.espn.com.sg/nrl/story/_/id/50171231/2026-rugby-league-world-cup-fixtures-scores-table-squads"
+  ],
+  "legs": [
+    {
+      "match": "Washington Wizards vs Toronto Raptors",
+      "sport_label": "NBA",
+      "market": "Moneyline",
+      "selection": "Toronto Raptors",
+      "odds": "1.27",
+      "kickoff": "2026-10-23T23:00:00Z"
+    },
+    {
+      "match": "Los Angeles Lakers vs Los Angeles Clippers",
+      "sport_label": "NBA",
+      "market": "Moneyline",
+      "selection": "Los Angeles Lakers",
+      "odds": "1.25",
+      "kickoff": "2026-10-24T02:00:00Z"
+    },
+    {
+      "match": "New Zealand vs Cook Islands",
+      "sport_label": "Rugby League",
+      "market": "Match winner",
+      "selection": "New Zealand",
+      "odds": "1.01",
+      "kickoff": "2026-10-25T05:05:00Z"
+    }
+  ],
+  "story_line1": "Raptors: Sat 12pm   Lakers: Sat 3pm",
+  "story_line2": "Kiwis: Sun 6:05pm  |  NZDT  |  24-25 Oct",
+  "risk_tagline": "Raptors on the road is the danger leg - All 3 must win - Indicative public odds",
+  "analysis": "Toronto are 2-0 with blowout wins over Atlanta (138-118) and Cleveland (135-92), and Washington are 0-2 and missing Dybantsa, Vukcevic and Watkins. The Lakers host a Clippers side without Beal, Ingram, Strus and Miller. The Kiwis close the weekend against a Cook Islands team that leaked 40 points to Fiji. The Raptors on the road is the danger leg.",
+  "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 WEEKEND MULTI\n\nToronto Raptors ML @ 1.27 \u2014 Sat 12:00pm\nLA Lakers ML @ 1.25 \u2014 Sat 3:00pm\nNZ Kiwis @ 1.01 \u2014 Sun 6:05pm (all NZDT)\n\nCombined ~1.60 | $10 returns ~$16.00\n\nToronto are flying at 2-0, the Lakers get a Clippers side missing Beal, Ingram, Strus and Miller, and the Kiwis should put the Cook Islands away on Sunday. All 3 legs must win.\n\n\u26a0\ufe0f Indicative public odds, not TAB. For entertainment & informational purposes only. Not advice. 18+.",
+  "has_pick": true,
+  "pick_id": "2026-10-24_research_Weekend_Multi_full",
+  "post_date": "2026-10-24",
+  "generated_at": "2026-10-23T20:09:57.630110+00:00",
+  "kickoff": "2026-10-23T23:00:00Z",
+  "match": "Weekend Multi",
+  "selection": "Toronto Raptors + Los Angeles Lakers + New Zealand",
+  "odds": 1.603375,
+  "market": "Match winner multi",
+  "bet_type": "PUNTER_BET",
+  "risk": "STANDARD_PICK",
+  "confidence": "Medium",
+  "confidence_label": "Medium",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-24_research_Weekend_Multi_full/cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-24_research_Weekend_Multi_full/tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-24_research_Weekend_Multi_full/breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-24_research_Weekend_Multi_full/story.png",
+  "story_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-24_research_Weekend_Multi_full/story.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-24_research_Weekend_Multi_full/story-breakdown.png"
+  ],
+  "intended_platforms": [
+    "telegram",
+    "instagram_story"
+  ],
+  "render_warnings": [
+    "possible overflow: <SPAN> \"MULTI.\" +-341px/+21px",
+    "possible overflow: <SPAN> \"~1.60\" +0px/+17px",
+    "possible overflow: <SPAN> \"~1.60\" +0px/+9px"
+  ],
+  "stake_guidance_nzd": 10
+}
