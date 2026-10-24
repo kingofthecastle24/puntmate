@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-24T17:46:17.189768+00:00",
+  "debug_token": {
+    "app_id": "1032743613026672",
+    "type": "PAGE",
+    "is_valid": true,
+    "expires_at": 0,
+    "scopes": [
+      "pages_show_list",
+      "instagram_basic",
+      "pages_read_engagement",
+      "pages_manage_posts",
+      "public_profile"
+    ],
+    "profile_id": "1173598642506628"
+  },
+  "debug_token_verifier": "via_meta_token",
+  "me": {
+    "status": 200,
+    "id": "1173598642506628",
+    "name": "Puntmate NZ",
+    "error": null
+  },
+  "me_matches_facebook_page_id_secret": true,
+  "ig_lookup": {
+    "status": 200,
+    "id": "17841415246709818",
+    "username": "puntmatenz",
+    "error": null
+  },
+  "page_linked_ig": {
+    "status": 200,
+    "ig_id": "17841415246709818",
+    "error": null
+  },
+  "linked_ig_matches_ig_user_id_secret": true
+}
