@@ -1,0 +1,108 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 285,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1792863185,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR1q3OvRFU_41hmZuXvRzpZQ7P0JfwACKg1rG57D6Uam3cd0vW6hqwEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADKg1rG57D6UZ4",
+            "file_size": 1086,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR1q3OvRFU_41hmZuXvRzpZQ7P0JfwACKg1rG57D6Uam3cd0vW6hqwEAAwIAA20AAz0E",
+            "file_unique_id": "AQADKg1rG57D6UZy",
+            "file_size": 10872,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR1q3OvRFU_41hmZuXvRzpZQ7P0JfwACKg1rG57D6Uam3cd0vW6hqwEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADKg1rG57D6UZ9",
+            "file_size": 45383,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR1q3OvRFU_41hmZuXvRzpZQ7P0JfwACKg1rG57D6Uam3cd0vW6hqwEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADKg1rG57D6UZ-",
+            "file_size": 81992,
+            "width": 1024,
+            "height": 1280
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR1q3OvRFU_41hmZuXvRzpZQ7P0JfwACKg1rG57D6Uam3cd0vW6hqwEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADKg1rG57D6UZ8",
+            "file_size": 82063,
+            "width": 1080,
+            "height": 1350
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NBA\n\n\ud83c\udfdf Cleveland Cavaliers vs Brooklyn Nets\n\nPICK: Cleveland Cavaliers\nODDS: 1.17 (Moneyline)\nInvestor Bet\n\nCleveland are an Eastern Conference finals side responding at home after a season-opening collapse at Philadelphia where they led by 29, while Brooklyn are 0-1 after losing their home opener to Charlotte and have one of the weakest rosters in the league. The Cavaliers have no rotation players on the injury report, with only deep-bench Diop, Tomlin and Udeh out, and ESPN's matchup predictor gives them 80 percent.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 63,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 89,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 112,
+            "length": 12,
+            "type": "bold"
+          },
+          {
+            "offset": 126,
+            "length": 415,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": false,
+    "error": {
+      "message": "(#10) Requires instagram_content_publish permission to manage the object",
+      "type": "OAuthException",
+      "code": 10,
+      "fbtrace_id": "A2W0rg9Xkvg5jTI-Mb7ylHP"
+    }
+  },
+  "instagram_story": {
+    "ok": false,
+    "media_id": null,
+    "error": {
+      "message": "(#10) Requires instagram_content_publish permission to manage the object",
+      "type": "OAuthException",
+      "code": 10,
+      "fbtrace_id": "AKhumd_quYuerykpcATtmR9"
+    }
+  }
+}
