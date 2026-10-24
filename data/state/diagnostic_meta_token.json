@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-24T17:46:17.189768+00:00",
+  "checked_at": "2026-10-24T20:36:15.018768+00:00",
   "debug_token": {
     "app_id": "1032743613026672",
     "type": "PAGE",
@@ -8,6 +8,7 @@
     "scopes": [
       "pages_show_list",
       "instagram_basic",
+      "instagram_content_publish",
       "pages_read_engagement",
       "pages_manage_posts",
       "public_profile"
