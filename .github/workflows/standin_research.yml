@@ -6,7 +6,7 @@ on:
       action:
         description: Prepare a frozen package, or publish an inspected package
         type: choice
-        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi]
+        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose]
         default: prepare
         required: true
       pick_json:
@@ -366,6 +366,74 @@ jobs:
           p.main()
           PYPUBLISH
           fi
+      - name: Diagnose Meta token and account mapping (read-only)
+        if: inputs.action == 'diagnose'
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+        run: |
+          python - <<'PYDIAG'
+          import json, os, requests
+          from pathlib import Path
+          from datetime import datetime, timezone
+          meta=os.environ.get('META_PAGE_TOKEN','')
+          fb=os.environ.get('FACEBOOK_PAGE_TOKEN','')
+          ig_id=os.environ.get('IG_USER_ID','')
+          page_id=os.environ.get('FACEBOOK_PAGE_ID','')
+          out={'checked_at':datetime.now(timezone.utc).isoformat()}
+          G='https://graph.facebook.com/v21.0'
+          def get(url, params):
+              try:
+                  r=requests.get(url, params=params, timeout=30)
+                  return r.status_code, r.json()
+              except Exception as e:
+                  return None, {'exception': str(e)}
+          for label, verifier in (('via_meta_token', meta), ('via_fb_token', fb)):
+              if not verifier: continue
+              st, d = get(G+'/debug_token', {'input_token': meta, 'access_token': verifier})
+              data=(d or {}).get('data') if isinstance(d, dict) else None
+              if data:
+                  out['debug_token']={
+                      'app_id': data.get('app_id'),
+                      'type': data.get('type'),
+                      'is_valid': data.get('is_valid'),
+                      'expires_at': data.get('expires_at'),
+                      'scopes': data.get('scopes'),
+                      'profile_id': data.get('profile_id'),
+                  }
+                  out['debug_token_verifier']=label
+                  break
+              err=(d or {}).get('error',{}) if isinstance(d,dict) else {}
+              out.setdefault('debug_token_attempts',{})[label]={'status':st,'error':err.get('message')}
+          st, d = get(G+'/me', {'fields':'id,name', 'access_token': meta})
+          err=(d or {}).get('error',{}) if isinstance(d,dict) else {}
+          out['me']={'status':st,'id':(d or {}).get('id') if isinstance(d,dict) else None,'name':(d or {}).get('name') if isinstance(d,dict) else None,'error':err.get('message')}
+          out['me_matches_facebook_page_id_secret'] = bool(out['me'].get('id')) and str(out['me'].get('id'))==str(page_id)
+          st, d = get(G+'/'+str(ig_id), {'fields':'username,name', 'access_token': meta})
+          err=(d or {}).get('error',{}) if isinstance(d,dict) else {}
+          out['ig_lookup']={'status':st,'id':(d or {}).get('id') if isinstance(d,dict) else None,'username':(d or {}).get('username') if isinstance(d,dict) else None,'error':err.get('message')}
+          st, d = get(G+'/me', {'fields':'instagram_business_account', 'access_token': meta})
+          err=(d or {}).get('error',{}) if isinstance(d,dict) else {}
+          iba=(d or {}).get('instagram_business_account',{}) if isinstance(d,dict) else {}
+          iba=iba or {}
+          out['page_linked_ig']={'status':st,'ig_id':iba.get('id'),'error':err.get('message')}
+          if iba.get('id'):
+              out['linked_ig_matches_ig_user_id_secret']= str(iba.get('id'))==str(ig_id)
+          Path('data/state').mkdir(parents=True, exist_ok=True)
+          Path('data/state/diagnostic_meta_token.json').write_text(json.dumps(out, indent=2))
+          print(json.dumps(out, indent=2))
+          PYDIAG
+      - name: Persist diagnostic result
+        if: always() && inputs.action == 'diagnose'
+        run: |
+          git config user.name 'PuntMate Bot'
+          git config user.email 'puntmatenz@gmail.com'
+          git add data/state/diagnostic_meta_token.json 2>/dev/null || true
+          git diff --cached --quiet || git commit -m 'chore: record meta token diagnostic [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
       - name: Persist platform receipts and state
         if: always() && (inputs.action == 'publish' || inputs.action == 'publish-multi') && inputs.dry_run == false
         run: |
