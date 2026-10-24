@@ -1,0 +1,46 @@
+{
+  "match": "Cleveland Cavaliers vs Brooklyn Nets",
+  "sport": "basketball",
+  "sport_label": "NBA",
+  "market": "Moneyline",
+  "selection": "Cleveland Cavaliers",
+  "odds": "1.17",
+  "kickoff": "2026-10-24T23:30:00Z",
+  "final_explanation": "Cleveland are an Eastern Conference finals side responding at home after a season-opening collapse at Philadelphia where they led by 29, while Brooklyn are 0-1 after losing their home opener to Charlotte and have one of the weakest rosters in the league. The Cavaliers have no rotation players on the injury report, with only deep-bench Diop, Tomlin and Udeh out, and ESPN's matchup predictor gives them 80 percent.",
+  "research_sources": [
+    "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-10-24_10_00AM.pdf",
+    "https://www.espn.com/nba/game/_/gameId/401909854/nets-cavaliers",
+    "https://www.nba.com/game/bkn-vs-cle-0022600105"
+  ],
+  "odds_source_url": "https://www.unibet.fr/paris-basketball/usa/nba/3389596/cle-cavaliers-vs-bkn-nets",
+  "research_checked_at": "2026-10-24T17:26:30Z",
+  "source_type": "research_based",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "Cleveland are an Eastern Conference finals side responding at home after a season-opening collapse at Philadelphia where they led by 29, while Brooklyn are 0-1 after losing their home opener to Charlotte and have one of the weakest rosters in the league. The Cavaliers have no rotation players on the injury report, with only deep-bench Diop, Tomlin and Udeh out, and ESPN's matchup predictor gives them 80 percent.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.17\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-25_research_Cleveland_Cavaliers_vs_Brooklyn_Nets",
+  "post_date": "2026-10-25",
+  "generated_at": "2026-10-24T17:27:55.415082+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-25_Cleveland_Cavaliers_vs_Brooklyn_Nets_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-25_Cleveland_Cavaliers_vs_Brooklyn_Nets_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-25_Cleveland_Cavaliers_vs_Brooklyn_Nets_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-25_Cleveland_Cavaliers_vs_Brooklyn_Nets_night_story.png"
+}

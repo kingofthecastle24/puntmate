@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-25_research_Cleveland_Cavaliers_vs_Brooklyn_Nets",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-24T17:27:57.827003+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-24T17:27:57.827167+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-24T17:27:57.827324+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}

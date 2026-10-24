@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "1f2efd82e3cf7796c76bda44abcc32f6f9c6c1b9a0d76f21b9f3c136c081ca98",
+      "bytes": 86638
+    },
+    "instagram-caption.txt": {
+      "sha256": "ba36858365ca37d63e133c664ad073ade8b7f775f4f99277f52aedd5ee99cb8a",
+      "bytes": 679
+    },
+    "cover.png": {
+      "sha256": "82b4068cb06be98142d58204f0dd7dc33a4cbe2c3b77085b530fdb73f7925e16",
+      "bytes": 75951
+    },
+    "post-metadata.json": {
+      "sha256": "15678111e7c7dbbb78757a887f83ad361dd6c0aef022b3fb692ce7865a87833a",
+      "bytes": 2841
+    },
+    "breakdown.png": {
+      "sha256": "8d91285461d518f1cde83d6a27b88615a11a88d0c5b35befaf24b36ee9e53e34",
+      "bytes": 170500
+    },
+    "telegram-post.txt": {
+      "sha256": "58642018d49eb786bd55c71da88eaed37a6e3983b94c991ac5ef371ae0eeeb5f",
+      "bytes": 721
+    },
+    "story.png": {
+      "sha256": "7dd2b689a9ce73d0bb6611343a61bbeba6b15f3964f72ffa45aa5eeafb706f6f",
+      "bytes": 71795
+    }
+  },
+  "pick_id": "2026-10-25_research_Cleveland_Cavaliers_vs_Brooklyn_Nets",
+  "created_at": "2026-10-24T17:27:55.415082+00:00"
+}
