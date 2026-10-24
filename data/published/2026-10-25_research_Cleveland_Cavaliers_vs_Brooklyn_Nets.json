@@ -87,22 +87,22 @@
     }
   },
   "instagram_feed": {
-    "ok": false,
-    "error": {
-      "message": "(#10) Requires instagram_content_publish permission to manage the object",
-      "type": "OAuthException",
-      "code": 10,
-      "fbtrace_id": "A2W0rg9Xkvg5jTI-Mb7ylHP"
-    }
+    "ok": true,
+    "media_id": "18102484979434283",
+    "container_id": "18165971623508224",
+    "permalink": "https://www.instagram.com/p/De4_u_KAWPn/",
+    "media_type": "CAROUSEL_ALBUM",
+    "children": 3,
+    "children_cdn_verified": true,
+    "published_at": "2026-10-24T20:31:18Z",
+    "note": "Published manually via IG Graph API on 2026-10-24 (timestamps from the published media objects) using a freshly consented short-lived page token after re-granting instagram_content_publish; backfills the 6:30am NZDT workflow failure (OAuth #10). Repair provenance: standin token repair, not the stored META_PAGE_TOKEN."
   },
   "instagram_story": {
-    "ok": false,
-    "media_id": null,
-    "error": {
-      "message": "(#10) Requires instagram_content_publish permission to manage the object",
-      "type": "OAuthException",
-      "code": 10,
-      "fbtrace_id": "AKhumd_quYuerykpcATtmR9"
-    }
+    "ok": true,
+    "media_id": "18072912338590673",
+    "container_id": "18165971827508224",
+    "permalink": "https://www.instagram.com/stories/puntmatenz/4015239685747101548",
+    "published_at": "2026-10-24T20:31:44Z",
+    "note": "Published manually via IG Graph API on 2026-10-24 (timestamps from the published media objects) using a freshly consented short-lived page token after re-granting instagram_content_publish; backfills the 6:30am NZDT workflow failure (OAuth #10). Repair provenance: standin token repair, not the stored META_PAGE_TOKEN."
   }
 }
