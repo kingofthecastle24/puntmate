@@ -1,0 +1,96 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 287,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1792949312,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR9q3jxAZrsOeZnj13I_1BvE4HlxjAACKA1rG_KJ-EakR2KTUNORbQEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADKA1rG_KJ-EZ4",
+            "file_size": 971,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR9q3jxAZrsOeZnj13I_1BvE4HlxjAACKA1rG_KJ-EakR2KTUNORbQEAAwIAA20AAz0E",
+            "file_unique_id": "AQADKA1rG_KJ-EZy",
+            "file_size": 9244,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR9q3jxAZrsOeZnj13I_1BvE4HlxjAACKA1rG_KJ-EakR2KTUNORbQEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADKA1rG_KJ-EZ9",
+            "file_size": 40115,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR9q3jxAZrsOeZnj13I_1BvE4HlxjAACKA1rG_KJ-EakR2KTUNORbQEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADKA1rG_KJ-EZ8",
+            "file_size": 73815,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAR9q3jxAZrsOeZnj13I_1BvE4HlxjAACKA1rG_KJ-EakR2KTUNORbQEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADKA1rG_KJ-EZ-",
+            "file_size": 74709,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 WTA TOKYO\n\n\ud83c\udfdf Moyuka Uchijima vs Elise Mertens\n\nPICK: Elise Mertens\nODDS: 1.12 (Match Winner)\nInvestor Bet\n\nMertens is world No.15 and the fifth seed in Tokyo, up against home wildcard Uchijima, ranked 121, whose 2026 titles have all come at lower-tier events. Mertens' steady baseline game should absorb Uchijima's first-strike aggression, and projection models give her over 80 percent; the risk is the Tokyo home crowd getting behind the local wildcard.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 26,
+            "type": "bold"
+          },
+          {
+            "offset": 65,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 85,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 111,
+            "length": 12,
+            "type": "bold"
+          },
+          {
+            "offset": 125,
+            "length": 348,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18118668331948395"
+  }
+}

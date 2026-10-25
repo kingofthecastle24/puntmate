@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-26_research_Moyuka_Uchijima_vs_Elise_Mertens_v2",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-25T17:26:04.219777+00:00",
       "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-25T17:28:31.081343+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-25T17:28:31.081549+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-10-25T17:29:15.565708+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": true, \"instagram_story\": true}"
     }
   ]
 }
