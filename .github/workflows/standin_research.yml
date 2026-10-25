@@ -6,7 +6,7 @@ on:
       action:
         description: Prepare a frozen package, or publish an inspected package
         type: choice
-        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose, prepare-recap, publish-recap]
+        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose, prepare-recap, publish-recap, admin-telegram-delete]
         default: prepare
         required: true
       pick_json:
@@ -19,6 +19,10 @@ on:
         required: false
       recap_json:
         description: Weekly recap payload JSON (prepare-recap only; no secrets)
+        type: string
+        required: false
+      telegram_message_id:
+        description: Telegram channel message ID to remove (admin-telegram-delete only)
         type: string
         required: false
       meta_ready:
@@ -51,6 +55,7 @@ jobs:
       ACTION: ${{ inputs.action }}
       PICK_JSON: ${{ inputs.pick_json }}
       RECAP_JSON: ${{ inputs.recap_json }}
+      TELEGRAM_MESSAGE_ID: ${{ inputs.telegram_message_id }}
       PICK_ID: ${{ inputs.pick_id }}
       DRY_RUN: ${{ inputs.dry_run }}
       META_READY: ${{ inputs.meta_ready }}
@@ -506,6 +511,25 @@ jobs:
           if not dry and not results.get('instagram_story',{}).get('ok'):
               raise SystemExit('Recap publish incomplete - see results')
           PYPUBRECAP
+      - name: Remove one Telegram channel message (or dry run)
+        if: inputs.action == 'admin-telegram-delete'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: |
+          python - <<'PYTGDEL'
+          import os, re, requests
+          mid = os.environ.get('TELEGRAM_MESSAGE_ID','').strip()
+          assert re.fullmatch(r'\d{1,10}', mid), 'telegram_message_id must be numeric'
+          dry = os.environ.get('DRY_RUN','true').lower() == 'true'
+          if dry:
+              print('DRY RUN - would delete Telegram channel message', mid)
+          else:
+              r = requests.post('https://api.telegram.org/bot'+os.environ['TELEGRAM_BOT_TOKEN']+'/deleteMessage',
+                  json={'chat_id': os.environ['TELEGRAM_CHANNEL_ID'], 'message_id': int(mid)}, timeout=30).json()
+              print(r)
+              assert r.get('ok'), r
+          PYTGDEL
       - name: Diagnose Meta token and account mapping (read-only)
         if: inputs.action == 'diagnose'
         env:
