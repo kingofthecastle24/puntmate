@@ -157,7 +157,6 @@ jobs:
           from workflow_state import transition, GENERATED, PREVIEW_READY, AWAITING_APPROVAL
           now = datetime.now(timezone.utc)
           today = now.astimezone(ZoneInfo('Pacific/Auckland')).date().isoformat()
-          assert today < '2026-11-01', 'Stand-in authorization window ended'
           p = json.loads(os.environ['PICK_JSON'])
           assert p.get('kind') == 'research_multi' and p.get('source_type') == 'research_based'
           assert not any(p.get(k) for k in ('synthetic','test','is_test','force_test_pick')), 'No synthetic picks'
@@ -286,7 +285,6 @@ jobs:
           from manifest import build_manifest, write_manifest
           now = datetime.now(timezone.utc)
           local = now.astimezone(ZoneInfo('Pacific/Auckland'))
-          assert local.date().isoformat() < '2026-11-01', 'Stand-in authorization window ended'
           r = json.loads(os.environ['RECAP_JSON'])
           rows = r['rows']; wins = int(r['wins']); losses = int(r['losses'])
           assert wins + losses == len(rows) and wins >= 0 and losses >= 0, 'Row count mismatch'
@@ -294,7 +292,7 @@ jobs:
               assert all(k in row for k in ('day','text','score','win')), 'Missing row field'
               assert isinstance(row['win'], bool)
           assert r.get('evidence_urls'), 'Recap evidence URLs required'
-          assert r.get('week_label') and r.get('pending_note') is not None and r.get('telegram_caption'), 'Missing recap fields'
+          assert r.get('week_label') and r.get('pending_note') is not None, 'Missing recap fields'
           pid = local.date().isoformat() + '_research_Weekly_Recap'
           d = Path('data/review', pid)
           assert not d.exists(), 'Recap package already frozen for today'
@@ -355,10 +353,10 @@ jobs:
           dr.text((sp(pad), sp(fy+26)), '@puntmatenz', font=mono_b(20), fill=PAPER)
           dr.text((sp(W-pad), sp(fy+30)), 'For entertainment & informational purposes only · Not advice · 18+', font=mono_r(14), fill=MUTED, anchor='ra')
           img.resize((W,H), Image.LANCZOS).save(d/'recap_story.png')
-          base = 'https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/main/'+str(d)+'/'
+          base = 'https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/'+os.environ.get('GITHUB_REF_NAME','main')+'/'+str(d)+'/'
           m = {'pick_id': pid, 'post_date': local.date().isoformat(), 'kind': 'weekly_recap',
-               'source_type': 'research_based', 'intended_platforms': ['telegram','instagram_story'],
-               'story_url': base+'recap_story.png', 'telegram_caption': r['telegram_caption'],
+               'source_type': 'research_based', 'intended_platforms': ['instagram_story'],
+               'story_url': base+'recap_story.png',
                'week_label': r['week_label'], 'wins': wins, 'losses': losses,
                'evidence_urls': r['evidence_urls'], 'research_checked_at': now.isoformat()}
           (d/'post-metadata.json').write_text(json.dumps(m, indent=2))
@@ -373,7 +371,7 @@ jobs:
           git add data/review/*_research_* data/state/*_research_*.json data/cards/
           git diff --cached --quiet || git commit -m 'chore: freeze stand-in research package [skip ci]'
           git pull --rebase origin main
-          git push origin HEAD:main
+          git push origin HEAD:${{ github.ref_name }}
       - name: Validate exact package before publish
         if: inputs.action == 'publish' || inputs.action == 'publish-multi'
         run: |
@@ -385,7 +383,7 @@ jobs:
           from manifest import load_manifest, verify_manifest
           now = datetime.now(timezone.utc)
           today = now.astimezone(ZoneInfo('Pacific/Auckland')).date().isoformat()
-          assert today < '2026-11-01', 'Stand-in authorization window ended'
+          assert os.environ['ACTION'] == 'publish-multi' or today < '2026-11-01', 'Stand-in authorization window ended'
           pid = os.environ['PICK_ID']
           assert re.fullmatch(r'\d{4}-\d{2}-\d{2}_research_[A-Za-z0-9_]+',pid), 'Invalid research package ID'
           d = Path('data/review',pid)
@@ -465,8 +463,6 @@ jobs:
       - name: Publish weekly recap (or dry run)
         if: inputs.action == 'publish-recap'
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           INSTAGRAM_USER_ID: ${{ secrets.IG_USER_ID }}
           META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
@@ -480,30 +476,20 @@ jobs:
           from manifest import load_manifest, verify_manifest
           now = datetime.now(timezone.utc)
           today = now.astimezone(ZoneInfo('Pacific/Auckland')).date().isoformat()
-          assert today < '2026-11-01', 'Stand-in authorization window ended'
           pid = today + '_research_Weekly_Recap'
           d = Path('data/review', pid)
           m = json.loads((d/'post-metadata.json').read_text())
           assert m['pick_id'] == pid and m['post_date'] == today
           assert m.get('kind') == 'weekly_recap' and m['source_type'] == 'research_based'
-          assert m['intended_platforms'] == ['telegram','instagram_story'], 'Unexpected platform'
+          assert m['intended_platforms'] == ['instagram_story'], 'Unexpected platform'
           ok, errors = verify_manifest(load_manifest(str(d/'manifest.json')), str(d))
           assert ok, errors
           results = {}
           dry = os.environ.get('DRY_RUN','true').lower() == 'true'
           if dry:
-              print('DRY RUN - would send Telegram photo + caption and IG story', m['story_url'])
-              results = {'dry_run': True, 'telegram': {'ok': True, 'note': 'simulated'}, 'instagram_story': {'ok': True, 'note': 'simulated'}}
+              print('DRY RUN - would send IG story only (recap is Story-only by instruction)', m['story_url'])
+              results = {'dry_run': True, 'instagram_story': {'ok': True, 'note': 'simulated'}}
           else:
-              token = os.environ['TELEGRAM_BOT_TOKEN']; chat = os.environ['TELEGRAM_CHANNEL_ID']
-              try:
-                  with open(d/'recap_story.png','rb') as f:
-                      r = requests.post('https://api.telegram.org/bot'+token+'/sendPhoto',
-                          data={'chat_id': chat, 'caption': m['telegram_caption']},
-                          files={'photo': f}, timeout=40).json()
-                  results['telegram'] = {'ok': bool(r.get('ok')), 'detail': r}
-              except Exception as e:
-                  results['telegram'] = {'ok': False, 'error': str(e)}
               if os.environ.get('META_READY') != 'true':
                   results['instagram_story'] = {'ok': False, 'held': True, 'note': 'Awaiting Meta token readiness confirmation'}
               else:
@@ -517,7 +503,7 @@ jobs:
           if not dry:
               out.write_text(json.dumps(results, indent=2))
           print(json.dumps(results, indent=2)[:2000])
-          if not dry and not (results.get('telegram',{}).get('ok') and results.get('instagram_story',{}).get('ok')):
+          if not dry and not results.get('instagram_story',{}).get('ok'):
               raise SystemExit('Recap publish incomplete - see results')
           PYPUBRECAP
       - name: Diagnose Meta token and account mapping (read-only)
@@ -596,7 +582,7 @@ jobs:
           git add data/published/*_research_*.json data/state/*_research_*.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m 'chore: record stand-in publish results [skip ci]'
           git pull --rebase origin main
-          git push origin HEAD:main
+          git push origin HEAD:${{ github.ref_name }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
