@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-26_research_Moyuka_Uchijima_vs_Elise_Mertens",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-25T17:23:33.379852+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-25T17:23:33.380036+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-25T17:23:33.380244+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}
