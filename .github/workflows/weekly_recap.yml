@@ -11,8 +11,9 @@
 name: PuntMate Weekly Recap
 
 on:
-  schedule:
-    - cron: '0 6 * * 0'   # Sunday 6pm NZT (NZST, UTC+12)
+  # Schedule disabled 2026-10-25: reads stale data/picks.json (stops Oct 12) and posted
+  # wrong "quiet week" recaps 18 + 25 Oct. Standing recap now runs via standin_research.yml
+  # (IG Story). Manual dispatch kept for testing.
   workflow_dispatch:
     inputs:
       dry_run:
