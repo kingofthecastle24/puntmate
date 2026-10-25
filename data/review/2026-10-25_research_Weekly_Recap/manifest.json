@@ -1,0 +1,14 @@
+{
+  "files": {
+    "post-metadata.json": {
+      "sha256": "91d79158ed2d195b9c33ddcec20081a93056fca5f94b768b2123ec69bce797b8",
+      "bytes": 1401
+    },
+    "recap_story.png": {
+      "sha256": "7398c966e4441ef7faeaf5922f904e64c6d544423d0ed7fa0d449b832368fad4",
+      "bytes": 231452
+    }
+  },
+  "pick_id": "2026-10-25_research_Weekly_Recap",
+  "created_at": "2026-10-25T07:04:30.080769+00:00"
+}
