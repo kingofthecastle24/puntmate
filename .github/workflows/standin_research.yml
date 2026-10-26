@@ -101,7 +101,9 @@ jobs:
           assert 1 < float(p['odds']) <= 2.2, 'Conservative odds required'
           assert len(p['research_sources']) >= 2 and all(s.startswith('https://') for s in p['research_sources'])
           assert p['odds_source_url'].startswith('https://')
-          p.update(has_pick=True, bet_type='INVESTOR_BET', bet_type_label='Investor Bet', risk='STANDARD_PICK', confidence='High', confidence_label='High')
+          conf = str(p.get('confidence') or 'Medium').strip().title()
+          assert conf in ('High','Medium','Low'), 'confidence must be High, Medium or Low'
+          p.update(has_pick=True, bet_type='INVESTOR_BET', bet_type_label='Investor Bet', risk='STANDARD_PICK', confidence=conf, confidence_label=conf)
           p['bet_type_reason'] = p['final_explanation']
           date = local.date().isoformat()
           pick_id = date + '_research_' + renderer.slugify(p['match'])
@@ -117,9 +119,25 @@ jobs:
           original_build_props = renderer.build_props
           def standin_props(pick, handle='@puntmatenz'):
               props = original_build_props(pick, handle)
-              # Template appends RISK to this prop; confidence remains in its own chip.
-              props['confidenceLabel'] = 'LOW'
+              # Chip states the price band from the odds - never a risk
+              # classification. The fixed ' RISK' suffix is stripped in
+              # standin_wrap below, research renders only.
+              try:
+                  o = float(pick.get('odds', 0))
+              except (TypeError, ValueError):
+                  o = 0
+              props['confidenceLabel'] = 'SHORT ODDS' if o <= 1.30 else ('MID-RANGE ODDS' if o <= 1.60 else 'LONG ODDS')
               return props
+          original_wrap = renderer.render_wrapper_html
+          def standin_wrap(template_path, tmp_dir):
+              original_wrap(template_path, tmp_dir)
+              import glob
+              for f in glob.glob(os.path.join(tmp_dir, '*.dc.html')):
+                  s = open(f, encoding='utf-8').read()
+                  s2 = s.replace('{{ confidenceLabel }} RISK', '{{ confidenceLabel }}')
+                  if s2 != s:
+                      open(f, 'w', encoding='utf-8').write(s2)
+          renderer.render_wrapper_html = standin_wrap
           renderer.build_props = standin_props
           result = renderer.render_pick(p, date_str=date)
           assert result['ok'], result
@@ -297,7 +315,9 @@ jobs:
               assert all(k in row for k in ('day','text','score','win')), 'Missing row field'
               assert isinstance(row['win'], bool)
           assert r.get('evidence_urls'), 'Recap evidence URLs required'
-          assert r.get('week_label') and r.get('pending_note') is not None, 'Missing recap fields'
+          assert r.get('week_label') and (r.get('pending_note') is not None or r.get('multi')), 'Missing recap fields'
+          platforms = r.get('platforms', ['instagram_story'])
+          assert platforms and set(platforms) <= {'instagram_story','telegram'}, 'Unsupported recap platform'
           pid = local.date().isoformat() + '_research_Weekly_Recap'
           d = Path('data/review', pid)
           assert not d.exists(), 'Recap package already frozen for today'
@@ -332,7 +352,7 @@ jobs:
           px = sp(W-pad)-pw
           dr.rounded_rectangle([px, sp(pad+6), px+pw, sp(pad+6)+ph], radius=sp(20), outline=GREEN, width=sp(2))
           dr.text((px+sp(18), sp(pad+14)), tag, font=tf, fill=GREEN)
-          dr.text((sp(pad), sp(200)), '// WEEK IN REVIEW', font=mono_b(22), fill=GREEN)
+          dr.text((sp(pad), sp(200)), r.get('kicker', '// WEEK IN REVIEW'), font=mono_b(22), fill=GREEN)
           dr.text((sp(pad-4), sp(248)), f'{wins}W - {losses}L', font=archivo(110), fill=PAPER)
           dr.text((sp(pad), sp(400)), 'Every published pick, every result.\nPending shown separately - nothing hidden.', font=grotesk(26,500), fill=MUTED, spacing=sp(8))
           y = 530
@@ -347,12 +367,24 @@ jobs:
               dr.text((sp(x2-28), sp(y+64)), 'W' if row['win'] else 'L', font=archivo(30), fill=GREEN if row['win'] else WARN, anchor='ra')
               y += 132
           y += 16
-          dr.text((sp(pad), sp(y)), 'PENDING', font=mono_b(16), fill=MUTED)
-          y += 44
-          dr.rounded_rectangle([sp(pad), sp(y), sp(x2), sp(y+116)], radius=sp(16), fill=SURFACE, outline=DIMMER, width=sp(1.2))
-          dr.text((sp(pad+28), sp(y+24)), 'WEEKEND MULTI', font=mono_b(15), fill=MUTED)
-          dr.text((sp(pad+28), sp(y+62)), r['pending_note'], font=grotesk(22,500), fill=PAPER)
-          dr.text((sp(x2-28), sp(y+48)), 'PENDING', font=mono_b(20), fill=MUTED, anchor='ra')
+          multi = r.get('multi')
+          if multi:
+              won = bool(multi.get('win'))
+              dr.text((sp(pad), sp(y)), 'WEEKEND MULTI', font=mono_b(16), fill=MUTED)
+              y += 44
+              dr.rounded_rectangle([sp(pad), sp(y), sp(x2), sp(y+116)], radius=sp(16), fill=SURFACE, outline=GREEN if won else WARN, width=sp(1.6))
+              dr.text((sp(pad+28), sp(y+24)), multi['day'], font=mono_b(15), fill=MUTED)
+              dr.text((sp(pad+28), sp(y+62)), multi['text'], font=grotesk(22,700), fill=PAPER)
+              if multi.get('score'):
+                  dr.text((sp(x2-28), sp(y+26)), multi['score'], font=mono_r(16), fill=MUTED, anchor='ra')
+              dr.text((sp(x2-28), sp(y+48)), 'WON' if won else 'LOST', font=mono_b(20), fill=GREEN if won else WARN, anchor='ra')
+          else:
+              dr.text((sp(pad), sp(y)), 'PENDING', font=mono_b(16), fill=MUTED)
+              y += 44
+              dr.rounded_rectangle([sp(pad), sp(y), sp(x2), sp(y+116)], radius=sp(16), fill=SURFACE, outline=DIMMER, width=sp(1.2))
+              dr.text((sp(pad+28), sp(y+24)), 'WEEKEND MULTI', font=mono_b(15), fill=MUTED)
+              dr.text((sp(pad+28), sp(y+62)), r['pending_note'], font=grotesk(22,500), fill=PAPER)
+              dr.text((sp(x2-28), sp(y+48)), 'PENDING', font=mono_b(20), fill=MUTED, anchor='ra')
           fy = H - 110
           dr.line([(sp(pad), sp(fy)), (sp(W-pad), sp(fy))], fill=DIMMER, width=sp(1.5))
           dr.text((sp(pad), sp(fy+26)), '@puntmatenz', font=mono_b(20), fill=PAPER)
@@ -360,7 +392,8 @@ jobs:
           img.resize((W,H), Image.LANCZOS).save(d/'recap_story.png')
           base = 'https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/'+os.environ.get('GITHUB_REF_NAME','main')+'/'+str(d)+'/'
           m = {'pick_id': pid, 'post_date': local.date().isoformat(), 'kind': 'weekly_recap',
-               'source_type': 'research_based', 'intended_platforms': ['instagram_story'],
+               'source_type': 'research_based', 'intended_platforms': platforms,
+               'telegram_caption': r.get('telegram_caption'),
                'story_url': base+'recap_story.png',
                'week_label': r['week_label'], 'wins': wins, 'losses': losses,
                'evidence_urls': r['evidence_urls'], 'research_checked_at': now.isoformat()}
@@ -472,6 +505,8 @@ jobs:
           INSTAGRAM_USER_ID: ${{ secrets.IG_USER_ID }}
           META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
           INSTAGRAM_ACCESS_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: |
           python - <<'PYPUBRECAP'
           import json, os, re, requests
@@ -485,15 +520,16 @@ jobs:
           d = Path('data/review', pid)
           m = json.loads((d/'post-metadata.json').read_text())
           assert m['pick_id'] == pid and m['post_date'] == today
-          assert m.get('kind') == 'weekly_recap' and m['source_type'] == 'research_based'
-          assert m['intended_platforms'] == ['instagram_story'], 'Unexpected platform'
+          assert m['source_type'] == 'research_based'
+          assert m.get('kind') == 'weekly_recap'
+          assert set(m['intended_platforms']) <= {'instagram_story','telegram'} and 'instagram_story' in m['intended_platforms'], 'Unexpected platform'
           ok, errors = verify_manifest(load_manifest(str(d/'manifest.json')), str(d))
           assert ok, errors
           results = {}
           dry = os.environ.get('DRY_RUN','true').lower() == 'true'
           if dry:
-              print('DRY RUN - would send IG story only (recap is Story-only by instruction)', m['story_url'])
-              results = {'dry_run': True, 'instagram_story': {'ok': True, 'note': 'simulated'}}
+              print('DRY RUN - would send recap to', m['intended_platforms'], m['story_url'])
+              results = {'dry_run': True, 'instagram_story': {'ok': True, 'note': 'simulated'}, 'telegram': {'ok': True, 'note': 'simulated'}}
           else:
               if os.environ.get('META_READY') != 'true':
                   results['instagram_story'] = {'ok': False, 'held': True, 'note': 'Awaiting Meta token readiness confirmation'}
@@ -504,11 +540,21 @@ jobs:
                       results['instagram_story'] = {'ok': mid is not None, 'media_id': mid, 'error': getattr(mod, 'LAST_ERROR', None)}
                   except Exception as e:
                       results['instagram_story'] = {'ok': False, 'error': str(e)}
+          if not dry and 'telegram' in m['intended_platforms']:
+              try:
+                  cap = m.get('telegram_caption') or ('Weekly recap ' + m['week_label'])
+                  with open(d/'recap_story.png','rb') as fh:
+                      tg = requests.post('https://api.telegram.org/bot'+os.environ['TELEGRAM_BOT_TOKEN']+'/sendPhoto',
+                          data={'chat_id': os.environ['TELEGRAM_CHANNEL_ID'], 'caption': cap},
+                          files={'photo': ('recap_story.png', fh, 'image/png')}, timeout=60).json()
+                  results['telegram'] = {'ok': bool(tg.get('ok')), 'message_id': (tg.get('result') or {}).get('message_id'), 'error': None if tg.get('ok') else str(tg)[:300]}
+              except Exception as e:
+                  results['telegram'] = {'ok': False, 'error': str(e)}
           out = Path('data/published', pid + '.json')
           if not dry:
               out.write_text(json.dumps(results, indent=2))
           print(json.dumps(results, indent=2)[:2000])
-          if not dry and not results.get('instagram_story',{}).get('ok'):
+          if not dry and not all(results.get(p,{}).get('ok') for p in m['intended_platforms']):
               raise SystemExit('Recap publish incomplete - see results')
           PYPUBRECAP
       - name: Remove one Telegram channel message (or dry run)
