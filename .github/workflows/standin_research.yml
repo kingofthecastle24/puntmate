@@ -117,12 +117,15 @@ jobs:
               return dt.strftime('%a %d %b').upper(), dt.strftime('%a %d %b, %-I:%M%p').lower() + ' NZDT'
           renderer.kickoff_display = kickoff_display
           original_build_props = renderer.build_props
-          RISK_CHIP = {'HIGH': 'LOW', 'MEDIUM': 'MODERATE', 'LOW': 'HIGHER'}
           def standin_props(pick, handle='@puntmatenz'):
               props = original_build_props(pick, handle)
               # Template appends RISK to this prop; confidence remains in its own chip.
-              # Chip follows the pick's evidence-based confidence instead of a fixed LOW.
-              props['confidenceLabel'] = RISK_CHIP.get(str(props.get('confidenceLabel', '')).upper(), 'MODERATE')
+              # Chip states the price band, never an absolute safety classification.
+              try:
+                  o = float(pick.get('odds', 0))
+              except (TypeError, ValueError):
+                  o = 0
+              props['confidenceLabel'] = 'SHORT-PRICED' if o <= 1.30 else ('MID-PRICED' if o <= 1.60 else 'LONG-PRICED')
               return props
           renderer.build_props = standin_props
           result = renderer.render_pick(p, date_str=date)
