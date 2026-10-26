@@ -1,0 +1,34 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "0e30c38cc1a9af45cd93b5258a754027c31ba3207060748246d284167defeaef",
+      "bytes": 90647
+    },
+    "instagram-caption.txt": {
+      "sha256": "3e2aabd279306d94a41f8b24c8ea809ffe1c462149c9903b4756a3f4f9e72d85",
+      "bytes": 606
+    },
+    "cover.png": {
+      "sha256": "27fb8da0b885a2a229f15df713f0915b883113ccf82347a7d59dcd98bc007fd5",
+      "bytes": 74862
+    },
+    "post-metadata.json": {
+      "sha256": "7d2ef6c850d4401ae96bd2c1c36dfb96605602a0a30f791948ee864006166fef",
+      "bytes": 2639
+    },
+    "breakdown.png": {
+      "sha256": "b485b72b9e8532c583007b47fe2feec5f5f195a7e1e679e954d0e4ba50b9c430",
+      "bytes": 156046
+    },
+    "telegram-post.txt": {
+      "sha256": "9e5822d3e82ecbfd2264cf5c48eaf61d7c62dfd32409651a3b0b73675ab76afc",
+      "bytes": 648
+    },
+    "story.png": {
+      "sha256": "6f3929219724413813a8ba0f87897894303dae67cf0ca963cb82885c8920a566",
+      "bytes": 75537
+    }
+  },
+  "pick_id": "2026-10-27_research_Oklahoma_City_Thunder_vs_Phoenix_Suns",
+  "created_at": "2026-10-26T17:32:59.099716+00:00"
+}

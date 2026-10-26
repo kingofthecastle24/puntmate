@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-27_research_Oklahoma_City_Thunder_vs_Phoenix_Suns",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-26T17:33:01.777692+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-26T17:33:01.777832+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-26T17:33:01.777978+00:00",
+      "note": "Research-based stand-in; visual review before live dispatch"
+    }
+  ]
+}

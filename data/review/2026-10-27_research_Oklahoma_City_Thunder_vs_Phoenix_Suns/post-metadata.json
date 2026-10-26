@@ -1,0 +1,45 @@
+{
+  "match": "Oklahoma City Thunder vs Phoenix Suns",
+  "sport": "basketball",
+  "sport_label": "NBA",
+  "market": "Moneyline",
+  "selection": "Oklahoma City Thunder",
+  "odds": "1.19",
+  "kickoff": "2026-10-27T00:00:00Z",
+  "final_explanation": "The defending champions are 3-0 and back home against a Phoenix side missing starting center Mark Williams, with Oso Ighodaro also doubtful, leaving the Suns thin in the frontcourt against OKC's depth. Jalen Williams remains out for the Thunder until November, which is the risk, but OKC have covered that absence through the opening week.",
+  "research_sources": [
+    "https://www.espn.com/nba/game/_/gameId/401909873/suns-thunder",
+    "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-10-26_01_00PM.pdf"
+  ],
+  "odds_source_url": "https://www.unibet.fr/paris-basketball/usa/nba/3389614/okc-thunder-vs-phx-suns",
+  "research_checked_at": "2026-10-26T17:20:00Z",
+  "source_type": "research_based",
+  "has_pick": true,
+  "bet_type": "INVESTOR_BET",
+  "bet_type_label": "Investor Bet",
+  "risk": "STANDARD_PICK",
+  "confidence": "High",
+  "confidence_label": "High",
+  "bet_type_reason": "The defending champions are 3-0 and back home against a Phoenix side missing starting center Mark Williams, with Oso Ighodaro also doubtful, leaving the Suns thin in the frontcourt against OKC's depth. Jalen Williams remains out for the Thunder until November, which is the risk, but OKC have covered that absence through the opening week.",
+  "render_warnings": [
+    "possible overflow: <SPAN> \"LOCKED\" +-202px/+18px",
+    "possible overflow: <DIV> \"\" +17px/+-201px",
+    "possible overflow: <SPAN> \"1.19\" +0px/+22px"
+  ],
+  "pick_id": "2026-10-27_research_Oklahoma_City_Thunder_vs_Phoenix_Suns",
+  "post_date": "2026-10-27",
+  "generated_at": "2026-10-26T17:32:59.099716+00:00",
+  "intended_platforms": [
+    "telegram",
+    "instagram_feed",
+    "instagram_story"
+  ],
+  "stake_guidance_nzd": 10,
+  "workflow_state": "AWAITING_APPROVAL",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-27_Oklahoma_City_Thunder_vs_Phoenix_Suns_night_1_cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-27_Oklahoma_City_Thunder_vs_Phoenix_Suns_night_2_tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-27_Oklahoma_City_Thunder_vs_Phoenix_Suns_night_3_breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/cards/2026-10-27_Oklahoma_City_Thunder_vs_Phoenix_Suns_night_story.png"
+}
