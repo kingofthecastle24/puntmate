@@ -101,7 +101,9 @@ jobs:
           assert 1 < float(p['odds']) <= 2.2, 'Conservative odds required'
           assert len(p['research_sources']) >= 2 and all(s.startswith('https://') for s in p['research_sources'])
           assert p['odds_source_url'].startswith('https://')
-          p.update(has_pick=True, bet_type='INVESTOR_BET', bet_type_label='Investor Bet', risk='STANDARD_PICK', confidence='High', confidence_label='High')
+          conf = str(p.get('confidence') or 'Medium').strip().title()
+          assert conf in ('High','Medium','Low'), 'confidence must be High, Medium or Low'
+          p.update(has_pick=True, bet_type='INVESTOR_BET', bet_type_label='Investor Bet', risk='STANDARD_PICK', confidence=conf, confidence_label=conf)
           p['bet_type_reason'] = p['final_explanation']
           date = local.date().isoformat()
           pick_id = date + '_research_' + renderer.slugify(p['match'])
@@ -117,9 +119,25 @@ jobs:
           original_build_props = renderer.build_props
           def standin_props(pick, handle='@puntmatenz'):
               props = original_build_props(pick, handle)
-              # Template appends RISK to this prop; confidence remains in its own chip.
-              props['confidenceLabel'] = 'LOW'
+              # Chip states the price band from the odds - never a risk
+              # classification. The fixed ' RISK' suffix is stripped in
+              # standin_wrap below, research renders only.
+              try:
+                  o = float(pick.get('odds', 0))
+              except (TypeError, ValueError):
+                  o = 0
+              props['confidenceLabel'] = 'SHORT ODDS' if o <= 1.30 else ('MID-RANGE ODDS' if o <= 1.60 else 'LONG ODDS')
               return props
+          original_wrap = renderer.render_wrapper_html
+          def standin_wrap(template_path, tmp_dir):
+              original_wrap(template_path, tmp_dir)
+              import glob
+              for f in glob.glob(os.path.join(tmp_dir, '*.dc.html')):
+                  s = open(f, encoding='utf-8').read()
+                  s2 = s.replace('{{ confidenceLabel }} RISK', '{{ confidenceLabel }}')
+                  if s2 != s:
+                      open(f, 'w', encoding='utf-8').write(s2)
+          renderer.render_wrapper_html = standin_wrap
           renderer.build_props = standin_props
           result = renderer.render_pick(p, date_str=date)
           assert result['ok'], result
