@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-27_research_Oklahoma_City_Thunder_vs_Phoenix_Suns",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-26T17:33:01.777978+00:00",
       "note": "Research-based stand-in; visual review before live dispatch"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-26T17:35:00.424955+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-26T17:35:00.425214+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-10-26T17:35:41.102632+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": true, \"instagram_story\": true}"
     }
   ]
 }

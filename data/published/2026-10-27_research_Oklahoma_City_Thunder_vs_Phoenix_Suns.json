@@ -1,0 +1,96 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 288,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1793036102,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASBq349GY8FwwYpo5I4SzBm1iwN-uwACDg1rG_KJAAFHfOC5Hk415BwBAAMCAANzAAM9BA",
+            "file_unique_id": "AQADDg1rG_KJAAFHeA",
+            "file_size": 1082,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASBq349GY8FwwYpo5I4SzBm1iwN-uwACDg1rG_KJAAFHfOC5Hk415BwBAAMCAANtAAM9BA",
+            "file_unique_id": "AQADDg1rG_KJAAFHcg",
+            "file_size": 11159,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASBq349GY8FwwYpo5I4SzBm1iwN-uwACDg1rG_KJAAFHfOC5Hk415BwBAAMCAAN4AAM9BA",
+            "file_unique_id": "AQADDg1rG_KJAAFHfQ",
+            "file_size": 45154,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASBq349GY8FwwYpo5I4SzBm1iwN-uwACDg1rG_KJAAFHfOC5Hk415BwBAAMCAAN3AAM9BA",
+            "file_unique_id": "AQADDg1rG_KJAAFHfA",
+            "file_size": 81666,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASBq349GY8FwwYpo5I4SzBm1iwN-uwACDg1rG_KJAAFHfOC5Hk415BwBAAMCAAN5AAM9BA",
+            "file_unique_id": "AQADDg1rG_KJAAFHfg",
+            "file_size": 83331,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NBA\n\n\ud83c\udfdf Oklahoma City Thunder vs Phoenix Suns\n\nPICK: Oklahoma City Thunder\nODDS: 1.19 (Moneyline)\nInvestor Bet\n\nThe defending champions are 3-0 and back home against a Phoenix side missing starting center Mark Williams, with Oso Ighodaro also doubtful, leaving the Suns thin in the frontcourt against OKC's depth. Jalen Williams remains out for the Thunder until November, which is the risk, but OKC have covered that absence through the opening week.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 64,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 92,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 115,
+            "length": 12,
+            "type": "bold"
+          },
+          {
+            "offset": 129,
+            "length": 339,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18088815116289907"
+  }
+}
