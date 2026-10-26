@@ -376,8 +376,8 @@ jobs:
               dr.text((sp(pad+28), sp(y+24)), multi['day'], font=mono_b(15), fill=MUTED)
               dr.text((sp(pad+28), sp(y+62)), multi['text'], font=grotesk(22,700), fill=PAPER)
               if multi.get('score'):
-                  dr.text((sp(x2-28), sp(y+26)), multi['score'], font=mono_r(16), fill=MUTED, anchor='ra')
-              dr.text((sp(x2-28), sp(y+48)), 'WON' if won else 'LOST', font=mono_b(20), fill=GREEN if won else WARN, anchor='ra')
+                  dr.text((sp(x2-28), sp(y+22)), multi['score'], font=mono_r(16), fill=MUTED, anchor='ra')
+              dr.text((sp(x2-28), sp(y+56)), 'WON' if won else 'LOST', font=mono_b(20), fill=GREEN if won else WARN, anchor='ra')
           else:
               dr.text((sp(pad), sp(y)), 'PENDING', font=mono_b(16), fill=MUTED)
               y += 44
