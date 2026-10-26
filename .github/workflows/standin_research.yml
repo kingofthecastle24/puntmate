@@ -101,7 +101,9 @@ jobs:
           assert 1 < float(p['odds']) <= 2.2, 'Conservative odds required'
           assert len(p['research_sources']) >= 2 and all(s.startswith('https://') for s in p['research_sources'])
           assert p['odds_source_url'].startswith('https://')
-          p.update(has_pick=True, bet_type='INVESTOR_BET', bet_type_label='Investor Bet', risk='STANDARD_PICK', confidence='High', confidence_label='High')
+          conf = str(p.get('confidence') or 'Medium').strip().title()
+          assert conf in ('High','Medium','Low'), 'confidence must be High, Medium or Low'
+          p.update(has_pick=True, bet_type='INVESTOR_BET', bet_type_label='Investor Bet', risk='STANDARD_PICK', confidence=conf, confidence_label=conf)
           p['bet_type_reason'] = p['final_explanation']
           date = local.date().isoformat()
           pick_id = date + '_research_' + renderer.slugify(p['match'])
@@ -115,10 +117,12 @@ jobs:
               return dt.strftime('%a %d %b').upper(), dt.strftime('%a %d %b, %-I:%M%p').lower() + ' NZDT'
           renderer.kickoff_display = kickoff_display
           original_build_props = renderer.build_props
+          RISK_CHIP = {'HIGH': 'LOW', 'MEDIUM': 'MODERATE', 'LOW': 'HIGHER'}
           def standin_props(pick, handle='@puntmatenz'):
               props = original_build_props(pick, handle)
               # Template appends RISK to this prop; confidence remains in its own chip.
-              props['confidenceLabel'] = 'LOW'
+              # Chip follows the pick's evidence-based confidence instead of a fixed LOW.
+              props['confidenceLabel'] = RISK_CHIP.get(str(props.get('confidenceLabel', '')).upper(), 'MODERATE')
               return props
           renderer.build_props = standin_props
           result = renderer.render_pick(p, date_str=date)
