@@ -119,14 +119,25 @@ jobs:
           original_build_props = renderer.build_props
           def standin_props(pick, handle='@puntmatenz'):
               props = original_build_props(pick, handle)
-              # Template appends RISK to this prop; confidence remains in its own chip.
-              # Chip states the price band, never an absolute safety classification.
+              # Chip states the price band from the odds - never a risk
+              # classification. The fixed ' RISK' suffix is stripped in
+              # standin_wrap below, research renders only.
               try:
                   o = float(pick.get('odds', 0))
               except (TypeError, ValueError):
                   o = 0
-              props['confidenceLabel'] = 'SHORT-PRICED' if o <= 1.30 else ('MID-PRICED' if o <= 1.60 else 'LONG-PRICED')
+              props['confidenceLabel'] = 'SHORT ODDS' if o <= 1.30 else ('MID-RANGE ODDS' if o <= 1.60 else 'LONG ODDS')
               return props
+          original_wrap = renderer.render_wrapper_html
+          def standin_wrap(template_path, tmp_dir):
+              original_wrap(template_path, tmp_dir)
+              import glob
+              for f in glob.glob(os.path.join(tmp_dir, '*.dc.html')):
+                  s = open(f, encoding='utf-8').read()
+                  s2 = s.replace('{{ confidenceLabel }} RISK', '{{ confidenceLabel }}')
+                  if s2 != s:
+                      open(f, 'w', encoding='utf-8').write(s2)
+          renderer.render_wrapper_html = standin_wrap
           renderer.build_props = standin_props
           result = renderer.render_pick(p, date_str=date)
           assert result['ok'], result
