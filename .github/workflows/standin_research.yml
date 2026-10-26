@@ -354,7 +354,7 @@ jobs:
           dr.text((px+sp(18), sp(pad+14)), tag, font=tf, fill=GREEN)
           dr.text((sp(pad), sp(200)), r.get('kicker', '// WEEK IN REVIEW'), font=mono_b(22), fill=GREEN)
           dr.text((sp(pad-4), sp(248)), f'{wins}W - {losses}L', font=archivo(110), fill=PAPER)
-          dr.text((sp(pad), sp(400)), 'Every published pick, every result.\nPending shown separately - nothing hidden.', font=grotesk(26,500), fill=MUTED, spacing=sp(8))
+          dr.text((sp(pad), sp(400)), r.get('subline', 'Every published pick, every result.\nPending shown separately - nothing hidden.'), font=grotesk(26,500), fill=MUTED, spacing=sp(8))
           y = 530
           dr.text((sp(pad), sp(y)), 'SETTLED SINGLES', font=mono_b(16), fill=MUTED)
           y += 44
