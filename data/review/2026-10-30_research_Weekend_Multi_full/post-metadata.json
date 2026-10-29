@@ -1,0 +1,61 @@
+{
+  "kind": "research_multi",
+  "source_type": "research_based",
+  "research_checked_at": "2026-10-29T20:52:00Z",
+  "legs": [
+    {
+      "match": "LA Clippers vs Minnesota Timberwolves",
+      "sport_label": "NBA",
+      "market": "Moneyline",
+      "selection": "Minnesota Timberwolves",
+      "odds": "1.33",
+      "kickoff": "2026-10-31T00:00:00Z"
+    },
+    {
+      "match": "New Zealand vs Fiji",
+      "sport_label": "Rugby League",
+      "market": "Match winner",
+      "selection": "New Zealand",
+      "odds": "1.01",
+      "kickoff": "2026-10-31T04:30:00Z"
+    }
+  ],
+  "analysis": "Minnesota's matchup projection is 80.7% at home vs the Clippers, clearing break-even at 1.33 (75.2%). The Kiwis put 82 on Samoa last Sunday; Fiji's best win is 40-12 over the Cook Islands. NBA injury designations for this US Friday game are not submitted until Saturday morning NZ - verify pre-game. Timberwolves at home is the danger leg.",
+  "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 WEEKEND MULTI\n\nMinnesota Timberwolves ML @ 1.33 \u2014 Sat 1:00pm\nNZ Kiwis @ 1.01 \u2014 Sat 5:30pm (all NZDT)\n\nCombined ~1.34 | $10 returns ~$13.40\n\nMinnesota are strong at home against a travelling Clippers side, and the Kiwis should account for Fiji after putting 82 on Samoa last Sunday. Both legs must win.\n\n\u26a0\ufe0f Indicative public odds, not TAB. For entertainment & informational purposes only. Not advice. 18+.",
+  "story_line1": "TWolves: Sat 1pm   Kiwis: Sat 5:30pm",
+  "story_line2": "NZDT  |  31 Oct - 1 Nov",
+  "risk_tagline": "NBA injury designations land Saturday morning NZ - Both legs must win - Indicative public odds",
+  "has_pick": true,
+  "pick_id": "2026-10-30_research_Weekend_Multi_full",
+  "post_date": "2026-10-30",
+  "generated_at": "2026-10-29T20:53:30.394160+00:00",
+  "kickoff": "2026-10-31T00:00:00Z",
+  "match": "Weekend Multi",
+  "selection": "Minnesota Timberwolves + New Zealand",
+  "odds": 1.3433,
+  "market": "Match winner multi",
+  "bet_type": "PUNTER_BET",
+  "risk": "STANDARD_PICK",
+  "confidence": "Medium",
+  "confidence_label": "Medium",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-30_research_Weekend_Multi_full/cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-30_research_Weekend_Multi_full/tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-30_research_Weekend_Multi_full/breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-30_research_Weekend_Multi_full/story.png",
+  "story_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-30_research_Weekend_Multi_full/story.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-30_research_Weekend_Multi_full/story-breakdown.png"
+  ],
+  "intended_platforms": [
+    "telegram",
+    "instagram_story"
+  ],
+  "render_warnings": [
+    "possible overflow: <SPAN> \"MULTI.\" +-341px/+21px",
+    "possible overflow: <SPAN> \"~1.34\" +0px/+17px",
+    "possible overflow: <SPAN> \"~1.34\" +0px/+9px"
+  ],
+  "stake_guidance_nzd": 10
+}
