@@ -6,7 +6,7 @@ on:
       action:
         description: Prepare a frozen package, or publish an inspected package
         type: choice
-        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose, prepare-recap, publish-recap, admin-telegram-delete]
+        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose, prepare-recap, publish-recap, admin-telegram-delete, admin-instagram-delete]
         default: prepare
         required: true
       pick_json:
@@ -23,6 +23,14 @@ on:
         required: false
       telegram_message_id:
         description: Telegram channel message ID to remove (admin-telegram-delete only)
+        type: string
+        required: false
+      instagram_media_id:
+        description: Instagram media object ID to remove (admin-instagram-delete only)
+        type: string
+        required: false
+      approval_ref:
+        description: Attestation reference for publish-multi (audit hash only; does not verify approval)
         type: string
         required: false
       meta_ready:
@@ -46,6 +54,7 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
+  pull-requests: read
 jobs:
   standin:
     runs-on: ubuntu-latest
@@ -56,6 +65,9 @@ jobs:
       PICK_JSON: ${{ inputs.pick_json }}
       RECAP_JSON: ${{ inputs.recap_json }}
       TELEGRAM_MESSAGE_ID: ${{ inputs.telegram_message_id }}
+      INSTAGRAM_MEDIA_ID: ${{ inputs.instagram_media_id }}
+      APPROVAL_REF: ${{ inputs.approval_ref }}
+      GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PICK_ID: ${{ inputs.pick_id }}
       DRY_RUN: ${{ inputs.dry_run }}
       META_READY: ${{ inputs.meta_ready }}
@@ -141,6 +153,7 @@ jobs:
           (review/'post-metadata.json').write_text(json.dumps(meta,indent=2))
           names = [f.name for f in review.iterdir() if f.is_file()]
           write_manifest(build_manifest(str(review),names,extra={'pick_id':pick_id,'created_at':now.isoformat()}),str(review/'manifest.json'))
+          import publish_gate; publish_gate.stamp_manifest(str(review/'manifest.json'), '.')
           for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL):
               transition(os.getcwd(),pick_id,state,note='Research-based stand-in; visual review before live dispatch')
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
@@ -224,6 +237,7 @@ jobs:
           meta=dict(p,has_pick=True,pick_id=pid,post_date=today,generated_at=now.isoformat(),kickoff=legs[0]['kickoff'],match=p.get('match_label','Weekend Multi'),selection=' + '.join(l['selection'] for l in legs),odds=float(combined),market=p.get('market_label','Match winner multi'),bet_type=bet_type,risk='STANDARD_PICK',confidence='Medium',confidence_label='Medium',carousel_urls=[base+'cover.png',base+'tip.png',base+'breakdown.png'],story_url=base+'story.png',story_urls=[base+'story.png',base+'story-breakdown.png'],intended_platforms=['telegram','instagram_story'],render_warnings=result.get('warnings',[]),stake_guidance_nzd=10,multi_tier=multi_tier,package_slug=slug)
           (d/'post-metadata.json').write_text(json.dumps(meta,indent=2))
           write_manifest(build_manifest(str(d),[f.name for f in d.iterdir() if f.name!='manifest.json'],extra={'pick_id':pid,'created_at':now.isoformat()}),str(d/'manifest.json'))
+          import publish_gate; publish_gate.stamp_manifest(str(d/'manifest.json'), '.')
           for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL): transition(os.getcwd(),pid,state,note='Weekend research multi; render review required')
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('Prepared '+pid+'; inspect all PNGs before live publish.')
           PYMULTI
@@ -408,6 +422,31 @@ jobs:
               assert m.get('kind') in ('research_multi','gambler_advisor')
               assert pid == today + '_research_' + m.get('package_slug','Weekend_Multi_full'), 'Package ID does not match its recorded slug'
               assert m['intended_platforms']==['telegram','instagram_story']
+              import json as _json, urllib.request, publish_gate as gate
+              fp = gate.assert_pin_matches('.')
+              print('PUBLISH GATE: renderer matches approved pin', fp[:12])
+              tok = os.environ.get('GH_API_TOKEN','')
+              repo = os.environ.get('GITHUB_REPOSITORY','kingofthecastle24/puntmate')
+              held = []
+              if not tok:
+                  raise SystemExit('PUBLISH HOLD: no GitHub API token available - cannot verify no renderer change is under review; refusing to publish')
+              try:
+                  hdr = {'Authorization':'Bearer '+tok,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+                  prs = _json.load(urllib.request.urlopen(urllib.request.Request(f'https://api.github.com/repos/{repo}/pulls?state=open&per_page=100', headers=hdr), timeout=30))
+                  for pr in prs:
+                      files = _json.load(urllib.request.urlopen(urllib.request.Request(f"https://api.github.com/repos/{repo}/pulls/{pr['number']}/files?per_page=100", headers=hdr), timeout=30))
+                      hits = gate.renderer_paths_touched([f['filename'] for f in files])
+                      if hits:
+                          held.append((pr['number'], pr['title'], hits))
+              except SystemExit:
+                  raise
+              except Exception as e:
+                  raise SystemExit(f'PUBLISH HOLD: open-PR review check failed ({e}) - cannot verify no renderer change is under review; refusing to publish')
+              if held:
+                  raise SystemExit('PUBLISH HOLD: renderer change under review in open PR(s): ' + '; '.join(f"#{n} {t} ({', '.join(h)})" for n,t,h in held) + ' - publish held until the PR is merged (with pin bump) or closed')
+              record = gate.record_attestation(pid, str(d), os.environ['ACTION'], m['intended_platforms'], os.environ.get('APPROVAL_REF',''))
+              gate.write_attestation_record('.', record)
+              print('PUBLISH GATE: attestation recorded', record['artifact_sha256'][:12])
           else:
               assert not m.get('kind')
               assert m['intended_platforms']==['telegram','instagram_feed','instagram_story'], 'Unexpected platform'
@@ -532,13 +571,34 @@ jobs:
           assert re.fullmatch(r'\d{1,10}', mid), 'telegram_message_id must be numeric'
           dry = os.environ.get('DRY_RUN','true').lower() == 'true'
           if dry:
-              print('DRY RUN - would delete Telegram channel message', mid)
+              print('DRY RUN - NOTHING DELETED (would delete Telegram channel message', mid, ')')
+              raise SystemExit('Refusing: dry_run is on, nothing was deleted')
           else:
               r = requests.post('https://api.telegram.org/bot'+os.environ['TELEGRAM_BOT_TOKEN']+'/deleteMessage',
                   json={'chat_id': os.environ['TELEGRAM_CHANNEL_ID'], 'message_id': int(mid)}, timeout=30).json()
               print(r)
               assert r.get('ok'), r
+              print('DELETED Telegram channel message', mid)
           PYTGDEL
+      - name: Remove one Instagram media object (or fail on dry run)
+        if: inputs.action == 'admin-instagram-delete'
+        env:
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+        run: |
+          python - <<'PYIGDEL'
+          import os, re, requests
+          mid = os.environ.get('INSTAGRAM_MEDIA_ID','').strip()
+          assert re.fullmatch(r'\d{5,25}', mid), 'instagram_media_id must be numeric'
+          dry = os.environ.get('DRY_RUN','true').lower() == 'true'
+          if dry:
+              print('DRY RUN - NOTHING DELETED (would delete IG media', mid, ')')
+              raise SystemExit('Refusing: dry_run is on, nothing was deleted')
+          r = requests.delete('https://graph.facebook.com/v21.0/'+mid,
+              params={'access_token': os.environ['META_PAGE_TOKEN']}, timeout=30)
+          print(r.status_code, r.text)
+          assert r.ok and r.json().get('success'), r.text
+          print('DELETED IG media', mid)
+          PYIGDEL
       - name: Diagnose Meta token and account mapping (read-only)
         if: inputs.action == 'diagnose'
         env:
@@ -612,7 +672,7 @@ jobs:
         run: |
           git config user.name 'PuntMate Bot'
           git config user.email 'puntmatenz@gmail.com'
-          git add data/published/*_research_*.json data/state/*_research_*.json 2>/dev/null || true
+          git add data/published/*_research_*.json data/state/*_research_*.json data/approvals/*.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m 'chore: record stand-in publish results [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:${{ github.ref_name }}
