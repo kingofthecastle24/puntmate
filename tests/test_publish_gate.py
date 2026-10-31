@@ -1,5 +1,5 @@
-"""Negative + positive tests for the publish gate. Synthetic fixtures only -
-no real picks, messages or private data."""
+"""Gate tests: integrity, review hold path detection, attestation honesty.
+Synthetic fixtures only - no real picks, messages or private data."""
 import json, sys, tempfile, unittest
 from pathlib import Path
 
@@ -7,23 +7,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 import publish_gate as gate
 
 
-def build_repo(root: Path, fp_source="reviewed"):
+def build_repo(root: Path, marker="reviewed"):
     (root / "scripts").mkdir(parents=True)
     (root / "brand/Templates").mkdir(parents=True)
     (root / "fonts").mkdir(parents=True)
     (root / "data/state").mkdir(parents=True)
-    (root / "scripts/render_brand_templates.py").write_text(f"# renderer {fp_source}")
-    (root / "brand/Templates/t.dc.html").write_text(f"<html>{fp_source}</html>")
-    (root / "fonts/f.ttf").write_bytes(fp_source.encode() * 10)
+    (root / "scripts/render_brand_templates.py").write_text(f"# renderer {marker}")
+    (root / "brand/Templates/t.dc.html").write_text(f"<html>{marker}</html>")
+    (root / "fonts/f.ttf").write_bytes(marker.encode() * 10)
     return gate.compute_renderer_fingerprint(root)
-
-
-def build_package(root: Path, renderer_fp) -> Path:
-    pkg = root / "data/review/2026-01-01_research_Test_Multi"
-    pkg.mkdir(parents=True)
-    (pkg / "manifest.json").write_text(json.dumps(
-        {"files": {}, "renderer_fingerprint": renderer_fp}))
-    return pkg
 
 
 class GateTest(unittest.TestCase):
@@ -33,61 +25,75 @@ class GateTest(unittest.TestCase):
         self.fp = build_repo(self.root)
         (self.root / gate.PIN_PATH).write_text(json.dumps(
             {"renderer_fingerprint": self.fp, "pinned_from": "test"}))
-        self.pkg = build_package(self.root, self.fp)
+        pkg = self.root / "data/review/2026-01-01_research_Test_Multi"
+        pkg.mkdir(parents=True)
+        (pkg / "manifest.json").write_text(json.dumps({"files": {}}))
+        self.pkg = pkg
 
     def tearDown(self):
         self.tmp.cleanup()
 
-    def attempt(self, approval="synthetic-approval-ref"):
-        return gate.assert_publish_allowed(
-            "2026-01-01_research_Test_Multi", str(self.pkg), str(self.root),
-            approval, "publish-multi", ["telegram", "instagram_story"])
+    # integrity
+    def test_pin_match_passes(self):
+        self.assertEqual(gate.assert_pin_matches(self.root), self.fp)
 
-    def test_happy_path_records_hashes_only(self):
-        rec = self.attempt()
-        blob = json.dumps(rec)
-        self.assertNotIn("synthetic-approval-ref", blob)   # privacy
-        self.assertEqual(rec["renderer_fingerprint"], self.fp)
-        self.assertEqual(len(rec["artifact_sha256"]), 64)
-        self.assertNotIn("wa-", blob)
-
-    def test_stale_template_blocked(self):
-        other = dict(json.loads((self.root / gate.PIN_PATH).read_text()))
-        other["renderer_fingerprint"] = "0" * 64           # pin moved on
-        (self.root / gate.PIN_PATH).write_text(json.dumps(other))
+    def test_unbumped_template_change_blocked(self):
+        (self.root / "brand/Templates/t.dc.html").write_text("<html>changed</html>")
         with self.assertRaises(SystemExit):
-            self.attempt()
-
-    def test_unstamped_package_blocked(self):
-        m = json.loads((self.pkg / "manifest.json").read_text())
-        del m["renderer_fingerprint"]                       # wrong assets
-        (self.pkg / "manifest.json").write_text(json.dumps(m))
-        with self.assertRaises(SystemExit):
-            self.attempt()
-
-    def test_missing_approval_blocked(self):
-        with self.assertRaises(SystemExit):
-            self.attempt(approval="")
-        with self.assertRaises(SystemExit):
-            self.attempt(approval="   ")
+            gate.assert_pin_matches(self.root)
 
     def test_missing_pin_fails_closed(self):
         (self.root / gate.PIN_PATH).unlink()
         with self.assertRaises(AssertionError):
-            self.attempt()
+            gate.assert_pin_matches(self.root)
 
-    def test_artifact_binds_pick_assets_audience(self):
-        a = self.attempt()
-        b = gate.assert_publish_allowed(
-            "2026-01-01_research_Other", str(self.pkg), str(self.root),
-            "synthetic-approval-ref", "publish-multi", ["telegram"])
-        self.assertNotEqual(a["artifact_sha256"], b["artifact_sha256"])
+    # review hold path detection
+    def test_renderer_pr_detected(self):
+        hit = gate.renderer_paths_touched(
+            ["scripts/render_brand_templates.py", "README.md"])
+        self.assertEqual(hit, ["scripts/render_brand_templates.py"])
+        self.assertTrue(gate.renderer_paths_touched(["fonts/Archivo-Black.ttf"]))
+        self.assertTrue(gate.renderer_paths_touched(["brand/Templates/x.dc.html"]))
 
-    def test_record_written_under_data_approvals(self):
-        rec = self.attempt()
-        path = gate.write_approval_record(self.root, rec)
-        self.assertTrue(Path(path).is_file())
-        self.assertIn("data/approvals", path)
+    def test_non_renderer_pr_ignored(self):
+        self.assertFalse(gate.renderer_paths_touched(
+            ["README.md", ".github/workflows/standin_research.yml",
+             "scripts/fetch_odds.py", "data/state/x.json"]))
+
+    # attestation honesty
+    def test_empty_attestation_blocked(self):
+        for bad in ("", "   ", None):
+            with self.assertRaises(SystemExit):
+                gate.record_attestation("p", str(self.pkg), "publish-multi",
+                                        ["telegram"], bad or "")
+
+    def test_attestation_hashes_only_and_binds_scope(self):
+        rec = gate.record_attestation(
+            "2026-01-01_research_Test_Multi", str(self.pkg),
+            "publish-multi", ["telegram", "instagram_story"],
+            "synthetic-reference-123")
+        blob = json.dumps(rec)
+        self.assertNotIn("synthetic-reference-123", blob)
+        self.assertEqual(rec["type"], "operator_attestation")
+        self.assertIn("does not verify", rec["note"])
+        other = gate.record_attestation(
+            "2026-01-01_research_Test_Multi", str(self.pkg),
+            "publish-multi", ["telegram"], "synthetic-reference-123")
+        self.assertNotEqual(rec["artifact_sha256"], other["artifact_sha256"])
+
+    def test_attestation_binds_actual_package_bytes(self):
+        rec1 = gate.record_attestation(
+            "p", str(self.pkg), "publish-multi", ["telegram"], "ref")
+        (self.pkg / "manifest.json").write_text(json.dumps({"files": {"x": 1}}))
+        rec2 = gate.record_attestation(
+            "p", str(self.pkg), "publish-multi", ["telegram"], "ref")
+        self.assertNotEqual(rec1["package_manifest_sha256"],
+                            rec2["package_manifest_sha256"])
+
+    def test_record_written(self):
+        rec = gate.record_attestation("p", str(self.pkg), "publish-multi",
+                                      ["telegram"], "ref")
+        self.assertTrue(Path(gate.write_attestation_record(self.root, rec)).is_file())
 
 
 if __name__ == "__main__":
