@@ -150,7 +150,7 @@ jobs:
         if: inputs.action == 'prepare-multi'
         run: |
           python - <<'PYMULTI'
-          import json, os, shutil
+          import json, os, re, shutil
           from pathlib import Path
           from datetime import datetime, timezone
           from zoneinfo import ZoneInfo
@@ -163,12 +163,17 @@ jobs:
           now = datetime.now(timezone.utc)
           today = now.astimezone(ZoneInfo('Pacific/Auckland')).date().isoformat()
           p = json.loads(os.environ['PICK_JSON'])
-          assert p.get('kind') == 'research_multi' and p.get('source_type') == 'research_based'
+          kind = p.get('kind')
+          assert kind in ('research_multi','gambler_advisor'), 'kind must be research_multi or gambler_advisor'
+          assert p.get('source_type') == 'research_based'
           assert not any(p.get(k) for k in ('synthetic','test','is_test','force_test_pick')), 'No synthetic picks'
           legs = p['legs']
-          assert 2 <= len(legs) <= 4, 'Multi needs 2-4 legs'
+          min_legs = 1 if kind == 'gambler_advisor' else 2
+          assert min_legs <= len(legs) <= 4, 'Multi needs 2-4 legs (1-4 for Gambler Advisor specials)'
           checked = datetime.fromisoformat(p['research_checked_at'].replace('Z','+00:00'))
           assert 0 <= (now-checked).total_seconds() < 7200
+          slug = p.get('package_slug','Weekend_Multi_full')
+          assert re.fullmatch(r'[A-Za-z0-9_]+', slug), 'Bad package slug'
           for leg in legs:
               assert all(leg.get(k) for k in ('match','selection','odds','kickoff')), 'Leg missing fields'
               dt = datetime.fromisoformat(leg['kickoff'].replace('Z','+00:00'))
@@ -176,17 +181,20 @@ jobs:
               assert 1 < float(leg['odds']) < 3
           combined = Decimal('1')
           for leg in legs: combined *= Decimal(str(leg['odds']))
-          pid = today + '_research_Weekend_Multi_full'
+          pid = today + '_research_' + slug
           d = Path('data/review',pid)
           assert not d.exists(), 'Frozen multi already exists; inspect it or use its exact ID'
           d.mkdir(parents=True)
+          multi_tier = p.get('multi_tier','punter')
+          assert multi_tier in ('punter','gambler'), 'multi_tier must be punter or gambler'
           original = renderer.build_multi_props
           def props(ls,tier,handle='@puntmatenz'):
               x = original(ls,tier,handle)
-              x.update(analysis=p['analysis'],combinedOdds='~'+format(combined,'.2f'),stake='$10',stakeReturn='All '+str(len(legs))+' legs must win',multiType='Weekend Multi',coverKicker='WEEKEND MULTI',riskTagline=p.get('risk_tagline','All legs must win - Indicative public odds'))
+              x.update(analysis=p['analysis'],combinedOdds='~'+format(combined,'.2f'),stake='$10',stakeReturn=p.get('stake_return','All '+str(len(legs))+' legs must win'),multiType=p.get('multi_type_label','Weekend Multi'),coverKicker=p.get('cover_kicker','WEEKEND MULTI'),riskTagline=p.get('risk_tagline','All legs must win - Indicative public odds'))
+              if p.get('cover_subline'): x['coverSubline'] = p['cover_subline']
               return x
           renderer.build_multi_props = props
-          result = renderer.render_multi({'match':'Weekend Multi'},'punter',legs,date_str=today)
+          result = renderer.render_multi({'match':p.get('match_label','Weekend Multi')},multi_tier,legs,date_str=today)
           assert result['ok'], result
           for key,srcf in result['files'].items():
               shutil.copyfile(srcf,d/('tip.png' if key=='legs' else key+'.png'))
@@ -198,7 +206,7 @@ jobs:
           logo=Image.open('brand/Logo/puntmate-icon-badge.png').convert('RGBA').resize((112,112),Image.Resampling.LANCZOS)
           im.paste(logo,(70,190),logo)
           draw.text((205,218),'PUNTMATE NZ',font=ImageFont.truetype(bold,44),fill='#24df7a')
-          text(315,'WEEKEND MULTI',37,b=True)
+          text(315,p.get('story_title','WEEKEND MULTI'),37,b=True)
           legsimg=Image.open(d/'tip.png').convert('RGB');legsimg.thumbnail((1080,1300));im.paste(legsimg,((1080-legsimg.width)//2,360))
           text(1695,p['story_line1'],27)
           text(1734,p['story_line2'],27)
@@ -207,12 +215,13 @@ jobs:
           im.save(d/'story.png')
           im2=Image.open(d/'story.png').convert('RGB');draw2=ImageDraw.Draw(im2);draw2.rectangle((0,360,1080,1680),fill='#0b120f')
           ximg=Image.open(d/'breakdown.png').convert('RGB');ximg.thumbnail((1080,1300));im2.paste(ximg,((1080-ximg.width)//2,360));im2.save(d/'story-breakdown.png')
+          bet_type = 'GAMBLER_BET' if kind == 'gambler_advisor' else 'PUNTER_BET'
           text = p['caption']
-          validate_text(text,risk='STANDARD_PICK',bet_type='PUNTER_BET',public=True)
+          validate_text(text,risk='STANDARD_PICK',bet_type=bet_type,public=True)
           (d/'telegram-post.txt').write_text(text)
           (d/'instagram-caption.txt').write_text(text)
           base='https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/main/'+str(d)+'/'
-          meta=dict(p,has_pick=True,pick_id=pid,post_date=today,generated_at=now.isoformat(),kickoff=legs[0]['kickoff'],match='Weekend Multi',selection=' + '.join(l['selection'] for l in legs),odds=float(combined),market='Match winner multi',bet_type='PUNTER_BET',risk='STANDARD_PICK',confidence='Medium',confidence_label='Medium',carousel_urls=[base+'cover.png',base+'tip.png',base+'breakdown.png'],story_url=base+'story.png',story_urls=[base+'story.png',base+'story-breakdown.png'],intended_platforms=['telegram','instagram_story'],render_warnings=result.get('warnings',[]),stake_guidance_nzd=10)
+          meta=dict(p,has_pick=True,pick_id=pid,post_date=today,generated_at=now.isoformat(),kickoff=legs[0]['kickoff'],match=p.get('match_label','Weekend Multi'),selection=' + '.join(l['selection'] for l in legs),odds=float(combined),market=p.get('market_label','Match winner multi'),bet_type=bet_type,risk='STANDARD_PICK',confidence='Medium',confidence_label='Medium',carousel_urls=[base+'cover.png',base+'tip.png',base+'breakdown.png'],story_url=base+'story.png',story_urls=[base+'story.png',base+'story-breakdown.png'],intended_platforms=['telegram','instagram_story'],render_warnings=result.get('warnings',[]),stake_guidance_nzd=10,multi_tier=multi_tier,package_slug=slug)
           (d/'post-metadata.json').write_text(json.dumps(meta,indent=2))
           write_manifest(build_manifest(str(d),[f.name for f in d.iterdir() if f.name!='manifest.json'],extra={'pick_id':pid,'created_at':now.isoformat()}),str(d/'manifest.json'))
           for state in (GENERATED,PREVIEW_READY,AWAITING_APPROVAL): transition(os.getcwd(),pid,state,note='Weekend research multi; render review required')
@@ -396,8 +405,8 @@ jobs:
           assert m['pick_id']==pid and m['post_date']==today
           assert m['source_type']=='research_based'
           if os.environ['ACTION'] == 'publish-multi':
-              assert m.get('kind') == 'research_multi'
-              assert pid == today + '_research_Weekend_Multi_full'
+              assert m.get('kind') in ('research_multi','gambler_advisor')
+              assert pid == today + '_research_' + m.get('package_slug','Weekend_Multi_full'), 'Package ID does not match its recorded slug'
               assert m['intended_platforms']==['telegram','instagram_story']
           else:
               assert not m.get('kind')
