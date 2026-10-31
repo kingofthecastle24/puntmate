@@ -96,7 +96,7 @@
     <div data-export-id="breakdown" style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;gap:36px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE BREAKDOWN</div>
-        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ confidenceLabel }} RISK</div>
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ riskBadge }}</div>
       </div>
 
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
@@ -202,7 +202,7 @@
 
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE BREAKDOWN</div>
-        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ confidenceLabel }} RISK</div>
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ riskBadge }}</div>
       </div>
 
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
@@ -310,10 +310,12 @@ class Component extends DCLogic {
     });
     const combinedOdds = this.props.combinedOdds ?? (valid > 0 ? ('$' + product.toFixed(2)) : '—');
 
-    const confidence = Math.max(1, Math.min(5, parseInt(this.props.confidence ?? 3, 10) || 3));
+    const confProp = this.props.confidence;
+    const showConfidence = !(confProp === 0 || confProp === '0' || confProp === 'none' || confProp === null);
+    const confidence = Math.max(1, Math.min(5, parseInt(confProp ?? 3, 10) || 3));
     const labels = { 5: 'MINIMAL', 4: 'LOW', 3: 'MODERATE', 2: 'HIGHER', 1: 'SPECULATIVE' };
     const confidenceLabel = this.props.confidenceLabel ?? labels[confidence];
-    const confidenceDots = [1, 2, 3, 4, 5].map(n => ({ bg: n <= confidence ? accent : 'rgba(255,255,255,0.14)' }));
+    const confidenceDots = showConfidence ? [1, 2, 3, 4, 5].map(n => ({ bg: n <= confidence ? accent : 'rgba(255,255,255,0.14)' })) : [];
 
     const riskTagline = this.props.riskTagline ?? 'Higher risk · Bigger return · One to dream on';
     const riskChips = riskTagline.split(/[·.]/).map(s => s.trim()).filter(Boolean).map(l => ({ label: l.toUpperCase() }));
@@ -359,6 +361,7 @@ class Component extends DCLogic {
       coverKicker: this.props.coverKicker ?? 'MULTI MONDAY',
       analysis: this.props.analysis ?? "Three short-priced favourites stacked for a value multi. Each leg clears our model on its own; combined they turn a modest stake into a real return without reaching for a longshot.",
       confidenceLabel,
+      riskBadge: showConfidence ? confidenceLabel + ' RISK' : '',
       confidenceDots,
       riskChips,
       stakeReturn,
