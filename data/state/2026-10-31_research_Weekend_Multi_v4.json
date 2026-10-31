@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-10-31_research_Weekend_Multi_v4",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-10-31T04:21:37.016361+00:00",
       "note": "Weekend research multi; render review required"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-10-31T04:23:19.587894+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-10-31T04:23:19.588083+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-10-31T04:23:46.046457+00:00",
+      "note": "{\"telegram\": true, \"instagram_story\": true}"
     }
   ]
 }
