@@ -1,6 +1,6 @@
 {
-  "renderer_fingerprint": "a302ed5ad45f67f7476d1a2f976923aef1629ed425b09629178e02334dea12c2",
-  "pinned_from": "main",
-  "pinned_at": "2026-10-31T04:35:00+00:00",
-  "note": "Reviewed renderer/templates/fonts fingerprint. Changes only via a merged PR that bumps this pin. publish-multi fails closed if a package was rendered with anything else."
+  "renderer_fingerprint": "3108ee2da88042273e8caaf1a07973300d8e5f80d02ed363ffdd1e92a50f63e2",
+  "pinned_from": "story-template-repair (PR #19 renderer)",
+  "pinned_at": "2026-10-31T04:44:00+00:00",
+  "note": "Reviewed renderer/templates/fonts fingerprint for the PR #19 renderer. publish-multi fails closed if the checkout renderer does not match this pin - after this PR merges, publishing resumes only when PR #19 (the matching renderer) merges."
 }
