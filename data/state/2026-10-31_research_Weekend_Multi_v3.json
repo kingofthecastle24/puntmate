@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-10-31_research_Weekend_Multi_v3",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-10-31T03:02:31.967124+00:00",
+      "note": "Weekend research multi; render review required"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-10-31T03:02:31.967258+00:00",
+      "note": "Weekend research multi; render review required"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-10-31T03:02:31.967406+00:00",
+      "note": "Weekend research multi; render review required"
+    }
+  ]
+}
