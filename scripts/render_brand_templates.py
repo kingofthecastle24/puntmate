@@ -596,6 +596,24 @@ def render_multi(pick, tier, legs, date_str=None, out_dir=CARDS_DIR):
                     )
                     check_no_overlap_and_containment(page, warnings)
                     files["cover"], files["legs"], files["breakdown"] = slide_paths
+
+                    # --- story frames (dedicated 1080x1920 template layout) ---
+                    # Replaces the old PIL-composed story frames: the Story is
+                    # its own approved design, rendered in Chromium like every
+                    # other export, and the exact files captured here are what
+                    # prepare-multi packages and publish-multi posts.
+                    story_paths = [
+                        os.path.join(out_dir, f"{base}_{tier}_multi_story.png"),
+                        os.path.join(out_dir, f"{base}_{tier}_multi_story_breakdown.png"),
+                    ]
+                    capture_exports(
+                        page,
+                        ["story", "story-breakdown"],
+                        [STORY_SIZE] * 2,
+                        story_paths,
+                        warnings,
+                    )
+                    files["story"], files["story_breakdown"] = story_paths
                 finally:
                     browser.close()
 
