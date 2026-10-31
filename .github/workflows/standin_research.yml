@@ -168,7 +168,6 @@ jobs:
           from datetime import datetime, timezone
           from zoneinfo import ZoneInfo
           from decimal import Decimal
-          from PIL import Image, ImageDraw, ImageFont
           import render_brand_templates as renderer
           from copy_validator import validate_text
           from manifest import build_manifest, write_manifest
@@ -203,31 +202,19 @@ jobs:
           original = renderer.build_multi_props
           def props(ls,tier,handle='@puntmatenz'):
               x = original(ls,tier,handle)
-              x.update(analysis=p['analysis'],combinedOdds='~'+format(combined,'.2f'),stake='$10',stakeReturn=p.get('stake_return','All '+str(len(legs))+' legs must win'),multiType=p.get('multi_type_label','Weekend Multi'),coverKicker=p.get('cover_kicker','WEEKEND MULTI'),riskTagline=p.get('risk_tagline','All legs must win - Indicative public odds'))
+              x.update(analysis=p['analysis'],combinedOdds=('@' if len(legs)==1 else '~')+format(combined,'.2f'),stake='$10',stakeReturn=p.get('stake_return','All '+str(len(legs))+' legs must win'),multiType=p.get('multi_type_label','Weekend Multi'),coverKicker=p.get('cover_kicker','WEEKEND MULTI'),riskTagline=p.get('risk_tagline','All legs must win - Indicative public odds'))
               if p.get('cover_subline'): x['coverSubline'] = p['cover_subline']
+              for payload_key, prop_key in (('cover_title_top','coverTitleTop'),('cover_title_accent','coverTitleAccent'),('swipe_label','swipeLabel'),('legs_kicker','legsKicker'),('combined_label','combinedLabel'),('product_label','productLabel'),('footer_cta','footerCta'),('story_title','storyTitle'),('story_title_font','storyTitleFont'),('story_line1','storyLine1'),('story_line2','storyLine2'),('story_disclaimer','storyDisclaimer'),('story_win_line','storyWinLine'),('confidence_label','confidenceLabel'),('confidence','confidence')):
+                  if p.get(payload_key): x[prop_key] = p[payload_key]
               return x
           renderer.build_multi_props = props
           result = renderer.render_multi({'match':p.get('match_label','Weekend Multi')},multi_tier,legs,date_str=today)
           assert result['ok'], result
+          # Story frames arrive as dedicated 1080x1920 template renders
+          # (story/story_breakdown); no PIL composition anywhere in this path.
+          name_map = {'legs':'tip.png','story':'story.png','story_breakdown':'story-breakdown.png'}
           for key,srcf in result['files'].items():
-              shutil.copyfile(srcf,d/('tip.png' if key=='legs' else key+'.png'))
-          im=Image.new('RGB',(1080,1920),'#0b120f'); draw=ImageDraw.Draw(im)
-          font='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
-          bold='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
-          def text(y,s,size=32,color='#eaf7ef',b=False):
-              f=ImageFont.truetype(bold if b else font,size);draw.text((80,y),s,font=f,fill=color)
-          logo=Image.open('brand/Logo/puntmate-icon-badge.png').convert('RGBA').resize((112,112),Image.Resampling.LANCZOS)
-          im.paste(logo,(70,190),logo)
-          draw.text((205,218),'PUNTMATE NZ',font=ImageFont.truetype(bold,44),fill='#24df7a')
-          text(315,p.get('story_title','WEEKEND MULTI'),37,b=True)
-          legsimg=Image.open(d/'tip.png').convert('RGB');legsimg.thumbnail((1080,1300));im.paste(legsimg,((1080-legsimg.width)//2,360))
-          text(1695,p['story_line1'],27)
-          text(1734,p['story_line2'],27)
-          text(1785,'Indicative public odds, not TAB. Odds may change.',23,'#8fa69a')
-          text(1820,'All '+str(len(legs))+' must win. 18+.',23,'#8fa69a')
-          im.save(d/'story.png')
-          im2=Image.open(d/'story.png').convert('RGB');draw2=ImageDraw.Draw(im2);draw2.rectangle((0,360,1080,1680),fill='#0b120f')
-          ximg=Image.open(d/'breakdown.png').convert('RGB');ximg.thumbnail((1080,1300));im2.paste(ximg,((1080-ximg.width)//2,360));im2.save(d/'story-breakdown.png')
+              shutil.copyfile(srcf,d/name_map.get(key,key+'.png'))
           bet_type = 'GAMBLER_BET' if kind == 'gambler_advisor' else 'PUNTER_BET'
           text = p['caption']
           validate_text(text,risk='STANDARD_PICK',bet_type=bet_type,public=True)

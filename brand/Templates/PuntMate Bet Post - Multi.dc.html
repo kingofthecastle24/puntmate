@@ -49,12 +49,12 @@
 
       <div style="display:flex;flex-direction:column;gap:26px;">
         <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:6px;">// {{ coverKicker }}</div>
-        <div style="font-weight:700;font-size:180px;line-height:0.88;letter-spacing:-4px;color:#EAF7EF;">THE<br><span style="color:{{ accent }};">MULTI.</span></div>
+        <div style="font-weight:700;font-size:180px;line-height:0.88;letter-spacing:-4px;color:#EAF7EF;">{{ coverTitleTop }}<br><span style="color:{{ accent }};">{{ coverTitleAccent }}</span></div>
         <div style="font-size:34px;color:#8FA69A;max-width:720px;line-height:1.35;">{{ coverSublinePre }} <span style="color:#EAF7EF;font-weight:700;">{{ combinedOdds }}</span>.</div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:34px;">
-        <div style="display:flex;align-items:center;gap:16px;color:{{ accent }};font-family:'Space Mono',monospace;font-size:26px;letter-spacing:4px;">SWIPE FOR THE LEGS <span style="font-size:34px;">→</span></div>
+        <div style="display:flex;align-items:center;gap:16px;color:{{ accent }};font-family:'Space Mono',monospace;font-size:26px;letter-spacing:4px;">{{ swipeLabel }} <span style="font-size:34px;">→</span></div>
         <div style="height:1px;background:rgba(255,255,255,0.12);"></div>
         <div style="display:flex;justify-content:space-between;color:#6B7A72;font-size:24px;letter-spacing:1px;">
           <span style="color:#EAF7EF;">{{ handle }}</span>
@@ -66,7 +66,7 @@
     <!-- SLIDE 2 · THE LEGS -->
     <div data-export-id="legs" style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;gap:32px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE LEGS</div>
+        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// {{ legsKicker }}</div>
         <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ legLabel }}</div>
       </div>
 
@@ -85,7 +85,7 @@
 
       <div style="background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:24px;padding:36px 40px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;flex-direction:column;gap:6px;">
-          <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:4px;">COMBINED ODDS</div>
+          <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:4px;">{{ combinedLabel }}</div>
           <div style="color:#8FA69A;font-size:24px;">{{ legLabelLower }} · {{ multiType }}</div>
         </div>
         <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:96px;line-height:0.8;letter-spacing:-3px;">{{ combinedOdds }}</div>
@@ -96,7 +96,7 @@
     <div data-export-id="breakdown" style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;gap:36px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE BREAKDOWN</div>
-        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ confidenceLabel }} RISK</div>
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ riskBadge }}</div>
       </div>
 
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
@@ -107,7 +107,7 @@
 
       <div style="background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:28px;padding:48px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:3px;">THE MULTI · {{ legLabel }}</div>
+          <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:3px;">{{ productLabel }} · {{ legLabel }}</div>
           <div style="color:#EAF7EF;font-size:44px;font-weight:700;">{{ stakeReturn }}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
@@ -134,12 +134,117 @@
             </div>
             <div style="color:#EAF7EF;font-size:40px;font-weight:700;letter-spacing:1px;">Follow {{ handle }}</div>
           </div>
-          <div style="color:{{ accent }};font-family:'Space Mono',monospace;font-size:26px;letter-spacing:2px;">DAILY EDGE →</div>
+          <div style="color:{{ accent }};font-family:'Space Mono',monospace;font-size:26px;letter-spacing:2px;">{{ footerCta }} →</div>
         </div>
         <div style="color:#6B7A72;font-size:23px;">For entertainment &amp; informational purposes only · Not advice · 18+</div>
       </div>
     </div>
 
+
+    <!-- STORY 1 . MULTI STORY (1080x1920 dedicated story layout) -->
+    <div data-export-id="story" style="flex:none;width:1080px;height:1920px;position:relative;overflow:hidden;background:#0B0F0D;background-image:linear-gradient(rgba(255,255,255,0.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.028) 1px,transparent 1px);background-size:60px 60px;box-sizing:border-box;padding:88px 80px 64px;display:flex;flex-direction:column;gap:40px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:18px;">
+          <div style="width:72px;height:72px;border-radius:50%;background:#111815;border:2.5px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+            <svg viewBox="0 0 120 120" width="38" height="38"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px {{ accentGlow }});"/></svg>
+          </div>
+          <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:44px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+        </div>
+        <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:22px;letter-spacing:3px;padding:12px 24px;border-radius:999px;">{{ legCount }}-LEG</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:6px;">// {{ coverKicker }}</div>
+        <div style="font-family:'{{ storyTitleFont }}',sans-serif;font-weight:{{ storyTitleWeight }};font-size:{{ storyTitleSize }};line-height:1.0;letter-spacing:-2px;color:#EAF7EF;">{{ storyTitle }}</div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;gap:22px;justify-content:center;">
+        <sc-for list="{{ legs }}" as="leg" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:26px;background-color:#111815;border:1px solid rgba(255,255,255,0.08);border-radius:22px;padding:34px 36px;">
+            <div style="width:60px;height:60px;border-radius:16px;background:{{ accentDim }};color:{{ accent }};font-family:'Space Mono',monospace;font-weight:700;font-size:30px;display:flex;align-items:center;justify-content:center;flex:none;">{{ leg.n }}</div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;">
+              <div style="color:#EAF7EF;font-size:38px;font-weight:700;line-height:1.05;">{{ leg.selection }}</div>
+              <div style="color:#8FA69A;font-size:23px;">{{ leg.detail }}</div>
+            </div>
+            <div style="color:{{ accent }};font-family:'Space Mono',monospace;font-weight:700;font-size:44px;flex:none;">{{ leg.odds }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:24px;padding:40px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:4px;">{{ combinedLabel }}</div>
+          <div style="color:#8FA69A;font-size:24px;">{{ legLabelLower }} · {{ multiType }}</div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:96px;line-height:0.8;letter-spacing:-3px;">{{ combinedOdds }}</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="color:#EAF7EF;font-size:30px;font-weight:700;">{{ storyLine1 }}</div>
+        <div style="color:#EAF7EF;font-size:30px;font-weight:700;">{{ storyLine2 }}</div>
+        <div style="height:1px;background:rgba(255,255,255,0.12);margin-top:8px;"></div>
+        <div style="display:flex;justify-content:space-between;color:#6B7A72;font-size:23px;">
+          <span>{{ storyDisclaimer }}</span>
+          <span style="color:#EAF7EF;">{{ handle }}</span>
+        </div>
+        <div style="color:#6B7A72;font-size:23px;">{{ winLine }}</div>
+      </div>
+    </div>
+
+    <!-- STORY 2 . BREAKDOWN STORY (1080x1920 dedicated story layout) -->
+    <div data-export-id="story-breakdown" style="flex:none;width:1080px;height:1920px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:88px 80px 64px;display:flex;flex-direction:column;gap:40px;">
+      <div style="display:flex;align-items:center;gap:18px;">
+        <div style="width:72px;height:72px;border-radius:50%;background:#111815;border:2.5px solid {{ accentDim }};display:flex;align-items:center;justify-content:center;flex:none;">
+          <svg viewBox="0 0 120 120" width="38" height="38"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="{{ accent }}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px {{ accentGlow }});"/></svg>
+        </div>
+        <div style="font-family:'Archivo',sans-serif;font-weight:900;font-size:44px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE BREAKDOWN</div>
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ riskBadge }}</div>
+      </div>
+
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <sc-for list="{{ riskChips }}" as="chip" hint-placeholder-count="3">
+          <div style="border:1.5px solid {{ accentDim }};color:{{ accent }};font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;padding:10px 20px;border-radius:999px;">{{ chip.label }}</div>
+        </sc-for>
+      </div>
+
+      <div style="background-color:#111815;border:1.5px solid {{ accentDim }};border-radius:28px;padding:48px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:3px;">{{ productLabel }} · {{ legLabel }}</div>
+          <div style="color:#EAF7EF;font-size:44px;font-weight:700;">{{ stakeReturn }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
+          <div style="color:{{ accent }};font-family:'Space Mono',monospace;font-weight:700;font-size:56px;line-height:0.8;">{{ combinedOdds }}</div>
+          <div style="display:flex;gap:12px;">
+            <sc-for list="{{ confidenceDots }}" as="dot" hint-placeholder-count="5">
+              <div style="width:22px;height:22px;border-radius:50%;background:{{ dot.bg }};"></div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1;display:flex;flex-direction:column;gap:18px;justify-content:center;">
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:3px;">THE READ</div>
+        <div style="color:#C7D6CE;font-size:36px;line-height:1.5;">{{ analysis }}</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:18px;">
+        <div style="height:1px;background:rgba(255,255,255,0.12);"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:18px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:{{ accent }};display:flex;align-items:center;justify-content:center;flex:none;">
+              <svg viewBox="0 0 120 120" width="30" height="30"><path d="M22 84 L54 52 L72 70 L100 30 M74 30 L100 30 L100 56" fill="none" stroke="#0B0F0D" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="color:#EAF7EF;font-size:40px;font-weight:700;letter-spacing:1px;">Follow {{ handle }}</div>
+          </div>
+          <div style="color:{{ accent }};font-family:'Space Mono',monospace;font-size:26px;letter-spacing:2px;">{{ footerCta }} →</div>
+        </div>
+        <div style="color:#6B7A72;font-size:23px;">For entertainment &amp; informational purposes only · Not advice · 18+</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -156,7 +261,20 @@
   &quot;riskTagline&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Higher risk · Bigger return · One to dream on&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
   &quot;stake&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;$10&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
   &quot;handle&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;@puntmatenz&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Brand&quot;},
-  &quot;palette&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;green&quot;, &quot;options&quot;: [&quot;green&quot;, &quot;blue&quot;, &quot;amber&quot;, &quot;pink&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Style&quot;}
+  &quot;palette&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;green&quot;, &quot;options&quot;: [&quot;green&quot;, &quot;blue&quot;, &quot;amber&quot;, &quot;pink&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Style&quot;},
+  &quot;coverTitleTop&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;THE&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Cover&quot;},
+  &quot;coverTitleAccent&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;MULTI.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Cover&quot;},
+  &quot;swipeLabel&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;SWIPE FOR THE LEGS&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Cover&quot;},
+  &quot;legsKicker&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;THE LEGS&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
+  &quot;combinedLabel&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;COMBINED ODDS&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
+  &quot;productLabel&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;THE MULTI&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;footerCta&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;DAILY EDGE&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;storyTitle&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;WEEKEND MULTI&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Story&quot;},
+  &quot;storyLine1&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Story&quot;},
+  &quot;storyLine2&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Story&quot;},
+  &quot;storyDisclaimer&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Indicative public odds, not TAB. Odds may change.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Story&quot;},
+  &quot;storyWinLine&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Story&quot;},
+  &quot;storyTitleFont&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;grotesk&quot;, &quot;options&quot;: [&quot;grotesk&quot;, &quot;anton&quot;, &quot;archivo&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Story&quot;}
 }">
 class Component extends DCLogic {
   hexToRgba(hex, alpha) {
@@ -192,10 +310,12 @@ class Component extends DCLogic {
     });
     const combinedOdds = this.props.combinedOdds ?? (valid > 0 ? ('$' + product.toFixed(2)) : '—');
 
-    const confidence = Math.max(1, Math.min(5, parseInt(this.props.confidence ?? 3, 10) || 3));
+    const confProp = this.props.confidence;
+    const showConfidence = !(confProp === 0 || confProp === '0' || confProp === 'none' || confProp === null);
+    const confidence = Math.max(1, Math.min(5, parseInt(confProp ?? 3, 10) || 3));
     const labels = { 5: 'MINIMAL', 4: 'LOW', 3: 'MODERATE', 2: 'HIGHER', 1: 'SPECULATIVE' };
     const confidenceLabel = this.props.confidenceLabel ?? labels[confidence];
-    const confidenceDots = [1, 2, 3, 4, 5].map(n => ({ bg: n <= confidence ? accent : 'rgba(255,255,255,0.14)' }));
+    const confidenceDots = showConfidence ? [1, 2, 3, 4, 5].map(n => ({ bg: n <= confidence ? accent : 'rgba(255,255,255,0.14)' })) : [];
 
     const riskTagline = this.props.riskTagline ?? 'Higher risk · Bigger return · One to dream on';
     const riskChips = riskTagline.split(/[·.]/).map(s => s.trim()).filter(Boolean).map(l => ({ label: l.toUpperCase() }));
@@ -207,6 +327,10 @@ class Component extends DCLogic {
       stakeReturn = (!isNaN(s) && valid > 0) ? (stake + ' returns $' + (s * product).toFixed(2)) : (stake + ' stake');
     }
 
+    const winLine = this.props.storyWinLine && this.props.storyWinLine.trim()
+      ? this.props.storyWinLine
+      : (parsed.length === 1 ? 'The leg must win. 18+.' : 'All ' + parsed.length + ' must win. 18+.');
+
     const legLabel = parsed.length === 1 ? '1 LEG' : parsed.length + ' LEGS';
     const legLabelLower = parsed.length === 1 ? '1 leg' : parsed.length + ' legs';
     const coverSublinePre = this.props.coverSubline ?? (parsed.length === 1 ? 'One special play, straight up. Priced at' : parsed.length + ' legs, one slip. Combined at');
@@ -214,6 +338,21 @@ class Component extends DCLogic {
     return {
       legs: parsed,
       legCount: String(parsed.length),
+      coverTitleTop: this.props.coverTitleTop ?? 'THE',
+      coverTitleAccent: this.props.coverTitleAccent ?? 'MULTI.',
+      swipeLabel: this.props.swipeLabel ?? 'SWIPE FOR THE LEGS',
+      legsKicker: this.props.legsKicker ?? 'THE LEGS',
+      combinedLabel: this.props.combinedLabel ?? 'COMBINED ODDS',
+      productLabel: this.props.productLabel ?? 'THE MULTI',
+      footerCta: this.props.footerCta ?? 'DAILY EDGE',
+      storyTitle: this.props.storyTitle ?? 'WEEKEND MULTI',
+      storyTitleFont: this.props.storyTitleFont === 'anton' ? 'Anton' : (this.props.storyTitleFont === 'archivo' ? 'Archivo' : 'Space Grotesk'),
+      storyTitleSize: this.props.storyTitleFont && this.props.storyTitleFont !== 'grotesk' ? '96px' : '72px',
+      storyTitleWeight: this.props.storyTitleFont === 'archivo' ? '900' : (this.props.storyTitleFont === 'anton' ? '400' : '700'),
+      storyLine1: this.props.storyLine1 ?? '',
+      storyLine2: this.props.storyLine2 ?? '',
+      storyDisclaimer: this.props.storyDisclaimer ?? 'Indicative public odds, not TAB. Odds may change.',
+      winLine,
       legLabel,
       legLabelLower,
       coverSublinePre,
@@ -222,6 +361,7 @@ class Component extends DCLogic {
       coverKicker: this.props.coverKicker ?? 'MULTI MONDAY',
       analysis: this.props.analysis ?? "Three short-priced favourites stacked for a value multi. Each leg clears our model on its own; combined they turn a modest stake into a real return without reaching for a longshot.",
       confidenceLabel,
+      riskBadge: showConfidence ? confidenceLabel + ' RISK' : '',
       confidenceDots,
       riskChips,
       stakeReturn,
