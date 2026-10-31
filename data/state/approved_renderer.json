@@ -1,0 +1,6 @@
+{
+  "renderer_fingerprint": "a302ed5ad45f67f7476d1a2f976923aef1629ed425b09629178e02334dea12c2",
+  "pinned_from": "main",
+  "pinned_at": "2026-10-31T04:35:00+00:00",
+  "note": "Reviewed renderer/templates/fonts fingerprint. Changes only via a merged PR that bumps this pin. publish-multi fails closed if a package was rendered with anything else."
+}
