@@ -38,6 +38,7 @@ import re
 
 from text_format import truncate_at_sentence
 import shutil
+import urllib.request
 import sys
 import tempfile
 import threading
@@ -306,8 +307,56 @@ def render_wrapper_html(template_path, tmp_dir):
         src = os.path.join(FONTS_DIR, fname)
         if os.path.exists(src):
             shutil.copy(src, fonts_out)
+    _repair_broken_font_files(fonts_out)
 
     return out_path
+
+
+# Repo font files have historically been corrupted (EOT files saved with a
+# .ttf extension), which Chromium and PIL cannot parse - every export then
+# silently falls back to a default sans. Validate each staged file and, when
+# it cannot be parsed, fetch a known-good copy from the pinned upstream
+# (google/fonts GitHub, same open-licensed faces the brand kit specifies).
+_FONT_REPAIR_URLS = {
+    "Anton-Regular.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/anton/Anton-Regular.ttf",
+    "Archivo-Black.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/archivo/Archivo%5Bwdth,wght%5D.ttf",
+    "BarlowCondensed-SemiBold.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowcondensed/BarlowCondensed-SemiBold.ttf",
+    "BarlowCondensed-Bold.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowcondensed/BarlowCondensed-Bold.ttf",
+    "SpaceGrotesk-Regular.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/spacegrotesk/SpaceGrotesk%5Bwght%5D.ttf",
+    "SpaceGrotesk-Medium.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/spacegrotesk/SpaceGrotesk%5Bwght%5D.ttf",
+    "SpaceGrotesk-Bold.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/spacegrotesk/SpaceGrotesk%5Bwght%5D.ttf",
+    "SpaceMono-Regular.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/spacemono/SpaceMono-Regular.ttf",
+    "SpaceMono-Bold.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/spacemono/SpaceMono-Bold.ttf",
+}
+
+
+def _font_file_parses(path):
+    try:
+        from PIL import ImageFont
+        ImageFont.truetype(path, 12)
+        return True
+    except Exception:
+        return False
+
+
+def _repair_broken_font_files(fonts_dir):
+    for _, _, fname in FONT_FACES:
+        staged = os.path.join(fonts_dir, fname)
+        if os.path.exists(staged) and _font_file_parses(staged):
+            continue
+        url = _FONT_REPAIR_URLS.get(fname)
+        if not url:
+            continue
+        print(f"  font repair: {fname} missing/unparsable - fetching pinned upstream copy")
+        try:
+            with urllib.request.urlopen(url, timeout=30) as resp:
+                data = resp.read()
+            with open(staged, "wb") as f:
+                f.write(data)
+        except Exception as exc:
+            print(f"  font repair FAILED for {fname}: {exc}")
+        if not (os.path.exists(staged) and _font_file_parses(staged)):
+            print(f"  WARNING: {fname} still unusable after repair attempt")
 
 
 class LocalServer:
@@ -325,9 +374,32 @@ class LocalServer:
         self.httpd.shutdown()
 
 
+def verify_brand_fonts_loaded(page):
+    """The brand kit's typography IS the design. If a font file fails to
+    parse (e.g. an EOT saved with a .ttf extension), Chromium silently falls
+    back to a default sans and every export looks off-brand. Force-load every
+    declared face and refuse to export when any of them cannot be used."""
+    results = page.evaluate(
+        """async (faces) => {
+            await document.fonts.ready;
+            const out = {};
+            for (const [fam, w] of faces) {
+                const loaded = await document.fonts.load(w + ' 16px "' + fam + '"');
+                out[fam + ' ' + w] = loaded.length > 0;
+            }
+            return out;
+        }""",
+        [[family, str(weight)] for family, weight, _ in FONT_FACES],
+    )
+    failed = [name for name, ok in results.items() if not ok]
+    if failed:
+        raise RuntimeError("brand fonts failed to load (would silently fall back): " + ", ".join(failed))
+
+
 def capture_exports(page, export_ids, expected_sizes, out_paths, warnings):
     """Screenshot each data-export-id element at native size, with the
     overflow/placeholder/error checks from the brief."""
+    verify_brand_fonts_loaded(page)
     body_text = page.inner_text("body")
     if "{{" in body_text or "}}" in body_text:
         raise RuntimeError("unresolved {{ placeholder }} found in rendered output — props did not fully apply")
