@@ -1,0 +1,38 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "e74dd1822e6c8ff9155cc2bbdf2b9ffb1c0d75aa33de7a7e3dee3e5b18f8ea74",
+      "bytes": 74583
+    },
+    "breakdown.png": {
+      "sha256": "cce6ce7f55fd7f024997503b7221b609c03ccbb93224b401e63dc5a9049d2c54",
+      "bytes": 125020
+    },
+    "telegram-post.txt": {
+      "sha256": "29c4ad2e5d9b08d16e4d0401ca1ef144b025e42a82d24ab36f177d7d2dc15adc",
+      "bytes": 668
+    },
+    "post-metadata.json": {
+      "sha256": "657e673bc59f1a2855f2da58c8e4e4d4cd918e8039049cd09cbaf889c824b7fc",
+      "bytes": 3661
+    },
+    "cover.png": {
+      "sha256": "5e89237ebbc580dbc726aa9a2a3044984673f78e21f2dc49c4891aaba70e57bf",
+      "bytes": 52255
+    },
+    "story.png": {
+      "sha256": "041f4a1b8f7b3738e518004be5754b4cdabff006a7150181d2ee5676512fb573",
+      "bytes": 164322
+    },
+    "story-breakdown.png": {
+      "sha256": "d874a879b5d8f742c542bc6e728638e90793711f7a4c571a68daa9809a54014b",
+      "bytes": 286948
+    },
+    "instagram-caption.txt": {
+      "sha256": "29c4ad2e5d9b08d16e4d0401ca1ef144b025e42a82d24ab36f177d7d2dc15adc",
+      "bytes": 668
+    }
+  },
+  "pick_id": "2026-10-31_research_Weekend_Multi_full",
+  "created_at": "2026-10-31T02:31:55.276670+00:00"
+}

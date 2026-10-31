@@ -1,0 +1,69 @@
+{
+  "kind": "research_multi",
+  "source_type": "research_based",
+  "research_checked_at": "2026-10-31T02:31:00Z",
+  "legs": [
+    {
+      "match": "New Zealand vs Fiji",
+      "sport_label": "Rugby League",
+      "market": "Match winner",
+      "selection": "New Zealand",
+      "odds": "1.01",
+      "kickoff": "2026-10-31T04:30:00Z"
+    },
+    {
+      "match": "Melbourne United vs Cairns Taipans",
+      "sport_label": "NBL",
+      "market": "Moneyline",
+      "selection": "Melbourne United",
+      "odds": "1.30",
+      "kickoff": "2026-10-31T08:30:00Z"
+    },
+    {
+      "match": "Perth Wildcats vs Illawarra Hawks",
+      "sport_label": "NBL",
+      "market": "Moneyline",
+      "selection": "Perth Wildcats",
+      "odds": "1.19",
+      "kickoff": "2026-10-31T10:30:00Z"
+    }
+  ],
+  "analysis": "No recommended bet this weekend - this is a speculative gamble. The Kiwis put 82 on Samoa last week and should account for Fiji. Perth are second at 5-2 and 4-1 at home. Melbourne United at Cairns is the danger leg: United are 4-5 and Cairns beat them by 12 earlier this season.",
+  "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 WEEKEND MULTI (SPECULATIVE)\n\nNo recommended bet this weekend - this one is for the gamblers only.\n\nNZ Kiwis @ 1.01 \u2014 Sat 5:30pm\nMelbourne United @ 1.30 \u2014 Sat 9:30pm\nPerth Wildcats @ 1.19 \u2014 Sat 11:30pm (all NZDT)\n\nCombined ~1.56 | $10 returns ~$15.60\n\nThe Kiwis should account for Fiji after putting 82 on Samoa, and Perth are second on the ladder and strong at home. Melbourne United at Cairns is the danger leg - United are 4-5 and Cairns beat them by 12 earlier this season. All 3 legs must win.\n\n\u26a0\ufe0f Speculative - not a recommended bet. Indicative public odds, not TAB. For entertainment & informational purposes only. Not advice. 18+.",
+  "story_line1": "Kiwis 5:30pm  United 9:30pm  Perth 11:30pm",
+  "story_line2": "SPECULATIVE - no recommended bet  |  NZDT 31 Oct",
+  "risk_tagline": "SPECULATIVE - No recommended bet - All 3 legs must win - Indicative public odds",
+  "has_pick": true,
+  "pick_id": "2026-10-31_research_Weekend_Multi_full",
+  "post_date": "2026-10-31",
+  "generated_at": "2026-10-31T02:31:55.276670+00:00",
+  "kickoff": "2026-10-31T04:30:00Z",
+  "match": "Weekend Multi",
+  "selection": "New Zealand + Melbourne United + Perth Wildcats",
+  "odds": 1.56247,
+  "market": "Match winner multi",
+  "bet_type": "PUNTER_BET",
+  "risk": "STANDARD_PICK",
+  "confidence": "Medium",
+  "confidence_label": "Medium",
+  "carousel_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-31_research_Weekend_Multi_full/cover.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-31_research_Weekend_Multi_full/tip.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-31_research_Weekend_Multi_full/breakdown.png"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-31_research_Weekend_Multi_full/story.png",
+  "story_urls": [
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-31_research_Weekend_Multi_full/story.png",
+    "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-10-31_research_Weekend_Multi_full/story-breakdown.png"
+  ],
+  "intended_platforms": [
+    "telegram",
+    "instagram_story"
+  ],
+  "render_warnings": [
+    "possible overflow: <SPAN> \"MULTI.\" +-341px/+21px",
+    "possible overflow: <SPAN> \"~1.56\" +0px/+17px",
+    "possible overflow: <SPAN> \"~1.56\" +0px/+9px"
+  ],
+  "stake_guidance_nzd": 10
+}
