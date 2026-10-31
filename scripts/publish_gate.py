@@ -1,16 +1,20 @@
-"""Publish gate: binds publishing to the reviewed renderer and a recorded,
-privacy-safe approval artifact.
+"""Publish gate for publish-multi: asset integrity + review hold + attestation.
 
-The renderer fingerprint pins the EXACT renderer code + templates + fonts that
-produced a package. The approved fingerprint lives in
-data/state/approved_renderer.json on main and only changes via a merged PR.
-A package rendered by anything else (stale, unmerged, or hand-built assets)
-fails closed at publish time.
+What this gate guarantees:
+1. INTEGRITY - the renderer code/templates/fonts on the publishing ref match
+   the approved pin in data/state/approved_renderer.json, and (via the
+   existing manifest verification in the workflow) the uploaded asset bytes
+   match the frozen package manifest.
+2. REVIEW HOLD - publishing is held while any open PR touches the renderer
+   paths (scripts/render_brand_templates.py, brand/Templates/, fonts/), so a
+   visual change under review can't race a publish either way.
+3. ATTESTATION - a deliberate, non-empty attestation reference must be
+   supplied at dispatch; it is recorded as SHA-256 hashes binding the
+   reference, pick, exact package bytes, action and platforms.
 
-The approval artifact proves a deliberate, per-publish approval action was
-taken and binds it to the exact assets, audience and action - without
-committing any private evidence (message IDs, times, channels) to this
-public repo. Only SHA-256 hashes are recorded.
+What it does NOT do: it cannot verify that a human approved anything. The
+attestation is an audit record of an operator's claim, not proof of approval.
+Authorization stays in the conversation record, outside this public repo.
 """
 import hashlib
 import json
@@ -20,6 +24,7 @@ from pathlib import Path
 PIN_PATH = "data/state/approved_renderer.json"
 RENDERER_FILES = ["scripts/render_brand_templates.py"]
 RENDERER_DIRS = ["brand/Templates", "fonts"]
+RENDERER_PATH_PREFIXES = tuple(RENDERER_FILES) + tuple(d + "/" for d in RENDERER_DIRS)
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -27,9 +32,6 @@ def _sha256_bytes(data: bytes) -> str:
 
 
 def compute_renderer_fingerprint(repo_root) -> str:
-    """SHA-256 over the renderer script, every template in brand/Templates,
-    and every font in fonts/. Any change to reviewed visual output changes
-    this fingerprint."""
     root = Path(repo_root)
     h = hashlib.sha256()
     files = [root / f for f in RENDERER_FILES]
@@ -53,61 +55,57 @@ def load_pin(repo_root) -> str:
     return fp
 
 
-def stamp_manifest(manifest_path, repo_root) -> str:
-    """Prepare-side: record which renderer produced this package."""
-    fp = compute_renderer_fingerprint(repo_root)
-    mp = Path(manifest_path)
-    m = json.loads(mp.read_text())
-    m["renderer_fingerprint"] = fp
-    mp.write_text(json.dumps(m, indent=2))
-    return fp
-
-
 def _fail(msg):
     raise SystemExit("PUBLISH GATE: " + msg)
 
 
-def assert_publish_allowed(pick_id, package_dir, repo_root, approval_ref, action, platforms):
-    """Fail closed unless the package was rendered by the approved renderer
-    AND a deliberate approval reference was supplied for this publish.
-    Returns the privacy-safe approval record (hashes only)."""
+def assert_pin_matches(repo_root):
+    """The renderer on the ref being published from must equal the approved
+    pin. Fails closed on any drift (unbumped template change, publish from a
+    branch with an unreviewed renderer)."""
+    actual = compute_renderer_fingerprint(repo_root)
+    pin = load_pin(repo_root)
+    if actual != pin:
+        _fail("renderer on this ref does not match the approved pin - "
+              "merge the pin bump for the current renderer before publishing")
+    return actual
+
+
+def renderer_paths_touched(file_paths):
+    """True if any changed path is a renderer input."""
+    return [p for p in file_paths if p.startswith(RENDERER_PATH_PREFIXES)]
+
+
+def record_attestation(pick_id, package_dir, action, platforms, attestation_ref):
+    """Record a hash-only attestation bound to the exact package bytes,
+    action and audience. The reference itself is never stored."""
+    if not (attestation_ref or "").strip():
+        _fail("no attestation reference supplied - a deliberate dispatch "
+              "input is required for publish-multi")
     pkg = Path(package_dir)
     manifest_path = pkg / "manifest.json"
     if not manifest_path.is_file():
         _fail(f"package manifest missing for {pick_id}")
-    manifest_bytes = manifest_path.read_bytes()
-    manifest = json.loads(manifest_bytes)
-    pkg_fp = manifest.get("renderer_fingerprint", "")
-    if len(pkg_fp) != 64:
-        _fail("package was not stamped with a renderer fingerprint - "
-              "re-run prepare with the gated workflow")
-    pin_fp = load_pin(repo_root)
-    if pkg_fp != pin_fp:
-        _fail("package renderer fingerprint does not match the approved pin "
-              "(assets rendered by unreviewed/stale templates)")
-    if not (approval_ref or "").strip():
-        _fail("no approval reference supplied - publishing requires a "
-              "deliberate per-publish approval input")
-    manifest_sha = _sha256_bytes(manifest_bytes)
-    scope = "|".join([approval_ref.strip(), pick_id, manifest_sha,
+    manifest_sha = _sha256_bytes(manifest_path.read_bytes())
+    scope = "|".join([attestation_ref.strip(), pick_id, manifest_sha,
                       action, ",".join(platforms)])
-    record = {
+    return {
+        "type": "operator_attestation",
         "pick_id": pick_id,
         "action": action,
         "platforms": platforms,
         "package_manifest_sha256": manifest_sha,
-        "renderer_fingerprint": pkg_fp,
-        "approval_ref_sha256": _sha256_bytes(approval_ref.strip().encode()),
+        "attestation_ref_sha256": _sha256_bytes(attestation_ref.strip().encode()),
         "artifact_sha256": _sha256_bytes(scope.encode()),
         "recorded_at": datetime.now(timezone.utc).isoformat(),
-        "note": "Hashes only. The approval evidence itself is private and "
-                "never committed to this public repo.",
+        "note": "Audit record only - this attests that a deliberate reference "
+                "was supplied at dispatch; it does not verify any approval. "
+                "Hashes only, no private text.",
     }
-    return record
 
 
-def write_approval_record(repo_root, record):
+def write_attestation_record(repo_root, record):
     out = Path(repo_root) / "data/approvals" / (record["pick_id"] + ".json")
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(record, indent=2))
+    out.write_text(json.dumps(record, indent=2) + "\n")
     return str(out)
