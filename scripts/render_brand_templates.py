@@ -73,6 +73,7 @@ MULTI_TIER_CONFIG = {
         "riskTagline": "Measured legs · Bigger return · Everything must land",
         "stake": "$20",  # 2026-07-19 (Micah): $20 Punter / $5 Gambler-Degenerate
         "confidence": 3,
+        "confidenceLabel": "MODERATE",
         "palette": "green",
     },
     "gambler": {
@@ -81,6 +82,7 @@ MULTI_TIER_CONFIG = {
         "riskTagline": "Longshot legs · Small stake, big swing · One to dream on",
         "stake": "$5",
         "confidence": 1,
+        "confidenceLabel": "SPECULATIVE",
         "palette": "pink",
     },
     # 2026-07-19 (Micah): Degenerate = its own rare, extreme-payout mega
@@ -92,6 +94,7 @@ MULTI_TIER_CONFIG = {
         "riskTagline": "Everything must land · Massive payout · Only for the brave",
         "stake": "$5",
         "confidence": 1,
+        "confidenceLabel": "SPECULATIVE",
         "palette": "amber",
     },
 }
@@ -526,6 +529,7 @@ def build_multi_props(legs, tier, handle="@puntmatenz"):
         "riskTagline": cfg["riskTagline"],
         "stake": cfg["stake"],
         "confidence": cfg["confidence"],
+        "confidenceLabel": cfg["confidenceLabel"],
         "analysis": analysis,
         "handle": handle,
         "palette": cfg["palette"],
