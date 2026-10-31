@@ -6,7 +6,7 @@ on:
       action:
         description: Prepare a frozen package, or publish an inspected package
         type: choice
-        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose, prepare-recap, publish-recap, admin-telegram-delete]
+        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose, prepare-recap, publish-recap, admin-telegram-delete, admin-instagram-delete]
         default: prepare
         required: true
       pick_json:
@@ -23,6 +23,10 @@ on:
         required: false
       telegram_message_id:
         description: Telegram channel message ID to remove (admin-telegram-delete only)
+        type: string
+        required: false
+      instagram_media_id:
+        description: Instagram media object ID to remove (admin-instagram-delete only)
         type: string
         required: false
       meta_ready:
@@ -56,6 +60,7 @@ jobs:
       PICK_JSON: ${{ inputs.pick_json }}
       RECAP_JSON: ${{ inputs.recap_json }}
       TELEGRAM_MESSAGE_ID: ${{ inputs.telegram_message_id }}
+      INSTAGRAM_MEDIA_ID: ${{ inputs.instagram_media_id }}
       PICK_ID: ${{ inputs.pick_id }}
       DRY_RUN: ${{ inputs.dry_run }}
       META_READY: ${{ inputs.meta_ready }}
@@ -532,13 +537,34 @@ jobs:
           assert re.fullmatch(r'\d{1,10}', mid), 'telegram_message_id must be numeric'
           dry = os.environ.get('DRY_RUN','true').lower() == 'true'
           if dry:
-              print('DRY RUN - would delete Telegram channel message', mid)
+              print('DRY RUN - NOTHING DELETED (would delete Telegram channel message', mid, ')')
+              raise SystemExit('Refusing: dry_run is on, nothing was deleted')
           else:
               r = requests.post('https://api.telegram.org/bot'+os.environ['TELEGRAM_BOT_TOKEN']+'/deleteMessage',
                   json={'chat_id': os.environ['TELEGRAM_CHANNEL_ID'], 'message_id': int(mid)}, timeout=30).json()
               print(r)
               assert r.get('ok'), r
+              print('DELETED Telegram channel message', mid)
           PYTGDEL
+      - name: Remove one Instagram media object (or fail on dry run)
+        if: inputs.action == 'admin-instagram-delete'
+        env:
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+        run: |
+          python - <<'PYIGDEL'
+          import os, re, requests
+          mid = os.environ.get('INSTAGRAM_MEDIA_ID','').strip()
+          assert re.fullmatch(r'\d{5,25}', mid), 'instagram_media_id must be numeric'
+          dry = os.environ.get('DRY_RUN','true').lower() == 'true'
+          if dry:
+              print('DRY RUN - NOTHING DELETED (would delete IG media', mid, ')')
+              raise SystemExit('Refusing: dry_run is on, nothing was deleted')
+          r = requests.delete('https://graph.facebook.com/v21.0/'+mid,
+              params={'access_token': os.environ['META_PAGE_TOKEN']}, timeout=30)
+          print(r.status_code, r.text)
+          assert r.ok and r.json().get('success'), r.text
+          print('DELETED IG media', mid)
+          PYIGDEL
       - name: Diagnose Meta token and account mapping (read-only)
         if: inputs.action == 'diagnose'
         env:
