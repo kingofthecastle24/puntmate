@@ -191,7 +191,7 @@ jobs:
               x = original(ls,tier,handle)
               x.update(analysis=p['analysis'],combinedOdds='~'+format(combined,'.2f'),stake='$10',stakeReturn=p.get('stake_return','All '+str(len(legs))+' legs must win'),multiType=p.get('multi_type_label','Weekend Multi'),coverKicker=p.get('cover_kicker','WEEKEND MULTI'),riskTagline=p.get('risk_tagline','All legs must win - Indicative public odds'))
               if p.get('cover_subline'): x['coverSubline'] = p['cover_subline']
-              for payload_key, prop_key in (('cover_title_top','coverTitleTop'),('cover_title_accent','coverTitleAccent'),('swipe_label','swipeLabel'),('legs_kicker','legsKicker'),('combined_label','combinedLabel'),('product_label','productLabel'),('footer_cta','footerCta'),('story_title','storyTitle'),('story_line1','storyLine1'),('story_line2','storyLine2'),('story_disclaimer','storyDisclaimer'),('story_win_line','storyWinLine')):
+              for payload_key, prop_key in (('cover_title_top','coverTitleTop'),('cover_title_accent','coverTitleAccent'),('swipe_label','swipeLabel'),('legs_kicker','legsKicker'),('combined_label','combinedLabel'),('product_label','productLabel'),('footer_cta','footerCta'),('story_title','storyTitle'),('story_title_font','storyTitleFont'),('story_line1','storyLine1'),('story_line2','storyLine2'),('story_disclaimer','storyDisclaimer'),('story_win_line','storyWinLine')):
                   if p.get(payload_key): x[prop_key] = p[payload_key]
               return x
           renderer.build_multi_props = props
