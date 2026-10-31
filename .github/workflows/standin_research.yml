@@ -30,7 +30,7 @@ on:
         type: string
         required: false
       approval_ref:
-        description: Approval reference for publish-multi (recorded as a hash only; never private text)
+        description: Attestation reference for publish-multi (audit hash only; does not verify approval)
         type: string
         required: false
       meta_ready:
@@ -54,6 +54,7 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
+  pull-requests: read
 jobs:
   standin:
     runs-on: ubuntu-latest
@@ -66,6 +67,7 @@ jobs:
       TELEGRAM_MESSAGE_ID: ${{ inputs.telegram_message_id }}
       INSTAGRAM_MEDIA_ID: ${{ inputs.instagram_media_id }}
       APPROVAL_REF: ${{ inputs.approval_ref }}
+      GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PICK_ID: ${{ inputs.pick_id }}
       DRY_RUN: ${{ inputs.dry_run }}
       META_READY: ${{ inputs.meta_ready }}
@@ -420,10 +422,27 @@ jobs:
               assert m.get('kind') in ('research_multi','gambler_advisor')
               assert pid == today + '_research_' + m.get('package_slug','Weekend_Multi_full'), 'Package ID does not match its recorded slug'
               assert m['intended_platforms']==['telegram','instagram_story']
-              import publish_gate as gate
-              record = gate.assert_publish_allowed(pid, str(d), '.', os.environ.get('APPROVAL_REF',''), os.environ['ACTION'], m['intended_platforms'])
-              gate.write_approval_record('.', record)
-              print('PUBLISH GATE OK - artifact', record['artifact_sha256'][:12])
+              import json as _json, urllib.request, publish_gate as gate
+              fp = gate.assert_pin_matches('.')
+              print('PUBLISH GATE: renderer matches approved pin', fp[:12])
+              tok = os.environ.get('GH_API_TOKEN','')
+              repo = os.environ.get('GITHUB_REPOSITORY','kingofthecastle24/puntmate')
+              held = []
+              if tok:
+                  hdr = {'Authorization':'Bearer '+tok,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+                  prs = _json.load(urllib.request.urlopen(urllib.request.Request(f'https://api.github.com/repos/{repo}/pulls?state=open&per_page=100', headers=hdr), timeout=30))
+                  for pr in prs:
+                      files = _json.load(urllib.request.urlopen(urllib.request.Request(f"https://api.github.com/repos/{repo}/pulls/{pr['number']}/files?per_page=100", headers=hdr), timeout=30))
+                      hits = gate.renderer_paths_touched([f['filename'] for f in files])
+                      if hits:
+                          held.append((pr['number'], pr['title'], hits))
+              else:
+                  print('PUBLISH GATE: no API token - skipping open-PR review hold check')
+              if held:
+                  raise SystemExit('PUBLISH HOLD: renderer change under review in open PR(s): ' + '; '.join(f"#{n} {t} ({', '.join(h)})" for n,t,h in held) + ' - publish held until the PR is merged (with pin bump) or closed')
+              record = gate.record_attestation(pid, str(d), os.environ['ACTION'], m['intended_platforms'], os.environ.get('APPROVAL_REF',''))
+              gate.write_attestation_record('.', record)
+              print('PUBLISH GATE: attestation recorded', record['artifact_sha256'][:12])
           else:
               assert not m.get('kind')
               assert m['intended_platforms']==['telegram','instagram_feed','instagram_story'], 'Unexpected platform'
