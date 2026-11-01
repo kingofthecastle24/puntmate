@@ -343,26 +343,42 @@ jobs:
           dr.rounded_rectangle([px, sp(pad+6), px+pw, sp(pad+6)+ph], radius=sp(20), outline=GREEN, width=sp(2))
           dr.text((px+sp(18), sp(pad+14)), tag, font=tf, fill=GREEN)
           dr.text((sp(pad), sp(200)), '// WEEK IN REVIEW', font=mono_b(22), fill=GREEN)
-          dr.text((sp(pad-4), sp(248)), f'{wins}W - {losses}L', font=archivo(110), fill=PAPER)
-          dr.text((sp(pad), sp(400)), 'Every published pick, every result.\nPending shown separately - nothing hidden.', font=grotesk(26,500), fill=MUTED, spacing=sp(8))
-          y = 530
-          dr.text((sp(pad), sp(y)), 'SETTLED SINGLES', font=mono_b(16), fill=MUTED)
-          y += 44
-          x2 = W - pad
+          headline = r.get('headline') or f'{wins}W - {losses}L'
+          dr.text((sp(pad-4), sp(252 if r.get('headline') else 248)), headline, font=archivo(84 if r.get('headline') else 110), fill=PAPER)
+          subline = r.get('subline') or 'Every published pick, every result.\nPending shown separately - nothing hidden.'
+          dr.text((sp(pad), sp(400)), subline, font=grotesk(26,500), fill=MUTED, spacing=sp(8))
+          sections = []
           for row in rows:
-              dr.rounded_rectangle([sp(pad), sp(y), sp(x2), sp(y+116)], radius=sp(16), fill=SURFACE, outline=DIMMER, width=sp(1.2))
-              dr.text((sp(pad+28), sp(y+24)), row['day'], font=mono_b(15), fill=MUTED)
-              dr.text((sp(pad+28), sp(y+62)), row['text'], font=grotesk(24,700), fill=PAPER)
-              dr.text((sp(x2-28), sp(y+26)), row['score'], font=mono_r(16), fill=MUTED, anchor='ra')
-              dr.text((sp(x2-28), sp(y+64)), 'W' if row['win'] else 'L', font=archivo(30), fill=GREEN if row['win'] else WARN, anchor='ra')
-              y += 132
-          y += 16
+              sec = row.get('section', 'SETTLED SINGLES')
+              if not sections or sections[-1][0] != sec:
+                  sections.append((sec, []))
+              sections[-1][1].append(row)
+          y = 620 if r.get('headline') else 530
+          x2 = W - pad
+          for sec, sec_rows in sections:
+              sw = sum(1 for rr in sec_rows if rr['win']); sl = len(sec_rows) - sw
+              dr.text((sp(pad), sp(y)), f'{sec} · {sw}-{sl}', font=mono_b(16), fill=MUTED)
+              y += 50
+              for row in sec_rows:
+                  dr.rounded_rectangle([sp(pad), sp(y), sp(x2), sp(y+140)], radius=sp(16), fill=SURFACE, outline=DIMMER, width=sp(1.2))
+                  dr.text((sp(pad+28), sp(y+30)), row['day'], font=mono_b(15), fill=MUTED)
+                  dr.text((sp(pad+28), sp(y+76)), row['text'], font=grotesk(25,700), fill=PAPER)
+                  dr.text((sp(x2-28), sp(y+32)), row['score'], font=mono_r(15), fill=MUTED, anchor='ra')
+                  dr.text((sp(x2-28), sp(y+80)), 'W' if row['win'] else 'L', font=archivo(32), fill=GREEN if row['win'] else WARN, anchor='ra')
+                  y += 166
+              if sec_rows[-1].get('note'):
+                  dr.text((sp(pad), sp(y)), sec_rows[-1]['note'], font=grotesk(20,400), fill=MUTED)
+              y += 84
           dr.text((sp(pad), sp(y)), 'PENDING', font=mono_b(16), fill=MUTED)
-          y += 44
-          dr.rounded_rectangle([sp(pad), sp(y), sp(x2), sp(y+116)], radius=sp(16), fill=SURFACE, outline=DIMMER, width=sp(1.2))
-          dr.text((sp(pad+28), sp(y+24)), 'WEEKEND MULTI', font=mono_b(15), fill=MUTED)
-          dr.text((sp(pad+28), sp(y+62)), r['pending_note'], font=grotesk(22,500), fill=PAPER)
-          dr.text((sp(x2-28), sp(y+48)), 'PENDING', font=mono_b(20), fill=MUTED, anchor='ra')
+          y += 50
+          p_label = r.get('pending_label', 'WEEKEND MULTI')
+          p_badge = r.get('pending_badge', 'PENDING')
+          dr.rounded_rectangle([sp(pad), sp(y), sp(x2), sp(y+(100 if not p_label else 140))], radius=sp(16), fill=SURFACE, outline=DIMMER, width=sp(1.2))
+          if p_label:
+              dr.text((sp(pad+28), sp(y+30)), p_label, font=mono_b(15), fill=MUTED)
+          dr.text((sp(pad+28), sp(y+(36 if not p_label else 76))), r['pending_note'], font=grotesk(22,500), fill=PAPER)
+          if p_badge:
+              dr.text((sp(x2-28), sp(y+48)), p_badge, font=mono_b(20), fill=MUTED, anchor='ra')
           fy = H - 110
           dr.line([(sp(pad), sp(fy)), (sp(W-pad), sp(fy))], fill=DIMMER, width=sp(1.5))
           dr.text((sp(pad), sp(fy+26)), '@puntmatenz', font=mono_b(20), fill=PAPER)
