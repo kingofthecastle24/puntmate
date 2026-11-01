@@ -70,7 +70,7 @@
         <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ legLabel }}</div>
       </div>
 
-      <div style="flex:1;display:flex;flex-direction:column;gap:20px;">
+      <div style="flex:1;display:flex;flex-direction:column;gap:20px;justify-content:center;">
         <sc-for list="{{ legs }}" as="leg" hint-placeholder-count="3">
           <div style="display:flex;align-items:center;gap:26px;background-color:#111815;border:1px solid rgba(255,255,255,0.08);border-radius:22px;padding:30px 34px;">
             <div style="width:60px;height:60px;border-radius:16px;background:{{ accentDim }};color:{{ accent }};font-family:'Space Mono',monospace;font-weight:700;font-size:30px;display:flex;align-items:center;justify-content:center;flex:none;">{{ leg.n }}</div>
@@ -89,6 +89,12 @@
           <div style="color:#8FA69A;font-size:24px;">{{ legLabelLower }} · {{ multiType }}</div>
         </div>
         <div style="font-family:'Space Mono',monospace;font-weight:700;color:{{ accent }};font-size:96px;line-height:0.8;letter-spacing:-3px;">{{ combinedOdds }}</div>
+      </div>
+
+      <div style="height:1px;background:rgba(255,255,255,0.12);"></div>
+      <div style="display:flex;justify-content:space-between;color:#6B7A72;font-size:24px;letter-spacing:1px;">
+        <span style="color:#EAF7EF;">{{ handle }}</span>
+        <span>For entertainment only · 18+</span>
       </div>
     </div>
 

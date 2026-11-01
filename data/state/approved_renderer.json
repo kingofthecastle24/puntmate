@@ -1,6 +1,6 @@
 {
-  "renderer_fingerprint": "3108ee2da88042273e8caaf1a07973300d8e5f80d02ed363ffdd1e92a50f63e2",
-  "pinned_from": "story-template-repair (PR #19 renderer)",
-  "pinned_at": "2026-10-31T04:44:00+00:00",
-  "note": "Reviewed renderer/templates/fonts fingerprint for the PR #19 renderer. publish-multi fails closed if the checkout renderer does not match this pin - after this PR merges, publishing resumes only when PR #19 (the matching renderer) merges."
+  "renderer_fingerprint": "41b9e3f6a4d881f8b1e029857766241462cadccb2147a2162e99c5bfe0a73852",
+  "pinned_from": "ga-single-special-render-fixes renderer",
+  "pinned_at": "2026-11-01T06:05:00+00:00",
+  "note": "Reviewed renderer/templates/fonts fingerprint for the single-special render fixes (legs centering, legs-slide footer). publish-multi fails closed if the checkout renderer does not match this pin."
 }
