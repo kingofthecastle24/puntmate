@@ -113,7 +113,7 @@
     <div data-export-id="breakdown" style="flex:none;width:1080px;height:1350px;position:relative;overflow:hidden;background:#0B0F0D;box-sizing:border-box;padding:80px;display:flex;flex-direction:column;gap:36px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="font-family:'Space Mono',monospace;color:{{ accent }};font-size:26px;letter-spacing:5px;">// THE BREAKDOWN</div>
-        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ confidenceLabel }} RISK</div>
+        <div style="color:#6B7A72;font-family:'Space Mono',monospace;font-size:22px;letter-spacing:2px;">{{ riskTag }}</div>
       </div>
 
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
@@ -185,6 +185,7 @@
   &quot;analysis&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Watene Zelezniak has crossed in three of his past four and shifts back to his preferred right edge against a Stormers side conceding tries out wide. At $3.00 the market is overpricing an in-form finisher — genuine value with statistical backing.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
   &quot;confidence&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 4, &quot;min&quot;: 1, &quot;max&quot;: 5, &quot;step&quot;: 1, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
   &quot;confidenceLabel&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;LOW&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
+  &quot;riskTag&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;LOW RISK&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
   &quot;riskTagline&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Low risk · Steady returns · Long game&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Breakdown&quot;},
   &quot;palette&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;green&quot;, &quot;options&quot;: [&quot;green&quot;, &quot;blue&quot;, &quot;amber&quot;, &quot;pink&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Style&quot;}
 }">
@@ -216,10 +217,12 @@ class Component extends DCLogic {
     };
     const theme = themes[this.props.coverTheme] ?? themes['Daily Pick'];
 
-    const confidence = Math.max(1, Math.min(5, parseInt(this.props.confidence ?? 4, 10) || 4));
+    const hasConfidence = this.props.confidence !== null && this.props.confidence !== undefined && this.props.confidence !== '';
+    const confidence = Math.max(1, Math.min(5, parseInt(hasConfidence ? this.props.confidence : 4, 10) || 4));
     const labels = { 5: 'MINIMAL', 4: 'LOW', 3: 'MODERATE', 2: 'HIGHER', 1: 'SPECULATIVE' };
     const confidenceLabel = this.props.confidenceLabel ?? labels[confidence];
-    const confidenceDots = [1, 2, 3, 4, 5].map(n => ({ bg: n <= confidence ? accent : 'rgba(255,255,255,0.14)' }));
+    const confidenceDots = hasConfidence ? [1, 2, 3, 4, 5].map(n => ({ bg: n <= confidence ? accent : 'rgba(255,255,255,0.14)' })) : [];
+    const riskTag = this.props.riskTag ?? (hasConfidence ? confidenceLabel + ' RISK' : '');
 
     const riskTagline = this.props.riskTagline ?? 'Low risk · Steady returns · Long game';
     const riskChips = riskTagline.split(/[·.]/).map(s => s.trim()).filter(Boolean).map(l => ({ label: l.toUpperCase() }));
@@ -242,6 +245,7 @@ class Component extends DCLogic {
       confidence,
       confidenceLabel,
       confidenceDots,
+      riskTag,
       riskChips,
       accent: accent,
       accentGlow: this.hexToRgba(accent, 0.6),
