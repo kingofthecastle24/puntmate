@@ -1,6 +1,6 @@
 {
-  "renderer_fingerprint": "41b9e3f6a4d881f8b1e029857766241462cadccb2147a2162e99c5bfe0a73852",
-  "pinned_from": "ga-single-special-render-fixes renderer",
-  "pinned_at": "2026-11-01T06:05:00+00:00",
-  "note": "Reviewed renderer/templates/fonts fingerprint for the single-special render fixes (legs centering, legs-slide footer). publish-multi fails closed if the checkout renderer does not match this pin."
+  "renderer_fingerprint": "fa70b01bdb530cd063c8682efebf6739b62493eeddcb36eca351f7b5d477e28c",
+  "pinned_from": "story-lane-pill-and-optional-confidence renderer",
+  "pinned_at": "2026-11-01T06:30:00+00:00",
+  "note": "Reviewed renderer/templates/fonts fingerprint for the story-frame lane pill (laneTag) and optional measured-confidence suppression (riskTag prop, confidence dots suppression). publish-multi fails closed if the checkout renderer does not match this pin."
 }
