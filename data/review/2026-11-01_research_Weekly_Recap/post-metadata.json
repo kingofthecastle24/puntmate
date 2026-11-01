@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-11-01_research_Weekly_Recap",
+  "post_date": "2026-11-01",
+  "kind": "weekly_recap",
+  "source_type": "research_based",
+  "intended_platforms": [
+    "instagram_story"
+  ],
+  "story_url": "https://raw.githubusercontent.com/kingofthecastle24/puntmate/main/data/review/2026-11-01_research_Weekly_Recap/recap_story.png",
+  "week_label": "26 OCT - 1 NOV",
+  "wins": 2,
+  "losses": 1,
+  "evidence_urls": [
+    "https://www.toray-ppo.com/en/result/date/261026/",
+    "https://www.espn.com/nba/game/_/gameId/401909873/suns-thunder",
+    "https://www.bbc.com/sport/rugby-league/articles/ck8dz8z712pno",
+    "https://www.nbl.com.au/news/oduro-anthony-lead-united-to-big-win",
+    "https://www.wildcats.com.au/news/nbl27-round-7-match-report-wildcats-vs-hawks"
+  ],
+  "research_checked_at": "2026-11-01T08:51:44.741218+00:00"
+}
