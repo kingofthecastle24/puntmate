@@ -225,6 +225,16 @@ def build_props(pick, handle="@puntmatenz"):
 
     bet_type = pick.get("bet_type", "")
     risk = pick.get("risk", "")
+    # Story-frame lane pill (owner-approved taxonomy: Investor/Punter/Gambler/
+    # Degen). Empty when the pick has no bet_type - the pill then renders
+    # nothing but its text, so templates treat empty as "no lane shown".
+    lane_tag = {
+        "INVESTOR_BET": "INVESTOR",
+        "PUNTER_BET": "PUNTER",
+        "GAMBLER_BET": "GAMBLER",
+        "DEGEN_BET": "DEGEN",
+        "DEGENERATE_BET": "DEGEN",
+    }.get(bet_type, "")
     risk_label = risk.replace("_", " ").title() if risk else ""
     bet_type_short = bet_type.replace("_BET", "").title() if bet_type else ""
     risk_tagline_parts = [p for p in (
@@ -257,9 +267,18 @@ def build_props(pick, handle="@puntmatenz"):
         "confidence": confidence_to_dots(confidence_label),
         "confidenceLabel": confidence_label,
         "riskTagline": risk_tagline,
+        "laneTag": lane_tag,
         "handle": handle,
         "coverTheme": "Daily Pick",
     }
+    if str(pick.get("confidence_label", "")).strip().upper() == "NONE":
+        # Opinion-only pick: no measured confidence - hide dots and risk tag.
+        props["confidence"] = None
+        props["confidenceLabel"] = None
+        props["riskTag"] = ""
+    if pick.get("risk_tagline"):
+        # Verbatim chip-row override (caption-grounded wording).
+        props["riskTagline"] = str(pick["risk_tagline"])
     return props
 
 
