@@ -6,15 +6,10 @@ approval gate, using the EXACT frozen files from data/review/<pick_id>/
 (downloaded as this run's artifact) — never regenerated, never re-read from
 whatever's newest on main.
 
-Facebook IS posted to directly as of 2026-07-19 (Micah confirmed the
-"linked Instagram" assumption never actually cross-posted anything — Meta
-doesn't auto-share API-published IG content to a linked Page). The
-2026-07-14 publish_actions failure was a user-token problem, not a dead
-API: Page posting works with a PAGE access token holding
-pages_manage_posts. See post_facebook.py for token setup. Requires the
-FACEBOOK_PAGE_ID secret (and ideally FACEBOOK_PAGE_TOKEN; falls back to
-META_PAGE_TOKEN). If the token still lacks permissions, the run logs the
-exact fix and Facebook fails independently — nothing else is affected.
+Facebook publication was removed from this publisher on 2026-11-03.
+Older frozen review bundles may still list "facebook" in
+intended_platforms; those entries are recorded as skipped and never
+posted. post_facebook.py is no longer called from this script.
 
 Freeze/verify: before publishing anything, this reloads manifest.json and
 re-hashes every file it lists. A single mismatch aborts the ENTIRE publish
@@ -142,35 +137,16 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
             results["instagram_story"] = {"ok": False, "error": str(e)}
             print(f"  Instagram Story error: {e}")
 
-    import post_facebook
-    fb_configured = post_facebook.is_configured()
-    if "facebook" in platforms and not fb_configured:
-        results["facebook"] = {
-            "skipped": True,
-            "note": "FACEBOOK_PAGE_ID / page token not configured — add the GitHub secret to enable direct Page posting.",
-        }
-        print("  Facebook: not configured (FACEBOOK_PAGE_ID missing) — skipped.")
-
-    if "facebook" in platforms and fb_configured and not is_weekend_multi_only:
-        try:
-            carousel_urls = metadata.get("carousel_urls") or []
-            if carousel_urls:
-                fb_id = post_facebook.post_photo(carousel_urls[0], instagram_caption or telegram_text)
-            else:
-                fb_id = post_facebook.post_text(telegram_text)
-            results["facebook"] = {"ok": fb_id is not None, "post_id": fb_id}
-        except Exception as e:
-            results["facebook"] = {"ok": False, "error": str(e)}
-            print(f"  Facebook error: {e}")
-
-        # Page Story mirrors the Instagram Story — same image URL.
-        if metadata.get("story_url"):
-            try:
-                story_id = post_facebook.post_story(metadata["story_url"])
-                results["facebook_story"] = {"ok": story_id is not None, "story_id": story_id}
-            except Exception as e:
-                results["facebook_story"] = {"ok": False, "error": str(e)}
-                print(f"  Facebook Story error: {e}")
+    # Facebook publication route removed 2026-11-03. Frozen metadata from
+    # older runs may still list "facebook" / "facebook_story"; record them as
+    # skipped (excluded from the success calculation) and never post.
+    for fb_platform in ("facebook", "facebook_story"):
+        if fb_platform in platforms:
+            results[fb_platform] = {
+                "skipped": True,
+                "note": "Facebook publication removed from the daily route on 2026-11-03; no post sent.",
+            }
+            print(f"  {fb_platform}: in frozen metadata - skipped (route removed).")
 
     # Phase 5/6 (2026-07-19): TWO independent multi tiers — Punter Multi and
     # Gambler/Degenerate Multi — each its own secondary Telegram text post
@@ -229,17 +205,6 @@ def publish(review_dir, metadata, telegram_text, instagram_caption, results):
                 results[f"instagram_{tier}_multi"] = {"ok": False, "error": str(e)}
                 print(f"  Instagram {tier} multi error: {e}")
 
-        if "facebook" in platforms and fb_configured:
-            tier_urls = metadata.get(f"{tier}_multi_carousel_urls") or []
-            try:
-                if tier_urls:
-                    fb_id = post_facebook.post_photo(tier_urls[0], tier_text)
-                else:
-                    fb_id = post_facebook.post_text(tier_text)
-                results[f"facebook_{tier}_multi"] = {"ok": fb_id is not None, "post_id": fb_id}
-            except Exception as e:
-                results[f"facebook_{tier}_multi"] = {"ok": False, "error": str(e)}
-                print(f"  Facebook {tier} multi error: {e}")
 
     # Private owner DM (owner_dm.py). Runs strictly AFTER every public post
     # above, only for bets whose public Telegram post succeeded, and is not
@@ -273,9 +238,7 @@ def dry_run_report(metadata, telegram_text, instagram_caption, review_dir=None):
         elif platform == "instagram_story":
             print(f"  Would post Story: {metadata.get('story_url')}")
         elif platform == "facebook":
-            print(f"  Would post photo to FB Page: {(metadata.get('carousel_urls') or ['(text-only fallback)'])[0]}")
-            if metadata.get("story_url"):
-                print(f"  Would post FB Page Story: {metadata.get('story_url')}")
+            print("  Facebook route removed 2026-11-03 - listed in this frozen metadata, would be skipped.")
 
     if review_dir:
         for tier in ("punter", "gambler", "degenerate"):
@@ -452,9 +415,9 @@ def main():
     def _platform_ok(r):
         return r.get("ok") is True or r.get("skipped") is True
 
-    # Facebook counts as a real platform now (2026-07-19) — the only results
-    # excluded from the success calculation are explicitly skipped ones
-    # (e.g. Facebook before its secret is configured).
+    # Results explicitly marked 'skipped' (e.g. a facebook entry from an
+    # older frozen bundle - the Facebook route was removed 2026-11-03) are
+    # excluded from the success calculation.
     real_platforms = [p for p in results if not results[p].get("skipped")]
     all_ok = all(results[p].get("ok") for p in real_platforms) if real_platforms else False
     any_ok = any(results[p].get("ok") for p in real_platforms) if real_platforms else False
