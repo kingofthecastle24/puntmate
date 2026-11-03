@@ -126,7 +126,6 @@ def main():
         intended_platforms.append("instagram_feed")
     if story_url:
         intended_platforms.append("instagram_story")
-    intended_platforms.append("facebook")
 
     post_data = {
         "has_picks": True,
