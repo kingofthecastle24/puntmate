@@ -1538,5 +1538,22 @@
     "confidence": "HIGH",
     "result": "pending",
     "pnl": null
+  },
+  {
+    "id": "2026-11-03_basketball_nba_Charlotte_Hornets_INVESTOR_BET",
+    "date": "2026-11-03",
+    "bet_type": "INVESTOR_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "basketball_nba",
+    "sport": "basketball_nba",
+    "match": "Charlotte Hornets vs Detroit Pistons",
+    "home_team": "Charlotte Hornets",
+    "away_team": "Detroit Pistons",
+    "pick": "DETROIT PISTONS",
+    "market": "Head to Head",
+    "odds": 1.48,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

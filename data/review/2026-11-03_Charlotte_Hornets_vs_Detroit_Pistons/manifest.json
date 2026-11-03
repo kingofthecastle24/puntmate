@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "b1f89f48013d91265cbef034257fafbef032932842dc0fc115d2859fbb81c01d",
+      "bytes": 627
+    },
+    "instagram-caption.txt": {
+      "sha256": "d41d35d73204ca580c54da971322e48b8b013a337733a74ecb76d29098152da6",
+      "bytes": 692
+    },
+    "post-metadata.json": {
+      "sha256": "dd8c53926c2b4c8d3f979606d34e89b2cf4f7af306323a6122564a5db88de403",
+      "bytes": 11370
+    },
+    "preview.html": {
+      "sha256": "0a4bda3d2c27c1c31d136519294f0ef1bfeeae857c8cc6dfcfd3eb2495675636",
+      "bytes": 16404
+    },
+    "cover.png": {
+      "sha256": "84acf3c8abb37d227865fd4ff184da0ec142ca19e56650b8e99f8463ece002f1",
+      "bytes": 68281
+    },
+    "tip.png": {
+      "sha256": "59b627c30b670eaec10735056c3b5a4eee8583364f2bd3144362d0ae3371fbda",
+      "bytes": 66813
+    },
+    "breakdown.png": {
+      "sha256": "fddd9c9cf87b54bed6712c216ca4a483b304acd8f1f318d4ccfa16cf43a1c514",
+      "bytes": 105768
+    },
+    "story.png": {
+      "sha256": "eef272d1bfe7e345442b413a06c05db34ef2076aaf331959115c0cfd47954811",
+      "bytes": 62363
+    }
+  },
+  "pick_id": "2026-11-03_Charlotte_Hornets_vs_Detroit_Pistons",
+  "created_at": "2026-11-03T00:08:03.631385+00:00"
+}

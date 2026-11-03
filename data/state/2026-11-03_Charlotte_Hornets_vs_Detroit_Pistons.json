@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-11-03_Charlotte_Hornets_vs_Detroit_Pistons",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-11-03T00:08:03.824286+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-11-03T00:08:03.824460+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-11-03T00:08:03.824573+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
