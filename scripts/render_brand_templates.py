@@ -109,6 +109,12 @@ REACT_CDN = [
 # Browser falls back to its default sans-serif for anything not covered here,
 # which is non-fatal (slightly different metrics, not a crash).
 FONT_FACES = [
+    # Wordmark face: DejaVu Sans Bold — the heavier wordmark look from the
+    # launch-era cards, set as the default across all posts by owner decision
+    # on 2026-11-04. Templates reference it as 'DejaVu Sans' 700. Not committed
+    # to fonts/ — staged via the pinned repair fetch below (same mechanism as
+    # the other brand faces).
+    ("DejaVu Sans",     700, "DejaVuSans-Bold.ttf"),
     ("Archivo",         900, "Archivo-Black.ttf"),
     ("Anton",           400, "Anton-Regular.ttf"),
     ("Barlow Condensed", 600, "BarlowCondensed-SemiBold.ttf"),
@@ -337,6 +343,9 @@ def render_wrapper_html(template_path, tmp_dir):
 # it cannot be parsed, fetch a known-good copy from the pinned upstream
 # (google/fonts GitHub, same open-licensed faces the brand kit specifies).
 _FONT_REPAIR_URLS = {
+    # Wordmark face (see FONT_FACES note). Pinned jsDelivr copy of the
+    # dejavu-fonts-ttf npm package (v2.37.3).
+    "DejaVuSans-Bold.ttf": "https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.3/ttf/DejaVuSans-Bold.ttf",
     "Anton-Regular.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/anton/Anton-Regular.ttf",
     "Archivo-Black.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/archivo/Archivo%5Bwdth,wght%5D.ttf",
     "BarlowCondensed-SemiBold.ttf": "https://raw.githubusercontent.com/google/fonts/main/ofl/barlowcondensed/BarlowCondensed-SemiBold.ttf",
