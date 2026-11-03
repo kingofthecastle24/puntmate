@@ -250,7 +250,7 @@ def _draw_confidence_dots(draw, cx, y, value, total=5, accent="#35E07E"):
 
 def _wordmark(draw, x, y, size, accent):
     """Draw PUNTMATE wordmark: PUNT (white) + MATE (accent)."""
-    f = _f("Archivo-Black.ttf", size)
+    f = _f("DejaVuSans-Bold.ttf", size)  # wordmark face: DejaVu Sans Bold (heavier default, owner decision 2026-11-04)
     draw.text((x, y), "PUNT", font=f, fill="#EAF7EF")
     bbox = draw.textbbox((x, y), "PUNT", font=f)
     draw.text((bbox[2], y), "MATE", font=f, fill=accent)
@@ -704,7 +704,7 @@ def _print_slide1_cover(pick):
 
     # Red top bar
     draw.rectangle([0, 0, W, 100], fill=PRINT["red"])
-    wm_f = _f("Archivo-Black.ttf", 36)
+    wm_f = _f("DejaVuSans-Bold.ttf", 36)  # wordmark face: heavier default (owner decision 2026-11-04)
     draw.text((pad, 30), "PUNTMATE", font=wm_f, fill=PRINT["yellow"])
     sport_f = _f("BarlowCondensed-Bold.ttf", 30)
     sport = pick.get("sport_label", "SPORT")
@@ -779,7 +779,7 @@ def _print_slide2_tip(pick):
 
     # Red top bar
     draw.rectangle([0, 0, W, 100], fill=PRINT["red"])
-    wm_f = _f("Archivo-Black.ttf", 36)
+    wm_f = _f("DejaVuSans-Bold.ttf", 36)  # wordmark face: heavier default (owner decision 2026-11-04)
     draw.text((pad, 30), "PUNTMATE", font=wm_f, fill=PRINT["yellow"])
 
     # THE PICK kicker — Barlow Condensed
