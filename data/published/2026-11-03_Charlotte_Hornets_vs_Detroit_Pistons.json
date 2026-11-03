@@ -1,0 +1,104 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 293,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1793664504,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASVq6SX46OSLMVt3uwWV8oHVH-tCJAAClw1rG_m0SEfyruXkczNnnAEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADlw1rG_m0SEd4",
+            "file_size": 989,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASVq6SX46OSLMVt3uwWV8oHVH-tCJAAClw1rG_m0SEfyruXkczNnnAEAAwIAA20AAz0E",
+            "file_unique_id": "AQADlw1rG_m0SEdy",
+            "file_size": 10802,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASVq6SX46OSLMVt3uwWV8oHVH-tCJAAClw1rG_m0SEfyruXkczNnnAEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADlw1rG_m0SEd9",
+            "file_size": 39734,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASVq6SX46OSLMVt3uwWV8oHVH-tCJAAClw1rG_m0SEfyruXkczNnnAEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADlw1rG_m0SEd8",
+            "file_size": 77377,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASVq6SX46OSLMVt3uwWV8oHVH-tCJAAClw1rG_m0SEfyruXkczNnnAEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADlw1rG_m0SEd-",
+            "file_size": 77985,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NBA\n\n\ud83c\udfdf Charlotte Hornets vs Detroit Pistons\n\nPICK: DETROIT PISTONS\nODDS: 1.48 (Head to Head)\nBET TYPE: INVESTOR\n\nDetroit have gone from punchline to a legitimately hard-edged team on the back of Cade Cunningham's development, and their size and defensive physicality is exactly the sort of profile Charlotte has struggled against. The Hornets remain a roster that leans heavily on perimeter scoring and gets bullied on the glass.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 63,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 85,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 111,
+            "length": 18,
+            "type": "bold"
+          },
+          {
+            "offset": 131,
+            "length": 316,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18092839595300457"
+  },
+  "facebook": {
+    "ok": true,
+    "post_id": "1173598642506628_122142856425391560"
+  },
+  "facebook_story": {
+    "ok": true,
+    "story_id": "27848655191477359"
+  }
+}
