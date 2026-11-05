@@ -85,13 +85,13 @@ def _legacy_pillow_pick(pick):
     }
 
 
-def render_card(pick):
+def render_card(pick, date_str=None):
     """Render one pick's cards. Tries the Playwright brand-kit renderer
     first; falls back to the legacy Pillow renderer on any exception (kept
     intentionally — documented fallback, not removed)."""
     try:
         from render_brand_templates import render_pick
-        return render_pick(pick, out_dir=CARDS_DIR)
+        return render_pick(pick, date_str=date_str, out_dir=CARDS_DIR)
     except Exception as e:
         print(f"  Playwright renderer failed ({e}) — falling back to legacy Pillow renderer.")
         from generate_picks_image import generate_carousel
@@ -99,7 +99,7 @@ def render_card(pick):
         return {"ok": True, "files": {"carousel": paths}, "warnings": ["used legacy Pillow fallback"]}
 
 
-def render_degen_watch_card(candidate):
+def render_degen_watch_card(candidate, date_str=None):
     """Render the Degen Watch card for the no-bet-day candidate closest to
     clearing the value bar. No legacy-Pillow fallback (unlike render_card)
     — this is optional, non-critical unofficial content; if it fails to
@@ -108,13 +108,13 @@ def render_degen_watch_card(candidate):
     instead of raising."""
     try:
         from render_brand_templates import render_degen_watch
-        return render_degen_watch(candidate, out_dir=CARDS_DIR)
+        return render_degen_watch(candidate, date_str=date_str, out_dir=CARDS_DIR)
     except Exception as e:
         print(f"  ::warning:: Degen Watch card render failed ({e}) — skipping Degen Watch for today.")
         return None
 
 
-def render_multi_cards(pick, tier, legs):
+def render_multi_cards(pick, tier, legs, date_str=None):
     """Render one multi tier's graphic (cover/legs/breakdown) via the
     Multi.dc.html brand template. Unlike the single featured pick, there is
     no legacy Pillow fallback for multis (that renderer has no multi
@@ -125,7 +125,7 @@ def render_multi_cards(pick, tier, legs):
     """
     try:
         from render_brand_templates import render_multi
-        result = render_multi(pick, tier, legs, out_dir=CARDS_DIR)
+        result = render_multi(pick, tier, legs, date_str=date_str, out_dir=CARDS_DIR)
         print(f"  Rendered {tier} multi cards: {result.get('files')}")
         if result.get("warnings"):
             for w in result["warnings"]:
@@ -358,7 +358,7 @@ def run():
         from generate_pick import select_closest_to_passing
         degen_candidate = select_closest_to_passing(pick.get("rejected_candidates", []))
         if degen_candidate:
-            degen_render = render_degen_watch_card(degen_candidate)
+            degen_render = render_degen_watch_card(degen_candidate, date_str=run_date)
             run_data["degen_watch"] = {
                 "candidate": degen_candidate,
                 "card_file": degen_render["file"] if degen_render else None,
@@ -375,7 +375,7 @@ def run():
 
     os.makedirs(CARDS_DIR, exist_ok=True)
     try:
-        render_result = render_card(pick)
+        render_result = render_card(pick, date_str=run_date)
         print(f"  Rendered cards: {render_result.get('files')}")
         if render_result.get("warnings"):
             for w in render_result["warnings"]:
