@@ -1,6 +1,6 @@
 {
-  "renderer_fingerprint": "fa70b01bdb530cd063c8682efebf6739b62493eeddcb36eca351f7b5d477e28c",
-  "pinned_from": "story-lane-pill-and-optional-confidence renderer",
-  "pinned_at": "2026-11-01T06:30:00+00:00",
-  "note": "Reviewed renderer/templates/fonts fingerprint for the story-frame lane pill (laneTag) and optional measured-confidence suppression (riskTag prop, confidence dots suppression). publish-multi fails closed if the checkout renderer does not match this pin."
+  "renderer_fingerprint": "e87fe8c116c064bf8a70362c5cb59b1d69273694c0e3fe52339ee13e9f689c31",
+  "pinned_from": "heavier wordmark (DejaVu Sans Bold) default renderer - PR #28",
+  "pinned_at": "2026-11-05T07:18:00+00:00",
+  "note": "Re-pinned after PR #28 (merged afe57e8): owner decision 2026-11-04 set the heavier launch-era wordmark (DejaVu Sans Bold) as default across all post templates. Verified the fingerprint delta from the previous pin (fa70b01b) is exactly that merge: pre-merge main 8652131 reproduces the old pin, and the only post-merge commits (665554a, 42700a9) touch data/cards/_selftest only, not renderer inputs. publish-multi fails closed if the checkout renderer does not match this pin."
 }
