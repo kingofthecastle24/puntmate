@@ -1,0 +1,18 @@
+{
+  "files": {
+    "punter-multi-post.txt": {
+      "sha256": "f08ce88d54c39e3e81119835967e33521ebb88f2ab687a772ca3f074a8bda1d8",
+      "bytes": 1100
+    },
+    "post-metadata.json": {
+      "sha256": "fbdf24d0ce3a83123e3534028bf4f71764b1147c1df4c8b1ad5725958783228b",
+      "bytes": 18748
+    },
+    "preview.html": {
+      "sha256": "88488ef725c013163eb26d7131885ea30cba1b3675f2cafd2d1d14141a84fb29",
+      "bytes": 22537
+    }
+  },
+  "pick_id": "2026-11-06_weekend_multi",
+  "created_at": "2026-11-05T23:00:44.943016+00:00"
+}
