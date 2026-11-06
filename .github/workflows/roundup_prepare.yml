@@ -1,0 +1,55 @@
+name: PuntMate Roundup Prepare Only
+on:
+  workflow_dispatch:
+    inputs:
+      kind:
+        type: choice
+        options: [daily, weekly]
+        default: daily
+      preview:
+        type: boolean
+        default: false
+      preview_as_of:
+        type: string
+        default: ''
+        description: Explicit offset timestamp for retrospective DESIGN PREVIEW only
+permissions:
+  contents: write
+concurrency:
+  group: puntmate-social-pipeline
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Freeze only, no credentials and no send action
+        env:
+          KIND: ${{ inputs.kind }}
+          PREVIEW: ${{ inputs.preview }}
+          AS_OF: ${{ inputs.preview_as_of }}
+        run: |
+          CHROME_PATH=$(command -v google-chrome || command -v chromium)
+          export CHROME_PATH
+          test -n "$CHROME_PATH"
+          args=()
+          [ "$PREVIEW" != true ] || args+=(--preview)
+          if [ -n "$AS_OF" ]; then
+            test "$PREVIEW" = true
+            args+=(--as-of "$AS_OF")
+          fi
+          python scripts/result_roundup.py prepare --kind "$KIND" --package "data/roundup_review/${{ github.run_id }}" "${args[@]}"
+      - name: Preserve frozen review package without live publishing
+        run: |
+          git add data/roundup_review/ || true
+          bash scripts/git_push_retry.sh 'chore: frozen roundup review package, no sends [skip ci]'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roundup-review-proof
+          path: data/roundup_review/
