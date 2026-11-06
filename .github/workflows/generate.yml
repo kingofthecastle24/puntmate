@@ -507,6 +507,10 @@ jobs:
         if: github.event_name != 'workflow_dispatch'
         run: python3 scripts/hold_until_send_time.py
 
+      - name: Mandatory current-style rendered-pixel design review
+        if: needs.generate.outputs.dry_run != 'true'
+        run: python scripts/design_review_gate.py
+
       - name: Publish (or simulate, if dry run)
         env:
           DRY_RUN:             ${{ needs.generate.outputs.dry_run }}
@@ -771,6 +775,10 @@ jobs:
       - name: Hold until 7:00am NZT
         if: github.event_name != 'workflow_dispatch'
         run: python3 scripts/hold_until_send_time.py
+
+      - name: Mandatory current-style rendered-pixel design review
+        if: needs.generate_weekend.outputs.dry_run != 'true'
+        run: python scripts/design_review_gate.py
 
       - name: Publish (or simulate, if dry run)
         env:
