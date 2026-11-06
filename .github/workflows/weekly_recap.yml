@@ -40,6 +40,10 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
+      - name: Mandatory current-style rendered-pixel design review
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: python scripts/design_review_gate.py
+
       - name: Build + post weekly recap
         env:
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
