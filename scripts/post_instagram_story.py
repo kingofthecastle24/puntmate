@@ -38,6 +38,7 @@ image ever changes to something caption-dependent.
 """
 
 import os
+import re
 import sys
 import time
 import requests
@@ -147,6 +148,84 @@ def post_story_to_instagram(image_url):
     return media_id
 
 
+
+
+def post_story_video_to_instagram(video_url):
+    """Publish a video (e.g. branded frames + licensed music) to Instagram as a Story.
+    Same container flow as post_story_to_instagram but with video_url.
+    Story video spec (Meta media endpoint reference, checked 2026-11-06):
+    3-60s duration, 9:16 recommended, H.264/HEVC 23-60fps, AAC audio.
+    Returns the published media ID, or None on failure."""
+    if not IG_USER_ID or not IG_TOKEN:
+        print("  ⚠️  IG_USER_ID / META_PAGE_TOKEN not set — skipping Instagram Story")
+        return None
+
+    # Step 1: Create the STORIES media container from the video URL
+    print(f"  → Creating IG Story video container for: {video_url}")
+    resp = requests.post(
+        f"{GRAPH_URL}/{IG_USER_ID}/media",
+        data={
+            "video_url": video_url,
+            "media_type": "STORIES",
+            "access_token": IG_TOKEN,
+        },
+        timeout=30,
+    )
+    result = resp.json()
+    if "error" in result:
+        print(f"  ❌ IG Story video container error: {result['error']}")
+        _set_last_error(result['error'])
+        return None
+    container_id = result.get("id")
+    print(f"  ✅ Story video container created: {container_id}")
+
+    # Step 2: Poll until Meta finishes processing the video (videos take longer than images; allow ~2.5 min)
+    status = None
+    for _ in range(30):
+        time.sleep(5)
+        check = requests.get(
+            f"{GRAPH_URL}/{container_id}",
+            params={"fields": "status_code", "access_token": IG_TOKEN},
+            timeout=20,
+        ).json()
+        status = check.get("status_code")
+        print(f"  Container status: {status}")
+        if status == "FINISHED":
+            break
+        if status == "ERROR":
+            print(f"  ❌ IG Story video container failed processing: {check}")
+            return None
+
+    if status != "FINISHED":
+        print(f"  ⚠️  Video container never confirmed FINISHED (last status: {status}) — trying to publish anyway")
+
+    # Step 3: Publish the Story
+    print("  → Publishing Instagram Story video...")
+    resp = requests.post(
+        f"{GRAPH_URL}/{IG_USER_ID}/media_publish",
+        data={
+            "creation_id": container_id,
+            "access_token": IG_TOKEN,
+        },
+        timeout=30,
+    )
+    result = resp.json()
+    if "error" in result:
+        print(f"  ❌ IG Story video publish error: {result['error']}")
+        _set_last_error(result['error'])
+        return None
+    media_id = result.get("id")
+    print(f"  ✅ Posted Instagram Story video: {media_id}")
+    return media_id
+
+
+def post_story_media(media_url):
+    """Route a Story publish by URL type: .mp4/.mov -> video container, else image."""
+    if re.search(r'\.(mp4|mov)(\?|$)', media_url, re.IGNORECASE):
+        return post_story_video_to_instagram(media_url)
+    return post_story_to_instagram(media_url)
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python3 post_instagram_story.py <path-to-image.png | https://image-url>")
@@ -163,5 +242,5 @@ if __name__ == "__main__":
         img_url = upload_to_catbox(arg)
         print(f"  ✅ Public URL: {img_url}")
 
-    media_id = post_story_to_instagram(img_url)
+    media_id = post_story_media(img_url)
     sys.exit(0 if media_id else 1)
