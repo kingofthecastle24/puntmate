@@ -1,0 +1,48 @@
+{
+  "files": {
+    "tip.png": {
+      "sha256": "fe1b005b063d11b6438debacfc75b46b6c2b7a8549e672486ab1af1cf038e0fa",
+      "bytes": 83451
+    },
+    "breakdown.png": {
+      "sha256": "1e40e291ea6c978f70f2efedc30fcd51c831fb5a9431b39229daafaf5fa37181",
+      "bytes": 88752
+    },
+    "tip-2.png": {
+      "sha256": "40b2abd2aa055b8a8896ca228df0aa62cda8697e60957c253ad70c240bf350fd",
+      "bytes": 76292
+    },
+    "telegram-post.txt": {
+      "sha256": "c9379e00cc3f2c0d3d9cbd54decc2efe26dc85bbd7d7e87e9e0d465536bd9328",
+      "bytes": 1046
+    },
+    "post-metadata.json": {
+      "sha256": "f4e49d9b7dbb8edd7053c5167b3994565b4e95d4350d705893a0c91690b1a39a",
+      "bytes": 6080
+    },
+    "cover.png": {
+      "sha256": "6c9c71fd8930c8fb5d63a05f53b4ae7399cb798c5e4e56e260f7d65ca56006dc",
+      "bytes": 47985
+    },
+    "story.png": {
+      "sha256": "0095a53db38632d19ed325596ae5817d5ac869bb294b63ce3b96e6595717602e",
+      "bytes": 112921
+    },
+    "story-2.png": {
+      "sha256": "4fd5fe41d70f9ee3a86959b6beb9a37d9eb5f887b330c5850a319e878bbcded8",
+      "bytes": 107046
+    },
+    "story-breakdown.png": {
+      "sha256": "501aa608502651dcb18f9f2b7941e35a716146e8719f0d859eb2cd1bd421db48",
+      "bytes": 103085
+    },
+    "instagram-caption.txt": {
+      "sha256": "c9379e00cc3f2c0d3d9cbd54decc2efe26dc85bbd7d7e87e9e0d465536bd9328",
+      "bytes": 1046
+    }
+  },
+  "pick_id": "2026-11-06_research_UFC_Vegas_124_Weekend_Multi",
+  "created_at": "2026-11-06T02:01:51.180179+00:00",
+  "renderer_fingerprint": "706e6d51972017d8af17656dfd20c4eb25d4b9a4d28a8af277d3e4ad26a26e04",
+  "renderer_stamped_at": "2026-11-06T02:01:57.938373+00:00"
+}
