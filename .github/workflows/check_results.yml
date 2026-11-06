@@ -58,6 +58,9 @@ jobs:
           python scripts/register_public_pick.py
           python scripts/settle_public_ledger.py
 
+      - name: Mandatory current-style rendered-pixel design review
+        run: python scripts/design_review_gate.py
+
       - name: Deliver newly verified public results (config-gated)
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
