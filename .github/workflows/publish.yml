@@ -51,6 +51,10 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
+      - name: Mandatory current-style rendered-pixel design review
+        if: inputs.dry_run == false
+        run: python scripts/design_review_gate.py
+
       - name: Publish (or simulate, if dry run)
         env:
           DRY_RUN:             ${{ inputs.dry_run }}
