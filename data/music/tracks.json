@@ -1,0 +1,68 @@
+{
+  "_comment": "Licensed music registry for PuntMate Story videos. ONLY tracks listed here may be used by render_story_video.py. Every entry must have its license verified before use. Meta Sound Collection audio is licensed for Meta products (Instagram/Facebook) ONLY - videos using these tracks must never be published to Telegram or other non-Meta surfaces.",
+  "tracks": {
+    "energy_instrumental": {
+      "title": "Energy (Instrumental)",
+      "artist": "Tony Dark Eyes",
+      "genre": "Electronic / Fast",
+      "duration_s": 193,
+      "file": "data/music/energy_instrumental.m4a",
+      "source": "Meta Sound Collection",
+      "audio_resource_id": "1247651456848393",
+      "license": "Meta Sound Collection Terms: non-exclusive, royalty-free license for commercial or non-commercial use in content created/uploaded/distributed on Meta Company Products only.",
+      "license_url": "https://www.facebook.com/sound/collection/terms",
+      "license_checked": "2026-11-06",
+      "restrictions": "Meta products only. No gambling-specific restriction in SC terms; general Meta terms/standards still apply to the post content.",
+      "audio_start": 30.0,
+      "notes": "Instrumental chosen to avoid lyric clashes with betting copy. Proof-verified 2026-11-06 (27.5s no-zoom build, -14 LUFS)."
+    },
+    "rainy_haze": {
+      "title": "Rainy Haze",
+      "artist": "ScottyMarz",
+      "genre": "Hip Hop / Chill",
+      "tempo": "Slow",
+      "duration_s": 81,
+      "file": "data/music/rainy_haze.m4a",
+      "source": "Meta Sound Collection",
+      "audio_resource_id": "1362632562691271",
+      "license": "Meta Sound Collection Terms: non-exclusive, royalty-free license for commercial or non-commercial use in content created/uploaded/distributed on Meta Company Products only.",
+      "license_url": "https://www.facebook.com/sound/collection/terms",
+      "license_checked": "2026-11-06",
+      "restrictions": "Meta products only. No gambling-specific restriction in SC terms; general Meta terms/standards still apply to the post content.",
+      "audio_start": 15.0,
+      "notes": "Chill lo-fi hip hop, no vocals - matches approved brand direction (calm/considered, steady beat, subtle bass, pick stays focus). Default daily-pick sound candidate."
+    },
+    "big_leagues_instrumental": {
+      "source": "Meta Sound Collection",
+      "license": "Meta Sound Collection Terms: non-exclusive, royalty-free license for commercial or non-commercial use in content created/uploaded/distributed on Meta Company Products only.",
+      "license_url": "https://www.facebook.com/sound/collection/terms",
+      "license_checked": "2026-11-06",
+      "restrictions": "Meta products only. No gambling-specific restriction in SC terms; general Meta terms/standards still apply to the post content.",
+      "title": "Big Leagues (Instrumental)",
+      "artist": "Mike Floss",
+      "genre": "Hip Hop",
+      "tempo": "Medium",
+      "duration_s": 128,
+      "file": "data/music/big_leagues_instrumental.m4a",
+      "audio_resource_id": "509908441811287",
+      "audio_start": 20.0,
+      "notes": "Match-day energy candidate: stadium-hip-hop swagger, no vocals."
+    },
+    "still_half_awake": {
+      "source": "Meta Sound Collection",
+      "license": "Meta Sound Collection Terms: non-exclusive, royalty-free license for commercial or non-commercial use in content created/uploaded/distributed on Meta Company Products only.",
+      "license_url": "https://www.facebook.com/sound/collection/terms",
+      "license_checked": "2026-11-06",
+      "restrictions": "Meta products only. No gambling-specific restriction in SC terms; general Meta terms/standards still apply to the post content.",
+      "title": "Still Half Awake",
+      "artist": "cloud cover",
+      "genre": "Hip Hop / Chill",
+      "tempo": "Slow",
+      "duration_s": 71,
+      "file": "data/music/still_half_awake.m4a",
+      "audio_resource_id": "1569748244831417",
+      "audio_start": 10.0,
+      "notes": "Laid-back beat candidate with more character than Rainy Haze."
+    }
+  }
+}
