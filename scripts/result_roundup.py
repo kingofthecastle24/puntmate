@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 from public_delivery import eligible,load,save,deliver,ROOT,LEDGER,STATE,FOOTER
 NZ=ZoneInfo('Pacific/Auckland')
 DESTINATIONS=['telegram','instagram_story']
-CHECKS=['current_approved_style','rendered_pixels_inspected','heavy_logo','layout_and_no_clipping','wording_and_facts','all_destination_variants','story_safe_areas','captions_and_all_public_copy']
+CHECKS=['current_approved_style','rendered_pixels_inspected','heavy_logo','layout_and_no_clipping','wording_and_facts','all_destination_variants','story_safe_areas','captions_and_all_public_copy','carousel_direction_and_destination','source_backed_result_context']
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def settled_key(p):return 'result:'+p['id']+':'+p['result']
@@ -45,14 +45,14 @@ def plan(picks,cfg,state,now,kind='daily',preview=False):
  if kind=='daily' and not new:return None
  start,cohort,rows=wtd(picks,day)
  if kind=='weekly':new=[]
- return {'schema_version':1,'id':key,'kind':kind,'date':day.isoformat(),'week_start':start.isoformat(),'as_of':now.isoformat(),'preview_only':preview,'destinations':DESTINATIONS,'outcomes':[settled_key(p) for p in new],'daily':[{k:p.get(k) for k in ['id','selection','match','market','approx_odds','result','lane','type','notes','outcome_source','outcome_checked_at']} for p in new],'record':rows,'pending':[{'selection':p['selection'],'type':p['type'],'label':p.get('pending_label','Result not yet verified')} for p in cohort if not eligible(p)],'cohort_basis':'Picks published in the current NZ Monday-Sunday week; strike rate excludes pending, unverified and void. Whole multis count once, separately.'}
+ return {'schema_version':1,'id':key,'kind':kind,'date':day.isoformat(),'week_start':start.isoformat(),'as_of':now.isoformat(),'preview_only':preview,'destinations':DESTINATIONS,'outcomes':[settled_key(p) for p in new],'daily':[{k:p.get(k) for k in ['id','selection','match','market','approx_odds','result','lane','type','notes','outcome_source','outcome_checked_at','result_context','context_source','context_checked_at']} for p in new],'record':rows,'pending':[{'selection':p['selection'],'type':p['type'],'label':p.get('pending_label','Result not yet verified')} for p in cohort if not eligible(p)],'cohort_basis':'Picks published in the current NZ Monday-Sunday week; strike rate excludes pending, unverified and void. Whole multis count once, separately.'}
 
 def captions(p):
  day=datetime.fromisoformat(p['date']).strftime('%-d %b %Y');start=datetime.fromisoformat(p['week_start']).strftime('%-d %b')
  text=[('Daily results - '+day) if p['kind']=='daily' else ('Week in review - '+day)]
  if p['preview_only']:text.insert(0,'DESIGN PREVIEW ONLY - NOT FOR PUBLICATION')
  if p['kind']=='daily':
-  for x in p['daily']:text.append(x['selection']+' - '+x['result']+'. '+x['notes'])
+  for x in p['daily']:text.append(x['selection']+' - '+x['result']+'. '+x['notes']+(' '+x['result_context'] if x.get('result_context') else ''))
  text.append(f'Publication week {start} to {day}')
  for x in p['record']:text.append(f"{x['label']}: {x['wins']}W - {x['losses']}L | {x['rate']} | {x['pending']} pending/unverified"+(f" | {x['void']} void" if x['void'] else ''))
  for x in p['pending']:text.append(x['selection']+': '+x['label'])
@@ -80,6 +80,8 @@ def verify_frozen(directory):
 
 def send(directory,now):
  directory=Path(directory);m,p=verify_frozen(directory)
+ for x in p['daily']:
+  if x['result']=='LOSS' and not all(x.get(k) for k in ['result_context','context_source','context_checked_at']):raise ValueError('Loss update needs reviewed, source-backed match context')
  if len((directory/'caption.txt').read_text())>1024:raise ValueError('Telegram photo caption exceeds1024; shorten and re-review package')
  cfg=load(ROOT/'config/public_delivery.json',{})
  if not cfg.get('results_enabled' if p['kind']=='daily' else 'recap_enabled'):raise ValueError('Publishing paused')

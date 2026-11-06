@@ -34,3 +34,7 @@ review must precede the record. Do not copy old review records.
 Results default: one daily roundup only when new verified outcomes, with day outcomes plus week-to-date W/L and strike rate by lane; whole multis separate. Sunday full recap replaces daily content. Telegram plus Instagram Stories only, never feed/Facebook. First roundup composition requires owner proof review. The old per-result sender remains disabled until replaced.
 
 Mandatory copy review includes every caption, Telegram text, baked-in breakdown, claims and CTA. The per-run receipt must include captions_and_all_public_copy=true after reviewing the exact final words and their sources. Current frozen packages from before a validator fix do not inherit permission: publish_pick.py reruns validate_post on the exact loaded captions at send/retry time. Source edits do not repair already-live captions or frozen historic packages.
+
+## Owner copy instructions, 7 November 2026
+Carousel covers use "Swipe right", never "below". Check direction for each destination; standalone Stories do not get carousel swipe copy.
+Results explain how the match played out, especially close losses. Keep the result prominent and counted. Use source-backed score/OT/match context, no invented unlucky/dominance claims or excuses. Record exact context source and check time; no bare LOSS-only live updates. Approved outcome+record layout does not authorize retrospective reposts or erase history.

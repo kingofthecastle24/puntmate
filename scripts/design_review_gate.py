@@ -7,7 +7,7 @@ invalidates the receipt. Existing consent/market/copy/dedup gates still apply.
 import hashlib,json,os,sys
 from pathlib import Path
 
-CHECKS=("current_approved_style","rendered_pixels_inspected","heavy_logo","layout_and_no_clipping","wording_and_facts","all_destination_variants","story_safe_areas","captions_and_all_public_copy")
+CHECKS=("current_approved_style","rendered_pixels_inspected","heavy_logo","layout_and_no_clipping","wording_and_facts","all_destination_variants","story_safe_areas","captions_and_all_public_copy","carousel_direction_and_destination")
 
 def snapshot(root):
     h=hashlib.sha256()
