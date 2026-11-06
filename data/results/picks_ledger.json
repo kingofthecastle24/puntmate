@@ -919,17 +919,20 @@
       "approx_odds": 1.75,
       "type": "INVESTOR",
       "lane": "INVESTOR",
-      "result": "PENDING",
+      "result": "LOSS",
       "publication_receipt": "data/published/2026-11-06_Colorado_Avalanche_vs_Nashville_Predators.json",
       "telegram_message_id": 296,
-      "notes": "Published selection confirmed; settlement not yet source-verified.",
+      "notes": "Colorado Avalanche 2 - Nashville Predators 3.",
       "market": "Head to Head",
       "sport": "icehockey_nhl",
       "event_id": null,
       "kickoff": null,
       "pending_label": "Result not yet verified",
       "home_team": "Colorado Avalanche",
-      "away_team": "Nashville Predators"
+      "away_team": "Nashville Predators",
+      "outcome_source": "https://api.the-odds-api.com/v4/sports/icehockey_nhl/scores",
+      "outcome_checked_at": "2026-11-06T06:04:31.381687+00:00",
+      "outcome_evidence": "data/results/evidence/2026-11-06_Colorado_Avalanche_vs_Nashville_Predators.json"
     },
     {
       "id": "2026-11-06_research_UFC_Vegas_124_Weekend_Multi_v4",

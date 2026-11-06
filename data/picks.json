@@ -1570,7 +1570,7 @@
     "market": "Head to Head",
     "odds": 1.75,
     "confidence": "MODERATE",
-    "result": "pending",
-    "pnl": null
+    "result": "loss",
+    "pnl": -10.0
   }
 ]

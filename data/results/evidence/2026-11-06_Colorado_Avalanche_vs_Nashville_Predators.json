@@ -1,0 +1,24 @@
+{
+  "source": "https://api.the-odds-api.com/v4/sports/icehockey_nhl/scores",
+  "checked_at": "2026-11-06T06:04:31.381687+00:00",
+  "game": {
+    "id": "446de9651d2d2948326d970e9f858a33",
+    "sport_key": "icehockey_nhl",
+    "sport_title": "NHL",
+    "commence_time": "2026-11-06T02:39:15Z",
+    "completed": true,
+    "home_team": "Colorado Avalanche",
+    "away_team": "Nashville Predators",
+    "scores": [
+      {
+        "name": "Colorado Avalanche",
+        "score": "2"
+      },
+      {
+        "name": "Nashville Predators",
+        "score": "3"
+      }
+    ],
+    "last_update": "2026-11-06T06:04:21Z"
+  }
+}
