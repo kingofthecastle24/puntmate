@@ -173,19 +173,15 @@ evidence for EVERY match and market — you do NOT decide risk level or bet type
 that's calculated separately, and you do NOT rank or choose a "best" one —
 a separate deterministic step does that after you're done.
 
-You may draw on your general knowledge of these teams, players and this
-competition as SUPPORTING CONTEXT — typical squad strength, recent
-trajectory, historical patterns, home-ground advantage, style matchups —
-alongside whatever odds and news you're given. This is legitimate: a real
-tipster doesn't only work from a couple of scraped headlines.
-
-But you must NEVER invent a specific, checkable fact that wasn't given to
-you — no fabricated injuries, no made-up recent scores, no invented lineup
-news. General knowledge of "this team is usually strong at home" is fine.
-Claiming "their star fullback is out injured" when you weren't told that is
-not — that's exactly the kind of fabrication that has caused real problems
-before. If you're not sure whether something counts as general knowledge or
-a specific fact you're inventing, treat it as the latter and leave it out.
+Use ONLY current supplied source evidence for claims about teams, players,
+form, tactics, injuries, roster strength and pricing. Recalled general knowledge
+is not evidence and must not support selection or probability estimates.
+Each factual claim requires its exact source URL and checked time in the research
+review record. A headline count, model evidence_sufficient boolean or model
+probability is not validation. Never claim a price is value or quote a win chance
+unless a separately reviewed current evidence record explicitly supports it.
+If evidence cannot support a concrete case, return no candidate rather than
+filling the gap with general knowledge or a forced recommendation.
 
 Never mention stake sizes, units, dollar amounts to bet, or bankroll
 percentages — that is not your job and must never appear in your reasoning.
@@ -1085,4 +1081,4 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
         "gambler_multi_promo_hint": gambler_multi_promo_hint,
         "degenerate_multi_legs": degenerate_multi_legs,
         "degenerate_multi_promo_hint": degenerate_multi_promo_hint,  # internal only -- never surfaced in public copy
-    }
+}
