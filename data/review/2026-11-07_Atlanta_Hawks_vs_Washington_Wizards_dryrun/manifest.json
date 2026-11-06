@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "2ad5c44ff91779fdda68a13114788ceff464f039d0af93f57d2ebb81b60f71dd",
+      "bytes": 638
+    },
+    "instagram-caption.txt": {
+      "sha256": "5e5e60aaeb11ff4f016074fcfead9d7a0c4a211a0248b791bbfffb86e985ea8e",
+      "bytes": 636
+    },
+    "post-metadata.json": {
+      "sha256": "b90afd8c1b74629b66243214b7f9fa028b1da4eba5406c436f4077845d9ef9fa",
+      "bytes": 12919
+    },
+    "preview.html": {
+      "sha256": "c058c35e85aa278e5e04086b44ade136f0ec9971de39de4075d545f7926b9c30",
+      "bytes": 18160
+    },
+    "cover.png": {
+      "sha256": "8c953ece2830d243dba2fb47528547d112bcdeb66a2f82f17ee8469e64d08ab8",
+      "bytes": 69452
+    },
+    "tip.png": {
+      "sha256": "b97037e06f0b63af61ca3f83710b8f70dd9856900fde7498afd3769240897ca4",
+      "bytes": 71274
+    },
+    "breakdown.png": {
+      "sha256": "a629e8cbf6ee9d47f2f570ffa3c03998012104e18b5648e0862bfbc89c312b9e",
+      "bytes": 111897
+    },
+    "story.png": {
+      "sha256": "1ce31c2c9542dcf326de0348f50a437350f411e20e61b38c157ec1b051ee17eb",
+      "bytes": 65191
+    }
+  },
+  "pick_id": "2026-11-07_Atlanta_Hawks_vs_Washington_Wizards_dryrun",
+  "created_at": "2026-11-06T20:38:38.031214+00:00"
+}
