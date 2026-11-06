@@ -105,6 +105,38 @@ MULTI_TIER_CONFIG = {
 # sync with the template - tests/test_multi_card_integrity.py pins it.
 MAX_MULTI_TEMPLATE_LEGS = 5
 
+# Above 5 legs, render_multi emits CONTINUATION frames: the same approved
+# Multi template rendered once per chunk of at most 4 legs, with legsOffset
+# keeping the original leg numbers and totalLegs keeping every "N-LEG" /
+# "All N must win" label truthful on every frame. Two frames of 4 is the
+# supported continuation range.
+MAX_MULTI_CONTINUATION_LEGS = 2 * 4
+
+
+def chunk_multi_legs(legs):
+    """Split a multi's legs into per-frame chunks the template can show
+    COMPLETELY. <=5 legs: a single frame (the template's own layout range).
+    6-8 legs: two continuation frames of at most 4 legs each. Anything
+    longer is refused so a mismatched card can never publish."""
+    n = len(legs)
+    if n <= MAX_MULTI_TEMPLATE_LEGS:
+        return [list(legs)]
+    if n > MAX_MULTI_CONTINUATION_LEGS:
+        raise ValueError(
+            f"multi has {n} legs but continuation rendering supports at most "
+            f"{MAX_MULTI_CONTINUATION_LEGS} - blocking the render so mismatched "
+            f"cards can never publish (the tier's text post still goes out "
+            f"without graphics)"
+        )
+    return [list(legs[:4]), list(legs[4:])]
+
+
+def _multi_legs_text(legs):
+    return "\n".join(
+        f"{leg['match']} | {leg['selection']} | {leg.get('market', '')} | {leg['odds']}"
+        for leg in legs
+    )
+
 REACT_CDN = [
     "https://unpkg.com/react@18/umd/react.production.min.js",
     "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js",
@@ -615,10 +647,7 @@ def build_multi_props(legs, tier, handle="@puntmatenz"):
         raise ValueError(f"unknown multi tier: {tier!r} (expected 'punter' or 'gambler')")
     cfg = MULTI_TIER_CONFIG[tier]
 
-    legs_text = "\n".join(
-        f"{leg['match']} | {leg['selection']} | {leg.get('market', '')} | {leg['odds']}"
-        for leg in legs
-    )
+    legs_text = _multi_legs_text(legs)
 
     sports = sorted({leg.get("sport_label", "") for leg in legs if leg.get("sport_label")})
     sports_str = ", ".join(sports) if sports else "today's fixtures"
@@ -680,21 +709,21 @@ def render_multi(pick, tier, legs, date_str=None, out_dir=CARDS_DIR):
     _freeze_multi_tier expects, where base is identical to the single
     featured pick's own base (same date/match-slug/theme) so both live in
     the same data/cards/ output for one run."""
-    # The Multi.dc.html template lays out 2-5 legs and silently truncates a
-    # longer list (its parser does .slice(0, 5) with no warning) - that
-    # rendered 5-leg cards for a 7-leg punter multi on 2026-11-06 while the
-    # Telegram text correctly listed all 7. Refuse to render a tier the
-    # template cannot show COMPLETELY: render_multi_cards catches this and
-    # the run continues text-only (Instagram skips cleanly), which is
-    # strictly better than publishing a card that disagrees with the data.
-    # A >5-leg layout would be a template design change (owner-approved
-    # frames), not a silent cap.
-    if len(legs) > MAX_MULTI_TEMPLATE_LEGS:
-        raise ValueError(
-            f"{tier} multi has {len(legs)} legs but the Multi template shows at most "
-            f"{MAX_MULTI_TEMPLATE_LEGS} - blocking the render so mismatched cards can "
-            f"never publish (the tier's text post still goes out without graphics)"
-        )
+    # The Multi.dc.html template lays out 2-5 legs per frame and its parser
+    # hard-caps at 5 (parsed.slice(0, 5)) - that rendered 5-leg cards for a
+    # 7-leg punter multi on 2026-11-06 while the Telegram text correctly
+    # listed all 7. Longer multis now render CONTINUATION FRAMES: the same
+    # approved template once per chunk (chunk_multi_legs), never a silent
+    # truncation. Beyond the continuation range the render is refused so a
+    # card that disagrees with the data can never publish.
+    chunks = chunk_multi_legs(legs)
+    if len(chunks) > 1:
+        # Cover/breakdown frames list no legs but still print the slip size
+        # ("N LEGS", "All N must win") - give them the true total so no frame
+        # undercounts a continuation-rendered multi.
+        props_extra = {"totalLegs": str(len(legs))}
+    else:
+        props_extra = {}
 
     from playwright.sync_api import sync_playwright  # imported here so --help works without playwright installed
 
@@ -702,6 +731,7 @@ def render_multi(pick, tier, legs, date_str=None, out_dir=CARDS_DIR):
     date_str = date_str or datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
     props = build_multi_props(legs, tier)
+    props.update(props_extra)
     theme = choose_theme(pick)
     match_slug = slugify(pick.get("match") or f"{pick.get('home_team','')}_{pick.get('away_team','')}")
     base = f"{date_str}_{match_slug}_{theme}"
@@ -735,38 +765,75 @@ def render_multi(pick, tier, legs, date_str=None, out_dir=CARDS_DIR):
                         page.set_viewport_size({"width": required_width, "height": 2400})
                         page.wait_for_timeout(100)
 
-                    slide_paths = [
-                        os.path.join(out_dir, f"{base}_{tier}_multi_1_cover.png"),
-                        os.path.join(out_dir, f"{base}_{tier}_multi_2_legs.png"),
-                        os.path.join(out_dir, f"{base}_{tier}_multi_3_breakdown.png"),
-                    ]
-                    capture_exports(
-                        page,
-                        ["cover", "legs", "breakdown"],
-                        [MULTI_SLIDE_SIZE] * 3,
-                        slide_paths,
-                        warnings,
-                    )
-                    check_no_overlap_and_containment(page, warnings)
-                    files["cover"], files["legs"], files["breakdown"] = slide_paths
+                    cover_path = os.path.join(out_dir, f"{base}_{tier}_multi_1_cover.png")
+                    legs_path = os.path.join(out_dir, f"{base}_{tier}_multi_2_legs.png")
+                    breakdown_path = os.path.join(out_dir, f"{base}_{tier}_multi_3_breakdown.png")
+                    story_path = os.path.join(out_dir, f"{base}_{tier}_multi_story.png")
+                    story_breakdown_path = os.path.join(out_dir, f"{base}_{tier}_multi_story_breakdown.png")
 
-                    # --- story frames (dedicated 1080x1920 template layout) ---
-                    # Replaces the old PIL-composed story frames: the Story is
-                    # its own approved design, rendered in Chromium like every
-                    # other export, and the exact files captured here are what
-                    # prepare-multi packages and publish-multi posts.
-                    story_paths = [
-                        os.path.join(out_dir, f"{base}_{tier}_multi_story.png"),
-                        os.path.join(out_dir, f"{base}_{tier}_multi_story_breakdown.png"),
-                    ]
-                    capture_exports(
-                        page,
-                        ["story", "story-breakdown"],
-                        [STORY_SIZE] * 2,
-                        story_paths,
-                        warnings,
-                    )
-                    files["story"], files["story_breakdown"] = story_paths
+                    if len(chunks) == 1:
+                        slide_paths = [cover_path, legs_path, breakdown_path]
+                        capture_exports(
+                            page,
+                            ["cover", "legs", "breakdown"],
+                            [MULTI_SLIDE_SIZE] * 3,
+                            slide_paths,
+                            warnings,
+                        )
+                        check_no_overlap_and_containment(page, warnings)
+                        files["cover"], files["legs"], files["breakdown"] = slide_paths
+
+                        # --- story frames (dedicated 1080x1920 template layout) ---
+                        # Replaces the old PIL-composed story frames: the Story is
+                        # its own approved design, rendered in Chromium like every
+                        # other export, and the exact files captured here are what
+                        # prepare-multi packages and publish-multi posts.
+                        story_paths = [story_path, story_breakdown_path]
+                        capture_exports(
+                            page,
+                            ["story", "story-breakdown"],
+                            [STORY_SIZE] * 2,
+                            story_paths,
+                            warnings,
+                        )
+                        files["story"], files["story_breakdown"] = story_paths
+                    else:
+                        # Continuation frames: one legs + one story frame per
+                        # chunk, original leg numbers preserved via legsOffset
+                        # and the true total via totalLegs, so no frame ever
+                        # truncates or renumbers the slip. Frame 2 is labelled
+                        # CONTINUED through the existing kicker prop.
+                        for idx, chunk in enumerate(chunks):
+                            cprops = dict(props)
+                            cprops["legs"] = _multi_legs_text(chunk)
+                            cprops["legsOffset"] = str(idx * 4)
+                            cprops["totalLegs"] = str(len(legs))
+                            if idx:
+                                cprops["coverKicker"] = (cprops.get("coverKicker") or "") + " · CONTINUED"
+                            set_props_and_settle(page, cprops)
+                            leg_frame = legs_path if idx == 0 else os.path.join(out_dir, f"{base}_{tier}_multi_2_legs_cont{idx + 1}.png")
+                            story_frame = story_path if idx == 0 else os.path.join(out_dir, f"{base}_{tier}_multi_story_cont{idx + 1}.png")
+                            capture_exports(
+                                page,
+                                ["legs", "story"],
+                                [MULTI_SLIDE_SIZE, STORY_SIZE],
+                                [leg_frame, story_frame],
+                                warnings,
+                            )
+                            check_no_overlap_and_containment(page, warnings)
+                            files["legs" if idx == 0 else f"legs_{idx + 1}"] = leg_frame
+                            files["story" if idx == 0 else f"story_{idx + 1}"] = story_frame
+
+                        set_props_and_settle(page, props)
+                        capture_exports(
+                            page,
+                            ["cover", "breakdown", "story-breakdown"],
+                            [MULTI_SLIDE_SIZE, MULTI_SLIDE_SIZE, STORY_SIZE],
+                            [cover_path, breakdown_path, story_breakdown_path],
+                            warnings,
+                        )
+                        check_no_overlap_and_containment(page, warnings)
+                        files["cover"], files["breakdown"], files["story_breakdown"] = cover_path, breakdown_path, story_breakdown_path
                 finally:
                     browser.close()
 
