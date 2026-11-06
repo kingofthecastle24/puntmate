@@ -218,12 +218,15 @@ def kickoff_display(kickoff_iso):
     """'2026-07-18T07:05:00Z' -> ('SAT 18 JUL', 'Sat 18 Jul, 7:05pm NZT').
     Returns (None, None) when the kickoff is missing/unparseable — callers
     fall back to existing defaults rather than showing a wrong date."""
-    from datetime import datetime, timedelta
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
     try:
         dt = datetime.fromisoformat(str(kickoff_iso).replace("Z", "+00:00"))
-        nzt = dt + timedelta(hours=12)  # NZST — matches convention used elsewhere
+        if dt.tzinfo is None:
+            return None, None
+        nzt = dt.astimezone(ZoneInfo("Pacific/Auckland"))
         short = nzt.strftime("%a %d %b").upper()
-        long = nzt.strftime("%a %d %b, %I:%M%p").replace(" 0", " ").replace("AM", "am").replace("PM", "pm") + " NZT"
+        long = nzt.strftime("%a %d %b, %I:%M%p").replace(" 0", " ").replace("AM", "am").replace("PM", "pm") + " " + nzt.tzname()
         return short, long
     except (ValueError, TypeError):
         return None, None
