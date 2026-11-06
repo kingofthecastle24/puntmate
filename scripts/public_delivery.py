@@ -73,6 +73,8 @@ def result_jobs(picks, baseline):
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('mode',choices=['results','recap','news']);ap.add_argument('--send',action='store_true');ap.add_argument('--payload');args=ap.parse_args()
     cfg=load(ROOT/'config/public_delivery.json',{});dry=not args.send
+    if args.send and args.mode in ('results','recap') and cfg.get('result_delivery_mode')=='daily_roundup':
+        raise SystemExit('Per-result/legacy recap delivery retired. Use a frozen, reviewed result_roundup package; never bypass the design gate.')
     if args.send and not cfg.get(args.mode+'_enabled'):raise SystemExit('Live delivery held pending proof review')
     picks=load(LEDGER,{'picks':[]})['picks'];out=ROOT/'data/public_delivery';baseline=cfg.get('historical_result_ids',[])
     if args.mode=='results':
