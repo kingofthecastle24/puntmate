@@ -1,0 +1,104 @@
+{
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 296,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1793926372,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAShq7STkhbrSydoOXWCF47CYlosomgAC4A5rG4M9aUfPR8Pw1z_bRAEAAwIAA3MAAz0E",
+            "file_unique_id": "AQAD4A5rG4M9aUd4",
+            "file_size": 1015,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAShq7STkhbrSydoOXWCF47CYlosomgAC4A5rG4M9aUfPR8Pw1z_bRAEAAwIAA20AAz0E",
+            "file_unique_id": "AQAD4A5rG4M9aUdy",
+            "file_size": 11780,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAShq7STkhbrSydoOXWCF47CYlosomgAC4A5rG4M9aUfPR8Pw1z_bRAEAAwIAA3gAAz0E",
+            "file_unique_id": "AQAD4A5rG4M9aUd9",
+            "file_size": 44879,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAShq7STkhbrSydoOXWCF47CYlosomgAC4A5rG4M9aUfPR8Pw1z_bRAEAAwIAA3cAAz0E",
+            "file_unique_id": "AQAD4A5rG4M9aUd8",
+            "file_size": 85921,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACAShq7STkhbrSydoOXWCF47CYlosomgAC4A5rG4M9aUfPR8Pw1z_bRAEAAwIAA3kAAz0E",
+            "file_unique_id": "AQAD4A5rG4M9aUd-",
+            "file_size": 87056,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "\ud83c\udfaf PUNTMATE NZ \u2014 NHL\n\n\ud83c\udfdf Colorado Avalanche vs Nashville Predators\n\nPICK: COLORADO AVALANCHE\nODDS: 1.75 (Head to Head)\nBET TYPE: INVESTOR\n\nColorado at altitude with the MacKinnon\u2013Makar engine room is about as clear a squad-strength gap as you get in this division, and Nashville have been the softer of the two sides for a while now. 1.75 is short but it's still a bit under where I'd price the Avs with home ice.\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\ud83d\udcf2 Join Telegram for daily picks\n\u26a0\ufe0f For entertainment & informational purposes only. Not advice. 18+.",
+        "caption_entities": [
+          {
+            "offset": 0,
+            "length": 20,
+            "type": "bold"
+          },
+          {
+            "offset": 68,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 93,
+            "length": 5,
+            "type": "bold"
+          },
+          {
+            "offset": 119,
+            "length": 18,
+            "type": "bold"
+          },
+          {
+            "offset": 139,
+            "length": 274,
+            "type": "italic"
+          }
+        ]
+      }
+    }
+  },
+  "instagram_feed": {
+    "ok": true
+  },
+  "instagram_story": {
+    "ok": true,
+    "media_id": "18108030299199281"
+  },
+  "facebook": {
+    "ok": true,
+    "post_id": "1173598642506628_122143557207391560"
+  },
+  "facebook_story": {
+    "ok": true,
+    "story_id": "3502241073269855"
+  }
+}

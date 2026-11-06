@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-11-06_Colorado_Avalanche_vs_Nashville_Predators",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-11-06T00:52:28.118921+00:00",
       "note": "entering GitHub environment approval gate"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-11-06T00:52:51.059504+00:00",
+      "note": "AUTO-PUBLISH TRIAL \u2014 no human gate; copy validator (hard-fail at freeze) was the only gate"
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-11-06T00:52:51.059761+00:00",
+      "note": null
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-11-06T00:53:36.959815+00:00",
+      "note": "{\"telegram\": true, \"instagram_feed\": true, \"instagram_story\": true, \"facebook\": true, \"facebook_story\": true}"
     }
   ]
 }
