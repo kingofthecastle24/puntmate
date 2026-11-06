@@ -7,14 +7,19 @@ jobs:
   install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - run: echo "One-time caption repair installed. No further writes."
+      - if: ${{ false }}
+        uses: actions/checkout@v4
         with:
           ref: main
-      - uses: actions/setup-python@v5
+      - if: ${{ false }}
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install -r requirements.txt
+      - if: ${{ false }}
+        run: pip install -r requirements.txt
       - name: Install preparation code only, no publishing credentials
+        if: ${{ false }}
         run: |
           python - <<'PYFILES'
           import json,base64
