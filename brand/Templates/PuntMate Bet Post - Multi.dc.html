@@ -44,7 +44,7 @@
           </div>
           <div style="font-family:'DejaVu Sans',sans-serif;font-weight:700;font-size:38px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
         </div>
-        <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:22px;letter-spacing:3px;padding:12px 24px;border-radius:999px;">{{ legCount }}-LEG</div>
+        <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:22px;letter-spacing:3px;padding:12px 24px;border-radius:999px;">{{ cornerPill }}</div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:26px;">
@@ -156,7 +156,7 @@
           </div>
           <div style="font-family:'DejaVu Sans',sans-serif;font-weight:700;font-size:44px;letter-spacing:-1px;"><span style="color:#EAF7EF;">PUNT</span><span style="color:{{ accent }};">MATE</span></div>
         </div>
-        <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:22px;letter-spacing:3px;padding:12px 24px;border-radius:999px;">{{ legCount }}-LEG</div>
+        <div style="border:1.5px solid {{ accent }};color:{{ accent }};font-weight:700;font-size:22px;letter-spacing:3px;padding:12px 24px;border-radius:999px;">{{ cornerPill }}</div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:14px;">
@@ -259,6 +259,7 @@
   &quot;$preview&quot;: {&quot;width&quot;: 1400, &quot;height&quot;: 750},
   &quot;legsOffset&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
   &quot;totalLegs&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
+  &quot;cornerPill&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
   &quot;legs&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NZ Warriors v Stormers | Warriors to win | $1.85\nBroncos v Panthers | Broncos +4.5 | $1.95\nStorm v Eels | Over 38.5 pts | $1.90&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
   &quot;multiType&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Multi&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
   &quot;combinedOdds&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
@@ -347,6 +348,7 @@ class Component extends DCLogic {
 
     return {
       legs: parsed,
+      cornerPill: (this.props.cornerPill && String(this.props.cornerPill).trim()) || (totalLegs + '-LEG'),
       legCount: String(totalLegs),
       coverTitleTop: this.props.coverTitleTop ?? 'THE',
       coverTitleAccent: this.props.coverTitleAccent ?? 'MULTI.',
