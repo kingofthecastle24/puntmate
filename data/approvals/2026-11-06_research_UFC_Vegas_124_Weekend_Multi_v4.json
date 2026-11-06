@@ -1,0 +1,13 @@
+{
+  "type": "operator_attestation",
+  "pick_id": "2026-11-06_research_UFC_Vegas_124_Weekend_Multi_v4",
+  "action": "publish-multi",
+  "platforms": [
+    "instagram_story"
+  ],
+  "package_manifest_sha256": "844a56ff4f4f30200c0606794c1ec65d2eb983a0cbc19fff4e114233cff4f861",
+  "attestation_ref_sha256": "ecb28a751964bd82c479ec413c2c28d4b8bc2a7d64e62ed151ee702c801bbeb0",
+  "artifact_sha256": "aaf6133027777d76d03e02ce76ed5f738ab4d41e99a36a770cab5744aedd0122",
+  "recorded_at": "2026-11-06T02:26:04.513951+00:00",
+  "note": "Audit record only - this attests that a deliberate reference was supplied at dispatch; it does not verify any approval. Hashes only, no private text."
+}
