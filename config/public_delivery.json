@@ -1,5 +1,5 @@
 {
-  "results_enabled": true,
+  "results_enabled": false,
   "recap_enabled": false,
   "news_enabled": false,
   "historical_result_ids": [
@@ -53,7 +53,7 @@
     "2026-10-31_research_Weekend_Multi_v4",
     "2026-11-03_Charlotte_Hornets_vs_Detroit_Pistons"
   ],
-  "note": "Historical settlements baseline only, no backfill. Auto scores may settle exact H2H; each result delivery requires explicit reviewed_result_ids after original-market grading check. Recap stays disabled until Sunday current proof. Unsupported market grading and multi registration/settlement remain owned manual checks.",
+  "note": "PAUSED after owner rejection of live result style 6 Nov19:15. Correct proof must match actual owner-approved brand and receive owner review before any replacement or result/recap send. Existing receipts preserved.",
   "reviewed_result_ids": [
     "2026-11-06_Colorado_Avalanche_vs_Nashville_Predators"
   ],
