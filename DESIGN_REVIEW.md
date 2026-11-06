@@ -32,3 +32,5 @@ reviewer, reviewed_at, style_reference, destinations, outgoing_assets
 review must precede the record. Do not copy old review records.
 
 Results default: one daily roundup only when new verified outcomes, with day outcomes plus week-to-date W/L and strike rate by lane; whole multis separate. Sunday full recap replaces daily content. Telegram plus Instagram Stories only, never feed/Facebook. First roundup composition requires owner proof review. The old per-result sender remains disabled until replaced.
+
+Mandatory copy review includes every caption, Telegram text, baked-in breakdown, claims and CTA. The per-run receipt must include captions_and_all_public_copy=true after reviewing the exact final words and their sources. Current frozen packages from before a validator fix do not inherit permission: publish_pick.py reruns validate_post on the exact loaded captions at send/retry time. Source edits do not repair already-live captions or frozen historic packages.

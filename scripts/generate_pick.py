@@ -365,9 +365,9 @@ BET_TYPE_OPENERS = {
     # 2026-11-06: the old opener claimed "about as close to a sure thing as
     # sport gets" — a near-guarantee no 1.75 favourite justifies (and the RG
     # certainty phrases are now banned on ALL public copy, not just Gambler).
-    "INVESTOR_BET": "The numbers stack up and the price still pays. A measured one, not a certainty.",
-    "PUNTER_BET": "Solid touch here. Not a lock, but the value's real and the form backs it up.",
-    "GAMBLER_BET": "Bold call at a big price — this is a swing, not a certainty, but the upside is real.",
+    "INVESTOR_BET": "An Investor selection, not a certainty.",
+    "PUNTER_BET": "A Punter selection. The result is uncertain.",
+    "GAMBLER_BET": "A Gambler selection. Higher risk, not a certainty.",
 }
 
 BET_TYPE_LABELS = {

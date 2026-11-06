@@ -351,6 +351,10 @@ def main():
     telegram_text = open(telegram_path).read() if os.path.exists(telegram_path) else ""
     instagram_caption = open(instagram_path).read() if os.path.exists(instagram_path) else ""
 
+    # Revalidate exact frozen captions at every publish/retry, not only generation.
+    from copy_validator import validate_post
+    validate_post(metadata, telegram_text, instagram_caption)
+
     if DRY_RUN:
         # Dry runs (manual testing) don't move workflow state at all — only a
         # real approved run does.

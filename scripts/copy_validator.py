@@ -250,7 +250,7 @@ def validate_text(text, risk=None, bet_type=None, public=True):
     violations += check_staking_language(text)
     if risk:
         violations += check_no_bet_contradiction(text, risk)
-    if bet_type:
+    if public or bet_type:
         violations += check_gambler_rg(text, bet_type)
     if public:
         violations += check_internal_leak(text)

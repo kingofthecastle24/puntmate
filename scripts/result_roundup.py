@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 from public_delivery import eligible,load,save,deliver,ROOT,LEDGER,STATE,FOOTER
 NZ=ZoneInfo('Pacific/Auckland')
 DESTINATIONS=['telegram','instagram_story']
-CHECKS=['current_approved_style','rendered_pixels_inspected','heavy_logo','layout_and_no_clipping','wording_and_facts','all_destination_variants','story_safe_areas']
+CHECKS=['current_approved_style','rendered_pixels_inspected','heavy_logo','layout_and_no_clipping','wording_and_facts','all_destination_variants','story_safe_areas','captions_and_all_public_copy']
 
 def sha(p):return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def settled_key(p):return 'result:'+p['id']+':'+p['result']
@@ -79,7 +79,9 @@ def verify_frozen(directory):
  return m,load(directory/'payload.json',{})
 
 def send(directory,now):
- directory=Path(directory);m,p=verify_frozen(directory);cfg=load(ROOT/'config/public_delivery.json',{})
+ directory=Path(directory);m,p=verify_frozen(directory)
+ if len((directory/'caption.txt').read_text())>1024:raise ValueError('Telegram photo caption exceeds1024; shorten and re-review package')
+ cfg=load(ROOT/'config/public_delivery.json',{})
  if not cfg.get('results_enabled' if p['kind']=='daily' else 'recap_enabled'):raise ValueError('Publishing paused')
  if cfg.get('first_roundup_requires_owner_proof_review',True):raise ValueError('First roundup owner proof approval not recorded; hold')
  if now.astimezone(NZ).date().isoformat()!=p['date']:raise ValueError('Frozen day expired - prepare and review current package')
