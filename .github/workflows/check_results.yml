@@ -8,6 +8,10 @@ on:
   workflow_dispatch:
     # Allow manual trigger for testing
 
+concurrency:
+  group: puntmate-social-pipeline
+  cancel-in-progress: false
+
 jobs:
   check_results:
     runs-on: ubuntu-latest
@@ -28,6 +32,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - run: python -m playwright install chromium --with-deps
+
       - name: Resolve pending picks
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
@@ -40,17 +46,32 @@ jobs:
           cd scripts
           python challenge_tracker.py
 
-      - name: Post results to Telegram
+      - name: Settle canonical public selections against strict source scores
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          python -c "import base64; from pathlib import Path; Path('scripts/register_public_pick.py').write_bytes(base64.b64decode('IiIiUmVnaXN0ZXIgb25seSBzdWNjZXNzZnVsbHkgcHVibGlzaGVkIHVuaXF1ZSBzZWxlY3Rpb25zIGZyb20gb3duIHJlY2VpcHRzLgpObyBleGVjdXRpb24gb24gaW1wb3J0OyBjYWxsZWQgYWZ0ZXIgcHVibGljYXRpb24gYnkgbmlnaHRseSBjYW5vbmljYWwgc2V0dGxlbWVudC4KUmVzZWFyY2ggbXVsdGlzIHVuc3VwcG9ydGVkIGZvciBhdXRvbWF0aWMgc2V0dGxlbWVudCByZW1haW4gY2xlYXJseSBwZW5kaW5nLgoiIiIKaW1wb3J0IGpzb24KZnJvbSBwYXRobGliIGltcG9ydCBQYXRoClJPT1Q9UGF0aChfX2ZpbGVfXykucmVzb2x2ZSgpLnBhcmVudHNbMV0KUEFUSD1ST09ULydkYXRhL3Jlc3VsdHMvcGlja3NfbGVkZ2VyLmpzb24nCmRlZiByZWdpc3RlcigpOgogZD1qc29uLmxvYWRzKFBBVEgucmVhZF90ZXh0KCkpO2tub3duPXtwWydpZCddIGZvciBwIGluIGRbJ3BpY2tzJ119CiBmb3IgcmVjZWlwdCBpbiBzb3J0ZWQoKFJPT1QvJ2RhdGEvcHVibGlzaGVkJykuZ2xvYignKi5qc29uJykpOgogIHBpZD1yZWNlaXB0LnN0ZW0KICBpZiBwaWQgaW4ga25vd24gb3IgcGlkWzoxMF08JzIwMjYtMTEtMDcnOmNvbnRpbnVlCiAgbWV0YT1ST09ULydkYXRhL3JldmlldycvcGlkLydwb3N0LW1ldGFkYXRhLmpzb24nCiAgaWYgbm90IG1ldGEuZXhpc3RzKCk6Y29udGludWUKICBtPWpzb24ubG9hZHMobWV0YS5yZWFkX3RleHQoKSk7cj1qc29uLmxvYWRzKHJlY2VpcHQucmVhZF90ZXh0KCkpCiAgIyBSZWdpc3RlciBzaW5nbGVzIG9ubHkgd2hlbiBwb3N0ZWQgcmVjZWlwdCBhbmQgZnJvemVuIHBpY2sgbWV0YWRhdGEgYWdyZWUuCiAgaWYgbm90IG0uZ2V0KCdzZWxlY3Rpb24nKSBvciBub3QgbS5nZXQoJ21hdGNoJykgb3IgbS5nZXQoJ2tpbmQnKSBpbiAoJ3dlZWtseV9yZWNhcCcsJ3Nwb3J0c19uZXdzJywncmVzZWFyY2hfbXVsdGknKTpjb250aW51ZQogIGlmIG5vdCBhbnkoaXNpbnN0YW5jZSh2LGRpY3QpIGFuZCB2LmdldCgnb2snKSBmb3Igayx2IGluIHIuaXRlbXMoKSBpZiBrIGluICgndGVsZWdyYW0nLCdpbnN0YWdyYW1fZmVlZCcsJ2luc3RhZ3JhbV9zdG9yeScpKTpjb250aW51ZQogIGxhbmU9bS5nZXQoJ2JldF90eXBlJywnJykucmVwbGFjZSgnX0JFVCcsJycpLnVwcGVyKCkKICBpZiBsYW5lIG5vdCBpbiAoJ0lOVkVTVE9SJywnUFVOVEVSJywnR0FNQkxFUicsJ0RFR0VOJyk6Y29udGludWUKICBleGlzdGluZz1qc29uLmxvYWRzKChST09ULydkYXRhL3BpY2tzLmpzb24nKS5yZWFkX3RleHQoKSkKICBoaXRzPVtwIGZvciBwIGluIGV4aXN0aW5nIGlmIHAuZ2V0KCdkYXRlJyk9PXBpZFs6MTBdIGFuZCBwLmdldCgnbWF0Y2gnKT09bVsnbWF0Y2gnXSBhbmQgcC5nZXQoJ3BpY2snLCcnKS5jYXNlZm9sZCgpPT1tWydzZWxlY3Rpb24nXS5jYXNlZm9sZCgpXQogIHRlYW1zPWhpdHNbMF0gaWYgbGVuKGhpdHMpPT0xIGVsc2Uge30KICBkWydwaWNrcyddLmFwcGVuZChkaWN0KGlkPXBpZCxkYXRlX3Bvc3RlZD1waWRbOjEwXSxtYXRjaD1tWydtYXRjaCddLHNlbGVjdGlvbj1tWydzZWxlY3Rpb24nXSxhcHByb3hfb2Rkcz1tLmdldCgnb2RkcycpLG1hcmtldD1tLmdldCgnbWFya2V0JyksdHlwZT1sYW5lLGxhbmU9bGFuZSxyZXN1bHQ9J1BFTkRJTkcnLHNwb3J0PW0uZ2V0KCdzcG9ydCcpLGhvbWVfdGVhbT10ZWFtcy5nZXQoJ2hvbWVfdGVhbScpLGF3YXlfdGVhbT10ZWFtcy5nZXQoJ2F3YXlfdGVhbScpLHB1YmxpY2F0aW9uX3JlY2VpcHQ9c3RyKHJlY2VpcHQucmVsYXRpdmVfdG8oUk9PVCkpLHBlbmRpbmdfbGFiZWw9J1Jlc3VsdCBub3QgeWV0IHZlcmlmaWVkJyxub3Rlcz0nQXdhaXRpbmcgdmVyaWZpZWQgZmluYWwgc2NvcmUuJykpCiAga25vd24uYWRkKHBpZCkKIFBBVEgud3JpdGVfdGV4dChqc29uLmR1bXBzKGQsaW5kZW50PTIpKydcbicpCmlmIF9fbmFtZV9fPT0nX19tYWluX18nOnJlZ2lzdGVyKCkK'))"
+          python scripts/register_public_pick.py
+          python scripts/settle_public_ledger.py
+
+      - name: Deliver newly verified public results (config-gated)
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
         run: |
-          cd scripts
-          python post_results_telegram.py
+          if python -c "import json; assert json.load(open('config/public_delivery.json')).get('results_enabled')"; then
+            python scripts/public_delivery.py results --send
+          else
+            python scripts/public_delivery.py results
+          fi
 
       - name: Commit resolved picks
         run: |
-          git add data/picks.json config/challenge.json
+          git add data/picks.json config/challenge.json data/results/picks_ledger.json
+          [ ! -d data/results/evidence ] || git add data/results/evidence
+          [ ! -f data/state/public_delivery.json ] || git add data/state/public_delivery.json
           # ledger only exists once the challenge has been enabled + run
           [ -f data/challenge.json ] && git add data/challenge.json || true
           [ -f data/state/results_post_state.json ] && git add data/state/results_post_state.json || true
@@ -59,4 +80,3 @@ jobs:
       - name: Log run summary
         if: always()
         run: echo "Results check completed at $(date -u)"
-
