@@ -7,14 +7,19 @@ jobs:
   install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - run: echo "One-time roundup installation complete. No further writes."
+      - if: ${{ false }}
+        uses: actions/checkout@v4
         with:
           ref: main
-      - uses: actions/setup-python@v5
+      - if: ${{ false }}
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install requests
+      - if: ${{ false }}
+        run: pip install requests
       - name: Install preparation code only, no publishing credentials
+        if: ${{ false }}
         run: |
           python - <<'PYFILES'
           import json,base64
