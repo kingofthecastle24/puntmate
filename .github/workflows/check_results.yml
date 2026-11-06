@@ -59,7 +59,12 @@ jobs:
           python scripts/settle_public_ledger.py
 
       - name: Mandatory current-style rendered-pixel design review
-        run: python scripts/design_review_gate.py
+        run: |
+          if python -c "import json; assert json.load(open('config/public_delivery.json')).get('results_enabled')"; then
+            python scripts/design_review_gate.py
+          else
+            echo 'Publishing disabled; settlement and ledger persistence may continue.'
+          fi
 
       - name: Deliver newly verified public results (config-gated)
         env:
