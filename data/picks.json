@@ -1555,5 +1555,22 @@
     "confidence": "MODERATE",
     "result": "win",
     "pnl": 4.8
+  },
+  {
+    "id": "2026-11-06_icehockey_nhl_Colorado_Avalanche_INVESTOR_BET",
+    "date": "2026-11-06",
+    "bet_type": "INVESTOR_BET",
+    "risk": "RISKY_PICK",
+    "sport_key": "icehockey_nhl",
+    "sport": "icehockey_nhl",
+    "match": "Colorado Avalanche vs Nashville Predators",
+    "home_team": "Colorado Avalanche",
+    "away_team": "Nashville Predators",
+    "pick": "COLORADO AVALANCHE",
+    "market": "Head to Head",
+    "odds": 1.75,
+    "confidence": "MODERATE",
+    "result": "pending",
+    "pnl": null
   }
 ]

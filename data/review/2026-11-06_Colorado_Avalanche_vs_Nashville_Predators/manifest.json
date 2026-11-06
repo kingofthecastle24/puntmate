@@ -1,0 +1,38 @@
+{
+  "files": {
+    "telegram-post.txt": {
+      "sha256": "35f8ab142fed2492d204d5ee4ee3088e28f863dd92e9b24f6412a2f99a3bbd39",
+      "bytes": 595
+    },
+    "instagram-caption.txt": {
+      "sha256": "2c26bebf4ef7627f514685e942df0b5c1434b768018c0e426d14c4b877f91ac2",
+      "bytes": 660
+    },
+    "post-metadata.json": {
+      "sha256": "d3842682aa701bc76c3e200181b924156bf2816e3e9c33c9a83ab236265d6d79",
+      "bytes": 7429
+    },
+    "preview.html": {
+      "sha256": "92626c253f9076dddb1f3cfdad6e8a69e214453cb9a94b9c94d33a18824825fe",
+      "bytes": 12225
+    },
+    "cover.png": {
+      "sha256": "0dbd88a1fe17df909da03d415e2fbf5b1a0027bee403bc12e701f92b3f12b26c",
+      "bytes": 67694
+    },
+    "tip.png": {
+      "sha256": "00691a791602e42bfce24c3089198ee9759fd9ea53418213a0c821bde966b334",
+      "bytes": 74056
+    },
+    "breakdown.png": {
+      "sha256": "d2c626bf68b686b28ec78082a74d6ef6c5632a29f6f65d9e1caec01cf35beb15",
+      "bytes": 104157
+    },
+    "story.png": {
+      "sha256": "e5cf8498aa2858289adf73c84b6acc1e593cb5f5965915cfbf621bdfd4bcd1dc",
+      "bytes": 69132
+    }
+  },
+  "pick_id": "2026-11-06_Colorado_Avalanche_vs_Nashville_Predators",
+  "created_at": "2026-11-06T00:52:27.831884+00:00"
+}

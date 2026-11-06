@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-11-06_Colorado_Avalanche_vs_Nashville_Predators",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-11-06T00:52:28.118684+00:00",
+      "note": "review package built"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-11-06T00:52:28.118820+00:00",
+      "note": "review package frozen"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-11-06T00:52:28.118921+00:00",
+      "note": "entering GitHub environment approval gate"
+    }
+  ]
+}
