@@ -1,0 +1,27 @@
+{
+  "run_id": "42291355485",
+  "job": "no_bet",
+  "snapshot_sha256": "89fc1e58a3f130d6a691193aa9ebf13ccca7aad904397ebcacd23354e82e083a",
+  "decision": "PASS",
+  "reviewer": "parent final visual inspection 2026-11-07T09:45:10+13:00",
+  "reviewed_at": "2026-11-07T09:45:10+13:00",
+  "style_reference": "current pink house Story; parent inspected exact no-bet proof",
+  "outgoing_assets": {
+    "data/cards/no-bet-2026-11-07.png": "26e68bae228a778e2733dace2ba2a10d50440a61e6f35d7ef7153aaaf2800e60"
+  },
+  "destinations": [
+    "telegram",
+    "instagram_story"
+  ],
+  "checks": {
+    "current_approved_style": true,
+    "rendered_pixels_inspected": true,
+    "heavy_logo": true,
+    "layout_and_no_clipping": true,
+    "wording_and_facts": true,
+    "all_destination_variants": true,
+    "story_safe_areas": true,
+    "captions_and_all_public_copy": true,
+    "carousel_direction_and_destination": true
+  }
+}
