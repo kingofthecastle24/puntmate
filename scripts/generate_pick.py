@@ -1085,4 +1085,4 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
         "gambler_multi_promo_hint": gambler_multi_promo_hint,
         "degenerate_multi_legs": degenerate_multi_legs,
         "degenerate_multi_promo_hint": degenerate_multi_promo_hint,  # internal only -- never surfaced in public copy
-      }
+    }
