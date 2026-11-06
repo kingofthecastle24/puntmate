@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-11-06_research_UFC_Vegas_124_Weekend_Multi_v2",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-11-06T02:12:57.316551+00:00",
+      "note": "Weekend research multi; render review required"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-11-06T02:12:57.316722+00:00",
+      "note": "Weekend research multi; render review required"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-11-06T02:12:57.316944+00:00",
+      "note": "Weekend research multi; render review required"
+    }
+  ]
+}
