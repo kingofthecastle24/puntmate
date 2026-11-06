@@ -2,8 +2,11 @@
   "items": {
     "result:2026-11-06_Colorado_Avalanche_vs_Nashville_Predators:LOSS": {
       "telegram": {
-        "status": "attempting",
-        "at": "2026-11-06T06:07:31.874148+00:00"
+        "status": "sent",
+        "receipt": {
+          "message_id": 297
+        },
+        "at": "2026-11-06T06:07:35.103206+00:00"
       }
     }
   }
