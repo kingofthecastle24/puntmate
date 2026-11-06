@@ -100,6 +100,11 @@ MULTI_TIER_CONFIG = {
     },
 }
 
+# Multi.dc.html's own header documents "Handles 2-5 legs" and its JS parser
+# hard-caps the list at 5 (parsed.slice(0, 5)) with no warning. Keep this in
+# sync with the template - tests/test_multi_card_integrity.py pins it.
+MAX_MULTI_TEMPLATE_LEGS = 5
+
 REACT_CDN = [
     "https://unpkg.com/react@18/umd/react.production.min.js",
     "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js",
@@ -622,7 +627,28 @@ def build_multi_props(legs, tier, handle="@puntmatenz"):
             f"swing, not a plan."
         )
 
-    return {
+    # Combined odds are computed HERE, from the same leg list the text post
+    # is built from - never left to the template. The template's own
+    # auto-calc is only a fallback, and its props-schema default for
+    # combinedOdds is "" (an empty string its "??" does NOT fall through),
+    # which printed a blank "Combined at ." and an empty COMBINED ODDS box on
+    # the 2026-11-06 punter multi cards (and would have broken the template's
+    # stake x combined stakeReturn on the breakdown slide). Passing the value
+    # explicitly keeps cards, text post, and run data in agreement. If any
+    # leg has no numeric odds, leave the prop unset rather than guess.
+    combined = 1.0
+    priced = 0
+    for leg in legs:
+        try:
+            v = float(str(leg.get("odds", "")).strip())
+        except (TypeError, ValueError):
+            continue
+        if v > 0:
+            combined *= v
+            priced += 1
+    combined_odds = f"{combined:.2f}" if priced > 0 and priced == len(legs) else None
+
+    props = {
         "legs": legs_text,
         "multiType": cfg["multiType"],
         "coverKicker": cfg["coverKicker"],
@@ -634,6 +660,9 @@ def build_multi_props(legs, tier, handle="@puntmatenz"):
         "handle": handle,
         "palette": cfg["palette"],
     }
+    if combined_odds is not None:
+        props["combinedOdds"] = combined_odds
+    return props
 
 
 def render_multi(pick, tier, legs, date_str=None, out_dir=CARDS_DIR):
@@ -643,6 +672,22 @@ def render_multi(pick, tier, legs, date_str=None, out_dir=CARDS_DIR):
     _freeze_multi_tier expects, where base is identical to the single
     featured pick's own base (same date/match-slug/theme) so both live in
     the same data/cards/ output for one run."""
+    # The Multi.dc.html template lays out 2-5 legs and silently truncates a
+    # longer list (its parser does .slice(0, 5) with no warning) - that
+    # rendered 5-leg cards for a 7-leg punter multi on 2026-11-06 while the
+    # Telegram text correctly listed all 7. Refuse to render a tier the
+    # template cannot show COMPLETELY: render_multi_cards catches this and
+    # the run continues text-only (Instagram skips cleanly), which is
+    # strictly better than publishing a card that disagrees with the data.
+    # A >5-leg layout would be a template design change (owner-approved
+    # frames), not a silent cap.
+    if len(legs) > MAX_MULTI_TEMPLATE_LEGS:
+        raise ValueError(
+            f"{tier} multi has {len(legs)} legs but the Multi template shows at most "
+            f"{MAX_MULTI_TEMPLATE_LEGS} - blocking the render so mismatched cards can "
+            f"never publish (the tier's text post still goes out without graphics)"
+        )
+
     from playwright.sync_api import sync_playwright  # imported here so --help works without playwright installed
 
     os.makedirs(out_dir, exist_ok=True)
