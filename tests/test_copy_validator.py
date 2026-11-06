@@ -48,9 +48,12 @@ class ResponsibleGamblingTests(unittest.TestCase):
         hits = check_gambler_rg("Bold call at a big price — this is a swing, not a certainty.", "GAMBLER_BET")
         self.assertEqual(hits, [])
 
-    def test_rg_check_skipped_for_non_gambler(self):
+    def test_certainty_flagged_but_chase_skipped_for_non_gambler(self):
+        # 2026-11-06: near-guarantee phrases are banned on every bet type
+        # (they reached an INVESTOR Instagram caption); chase/all-in phrases
+        # remain Gambler-only.
         hits = check_gambler_rg("Guaranteed win, all in.", "INVESTOR_BET")
-        self.assertEqual(hits, [])
+        self.assertEqual(hits, ["certainty/near-guarantee phrase in public copy: 'guaranteed win'"])
 
 
 class FullPostValidationTests(unittest.TestCase):

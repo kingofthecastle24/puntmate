@@ -154,13 +154,20 @@ INTERNAL_LEAK_PATTERNS = [
     re.compile(r"\bpossible\s+(copy[\s-]?paste|mix[\s-]?up|mismatch)\b", re.IGNORECASE),
 ]
 
-# Responsible-gambling: GAMBLER_BET copy must never chase, promise, or imply
-# guaranteed/all-in behaviour.
-RG_BANNED_FOR_GAMBLER = [
+# Near-guarantee / certainty language is banned on EVERY public post, every
+# bet type (2026-11-06: "about as close to a sure thing as sport gets"
+# reached the Instagram caption of a 1.75 INVESTOR pick because these phrases
+# were only enforced for Gambler copy — no short price is a sure thing).
+RG_BANNED_CERTAINTY = [
     "guaranteed win", "guaranteed winner", "can't lose", "sure thing",
-    "all in", "go big or go home", "chase", "bet it all", "lock of the day",
-    "free money",
+    "lock of the day", "free money",
 ]
+
+# Responsible-gambling: GAMBLER_BET copy must additionally never chase or
+# imply all-in behaviour.
+RG_BANNED_FOR_GAMBLER = [
+    "all in", "go big or go home", "chase", "bet it all",
+] + RG_BANNED_CERTAINTY
 
 
 class CopyValidationError(ValueError):
@@ -214,10 +221,12 @@ def check_internal_leak(public_text):
 
 
 def check_gambler_rg(text, bet_type):
-    if bet_type != "GAMBLER_BET":
-        return []
-    hits = _contains_any(text, RG_BANNED_FOR_GAMBLER)
-    return [f"responsible-gambling violation for GAMBLER_BET: '{p}'" for p in hits]
+    certainty = _contains_any(text, RG_BANNED_CERTAINTY)
+    violations = [f"certainty/near-guarantee phrase in public copy: '{p}'" for p in certainty]
+    if bet_type == "GAMBLER_BET":
+        hits = _contains_any(text, RG_BANNED_FOR_GAMBLER)
+        violations += [f"responsible-gambling violation for GAMBLER_BET: '{p}'" for p in hits]
+    return violations
 
 
 def check_single_pick(post_metadata):

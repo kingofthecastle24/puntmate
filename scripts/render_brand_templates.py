@@ -278,6 +278,14 @@ def build_props(pick, handle="@puntmatenz"):
         "confidence": confidence_to_dots(confidence_label),
         "confidenceLabel": confidence_label,
         "riskTagline": risk_tagline,
+        # 2026-11-06: never leave riskTag unset - the Betslip Night template
+        # falls back to its schema default "LOW RISK", which printed next to
+        # a RISKY_PICK classification on the Avalanche breakdown card (a
+        # contradictory, ungrounded label). The truthful risk signal already
+        # rides in riskTagline ("Risky Pick" from the pick's own risk field);
+        # the standalone tag is decorative, so suppress it explicitly. The
+        # classification itself is unchanged.
+        "riskTag": "",
         "laneTag": lane_tag,
         "handle": handle,
         "coverTheme": "Daily Pick",

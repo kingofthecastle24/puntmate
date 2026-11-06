@@ -1,6 +1,7 @@
 {
-  "renderer_fingerprint": "e87fe8c116c064bf8a70362c5cb59b1d69273694c0e3fe52339ee13e9f689c31",
+  "renderer_fingerprint": "386a0c7fce6b5cdffa9e568944dbf40f7ccc0e51dd4b2c0177dc749136ecfc7e",
   "pinned_from": "heavier wordmark (DejaVu Sans Bold) default renderer - PR #28",
-  "pinned_at": "2026-11-05T07:18:00+00:00",
-  "note": "Re-pinned after PR #28 (merged afe57e8): owner decision 2026-11-04 set the heavier launch-era wordmark (DejaVu Sans Bold) as default across all post templates. Verified the fingerprint delta from the previous pin (fa70b01b) is exactly that merge: pre-merge main 8652131 reproduces the old pin, and the only post-merge commits (665554a, 42700a9) touch data/cards/_selftest only, not renderer inputs. publish-multi fails closed if the checkout renderer does not match this pin."
+  "pinned_at": "2026-11-06T01:01:00+00:00",
+  "note": "Re-pinned 2026-11-06 after the multi-card consistency repair (PR #31) and the riskTag template-default suppression (this branch): publish-multi fails closed on pin mismatch, and both changed render_brand_templates.py after the previous pin.",
+  "fingerprint": "5b169984fc2184be5aa3df69e351a3b300adf733e7b08612177cd047e4605dab"
 }

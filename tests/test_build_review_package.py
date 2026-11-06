@@ -23,7 +23,7 @@ def _standard_pick():
         "risk": "STANDARD_PICK",
         "bet_type": "INVESTOR_BET",
         "bet_type_label": "BET TYPE: INVESTOR",
-        "bet_type_reason": "This one's about as close to a sure thing as sport gets — the numbers stack up and the price still pays. Warriors have won four straight at home.",
+        "bet_type_reason": "The numbers stack up and the price still pays. A measured one, not a certainty. Warriors have won four straight at home.",
         "final_explanation": "Warriors have won four straight at home and Storm are missing two starters.",
         "confidence": "HIGH",
         "confidence_label": "HIGH",

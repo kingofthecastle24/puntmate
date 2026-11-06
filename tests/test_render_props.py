@@ -16,7 +16,7 @@ def _pick(**overrides):
         "risk": "STANDARD_PICK",
         "confidence_label": "HIGH",
         "final_explanation": "Warriors have won four straight at home.",
-        "bet_type_reason": "This one's about as close to a sure thing as sport gets.",
+        "bet_type_reason": "The numbers stack up and the price still pays. A measured one, not a certainty.",
     }
     base.update(overrides)
     return base
