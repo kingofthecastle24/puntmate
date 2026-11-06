@@ -129,7 +129,7 @@ def run():
     os.makedirs(CARDS_DIR, exist_ok=True)
     for tier, legs in (("punter", punter_legs), ("gambler", gambler_legs), ("degenerate", degenerate_legs)):
         if len(legs) >= 3:
-            render_multi_cards(anchor_pick, tier, legs)
+            render_multi_cards(anchor_pick, tier, legs, date_str=run_date)
 
     run_data["punter_multi_legs"] = punter_legs
     run_data["punter_multi_promo_hint"] = pick.get("punter_multi_promo_hint")
