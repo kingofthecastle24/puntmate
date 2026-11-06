@@ -362,7 +362,10 @@ def _one_sentence(text, max_len=400):
 
 
 BET_TYPE_OPENERS = {
-    "INVESTOR_BET": "This one's about as close to a sure thing as sport gets — the numbers stack up and the price still pays.",
+    # 2026-11-06: the old opener claimed "about as close to a sure thing as
+    # sport gets" — a near-guarantee no 1.75 favourite justifies (and the RG
+    # certainty phrases are now banned on ALL public copy, not just Gambler).
+    "INVESTOR_BET": "The numbers stack up and the price still pays. A measured one, not a certainty.",
     "PUNTER_BET": "Solid touch here. Not a lock, but the value's real and the form backs it up.",
     "GAMBLER_BET": "Bold call at a big price — this is a swing, not a certainty, but the upside is real.",
 }
@@ -1082,4 +1085,4 @@ def generate_pick_for_matches(matches, match_news, build_multis=False, exclude_m
         "gambler_multi_promo_hint": gambler_multi_promo_hint,
         "degenerate_multi_legs": degenerate_multi_legs,
         "degenerate_multi_promo_hint": degenerate_multi_promo_hint,  # internal only -- never surfaced in public copy
-    }
+      }
