@@ -1,0 +1,68 @@
+name: PuntMate Public Delivery Review
+run-name: Public delivery ${{ inputs.mode }} - ${{ inputs.send && 'LIVE' || 'DRY RUN' }}
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [results, recap, news]
+        required: true
+      payload:
+        type: string
+        description: Repository payload path (blank generates current publication week for recap)
+        default: ''
+      send:
+        type: boolean
+        default: false
+        description: Live only after reviewed proof and config enablement
+permissions:
+  contents: write
+concurrency:
+  group: puntmate-social-pipeline
+  cancel-in-progress: false
+jobs:
+  delivery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install Pillow requests playwright
+      - run: python -m playwright install chromium --with-deps
+      - name: Render and optionally deliver
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          MODE: ${{ inputs.mode }}
+          PAYLOAD: ${{ inputs.payload }}
+          SEND: ${{ inputs.send }}
+        run: |
+          if [ "$MODE" = recap ] && [ -z "$PAYLOAD" ]; then
+            python - <<'PYWEEK'
+          import json
+          from pathlib import Path
+          from datetime import datetime,timedelta
+          from zoneinfo import ZoneInfo
+          today=datetime.now(ZoneInfo('Pacific/Auckland')).date()
+          assert today.weekday()==6, 'Weekly recap live preparation is Sunday only'
+          Path('data/results/recap_current.json').write_text(json.dumps({'start':(today-timedelta(days=6)).isoformat(),'end':today.isoformat()}))
+          PYWEEK
+            PAYLOAD=data/results/recap_current.json
+          fi
+          args=()
+          [ "$SEND" = true ] && args+=(--send)
+          [ -n "$PAYLOAD" ] && args+=(--payload "$PAYLOAD")
+          python scripts/public_delivery.py "$MODE" "${args[@]}"
+      - name: Persist delivery attempt receipts even on failure
+        if: always() && inputs.send
+        run: |
+          git add data/state/public_delivery.json || true
+          bash scripts/git_push_retry.sh 'chore: public delivery receipts [skip ci]'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-delivery-proof
+          path: data/public_delivery/
