@@ -64,5 +64,16 @@
       "source": "https://cdn.sanity.io/files/3hv6m2p5/production/8f88c1cbbc57246e9f8b5dda60b8b1c7a85490d7.pdf",
       "checked_at": "2026-11-06T19:04:00+13:00"
     }
-  }
+  },
+  "result_delivery_mode": "daily_roundup",
+  "result_roundup_max_per_day": 1,
+  "result_roundup_only_with_new_verified_results": true,
+  "result_roundup_include_week_to_date": true,
+  "result_roundup_multis_separate": true,
+  "result_destinations": [
+    "telegram",
+    "instagram_story"
+  ],
+  "sunday_full_recap_replaces_daily": true,
+  "first_roundup_requires_owner_proof_review": true
 }
