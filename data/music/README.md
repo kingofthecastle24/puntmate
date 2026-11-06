@@ -4,6 +4,11 @@ Music for Instagram Story videos comes ONLY from this folder, and only after
 its license is verified for the account/use (Micah's music grant 2026-11-06:
 suitable cleared music, no spend; previewed and accepted on the 27.5s proof).
 
+## Files
+Audio files (.m4a) are NOT committed to this repo - the SC license covers use in
+Meta-product content, not standalone redistribution. Fetch a track fresh (see
+below) into this folder before rendering; tracks.json is the manifest.
+
 ## Rules
 1. Use a track from `tracks.json` via `scripts/render_story_video.py --track <id>`.
 2. Meta Sound Collection tracks are licensed for Meta Company Products ONLY.
