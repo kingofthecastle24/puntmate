@@ -34,12 +34,12 @@ jobs:
           python scripts/public_delivery.py recap --payload data/results/recap_preview.json
       - name: Save disabled draft on review branch (never enable or publish)
         run: |
-          git switch -c fix/delivery-reviewed-v2
-          git add scripts/public_delivery.py scripts/render_public_record.py scripts/settle_public_ledger.py tests/test_public_delivery.py config/public_delivery.json data/results/picks_ledger.json .github/workflows/public_delivery.yml .github/workflows/check_results.yml data/results/recap_preview.json
+          git switch -c fix/delivery-reviewed-v3
+          git add scripts/public_delivery.py scripts/render_public_record.py scripts/settle_public_ledger.py tests/test_public_delivery.py config/public_delivery.json data/results/picks_ledger.json data/results/recap_preview.json
           git config user.name 'puntmate-bot'
           git config user.email 'puntmate-bot@users.noreply.github.com'
           git commit -m 'Build disabled source-ledger delivery with native-template proof'
-          git push origin HEAD:fix/delivery-reviewed-v2
+          git push origin HEAD:fix/delivery-reviewed-v3
       - uses: actions/upload-artifact@v4
         if: always()
         with:
