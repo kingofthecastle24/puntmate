@@ -181,7 +181,7 @@ jobs:
           assert not any(p.get(k) for k in ('synthetic','test','is_test','force_test_pick')), 'No synthetic picks'
           legs = p['legs']
           min_legs = 1 if kind == 'gambler_advisor' else 2
-          assert min_legs <= len(legs) <= 4, 'Multi needs 2-4 legs (1-4 for Gambler Advisor specials)'
+          assert min_legs <= len(legs) <= 8, 'Multi needs 2-8 legs (1-8 for Gambler Advisor specials); continuation frames cover 6-8'
           checked = datetime.fromisoformat(p['research_checked_at'].replace('Z','+00:00'))
           assert 0 <= (now-checked).total_seconds() < 7200
           slug = p.get('package_slug','Weekend_Multi_full')
@@ -212,7 +212,7 @@ jobs:
           assert result['ok'], result
           # Story frames arrive as dedicated 1080x1920 template renders
           # (story/story_breakdown); no PIL composition anywhere in this path.
-          name_map = {'legs':'tip.png','story':'story.png','story_breakdown':'story-breakdown.png'}
+          name_map = {'legs':'tip.png','legs_2':'tip-2.png','story':'story.png','story_2':'story-2.png','story_breakdown':'story-breakdown.png'}
           for key,srcf in result['files'].items():
               shutil.copyfile(srcf,d/name_map.get(key,key+'.png'))
           bet_type = 'GAMBLER_BET' if kind == 'gambler_advisor' else 'PUNTER_BET'
@@ -221,7 +221,10 @@ jobs:
           (d/'telegram-post.txt').write_text(text)
           (d/'instagram-caption.txt').write_text(text)
           base='https://raw.githubusercontent.com/'+os.environ['GITHUB_REPOSITORY']+'/main/'+str(d)+'/'
-          meta=dict(p,has_pick=True,pick_id=pid,post_date=today,generated_at=now.isoformat(),kickoff=legs[0]['kickoff'],match=p.get('match_label','Weekend Multi'),selection=' + '.join(l['selection'] for l in legs),odds=float(combined),market=p.get('market_label','Match winner multi'),bet_type=bet_type,risk='STANDARD_PICK',confidence='Medium',confidence_label='Medium',carousel_urls=[base+'cover.png',base+'tip.png',base+'breakdown.png'],story_url=base+'story.png',story_urls=[base+'story.png',base+'story-breakdown.png'],intended_platforms=['telegram','instagram_story'],render_warnings=result.get('warnings',[]),stake_guidance_nzd=10,multi_tier=multi_tier,package_slug=slug)
+          story_frames=[base+'story.png']+([base+'story-2.png'] if 'story_2' in result['files'] else [])+[base+'story-breakdown.png']
+          platforms=p.get('intended_platforms') or ['telegram','instagram_story']
+          assert platforms in (['telegram','instagram_story'],['instagram_story']), 'Unexpected platform list'
+          meta=dict(p,has_pick=True,pick_id=pid,post_date=today,generated_at=now.isoformat(),kickoff=legs[0]['kickoff'],match=p.get('match_label','Weekend Multi'),selection=' + '.join(l['selection'] for l in legs),odds=float(combined),market=p.get('market_label','Match winner multi'),bet_type=bet_type,risk='STANDARD_PICK',confidence='Medium',confidence_label='Medium',carousel_urls=[base+'cover.png',base+'tip.png',base+'breakdown.png'],story_url=base+'story.png',story_urls=story_frames,intended_platforms=platforms,render_warnings=result.get('warnings',[]),stake_guidance_nzd=10,multi_tier=multi_tier,package_slug=slug)
           (d/'post-metadata.json').write_text(json.dumps(meta,indent=2))
           write_manifest(build_manifest(str(d),[f.name for f in d.iterdir() if f.name!='manifest.json'],extra={'pick_id':pid,'created_at':now.isoformat()}),str(d/'manifest.json'))
           import publish_gate; publish_gate.stamp_manifest(str(d/'manifest.json'), '.')
@@ -424,7 +427,7 @@ jobs:
           if os.environ['ACTION'] == 'publish-multi':
               assert m.get('kind') in ('research_multi','gambler_advisor')
               assert pid == today + '_research_' + m.get('package_slug','Weekend_Multi_full'), 'Package ID does not match its recorded slug'
-              assert m['intended_platforms']==['telegram','instagram_story']
+              assert m['intended_platforms'] in (['telegram','instagram_story'],['instagram_story']), 'Unexpected platform list'
               import json as _json, urllib.request, publish_gate as gate
               fp = gate.assert_pin_matches('.')
               print('PUBLISH GATE: renderer matches approved pin', fp[:12])
@@ -511,7 +514,7 @@ jobs:
                       if i<len(done):done[i]=result
                       else:done.append(result)
                       if not result['ok']:break
-                  results[platform]={'ok':len(done)==2 and all(x.get('ok') for x in done),'frames':done}
+                  results[platform]={'ok':len(done)==len(metadata['story_urls']) and all(x.get('ok') for x in done),'frames':done}
           p.publish=publish
           p.main()
           PYPUBLISH

@@ -1,7 +1,8 @@
 {
-  "renderer_fingerprint": "386a0c7fce6b5cdffa9e568944dbf40f7ccc0e51dd4b2c0177dc749136ecfc7e",
+  "renderer_fingerprint": "706e6d51972017d8af17656dfd20c4eb25d4b9a4d28a8af277d3e4ad26a26e04",
   "pinned_from": "heavier wordmark (DejaVu Sans Bold) default renderer - PR #28",
   "pinned_at": "2026-11-06T01:01:00+00:00",
-  "note": "Re-pinned 2026-11-06 after the multi-card consistency repair (PR #31) and the riskTag template-default suppression (this branch): publish-multi fails closed on pin mismatch, and both changed render_brand_templates.py after the previous pin.",
-  "fingerprint": "5b169984fc2184be5aa3df69e351a3b300adf733e7b08612177cd047e4605dab"
+  "note": "Re-pinned for multi continuation frames (legsOffset/totalLegs) - PR #33",
+  "fingerprint": "5b169984fc2184be5aa3df69e351a3b300adf733e7b08612177cd047e4605dab",
+  "approved_at": "2026-11-06T01:47:49.351187+00:00"
 }

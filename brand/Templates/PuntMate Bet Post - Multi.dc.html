@@ -257,6 +257,8 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{
   &quot;$preview&quot;: {&quot;width&quot;: 1400, &quot;height&quot;: 750},
+  &quot;legsOffset&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
+  &quot;totalLegs&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
   &quot;legs&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;NZ Warriors v Stormers | Warriors to win | $1.85\nBroncos v Panthers | Broncos +4.5 | $1.95\nStorm v Eels | Over 38.5 pts | $1.90&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
   &quot;multiType&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Multi&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
   &quot;combinedOdds&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Legs&quot;},
@@ -296,6 +298,7 @@ class Component extends DCLogic {
     const key = this.props.palette ?? 'green';
     const accent = palettes[key] ?? palettes.green;
 
+    const legsOffset = Math.max(0, parseInt(this.props.legsOffset ?? '0', 10) || 0);
     const rawLegs = this.props.legs ?? "NZ Warriors v Stormers | Warriors to win | $1.85\nBroncos v Panthers | Broncos +4.5 | $1.95\nStorm v Eels | Over 38.5 pts | $1.90";
     const parsed = rawLegs.split('\n').map(s => s.trim()).filter(Boolean).slice(0, 5).map((line, i) => {
       const parts = line.split('|').map(p => p.trim());
@@ -305,7 +308,7 @@ class Component extends DCLogic {
       else if (parts.length === 2) { [selection, odds] = parts; }
       else { selection = parts[0] || ''; }
       const detail = market ? (match + ' · ' + market) : match;
-      return { n: String(i + 1), match, selection, market, odds, detail };
+      return { n: String(legsOffset + i + 1), match, selection, market, odds, detail };
     });
 
     // combined odds = product of numeric odds
@@ -316,6 +319,7 @@ class Component extends DCLogic {
     });
     const combinedOdds = this.props.combinedOdds ?? (valid > 0 ? ('$' + product.toFixed(2)) : '—');
 
+    const totalLegs = Math.max(parsed.length, parseInt(this.props.totalLegs ?? '0', 10) || 0);
     const confProp = this.props.confidence;
     const showConfidence = !(confProp === 0 || confProp === '0' || confProp === 'none' || confProp === null);
     const confidence = Math.max(1, Math.min(5, parseInt(confProp ?? 3, 10) || 3));
@@ -335,15 +339,15 @@ class Component extends DCLogic {
 
     const winLine = this.props.storyWinLine && this.props.storyWinLine.trim()
       ? this.props.storyWinLine
-      : (parsed.length === 1 ? 'The leg must win. 18+.' : 'All ' + parsed.length + ' must win. 18+.');
+      : (totalLegs === 1 ? 'The leg must win. 18+.' : 'All ' + totalLegs + ' must win. 18+.');
 
-    const legLabel = parsed.length === 1 ? '1 LEG' : parsed.length + ' LEGS';
-    const legLabelLower = parsed.length === 1 ? '1 leg' : parsed.length + ' legs';
-    const coverSublinePre = this.props.coverSubline ?? (parsed.length === 1 ? 'One special play, straight up. Priced at' : parsed.length + ' legs, one slip. Combined at');
+    const legLabel = totalLegs === 1 ? '1 LEG' : totalLegs + ' LEGS';
+    const legLabelLower = totalLegs === 1 ? '1 leg' : totalLegs + ' legs';
+    const coverSublinePre = this.props.coverSubline ?? (totalLegs === 1 ? 'One special play, straight up. Priced at' : totalLegs + ' legs, one slip. Combined at');
 
     return {
       legs: parsed,
-      legCount: String(parsed.length),
+      legCount: String(totalLegs),
       coverTitleTop: this.props.coverTitleTop ?? 'THE',
       coverTitleAccent: this.props.coverTitleAccent ?? 'MULTI.',
       swipeLabel: this.props.swipeLabel ?? 'SWIPE FOR THE LEGS',

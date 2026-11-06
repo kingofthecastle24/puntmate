@@ -1,7 +1,13 @@
 import os, re, sys, unittest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
-from render_brand_templates import build_multi_props, render_multi, MAX_MULTI_TEMPLATE_LEGS
+from render_brand_templates import (
+    build_multi_props,
+    chunk_multi_legs,
+    render_multi,
+    MAX_MULTI_CONTINUATION_LEGS,
+    MAX_MULTI_TEMPLATE_LEGS,
+)
 
 
 def _leg(match, selection, odds, sport="UFC", market="Head to Head"):
@@ -47,14 +53,36 @@ class CombinedOddsPropsTests(unittest.TestCase):
         self.assertNotIn("combinedOdds", props)
 
 
+class ContinuationChunkTests(unittest.TestCase):
+    def test_five_or_fewer_legs_single_frame(self):
+        self.assertEqual(chunk_multi_legs(UFC_7_LEGS[:5]), [UFC_7_LEGS[:5]])
+
+    def test_seven_legs_split_four_then_three(self):
+        chunks = chunk_multi_legs(UFC_7_LEGS)
+        self.assertEqual([len(c) for c in chunks], [4, 3])
+        self.assertEqual(chunks[0][0]["match"], UFC_7_LEGS[0]["match"])
+        self.assertEqual(chunks[1][0]["match"], UFC_7_LEGS[4]["match"])
+
+    def test_eight_legs_split_evenly(self):
+        legs = UFC_7_LEGS + [_leg("H vs I", "H", "1.50")]
+        self.assertEqual([len(c) for c in chunk_multi_legs(legs)], [4, 4])
+
+    def test_beyond_continuation_range_raises(self):
+        legs = UFC_7_LEGS + [_leg("H vs I", "H", "1.50"), _leg("J vs K", "J", "1.60")]
+        with self.assertRaises(ValueError) as ctx:
+            chunk_multi_legs(legs)
+        self.assertIn(str(MAX_MULTI_CONTINUATION_LEGS), str(ctx.exception))
+
+
 class TemplateCapacityGuardTests(unittest.TestCase):
     def test_over_cap_render_raises_before_any_browser_work(self):
-        """A multi the template cannot show completely must never render:
-        missing graphics are handled cleanly downstream (Telegram-only),
-        truncated ones would publish cards that disagree with the data."""
+        """A multi beyond the continuation range must never render: missing
+        graphics are handled cleanly downstream (Telegram-only), truncated
+        ones would publish cards that disagree with the data."""
+        legs = UFC_7_LEGS + [_leg("H vs I", "H", "1.50"), _leg("J vs K", "J", "1.60")]
         with self.assertRaises(ValueError) as ctx:
-            render_multi({"match": "Weekend Multi"}, "punter", UFC_7_LEGS)
-        self.assertIn(str(MAX_MULTI_TEMPLATE_LEGS), str(ctx.exception))
+            render_multi({"match": "Weekend Multi"}, "punter", legs)
+        self.assertIn(str(MAX_MULTI_CONTINUATION_LEGS), str(ctx.exception))
 
     def test_guard_constant_matches_template_cap(self):
         """The template JS hard-caps its leg parser with .slice(0, N); if the
