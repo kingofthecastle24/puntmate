@@ -466,6 +466,10 @@ jobs:
           ok, errors = verify_manifest(load_manifest(str(d/'manifest.json')),str(d))
           assert ok, errors
           PY
+      - name: Mandatory current-style rendered-pixel design review
+        if: (inputs.action == 'publish' || inputs.action == 'publish-multi' || inputs.action == 'publish-recap') && inputs.dry_run == false
+        run: python scripts/design_review_gate.py
+
       - name: Publish verified frozen files (or dry run)
         if: inputs.action == 'publish' || inputs.action == 'publish-multi'
         env:
@@ -524,6 +528,10 @@ jobs:
           p.main()
           PYPUBLISH
           fi
+      - name: Mandatory current-style rendered-pixel design review
+        if: (inputs.action == 'publish' || inputs.action == 'publish-multi' || inputs.action == 'publish-recap') && inputs.dry_run == false
+        run: python scripts/design_review_gate.py
+
       - name: Publish weekly recap (or dry run)
         if: inputs.action == 'publish-recap'
         env:
