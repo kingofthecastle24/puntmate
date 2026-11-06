@@ -6,7 +6,7 @@ on:
       action:
         description: Prepare a frozen package, or publish an inspected package
         type: choice
-        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose, prepare-recap, publish-recap, admin-telegram-delete, admin-instagram-delete]
+        options: [prepare, publish, prepare-multi, prepare-story, prepare-details, publish-multi, diagnose, prepare-recap, publish-recap, admin-telegram-delete, admin-telegram-edit, admin-instagram-delete]
         default: prepare
         required: true
       pick_json:
@@ -23,6 +23,10 @@ on:
         required: false
       telegram_message_id:
         description: Telegram channel message ID to remove (admin-telegram-delete only)
+        type: string
+        required: false
+      telegram_edit_text:
+        description: Replacement message text (admin-telegram-edit only; validated before send)
         type: string
         required: false
       instagram_media_id:
@@ -65,6 +69,7 @@ jobs:
       PICK_JSON: ${{ inputs.pick_json }}
       RECAP_JSON: ${{ inputs.recap_json }}
       TELEGRAM_MESSAGE_ID: ${{ inputs.telegram_message_id }}
+      TELEGRAM_EDIT_TEXT: ${{ inputs.telegram_edit_text }}
       INSTAGRAM_MEDIA_ID: ${{ inputs.instagram_media_id }}
       APPROVAL_REF: ${{ inputs.approval_ref }}
       GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -586,6 +591,31 @@ jobs:
               assert r.get('ok'), r
               print('DELETED Telegram channel message', mid)
           PYTGDEL
+      - name: Edit one Telegram channel message text (or dry run)
+        if: inputs.action == 'admin-telegram-edit'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+        run: |
+          python - <<'PYTGEDIT'
+          import os, re, requests, sys
+          sys.path.insert(0, 'scripts')
+          mid = os.environ.get('TELEGRAM_MESSAGE_ID','').strip()
+          text = os.environ.get('TELEGRAM_EDIT_TEXT','')
+          assert re.fullmatch(r'\d{1,10}', mid), 'telegram_message_id must be numeric'
+          assert text.strip(), 'telegram_edit_text is required for admin-telegram-edit'
+          from copy_validator import validate_text
+          validate_text(text, risk='STANDARD_PICK', bet_type='PUNTER_BET', public=True)
+          dry = os.environ.get('DRY_RUN','true').lower() == 'true'
+          if dry:
+              print('DRY RUN - NOTHING EDITED (would edit Telegram channel message', mid, ')')
+              raise SystemExit('Refusing: dry_run is on, nothing was edited')
+          r = requests.post('https://api.telegram.org/bot'+os.environ['TELEGRAM_BOT_TOKEN']+'/editMessageText',
+              json={'chat_id': os.environ['TELEGRAM_CHANNEL_ID'], 'message_id': int(mid), 'text': text, 'parse_mode': 'Markdown'}, timeout=30).json()
+          print(r)
+          assert r.get('ok'), r
+          print('EDITED Telegram channel message', mid)
+          PYTGEDIT
       - name: Remove one Instagram media object (or fail on dry run)
         if: inputs.action == 'admin-instagram-delete'
         env:
