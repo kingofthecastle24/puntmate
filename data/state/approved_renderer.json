@@ -1,8 +1,8 @@
 {
-  "renderer_fingerprint": "706e6d51972017d8af17656dfd20c4eb25d4b9a4d28a8af277d3e4ad26a26e04",
+  "renderer_fingerprint": "b7ba134a90b00cb1bc4b3d7023ebffe3f5ee556498c2cdf30f3209eb8b26b44c",
   "pinned_from": "heavier wordmark (DejaVu Sans Bold) default renderer - PR #28",
   "pinned_at": "2026-11-06T01:01:00+00:00",
-  "note": "Re-pinned for multi continuation frames (legsOffset/totalLegs) - PR #33",
+  "note": "Re-pinned for multi lane corner pill (PUNTER/GAMBLER) - PR #35",
   "fingerprint": "5b169984fc2184be5aa3df69e351a3b300adf733e7b08612177cd047e4605dab",
-  "approved_at": "2026-11-06T01:47:49.351187+00:00"
+  "approved_at": "2026-11-06T02:07:10.327449+00:00"
 }

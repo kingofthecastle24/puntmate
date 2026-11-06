@@ -53,6 +53,21 @@ class CombinedOddsPropsTests(unittest.TestCase):
         self.assertNotIn("combinedOdds", props)
 
 
+class CornerPillTests(unittest.TestCase):
+    def test_build_multi_props_sets_lane_pill(self):
+        import render_brand_templates as renderer
+        props = renderer.build_multi_props(
+            [{"match": "A vs B", "selection": "A", "odds": "1.50"},
+             {"match": "C vs D", "selection": "C", "odds": "1.40"}],
+            "punter")
+        self.assertEqual("PUNTER", props["cornerPill"])
+        props = renderer.build_multi_props(
+            [{"match": "A vs B", "selection": "A", "odds": "1.50"},
+             {"match": "C vs D", "selection": "C", "odds": "1.40"}],
+            "gambler")
+        self.assertEqual("GAMBLER", props["cornerPill"])
+
+
 class ContinuationChunkTests(unittest.TestCase):
     def test_five_or_fewer_legs_single_frame(self):
         self.assertEqual(chunk_multi_legs(UFC_7_LEGS[:5]), [UFC_7_LEGS[:5]])

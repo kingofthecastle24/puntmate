@@ -696,6 +696,11 @@ def build_multi_props(legs, tier, handle="@puntmatenz"):
         "analysis": analysis,
         "handle": handle,
         "palette": cfg["palette"],
+        # Lane pill in the top-right corner (owner-locked visual standard:
+        # lane as a small pill, never a generic leg count there). The slip
+        # size still shows everywhere else ("N legs · Weekend Multi", "THE
+        # MULTI · N LEGS").
+        "cornerPill": tier.upper(),
     }
     if combined_odds is not None:
         props["combinedOdds"] = combined_odds
