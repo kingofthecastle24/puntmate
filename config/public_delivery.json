@@ -1,5 +1,5 @@
 {
-  "results_enabled": false,
+  "results_enabled": true,
   "recap_enabled": false,
   "news_enabled": false,
   "historical_result_ids": [
@@ -53,5 +53,16 @@
     "2026-10-31_research_Weekend_Multi_v4",
     "2026-11-03_Charlotte_Hornets_vs_Detroit_Pistons"
   ],
-  "note": "Historic settlements baseline only, no public backfill. Enable only after inspected proof. Pending IDs are eligible when source-backed settlement is recorded."
+  "note": "Historical settlements baseline only, no backfill. Auto scores may settle exact H2H; each result delivery requires explicit reviewed_result_ids after original-market grading check. Recap stays disabled until Sunday current proof. Unsupported market grading and multi registration/settlement remain owned manual checks.",
+  "reviewed_result_ids": [
+    "2026-11-06_Colorado_Avalanche_vs_Nashville_Predators"
+  ],
+  "grading_reviews": {
+    "2026-11-06_Colorado_Avalanche_vs_Nashville_Predators": {
+      "market": "Head to Head",
+      "rule": "TAB NHL section19.1 includes overtime/shootouts unless stated otherwise; original publication no regulation-only exception",
+      "source": "https://cdn.sanity.io/files/3hv6m2p5/production/8f88c1cbbc57246e9f8b5dda60b8b1c7a85490d7.pdf",
+      "checked_at": "2026-11-06T19:04:00+13:00"
+    }
+  }
 }
