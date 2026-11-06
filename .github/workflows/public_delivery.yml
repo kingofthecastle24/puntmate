@@ -30,6 +30,10 @@ jobs:
           python-version: '3.12'
       - run: pip install Pillow requests playwright
       - run: python -m playwright install chromium --with-deps
+      - name: Mandatory current-style rendered-pixel design review
+        if: inputs.send
+        run: python scripts/design_review_gate.py
+
       - name: Render and optionally deliver
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
