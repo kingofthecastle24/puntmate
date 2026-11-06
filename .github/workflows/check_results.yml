@@ -32,7 +32,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - run: python -m playwright install chromium --with-deps
+      - name: Use runner Chrome for native rendering
+        run: |
+          CHROME_PATH=$(command -v google-chrome || command -v chromium)
+          test -n "$CHROME_PATH"
+          echo "CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
 
       - name: Resolve pending picks
         env:
