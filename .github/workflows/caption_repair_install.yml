@@ -1,10 +1,52 @@
-name: Install approved carousel and result-copy defaults
+name: PuntMate current daily preparation only
 'on':
   workflow_dispatch: null
+concurrency:
+  group: puntmate-social-pipeline
+  cancel-in-progress: false
 permissions:
   contents: write
 jobs:
-  install:
+  prepare:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: scripts
+      DRY_RUN: 'true'
     steps:
-    - run: echo "One-time source update complete. No further writes."
+    - uses: actions/checkout@v4
+      with:
+        ref: main
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - run: 'pip install -r requirements.txt
+
+        python -m playwright install --with-deps chromium'
+    - name: Fresh real research and frozen preview only
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+      run: 'python scripts/main.py
+
+        python scripts/build_review_package.py'
+    - name: Persist preparation without send or personal result accounting
+      if: always()
+      run: 'git config user.name ''PuntMate maintenance''
+
+        git config user.email ''actions@users.noreply.github.com''
+
+        git add data/latest_run.json data/review/ data/cards/
+
+        bash scripts/git_push_retry.sh "chore: prepare current daily review only [skip
+        ci]" --soft'
+    - if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: daily-prepare-${{ github.run_id }}
+        path: 'data/latest_run.json
+
+          data/review/
+
+          data/cards/'
+        retention-days: 7
