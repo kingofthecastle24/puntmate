@@ -71,6 +71,21 @@ def assert_pin_matches(repo_root):
     return actual
 
 
+def stamp_manifest(manifest_path, repo_root):
+    """Record on a frozen package manifest which renderer pin produced it.
+
+    Called by the workflow right after write_manifest during prepare. Adds
+    informational fields only; verify_manifest checks the files checksums and
+    ignores extras, and the publish gate re-asserts the pin at publish time.
+    """
+    p = Path(manifest_path)
+    manifest = json.loads(p.read_text())
+    manifest["renderer_fingerprint"] = compute_renderer_fingerprint(repo_root)
+    manifest["renderer_stamped_at"] = datetime.now(timezone.utc).isoformat()
+    p.write_text(json.dumps(manifest, indent=2))
+    return manifest["renderer_fingerprint"]
+
+
 def renderer_paths_touched(file_paths):
     """True if any changed path is a renderer input."""
     return [p for p in file_paths if p.startswith(RENDERER_PATH_PREFIXES)]
