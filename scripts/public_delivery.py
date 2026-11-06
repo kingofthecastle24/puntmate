@@ -77,6 +77,8 @@ def main():
     picks=load(LEDGER,{'picks':[]})['picks'];out=ROOT/'data/public_delivery';baseline=cfg.get('historical_result_ids',[])
     if args.mode=='results':
         for p in result_jobs(picks,baseline):
+            if p['id'] not in cfg.get('reviewed_result_ids',[]):
+                print('HELD: exact market grading review required',p['id']);continue
             text=f"{p['selection']} - {p['result']}. {p['notes']}\n{FOOTER}"
             image=out/(p['id']+'.png');render_result(p,image)
             deliver('result:'+p['id']+':'+p['result'],image,text,['telegram','instagram_story'],dry)
