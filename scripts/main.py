@@ -302,7 +302,21 @@ def run():
     already_posted = _recently_actioned_slugs()
     if already_posted:
         print(f"  Excluding {len(already_posted)} already-posted fixture(s) from featured selection.")
-    pick = generate_pick_for_matches(matches, match_news, exclude_matches=already_posted)
+    try:
+        pick = generate_pick_for_matches(matches, match_news, exclude_matches=already_posted)
+    except Exception as exc:
+        # Record a fresh operational failure before propagating the error.
+        # Never relabel provider/account failures as editorial no-bet content.
+        credit_blocked = 'credit balance is too low' in str(exc).lower()
+        reason = ('Selection provider credit balance is too low. Owner funding decision required; no paid retry attempted.'
+                  if credit_blocked else 'Selection provider failed. Inspect the job log; no selection was produced.')
+        _write_run({'run_id': run_id, 'run_date': run_date, 'run_ts': run_ts,
+                    'status': run_status.MODEL_ERROR,
+                    'failure_code': 'PROVIDER_CREDIT_BLOCKED' if credit_blocked else 'SELECTION_FAILED',
+                    'pick': {'has_pick': False, 'status': run_status.MODEL_ERROR,
+                             'reasoning': reason, 'research_warnings': []}})
+        raise
+
 
     if pick.get("has_pick"):
         existing_state = _already_actioned_today(pick["match"], run_date)
@@ -330,6 +344,10 @@ def run():
         "pick": pick,
         "fixture_availability": fixture_availability,
     }
+
+    if run_data['status'] in run_status.OPERATIONAL_FAILURE_STATUSES:
+        _write_run(run_data)
+        raise RuntimeError('Operational selection failure; no editorial no-bet review is allowed.')
 
     if not pick.get("has_pick"):
         print(f"  NO_BET — {pick.get('reasoning', '')}")

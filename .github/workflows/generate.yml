@@ -307,7 +307,7 @@ jobs:
           fi
 
       - name: Send approval-preview email (or No-Bet notice)
-        if: always() && hashFiles('data/latest_run.json') != ''
+        if: success() && hashFiles('data/latest_run.json') != ''
         env:
           GMAIL_SENDER_EMAIL:    ${{ secrets.GMAIL_SENDER_EMAIL }}
           GMAIL_APP_PASSWORD:    ${{ secrets.GMAIL_APP_PASSWORD }}
@@ -326,49 +326,20 @@ jobs:
           git add data/picks.json data/latest_run.json data/review/ data/state/ data/cards/
           bash scripts/git_push_retry.sh "chore: prepare social post $(date -u +%Y-%m-%d) [skip ci]"
 
-      - name: Write job summary
+      - name: Write truthful prepare summary and diagnostic
         if: always()
-        run: |
-          {
-            echo "## PuntMate Social — Generate"
-            echo ""
-            if [ "${{ steps.review_package.outputs.has_pick }}" != "true" ]; then
-              echo "No defensible pick today (NO_BET) — nothing rendered, nothing to approve."
-              if [ -f data/latest_run.json ]; then
-                python3 -c "import json; print('Reason:', json.load(open('data/latest_run.json'))['pick'].get('reasoning',''))"
-                python3 -c "
-          import json
-          d = json.load(open('data/latest_run.json'))
-          dw = d.get('degen_watch')
-          if dw:
-              c = dw['candidate']
-              print(f\"Degen Watch (unofficial): {c.get('match','')} / {c.get('selection','')} @ {c.get('odds')} — edge {c['edge_pct']:+.1f}%, short of the {c['min_value_edge_pct']:.0f}% bar.\")
-          "
-              fi
-            else
-              PICK_ID="${{ steps.review_package.outputs.pick_id }}"
-              python3 - << PYEOF
-          import json
-          with open(f"data/review/${PICK_ID}/post-metadata.json") as f:
-              p = json.load(f)
-          print("| Field | Value |")
-          print("|---|---|")
-          print(f"| Match | {p.get('match','')} |")
-          print(f"| Selection | {p.get('selection','')} |")
-          print(f"| Market | {p.get('market','')} |")
-          print(f"| Odds | {p.get('odds','')} |")
-          print(f"| Bet type | {p.get('bet_type_label','')} |")
-          print(f"| Classification | {p.get('classification','')} |")
-          print(f"| Confidence | {p.get('confidence_label','')} |")
-          print(f"| Generated at (UTC) | {p.get('generated_at','')} |")
-          print(f"| Intended platforms | {', '.join(p.get('intended_platforms', []))} |")
-          PYEOF
-              echo ""
-              echo "Full review package (texts, images, manifest, preview.html) is in the **puntmate-review-${{ github.run_id }}** artifact above, and committed at \`data/review/${PICK_ID}/\`."
-              echo ""
-              echo "Dry run: \`${{ steps.mode.outputs.dry_run }}\`"
-            fi
-          } >> "$GITHUB_STEP_SUMMARY"
+        env:
+          PREPARE_JOB_STATUS: ${{ job.status }}
+        run: python scripts/prepare_report.py
+
+      - name: Upload prepare diagnostic (never a publication artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: puntmate-prepare-status-${{ github.run_id }}
+          path: data/diagnostics/${{ github.run_id }}/prepare-status.json
+          retention-days: 30
+          if-no-files-found: error
 
       - name: Upload review artifact
         if: steps.review_package.outputs.has_pick == 'true' || steps.review_package.outputs.has_watchlist == 'true'

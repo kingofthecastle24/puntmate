@@ -372,6 +372,10 @@ def main():
         run_data = json.load(f)
 
     _assert_not_stale(run_data)
+    import run_status
+    if run_data.get('status') in run_status.OPERATIONAL_FAILURE_STATUSES:
+        raise RuntimeError('Operational prepare failure: no editorial no-bet or review package may be built.')
+
 
     pick = run_data.get("pick")
     post_date = run_data.get("run_date") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
