@@ -63,13 +63,17 @@ def _safe_transition(pick_id, new_state, note=None):
 def main():
     pick_id = os.environ.get("PICK_ID", "").strip()
     if not pick_id:
-        print("No pick_id provided (NO_BET or no matches today) — nothing to preview.")
+        print("No review package ID provided; nothing to preview. Check current prepare status.")
         return
 
     review_dir = os.path.join(REVIEW_ROOT, pick_id)
     meta_path = os.path.join(review_dir, "post-metadata.json")
     with open(meta_path) as f:
         metadata = json.load(f)
+
+    import run_status
+    if metadata.get('status') in run_status.OPERATIONAL_FAILURE_STATUSES:
+        raise RuntimeError('Operational prepare failure cannot enter editorial review.')
 
     if not _safe_transition(pick_id, GENERATED, note="review package built"):
         return
