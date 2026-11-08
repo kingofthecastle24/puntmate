@@ -942,15 +942,16 @@
       "approx_odds": 6.46,
       "type": "MULTI",
       "lane": "GAMBLER",
-      "result": "PENDING",
+      "result": "LOSS",
       "publication_receipt": "data/published/2026-11-06_research_UFC_Vegas_124_Weekend_Multi_v4.json",
       "telegram_message_id": 295,
-      "notes": "Whole multi counts once. All seven legs must land.",
+      "notes": "Whole multi counts once. Settled LOSS: leg 6 pick Mantas Kondratavicius lost to Andre Petroski by TKO R2 (official UFC results).",
       "market": "7-leg UFC multi (winner + total markets)",
       "sport": null,
       "event_id": null,
       "kickoff": "2026-11-08T11:00:00+13:00",
-      "pending_label": "Not yet played"
+      "outcome_source": "https://www.ufc.com/news/ufc-fight-night-cortes-acosta-vs-walker-prelim-results",
+      "outcome_checked_at": "2026-11-08T16:49:00+13:00"
     }
   ],
   "coverage_audit": {
