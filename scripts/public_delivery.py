@@ -28,10 +28,20 @@ def render_result(p, output):
         'headline':p['result'],'subline':p['selection'],
         'rows':[p['match'],p.get('market','Match winner')+' | posted odds '+str(p.get('approx_odds','N/A')),p['notes'], 'Whole multi counts once.' if p['type']=='MULTI' else 'Single selection.']}, output)
 
+def format_publication_week(start, end):
+    # Short public dates, no ISO break: '2-8 Nov 2026' within a month,
+    # '26 Oct - 1 Nov 2026' across months, years spelled out across years.
+    s=datetime.fromisoformat(start); e=datetime.fromisoformat(end)
+    if (s.year,s.month)==(e.year,e.month):
+        return f'{s.day}-{e.day} {s.strftime("%b")} {s.year}'
+    if s.year==e.year:
+        return f'{s.day} {s.strftime("%b")} - {e.day} {e.strftime("%b")} {s.year}'
+    return f'{s.day} {s.strftime("%b")} {s.year} - {e.day} {e.strftime("%b")} {e.year}'
+
 def render_recap(lines, output):
     from render_public_record import render_record
     render_record({'lane':'','native_results':'','kicker':'// WEEK IN REVIEW',
-        'headline':'THE RECORD','subline':lines[0]+' · '+lines[1], 'rows':lines[2:]},output)
+        'headline':'THE RECORD','subline':lines[0], 'rows':lines[1:]},output)
 
 def deliver(key, image, caption, destinations, dry=True):
     validate_text(caption, risk='STANDARD_PICK', public=True)
@@ -90,7 +100,7 @@ def main():
         start,end=payload.get('start'),payload.get('end')
         if not start or not end:raise SystemExit('Explicit publication-date start/end required')
         cohort=[p for p in picks if start<=p['date_posted']<=end]
-        lines=[f'Publication week {start} to {end}', 'Preview as of '+datetime.now(timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('Pacific/Auckland')).strftime('%d %b %Y %H:%M NZDT')]
+        lines=[f'Publication week {format_publication_week(start,end)}', 'Preview as of '+datetime.now(timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('Pacific/Auckland')).strftime('%d %b %Y %H:%M NZDT')]
         for lane in ['INVESTOR','PUNTER','GAMBLER','DEGEN']:
             group=[p for p in cohort if p['lane']==lane and p['type']!='MULTI'];w=sum(p['result']=='WIN' for p in group);l=sum(p['result']=='LOSS' for p in group)
             rate=f'{100*w/(w+l):.0f}%' if w+l else 'N/A'; lines.append(f'{lane}: {w}W - {l}L | {rate}')
