@@ -716,7 +716,9 @@ jobs:
         run: |
           git config user.name 'PuntMate Bot'
           git config user.email 'puntmatenz@gmail.com'
-          git add data/published/*_research_*.json data/state/*_research_*.json data/approvals/*.json 2>/dev/null || true
+          for pat in 'data/published/*_research_*.json' 'data/state/*_research_*.json' 'data/approvals/*.json'; do
+            git add $pat 2>/dev/null || true
+          done
           git diff --cached --quiet || git commit -m 'chore: record stand-in publish results [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:${{ github.ref_name }}
