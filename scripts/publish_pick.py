@@ -355,6 +355,13 @@ def main():
     from copy_validator import validate_post
     validate_post(metadata, telegram_text, instagram_caption)
 
+    # Factual review is separate from model confidence and rendered design.
+    # No automatic pass receipt: fresh owning-source and bookmaker evidence
+    # must be reviewed against these exact frozen captions before a live send.
+    if not DRY_RUN:
+        from source_copy_gate import verify as verify_source_copy
+        verify_source_copy(review_dir, metadata, telegram_text, instagram_caption)
+
     if DRY_RUN:
         # Dry runs (manual testing) don't move workflow state at all — only a
         # real approved run does.
