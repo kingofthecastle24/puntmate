@@ -1,0 +1,59 @@
+name: PuntMate On-demand Instagram Story
+
+# Manual, on-demand Story publish. Uses the read-only-verified
+# FACEBOOK_PAGE_TOKEN secret (validated by the Meta diagnostic workflow),
+# exported under the META_PAGE_TOKEN name the Story script reads first.
+# Does not change any existing workflow or schedule.
+
+'on':
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Public https image URL, or repo-relative card path (e.g. data/cards/pick.png)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: story-publish
+  cancel-in-progress: false
+
+jobs:
+  story:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests
+      - name: Read-only token preflight (prints status, never the token)
+        env:
+          META_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        run: |
+          python - <<'PYPRE'
+          import os, requests, sys
+          token = os.environ['META_PAGE_TOKEN']
+          print('::add-mask::' + token)
+          ig = os.environ['IG_USER_ID']
+          r = requests.get(
+              f'https://graph.facebook.com/v21.0/{ig}',
+              params={'fields': 'id,username', 'access_token': token},
+              timeout=25,
+          )
+          data = r.json()
+          if 'error' in data:
+              e = data['error']
+              print(f"Preflight FAILED: {e.get('type')} code={e.get('code')} subcode={e.get('error_subcode')}")
+              sys.exit(1)
+          print(f"Preflight OK: IG account @{data.get('username')} reachable with FACEBOOK_PAGE_TOKEN")
+          PYPRE
+      - name: Publish Story
+        env:
+          META_PAGE_TOKEN: ${{ secrets.FACEBOOK_PAGE_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+        run: python3 scripts/post_instagram_story.py "${{ inputs.image }}"
