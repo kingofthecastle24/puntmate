@@ -1264,7 +1264,7 @@
     "market": "Handicap",
     "odds": 1.95,
     "confidence": "LOW",
-    "result": "pending",
+    "result": "unresolved",
     "pnl": null
   },
   {
@@ -1468,7 +1468,7 @@
     "market": "Head to Head",
     "odds": 2.1,
     "confidence": "HIGH",
-    "result": "pending",
+    "result": "unresolved",
     "pnl": null
   },
   {
@@ -1536,7 +1536,7 @@
     "market": "Head to Head",
     "odds": 2.1,
     "confidence": "HIGH",
-    "result": "pending",
+    "result": "unresolved",
     "pnl": null
   },
   {
