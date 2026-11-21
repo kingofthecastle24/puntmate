@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-11-22_Minnesota_Timberwolves_vs_Memphis_Grizzlies",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-11-21T20:52:32.802573+00:00",
+      "note": "manual IG-only review package built from owner-approved rendered cards (delivered 07:02 NZDT 22 Nov); generator pipeline down (Anthropic credit balance)"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-11-21T20:52:32.802573+00:00",
+      "note": "package frozen with manifest"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-11-21T20:52:32.802573+00:00",
+      "note": "owner requested Instagram-only posting of today's pick 07:05 NZDT 22 Nov via WhatsApp"
+    }
+  ]
+}
