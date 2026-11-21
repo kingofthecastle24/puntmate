@@ -1,0 +1,46 @@
+{
+  "run_id": "44949903835",
+  "job": "publish",
+  "snapshot_sha256": "4e909abec161e3db44ccad27e6f138676a3471add71af674febf96eeba702818",
+  "decision": "PASS",
+  "reviewer": "Instinct task agent (PuntMate operator): rendered-pixel inspection of all three final carousel cards and all public copy, 2026-11-22T10:08+13:00",
+  "reviewed_at": "2026-11-22T10:08:30+13:00",
+  "style_reference": "current black/green house style with repo brand lockup; approved daily-pick feed layout (cover/pick/breakdown), Punter lane pill",
+  "outgoing_assets": {
+    "data/review/2026-11-22_Minnesota_Timberwolves_vs_Memphis_Grizzlies/instagram-caption.txt": "6f5414b8a458e59598add0183dc2be762acfe689f5202479851f8606084cbd10",
+    "data/review/2026-11-22_Minnesota_Timberwolves_vs_Memphis_Grizzlies/post-metadata.json": "c6d7dd9e04162dbc7098dbe92fb048a960a909f689ecaa7961d7cc0b694f4620"
+  },
+  "outgoing_images_external": [
+    {
+      "url": "https://github.com/user-attachments/assets/408175aa-b5c7-4f08-a921-2616a7235945",
+      "sha256": "c0b560b225f524520cca6b2458eb68df1cdc42165a28010f855c04034597fb5a",
+      "slide": "cover"
+    },
+    {
+      "url": "https://github.com/user-attachments/assets/692dd781-813f-4580-98a5-68ada045c289",
+      "sha256": "e8da7689d060de50acbcc43517b68a23bccd528abc97b6b77b5ee55791745fee",
+      "slide": "tip"
+    },
+    {
+      "url": "https://github.com/user-attachments/assets/06b73e89-b621-4a41-83ce-2a25db6b0ec6",
+      "sha256": "c717b5435f6fd1963b6ea9fb172f47d792df7e6aa5c51fa729097779e626c4a3",
+      "sha256_note": "re-rendered 09:53 NZDT fixing ATS wording",
+      "slide": "breakdown"
+    }
+  ],
+  "external_hosting_note": "Carousel pixels hosted as GitHub user-attachments (issue #50) this run because the repo web upload flow failed in the operator browser session; each hosted image byte-verified against the inspected local original (sha256 match).",
+  "destinations": [
+    "instagram_feed"
+  ],
+  "checks": {
+    "current_approved_style": true,
+    "rendered_pixels_inspected": true,
+    "heavy_logo": true,
+    "layout_and_no_clipping": true,
+    "wording_and_facts": true,
+    "all_destination_variants": true,
+    "story_safe_areas": true,
+    "captions_and_all_public_copy": true,
+    "carousel_direction_and_destination": true
+  }
+}
