@@ -37,7 +37,7 @@ from post_instagram_story import upload_to_catbox
 
 IG_USER_ID    = os.environ.get('INSTAGRAM_USER_ID', '')
 IG_TOKEN      = os.environ.get('INSTAGRAM_ACCESS_TOKEN', '')
-GRAPH_URL     = "https://graph.facebook.com/v19.0"
+GRAPH_URL     = "https://graph.facebook.com/v26.0"
 
 # Last Meta API error seen by this module (dict or str), so publish_pick can
 # put the REAL reason into the publish record / result email instead of a
