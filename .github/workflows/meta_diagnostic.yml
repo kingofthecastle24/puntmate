@@ -32,7 +32,54 @@ jobs:
         \ to output credential'\nprint(text)\nPath('data/diagnostics').mkdir(parents=True,exist_ok=True)\nPath('data/diagnostics/meta-readonly.json').write_text(text)\n\
         with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('### Read-only Meta diagnostic\\n```json\\n'+text+'\\\
         n```\\n')\nPYDIAG\n"
+    - name: Read-only masked FEED token diagnosis (META_PAGE_TOKEN)
+      env:
+        FEED_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+        DIAG_IG_ID: ${{ secrets.IG_USER_ID }}
+      run: |
+        python - <<'PYDIAG2'
+        import os, json, requests
+        from pathlib import Path
+        token = os.environ.get('FEED_TOKEN', '')
+        if not token:
+            output = {'secret_tested': 'META_PAGE_TOKEN', 'configured': False}
+        else:
+            print('::add-mask::' + token)
+            base = 'https://graph.facebook.com/v26.0/'
+            output = {'secret_tested': 'META_PAGE_TOKEN', 'read_only': True, 'configured': True, 'configured_ig_id': os.environ.get('DIAG_IG_ID')}
+            def get(path, fields=None, extra=None):
+                params = {'access_token': token}
+                if fields: params['fields'] = fields
+                if extra: params.update(extra)
+                try:
+                    r = requests.get(base + path, params=params, timeout=25)
+                    data = r.json()
+                    if 'error' in data:
+                        e = data['error']
+                        return {'ok': False, 'http_status': r.status_code, 'error': {k: e.get(k) for k in ('message', 'type', 'code', 'error_subcode')}}
+                    return {'ok': r.ok, 'http_status': r.status_code, 'data': data}
+                except Exception as e:
+                    return {'ok': False, 'error_type': type(e).__name__}
+            ig = os.environ.get('DIAG_IG_ID', '')
+            output['ig_account'] = get(ig, 'id,username') if ig else {'skipped': 'no IG_USER_ID secret'}
+            output['permissions'] = get('me/permissions')
+            raw = get('debug_token', extra={'input_token': token})
+            if raw.get('ok'):
+                d = raw.get('data', {}).get('data', {})
+                output['token_metadata'] = {'ok': True, **{k: d.get(k) for k in ('is_valid', 'type', 'app_id', 'application', 'expires_at', 'data_access_expires_at', 'issued_at', 'scopes', 'granular_scopes') if k in d}}
+            else:
+                output['token_metadata'] = raw
+        text = json.dumps(output, indent=2)
+        assert not token or token not in text, 'Refusing to output credential'
+        print(text)
+        Path('data/diagnostics').mkdir(parents=True, exist_ok=True)
+        Path('data/diagnostics/meta-feed-readonly.json').write_text(text)
+        with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+            f.write('### Read-only Meta FEED diagnostic (META_PAGE_TOKEN)\n```json\n' + text + '\n```\n')
+        PYDIAG2
     - uses: actions/upload-artifact@v4
       with:
         name: meta-readonly-diagnostic
-        path: data/diagnostics/meta-readonly.json
+        path: |
+          data/diagnostics/meta-readonly.json
+          data/diagnostics/meta-feed-readonly.json
