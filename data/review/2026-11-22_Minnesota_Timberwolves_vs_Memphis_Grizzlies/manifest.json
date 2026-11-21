@@ -1,0 +1,14 @@
+{
+  "files": {
+    "instagram-caption.txt": {
+      "sha256": "6f5414b8a458e59598add0183dc2be762acfe689f5202479851f8606084cbd10",
+      "bytes": 399
+    },
+    "post-metadata.json": {
+      "sha256": "c6d7dd9e04162dbc7098dbe92fb048a960a909f689ecaa7961d7cc0b694f4620",
+      "bytes": 2015
+    }
+  },
+  "pick_id": "2026-11-22_Minnesota_Timberwolves_vs_Memphis_Grizzlies",
+  "created_at": "2026-11-21T21:06:31.179749+00:00"
+}
