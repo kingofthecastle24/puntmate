@@ -1,0 +1,40 @@
+{
+  "has_pick": true,
+  "pick_id": "2026-11-22_Minnesota_Timberwolves_vs_Memphis_Grizzlies",
+  "run_id": "manual-ig-only-20261122",
+  "generated_at": "2026-11-21T20:52:32.802573+00:00",
+  "post_date": "2026-11-22",
+  "match": "Minnesota Timberwolves vs Memphis Grizzlies",
+  "sport": "basketball_nba",
+  "sport_label": "NBA",
+  "market": "Head to Head",
+  "selection": "MINNESOTA TIMBERWOLVES",
+  "odds": "1.44",
+  "bet_type": "PUNTER_BET",
+  "bet_type_label": "BET TYPE: PUNTER",
+  "bet_type_reason": "Punter gate (60%+ model probability) cleared by both numberFire (78.5%) and market-implied (~68%); sanity holds (no model below book). Not forced into Gambler: the 7pp edge test passes only against the FanDuel -225 price (+9.3pp), market-implied edge is near zero.",
+  "classification": "STANDARD_PICK",
+  "risk": "STANDARD_PICK",
+  "confidence": "MODERATE",
+  "confidence_label": "MODERATE",
+  "final_explanation": "No Anthony Edwards, but Minnesota's defence has been elite and Memphis arrives without three rotation players (Boozer, Grant, GG Jackson).",
+  "public_caution": "Edge picture is mixed: the 7pp edge only clears at the FanDuel price; market-implied edge is near zero. Punter lane, keep it sensible.",
+  "research_warnings": [
+    "manual IG-only package: cards rendered and approved this morning (delivered to owner 07:02 NZDT); pipeline generation currently down (Anthropic credit balance)",
+    "Anthony Edwards OUT for Minnesota; Memphis missing Boozer, Grant, GG Jackson"
+  ],
+  "theme": "night",
+  "carousel_paths": [],
+  "carousel_urls": [
+    "https://github.com/user-attachments/assets/408175aa-b5c7-4f08-a921-2616a7235945",
+    "https://github.com/user-attachments/assets/692dd781-813f-4580-98a5-68ada045c289",
+    "https://github.com/user-attachments/assets/06b73e89-b621-4a41-83ce-2a25db6b0ec6"
+  ],
+  "intended_platforms": [
+    "instagram_feed"
+  ],
+  "workflow_state": "AWAITING_APPROVAL",
+  "has_punter_multi": false,
+  "has_gambler_multi": false,
+  "has_degenerate_multi": false
+}
