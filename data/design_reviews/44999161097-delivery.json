@@ -1,7 +1,7 @@
 {
   "run_id": "44999161097",
   "job": "delivery",
-  "snapshot_sha256": "7d8522cabecfffc19ce7417a97aaff9fbf3aced617665ce704c6b6378316b959",
+  "snapshot_sha256": "5db6f35d7f3b53d55b47f01ef11ac991cd045cb5478c7faef69e5f5b98590728",
   "decision": "PASS",
   "reviewer": "Instinct task agent (PuntMate operator): rendered-pixel inspection of final v4 recap card and caption, 2026-11-22T20:36+13:00. Operator audit only; send authority is Micah's 20:25 NZDT reply relayed by main.",
   "reviewed_at": "2026-11-22T20:36:00+13:00",
