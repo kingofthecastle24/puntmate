@@ -1,0 +1,28 @@
+{
+  "run_id": "44999161097",
+  "job": "delivery",
+  "snapshot_sha256": "7d8522cabecfffc19ce7417a97aaff9fbf3aced617665ce704c6b6378316b959",
+  "decision": "PASS",
+  "reviewer": "Instinct task agent (PuntMate operator): rendered-pixel inspection of final v4 recap card and caption, 2026-11-22T20:36+13:00. Operator audit only; send authority is Micah's 20:25 NZDT reply relayed by main.",
+  "reviewed_at": "2026-11-22T20:36:00+13:00",
+  "style_reference": "current black/green house style with repo brand lockup (v4 recap: official/unofficial record, 300px top safe zone, no grid)",
+  "outgoing_assets": {
+    "data/public_delivery/approved/2-recap.png": "c90279799d3d9f352a4662ca2e4ee290838eea9fb7ca37546c9befe80609001e",
+    "data/results/recap_current.json": "e28b7ced724cb5e9a4eb6f68c2fe245ef03b6083e513d43bd5636311a9deade2"
+  },
+  "destinations": [
+    "telegram",
+    "instagram_story"
+  ],
+  "checks": {
+    "current_approved_style": true,
+    "rendered_pixels_inspected": true,
+    "heavy_logo": true,
+    "layout_and_no_clipping": true,
+    "wording_and_facts": true,
+    "all_destination_variants": true,
+    "story_safe_areas": true,
+    "captions_and_all_public_copy": true,
+    "carousel_direction_and_destination": true
+  }
+}
