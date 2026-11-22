@@ -1,0 +1,21 @@
+{
+  "pick_id": "2026-11-23_Denver_Nuggets_vs_Chicago_Bulls",
+  "state": "AWAITING_APPROVAL",
+  "history": [
+    {
+      "state": "GENERATED",
+      "at": "2026-11-22T18:10:00+00:00",
+      "note": "manual IG-only review package built from owner-delivered v3 cards (delivered 06:56 NZDT 23 Nov); generator pipeline down (Anthropic credit balance)"
+    },
+    {
+      "state": "PREVIEW_READY",
+      "at": "2026-11-22T18:10:00+00:00",
+      "note": "package frozen with manifest"
+    },
+    {
+      "state": "AWAITING_APPROVAL",
+      "at": "2026-11-22T18:10:00+00:00",
+      "note": "owner asked 06:58 NZDT 23 Nov via WhatsApp to try posting today's pick again; Instagram feed only"
+    }
+  ]
+}
