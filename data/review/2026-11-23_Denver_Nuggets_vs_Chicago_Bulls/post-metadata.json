@@ -1,0 +1,40 @@
+{
+  "has_pick": true,
+  "pick_id": "2026-11-23_Denver_Nuggets_vs_Chicago_Bulls",
+  "run_id": "manual-ig-only-20261123",
+  "generated_at": "2026-11-22T17:44:00+00:00",
+  "post_date": "2026-11-23",
+  "match": "Denver Nuggets vs Chicago Bulls",
+  "sport": "basketball_nba",
+  "sport_label": "NBA",
+  "market": "Head to Head",
+  "selection": "DENVER NUGGETS",
+  "odds": "1.24",
+  "bet_type": "UNOFFICIAL_PICK",
+  "bet_type_label": "UNOFFICIAL",
+  "bet_type_reason": "Unofficial: ESPN BPI 75% and FanDuel Research 71% both sit below the market-implied ~78% at DraftKings -423, so the sanity rule fails. Manual read, generator down.",
+  "classification": "STANDARD_PICK",
+  "risk": "STANDARD_PICK",
+  "confidence": "MODERATE",
+  "confidence_label": "MODERATE",
+  "final_explanation": "Denver is 9-5 and has won 7 of its last 10. Chicago is 4-11 and is without Norman Powell. Denver lists Julian Strawther (knee) out.",
+  "public_caution": "A short price still loses sometimes, and injury news can change this.",
+  "research_warnings": [
+    "manual IG-only package from owner-delivered v3 cards; indicative DraftKings -423 (1.24) read 06:44 NZDT 23 Nov, not TAB",
+    "pipeline generation down (Anthropic credit balance)"
+  ],
+  "theme": "night",
+  "carousel_paths": [],
+  "carousel_urls": [
+    "https://github.com/user-attachments/assets/f008aa87-8725-495c-964b-d63a6251b697",
+    "https://github.com/user-attachments/assets/07af1c47-2a15-46da-8ad0-406aaf23f55e",
+    "https://github.com/user-attachments/assets/c365b3df-090f-4b4b-8d31-2ca5af1efe56"
+  ],
+  "intended_platforms": [
+    "instagram_feed"
+  ],
+  "workflow_state": "AWAITING_APPROVAL",
+  "has_punter_multi": false,
+  "has_gambler_multi": false,
+  "has_degenerate_multi": false
+}
