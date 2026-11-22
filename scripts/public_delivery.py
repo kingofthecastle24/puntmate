@@ -103,18 +103,17 @@ def main():
         for lane in ['INVESTOR','PUNTER']:
             group=[p for p in cohort if p['lane']==lane and p['type']!='MULTI' and official(p)]
             if group: lines.append(lane_line(lane, group))
-        lines.append('##UNOFFICIAL - recorded separately from the official record')
+        lines.append('##UNOFFICIAL RECORD')
         for lane in ['GAMBLER','DEGEN','INVESTOR','PUNTER']:
             group=[p for p in cohort if p['lane']==lane and p['type']!='MULTI' and not official(p)]
             if group: lines.append(lane_line(lane, group))
         multis=[p for p in cohort if p['type']=='MULTI'];mw=sum(p['result']=='WIN' for p in multis); ml=sum(p['result']=='LOSS' for p in multis)
-        if multis: lines.append(f'Multis (whole ticket, unofficial): {mw}W - {ml}L'+(f' | {100*mw/(mw+ml):.0f}%' if mw and ml else ''))
+        if multis: lines.append(f'Multis (unofficial): {mw}W - {ml}L'+(f' | {100*mw/(mw+ml):.0f}%' if mw and ml else ''))
         
         for p in cohort:
             if p['result']=='PENDING':
                 lines.append(p['selection']+': '+p.get('pending_label','Result not yet verified'))
         if any(p['result']=='UNRESOLVED' for p in cohort):lines.append('Some results not yet verified')
-        lines.append('Historical settlement audit incomplete; earlier gaps excluded.')
         image=out/'recap.png';render_recap(lines,image)
         caption_lines=[l[2:] if l.startswith('##') else l for l in lines]
         deliver('recap:'+start+':'+end,image,'\n'.join(caption_lines+[FOOTER]),['telegram','instagram_story'],dry)
