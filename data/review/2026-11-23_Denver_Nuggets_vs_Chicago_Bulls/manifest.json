@@ -4,11 +4,15 @@
       "sha256": "adecaff9d75a1278c6a2bfea15c573ded9fb7dd23db4c7a3697056a3fd552296",
       "bytes": 604
     },
+    "telegram-post.txt": {
+      "sha256": "adecaff9d75a1278c6a2bfea15c573ded9fb7dd23db4c7a3697056a3fd552296",
+      "bytes": 604
+    },
     "post-metadata.json": {
-      "sha256": "59f60522d1f3ae0d1ad4075e86a606255df1b8189c0606e05e6cf2d9daee4a62",
-      "bytes": 1737
+      "sha256": "443ba8aab3d12960e2cabe693831ed12ce611b1d7d1dea4d5e83f02ab3b4eac3",
+      "bytes": 1744
     }
   },
   "pick_id": "2026-11-23_Denver_Nuggets_vs_Chicago_Bulls",
-  "created_at": "2026-11-22T18:09:43.416262+00:00"
+  "created_at": "2026-11-22T23:39:15.473623+00:00"
 }
