@@ -73,9 +73,11 @@ def result_jobs(picks, baseline):
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('mode',choices=['results','recap','news']);ap.add_argument('--send',action='store_true');ap.add_argument('--payload');args=ap.parse_args()
     cfg=load(ROOT/'config/public_delivery.json',{});dry=not args.send
-    if args.send and args.mode in ('results','recap') and cfg.get('result_delivery_mode')=='daily_roundup':
+    pl=load(Path(args.payload),{}) if args.payload else {}
+    reviewed=args.mode=='recap' and bool(pl.get('reviewed_image') and pl.get('approved_image_sha256') and pl.get('reviewed_caption'))
+    if args.send and not reviewed and args.mode in ('results','recap') and cfg.get('result_delivery_mode')=='daily_roundup':
         raise SystemExit('Per-result/legacy recap delivery retired. Use a frozen, reviewed result_roundup package; never bypass the design gate.')
-    if args.send and not cfg.get(args.mode+'_enabled'):raise SystemExit('Live delivery held pending proof review')
+    if args.send and not reviewed and not cfg.get(args.mode+'_enabled'):raise SystemExit('Live delivery held pending proof review')
     picks=load(LEDGER,{'picks':[]})['picks'];out=ROOT/'data/public_delivery';baseline=cfg.get('historical_result_ids',[])
     if args.mode=='results':
         for p in result_jobs(picks,baseline):
@@ -89,6 +91,9 @@ def main():
         payload=load(Path(args.payload),{}) if args.payload else {}
         start,end=payload.get('start'),payload.get('end')
         if not start or not end:raise SystemExit('Explicit publication-date start/end required')
+        if reviewed:
+            img=ROOT/pl['reviewed_image'];assert hashlib.sha256(img.read_bytes()).hexdigest()==pl['approved_image_sha256'],'Image differs from inspected proof'
+            deliver('recap:'+start+':'+end,img,pl['reviewed_caption'],['telegram','instagram_story'],dry);return
         cohort=[p for p in picks if start<=p['date_posted']<=end]
         sd=datetime.fromisoformat(start); ed=datetime.fromisoformat(end)
         week_label = (f'{sd.day}-{ed.day} {ed.strftime("%b %Y")}' if sd.month==ed.month else f'{sd.strftime("%d %b")} - {ed.strftime("%d %b %Y")}')
