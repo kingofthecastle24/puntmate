@@ -36,5 +36,10 @@
   "workflow_state": "AWAITING_APPROVAL",
   "has_punter_multi": false,
   "has_gambler_multi": false,
-  "has_degenerate_multi": false
+  "has_degenerate_multi": false,
+  "telegram_media_repair": {
+    "message_id": 300,
+    "image_url": "https://github.com/user-attachments/assets/07af1c47-2a15-46da-8ad0-406aaf23f55e",
+    "sha256": "54f696264a5ca08676e4c70ff9ae94698e65ba050a7f9f872ef8484175babc61"
+  }
 }
