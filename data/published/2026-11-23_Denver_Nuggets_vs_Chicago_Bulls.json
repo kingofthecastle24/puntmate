@@ -21,6 +21,86 @@
           "type": "channel"
         },
         "date": 1795390870,
+        "edit_date": 1795391994,
+        "photo": [
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASxrA4H63VQ7RKhTSHTe7pxuO-HFOwACdA1rGxiGGUSQlRPLJ3TniQEAAwIAA3MAAz0E",
+            "file_unique_id": "AQADdA1rGxiGGUR4",
+            "file_size": 1097,
+            "width": 72,
+            "height": 90
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASxrA4H63VQ7RKhTSHTe7pxuO-HFOwACdA1rGxiGGUSQlRPLJ3TniQEAAwIAA20AAz0E",
+            "file_unique_id": "AQADdA1rGxiGGURy",
+            "file_size": 13425,
+            "width": 256,
+            "height": 320
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASxrA4H63VQ7RKhTSHTe7pxuO-HFOwACdA1rGxiGGUSQlRPLJ3TniQEAAwIAA3gAAz0E",
+            "file_unique_id": "AQADdA1rGxiGGUR9",
+            "file_size": 46090,
+            "width": 640,
+            "height": 800
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASxrA4H63VQ7RKhTSHTe7pxuO-HFOwACdA1rGxiGGUSQlRPLJ3TniQEAAwIAA3cAAz0E",
+            "file_unique_id": "AQADdA1rGxiGGUR8",
+            "file_size": 85981,
+            "width": 1080,
+            "height": 1350
+          },
+          {
+            "file_id": "AgACAgEAAyEGAAMBBwnUawACASxrA4H63VQ7RKhTSHTe7pxuO-HFOwACdA1rGxiGGUSQlRPLJ3TniQEAAwIAA3kAAz0E",
+            "file_unique_id": "AQADdA1rGxiGGUR-",
+            "file_size": 89624,
+            "width": 1024,
+            "height": 1280
+          }
+        ],
+        "caption": "DAILY PICK | Denver Nuggets to win against Chicago\nNBA | Today, 1pm NZDT\n\nUNOFFICIAL | Indicative public odds 1.24, not verified TAB odds.\n\nDenver comes in 9-5 with seven wins in its last ten. Chicago is 4-11 and missing Norman Powell. Denver is without Julian Strawther.\n\nWhy unofficial? Both public models checked put Denver's win chance below the market estimate. A likely winner isn't automatically a value bet, and a short price isn't a guarantee.\n\nEntertainment and information only. Not betting advice. 18+. Gamble responsibly.\n\nWho have you got, Denver or Chicago?\n\n#NBA #NZSport #Nuggets #Bulls",
+        "caption_entities": [
+          {
+            "offset": 574,
+            "length": 4,
+            "type": "hashtag"
+          },
+          {
+            "offset": 579,
+            "length": 8,
+            "type": "hashtag"
+          },
+          {
+            "offset": 588,
+            "length": 8,
+            "type": "hashtag"
+          },
+          {
+            "offset": 597,
+            "length": 6,
+            "type": "hashtag"
+          }
+        ]
+      }
+    },
+    "original_text_receipt": {
+      "ok": true,
+      "result": {
+        "message_id": 300,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1795390870,
         "text": "DAILY PICK | Denver Nuggets to win against Chicago\nNBA | Today, 1pm NZDT\n\nUNOFFICIAL | Indicative public odds 1.24, not verified TAB odds.\n\nDenver comes in 9-5 with seven wins in its last ten. Chicago is 4-11 and missing Norman Powell. Denver is without Julian Strawther.\n\nWhy unofficial? Both public models checked put Denver's win chance below the market estimate. A likely winner isn't automatically a value bet, and a short price isn't a guarantee.\n\nEntertainment and information only. Not betting advice. 18+. Gamble responsibly.\n\nWho have you got, Denver or Chicago?\n\n#NBA #NZSport #Nuggets #Bulls",
         "entities": [
           {
@@ -45,6 +125,11 @@
           }
         ]
       }
+    },
+    "media_repair": {
+      "message_id": 300,
+      "sha256": "54f696264a5ca08676e4c70ff9ae94698e65ba050a7f9f872ef8484175babc61",
+      "ok": true
     }
   }
 }
