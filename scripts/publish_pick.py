@@ -338,6 +338,39 @@ def main():
 
     pick_id = metadata["pick_id"]
 
+    repair = metadata.get("telegram_media_repair")
+    if repair:
+        # Explicit existing-message repair only, separate from normal send/retry.
+        assert RESEND_FAILED, 'Repair requires explicit retry mode'
+        prior = _prior_publish_record(pick_id)
+        original = prior.get('telegram', {}).get('detail', {}).get('result', {})
+        assert prior.get('telegram', {}).get('ok') is True
+        assert original.get('message_id') == repair['message_id']
+        caption = open(os.path.join(review_dir, 'telegram-post.txt')).read()
+        assert (original.get('text') or original.get('caption')).rstrip('\n') == caption.rstrip('\n')
+        caption = original.get('text') or original.get('caption')
+        assert len(caption) <= 1024
+        assert original.get('chat', {}).get('username') == 'puntmatenz'
+        manifest = load_manifest(os.path.join(review_dir, 'manifest.json'))
+        ok, mismatches = verify_manifest(manifest, review_dir)
+        assert ok, str(mismatches)
+        from copy_validator import validate_post
+        validate_post(metadata, caption, open(os.path.join(review_dir, 'instagram-caption.txt')).read())
+        if original.get('photo'):
+            print('Existing target already has media; no action taken.')
+            return
+        if DRY_RUN:
+            print('DRY RUN: would attach approved photo to existing Telegram message', repair['message_id'])
+            return
+        from post_telegram import repair_message_photo
+        response = repair_message_photo(repair['message_id'], repair['image_url'], repair['sha256'], caption)
+        prior['telegram']['original_text_receipt'] = prior['telegram']['detail']
+        prior['telegram']['detail'] = response
+        prior['telegram']['media_repair'] = {'message_id': repair['message_id'], 'sha256': repair['sha256'], 'ok': True}
+        mark_published(pick_id, prior)
+        print('Existing Telegram message media repaired:', repair['message_id'])
+        return
+
     if already_published(pick_id) and not RESEND_FAILED:
         print(f"::notice::{pick_id} was already published — skipping to avoid a duplicate post.")
         return
