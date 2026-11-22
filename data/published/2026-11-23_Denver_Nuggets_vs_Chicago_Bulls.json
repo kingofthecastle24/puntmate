@@ -1,5 +1,50 @@
 {
   "instagram_feed": {
     "ok": true
+  },
+  "telegram": {
+    "ok": true,
+    "detail": {
+      "ok": true,
+      "result": {
+        "message_id": 300,
+        "sender_chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "chat": {
+          "id": -1004413052011,
+          "title": "PuntMate NZ",
+          "username": "puntmatenz",
+          "type": "channel"
+        },
+        "date": 1795390870,
+        "text": "DAILY PICK | Denver Nuggets to win against Chicago\nNBA | Today, 1pm NZDT\n\nUNOFFICIAL | Indicative public odds 1.24, not verified TAB odds.\n\nDenver comes in 9-5 with seven wins in its last ten. Chicago is 4-11 and missing Norman Powell. Denver is without Julian Strawther.\n\nWhy unofficial? Both public models checked put Denver's win chance below the market estimate. A likely winner isn't automatically a value bet, and a short price isn't a guarantee.\n\nEntertainment and information only. Not betting advice. 18+. Gamble responsibly.\n\nWho have you got, Denver or Chicago?\n\n#NBA #NZSport #Nuggets #Bulls",
+        "entities": [
+          {
+            "offset": 574,
+            "length": 4,
+            "type": "hashtag"
+          },
+          {
+            "offset": 579,
+            "length": 8,
+            "type": "hashtag"
+          },
+          {
+            "offset": 588,
+            "length": 8,
+            "type": "hashtag"
+          },
+          {
+            "offset": 597,
+            "length": 6,
+            "type": "hashtag"
+          }
+        ]
+      }
+    }
   }
 }
