@@ -20,8 +20,7 @@
   "final_explanation": "Denver is 9-5 and has won 7 of its last 10. Chicago is 4-11 and is without Norman Powell. Denver lists Julian Strawther (knee) out.",
   "public_caution": "A short price still loses sometimes, and injury news can change this.",
   "research_warnings": [
-    "manual IG-only package from owner-delivered v3 cards; indicative DraftKings -423 (1.24) read 06:44 NZDT 23 Nov, not TAB",
-    "pipeline generation down (Anthropic credit balance)"
+    "Telegram catch-up owner approved 2026-11-23 12:38 NZDT; prior Instagram success preserved; indicative public odds 1.24 still listed at SI on refresh 12:38, not live TAB."
   ],
   "theme": "night",
   "carousel_paths": [],
@@ -31,7 +30,8 @@
     "https://github.com/user-attachments/assets/c365b3df-090f-4b4b-8d31-2ca5af1efe56"
   ],
   "intended_platforms": [
-    "instagram_feed"
+    "instagram_feed",
+    "telegram"
   ],
   "workflow_state": "AWAITING_APPROVAL",
   "has_punter_multi": false,
