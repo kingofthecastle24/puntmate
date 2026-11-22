@@ -90,11 +90,25 @@ def main():
         start,end=payload.get('start'),payload.get('end')
         if not start or not end:raise SystemExit('Explicit publication-date start/end required')
         cohort=[p for p in picks if start<=p['date_posted']<=end]
-        lines=[f'Publication week {start} to {end}', 'Preview as of '+datetime.now(timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('Pacific/Auckland')).strftime('%d %b %Y %H:%M NZDT')]
-        for lane in ['INVESTOR','PUNTER','GAMBLER','DEGEN']:
-            group=[p for p in cohort if p['lane']==lane and p['type']!='MULTI'];w=sum(p['result']=='WIN' for p in group);l=sum(p['result']=='LOSS' for p in group)
-            rate=f'{100*w/(w+l):.0f}%' if w+l else 'N/A'; lines.append(f'{lane}: {w}W - {l}L | {rate}')
-        multis=[p for p in cohort if p['type']=='MULTI'];mw=sum(p['result']=='WIN' for p in multis); ml=sum(p['result']=='LOSS' for p in multis); mr=f'{100*mw/(mw+ml):.0f}%' if mw+ml else 'N/A'; lines.append(f'Multis: {mw}W - {ml}L | strike rate {mr}')
+        sd=datetime.fromisoformat(start); ed=datetime.fromisoformat(end)
+        week_label = (f'{sd.day}-{ed.day} {ed.strftime("%b %Y")}' if sd.month==ed.month else f'{sd.strftime("%d %b")} - {ed.strftime("%d %b %Y")}')
+        now_nz=datetime.now(timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('Pacific/Auckland'))
+        lines=[f'Publication week {week_label}', 'As of '+now_nz.strftime('%d %b %Y, ')+now_nz.strftime('%-I:%M%p').lower()+' NZDT']
+        def official(p): return p['lane'] in ('INVESTOR','PUNTER') and 'nofficial' not in (p.get('notes','')+' '+p.get('type','')+' '+p.get('lane','')).lower()
+        def lane_line(lane, group):
+            w=sum(p['result']=='WIN' for p in group);l=sum(p['result']=='LOSS' for p in group)
+            base=f'{lane}: {w}W - {l}L'
+            return base+(f' | {100*w/(w+l):.0f}%' if w and l else '')
+        lines.append('##OFFICIAL RECORD')
+        for lane in ['INVESTOR','PUNTER']:
+            group=[p for p in cohort if p['lane']==lane and p['type']!='MULTI' and official(p)]
+            if group: lines.append(lane_line(lane, group))
+        lines.append('##UNOFFICIAL - recorded separately from the official record')
+        for lane in ['GAMBLER','DEGEN','INVESTOR','PUNTER']:
+            group=[p for p in cohort if p['lane']==lane and p['type']!='MULTI' and not official(p)]
+            if group: lines.append(lane_line(lane, group))
+        multis=[p for p in cohort if p['type']=='MULTI'];mw=sum(p['result']=='WIN' for p in multis); ml=sum(p['result']=='LOSS' for p in multis)
+        if multis: lines.append(f'Multis (whole ticket, unofficial): {mw}W - {ml}L'+(f' | {100*mw/(mw+ml):.0f}%' if mw and ml else ''))
         
         for p in cohort:
             if p['result']=='PENDING':
@@ -102,7 +116,8 @@ def main():
         if any(p['result']=='UNRESOLVED' for p in cohort):lines.append('Some results not yet verified')
         lines.append('Historical settlement audit incomplete; earlier gaps excluded.')
         image=out/'recap.png';render_recap(lines,image)
-        deliver('recap:'+start+':'+end,image,'\n'.join(lines+[FOOTER]),['telegram','instagram_story'],dry)
+        caption_lines=[l[2:] if l.startswith('##') else l for l in lines]
+        deliver('recap:'+start+':'+end,image,'\n'.join(caption_lines+[FOOTER]),['telegram','instagram_story'],dry)
     else:
         payload=load(Path(args.payload),{})
         assert payload.get('kind')=='sports_news' and payload.get('destinations')==['instagram_story']
