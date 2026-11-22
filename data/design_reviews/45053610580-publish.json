@@ -1,0 +1,45 @@
+{
+  "run_id": "45053610580",
+  "job": "publish",
+  "snapshot_sha256": "794b0426271d65cda642b1249477d9637ce842e0cee041a64595409c68130a55",
+  "decision": "PASS",
+  "reviewer": "PuntMate operator, actual pixel inspection of all three accepted v3 cards at 07:09 NZDT 23 Nov",
+  "reviewed_at": "2026-11-22T18:11:46.389022+00:00",
+  "style_reference": "Accepted v3 black and green no-grid daily carousel, approved repo lockup, conspicuous UNOFFICIAL on every slide",
+  "outgoing_assets": {
+    "data/review/2026-11-23_Denver_Nuggets_vs_Chicago_Bulls/instagram-caption.txt": "adecaff9d75a1278c6a2bfea15c573ded9fb7dd23db4c7a3697056a3fd552296",
+    "data/review/2026-11-23_Denver_Nuggets_vs_Chicago_Bulls/post-metadata.json": "59f60522d1f3ae0d1ad4075e86a606255df1b8189c0606e05e6cf2d9daee4a62"
+  },
+  "outgoing_images_external": [
+    {
+      "url": "https://github.com/user-attachments/assets/f008aa87-8725-495c-964b-d63a6251b697",
+      "sha256": "0564c584ea2a974b4a3b13b801b03e03422d6607e42a37a948281cc8f7368bda",
+      "slide": "1_cover"
+    },
+    {
+      "url": "https://github.com/user-attachments/assets/07af1c47-2a15-46da-8ad0-406aaf23f55e",
+      "sha256": "54f696264a5ca08676e4c70ff9ae94698e65ba050a7f9f872ef8484175babc61",
+      "slide": "2_pick"
+    },
+    {
+      "url": "https://github.com/user-attachments/assets/c365b3df-090f-4b4b-8d31-2ca5af1efe56",
+      "sha256": "8279c185f388129a8a64c6fbebfc1e8daf4d86fd7076fc4b564de95212155d13",
+      "slide": "3_breakdown"
+    }
+  ],
+  "destinations": [
+    "instagram_feed"
+  ],
+  "checks": {
+    "current_approved_style": true,
+    "rendered_pixels_inspected": true,
+    "heavy_logo": true,
+    "layout_and_no_clipping": true,
+    "wording_and_facts": true,
+    "all_destination_variants": true,
+    "story_safe_areas": true,
+    "captions_and_all_public_copy": true,
+    "carousel_direction_and_destination": true
+  },
+  "external_hosting_note": "Exact accepted PNGs hosted as GitHub issue 50 attachments; downloaded anonymously and SHA-256 verified equal to inspected originals. Caption equals final WhatsApp message delivered at 06:56:36 NZDT. Review is an execution audit, not owner authority."
+}
