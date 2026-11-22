@@ -1,1 +1,7 @@
-{"start":"2026-11-16","end":"2026-11-22"}
+{
+ "start": "2026-11-16",
+ "end": "2026-11-22",
+ "reviewed_image": "data/public_delivery/approved/2-recap.png",
+ "approved_image_sha256": "c90279799d3d9f352a4662ca2e4ee290838eea9fb7ca37546c9befe80609001e",
+ "reviewed_caption": "Publication week 16-22 Nov 2026\nAs of 22 Nov 2026, 8:26pm NZDT\n\nOFFICIAL RECORD\nINVESTOR: 0W - 1L\nPUNTER: 1W - 0L\n\nUNOFFICIAL RECORD\nGAMBLER: 1W - 0L\nDEGEN: 0W - 1L\nMultis (unofficial): 1W - 0L\nR18 | Gamble responsibly | 0800 654 655"
+}
