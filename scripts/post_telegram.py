@@ -60,3 +60,26 @@ def post_no_picks():
         "#PuntmateNZ"
     )
     _send(text)
+
+
+def repair_message_photo(message_id, image_url, image_sha256, caption):
+    """Add the inspected image to one existing bot post, never send a new post."""
+    import hashlib
+    assert isinstance(message_id, int) and message_id > 0
+    assert len(caption) <= 1024, 'Caption exceeds Telegram photo limit'
+    image = requests.get(image_url, timeout=30)
+    image.raise_for_status()
+    assert hashlib.sha256(image.content).hexdigest() == image_sha256, 'Image hash mismatch'
+    import json
+    response = requests.post(
+        'https://api.telegram.org/bot' + BOT_TOKEN + '/editMessageMedia',
+        data={'chat_id': CHANNEL_ID, 'message_id': message_id,
+              'media': json.dumps({'type': 'photo', 'media': 'attach://photo', 'caption': caption})},
+        files={'photo': ('pick.png', image.content, 'image/png')}, timeout=40)
+    result = response.json()
+    if not result.get('ok'):
+        raise RuntimeError('Telegram media repair rejected: ' + str(result.get('description')))
+    edited = result['result']
+    assert edited['message_id'] == message_id and edited.get('photo'), 'Unexpected repaired message'
+    assert edited.get('caption') == caption, 'Caption changed during media repair'
+    return result
