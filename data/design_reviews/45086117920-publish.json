@@ -1,0 +1,34 @@
+{
+  "run_id": "45086117920",
+  "job": "publish",
+  "snapshot_sha256": "c4b376fb87d24cd488640b95903e0b4d5071c8f85e86e8e344802ead79664add",
+  "decision": "PASS",
+  "reviewer": "PuntMate operator, actual current pixel inspection of accepted pick card and existing Telegram caption",
+  "reviewed_at": "2026-11-22T23:59:10.826789+00:00",
+  "style_reference": "Accepted v3 black and green no-grid daily carousel, approved repo lockup, conspicuous UNOFFICIAL on every slide",
+  "outgoing_assets": {
+    "data/review/2026-11-23_Denver_Nuggets_vs_Chicago_Bulls/telegram-post.txt": "adecaff9d75a1278c6a2bfea15c573ded9fb7dd23db4c7a3697056a3fd552296",
+    "data/review/2026-11-23_Denver_Nuggets_vs_Chicago_Bulls/post-metadata.json": "160055d4c199c4dbe666f292902436ddd9c4766d4cd90e578d3bbff91048291f"
+  },
+  "outgoing_images_external": [
+    {
+      "url": "https://github.com/user-attachments/assets/07af1c47-2a15-46da-8ad0-406aaf23f55e",
+      "sha256": "54f696264a5ca08676e4c70ff9ae94698e65ba050a7f9f872ef8484175babc61"
+    }
+  ],
+  "destinations": [
+    "telegram"
+  ],
+  "checks": {
+    "current_approved_style": true,
+    "rendered_pixels_inspected": true,
+    "heavy_logo": true,
+    "layout_and_no_clipping": true,
+    "wording_and_facts": true,
+    "all_destination_variants": true,
+    "story_safe_areas": true,
+    "captions_and_all_public_copy": true,
+    "carousel_direction_and_destination": true
+  },
+  "external_hosting_note": "Existing message 300 media repair only. Approved pick card hash verified before API edit. Full original 603-character caption, original message/date preserved. No send/delete/new pick notification."
+}
