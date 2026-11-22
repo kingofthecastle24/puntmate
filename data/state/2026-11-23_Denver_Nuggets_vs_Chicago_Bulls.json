@@ -1,6 +1,6 @@
 {
   "pick_id": "2026-11-23_Denver_Nuggets_vs_Chicago_Bulls",
-  "state": "AWAITING_APPROVAL",
+  "state": "PUBLISHED",
   "history": [
     {
       "state": "GENERATED",
@@ -16,6 +16,21 @@
       "state": "AWAITING_APPROVAL",
       "at": "2026-11-22T18:10:00+00:00",
       "note": "owner asked 06:58 NZDT 23 Nov via WhatsApp to try posting today's pick again; Instagram feed only"
+    },
+    {
+      "state": "APPROVED",
+      "at": "2026-11-22T23:41:57.018666+00:00",
+      "note": "State reconciliation only, not a new approval: owner WhatsApp 23 Nov 06:58:56 authorized Instagram retry, 12:38:13 Yes authorized today and standing daily Telegram. Original prep history timestamps are recorded values, not reliable execution times."
+    },
+    {
+      "state": "PUBLISHING",
+      "at": "2026-11-22T23:41:57.018960+00:00",
+      "note": "State reconciliation only, no send or test: actual Instagram run45053610580 attempt2 and Telegram run45084461393 attempt2 already completed; canonical delivery receipts preserved."
+    },
+    {
+      "state": "PUBLISHED",
+      "at": "2026-11-22T23:41:57.019727+00:00",
+      "note": "Reconciled after live verification: Instagram https://www.instagram.com/puntmatenz/p/DgDbAORCVk4/ at07:13 NZDT and Telegram https://t.me/puntmatenz/300 at12:41 NZDT. Both canonical receipt flags true. No republish performed. Reconciliation timestamps reflect this repair, not original sends."
     }
   ]
 }
