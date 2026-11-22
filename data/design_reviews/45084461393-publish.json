@@ -1,0 +1,29 @@
+{
+  "run_id": "45084461393",
+  "job": "publish",
+  "snapshot_sha256": "e6b6cdd5a3859474de9567a234fa9d6eeff9b7a990b7b3d12a3da30ba88cca0d",
+  "decision": "PASS",
+  "reviewer": "PuntMate operator: full Telegram text and exact destination inspected; text-only catch-up of already reviewed pick",
+  "reviewed_at": "2026-11-22T23:40:16.496528+00:00",
+  "style_reference": "Accepted v3 black and green no-grid daily carousel, approved repo lockup, conspicuous UNOFFICIAL on every slide",
+  "outgoing_assets": {
+    "data/review/2026-11-23_Denver_Nuggets_vs_Chicago_Bulls/telegram-post.txt": "adecaff9d75a1278c6a2bfea15c573ded9fb7dd23db4c7a3697056a3fd552296",
+    "data/review/2026-11-23_Denver_Nuggets_vs_Chicago_Bulls/post-metadata.json": "443ba8aab3d12960e2cabe693831ed12ce611b1d7d1dea4d5e83f02ab3b4eac3"
+  },
+  "outgoing_images_external": [],
+  "destinations": [
+    "telegram"
+  ],
+  "checks": {
+    "current_approved_style": true,
+    "rendered_pixels_inspected": true,
+    "heavy_logo": true,
+    "layout_and_no_clipping": true,
+    "wording_and_facts": true,
+    "all_destination_variants": true,
+    "story_safe_areas": true,
+    "captions_and_all_public_copy": true,
+    "carousel_direction_and_destination": true
+  },
+  "external_hosting_note": "Telegram retry sends text only, no local tip.png exists. Prior Instagram receipt is preserved and excluded from retry. Existing cards were pixel-inspected and posted this morning, not resent here. Owner Yes at 12:38 confirms today and daily Telegram scope. Sources refreshed 12:38, before 13:00 NZDT tip."
+}
