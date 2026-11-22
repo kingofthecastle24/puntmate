@@ -221,9 +221,13 @@ def kickoff_display(kickoff_iso):
     from datetime import datetime, timedelta
     try:
         dt = datetime.fromisoformat(str(kickoff_iso).replace("Z", "+00:00"))
-        nzt = dt + timedelta(hours=12)  # NZST — matches convention used elsewhere
+        from zoneinfo import ZoneInfo
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        nzt = dt.astimezone(ZoneInfo("Pacific/Auckland"))  # DST-aware NZST/NZDT
+        tzlabel = nzt.tzname()
         short = nzt.strftime("%a %d %b").upper()
-        long = nzt.strftime("%a %d %b, %I:%M%p").replace(" 0", " ").replace("AM", "am").replace("PM", "pm") + " NZT"
+        long = nzt.strftime("%a %d %b, %I:%M%p").replace(" 0", " ").replace("AM", "am").replace("PM", "pm") + " " + tzlabel
         return short, long
     except (ValueError, TypeError):
         return None, None
