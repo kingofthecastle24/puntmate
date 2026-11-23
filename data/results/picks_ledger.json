@@ -1063,6 +1063,41 @@
       "kickoff": null,
       "home_team": "Minnesota Timberwolves",
       "away_team": "Memphis Grizzlies"
+    },
+    {
+      "id": "2026-11-23_Denver_Nuggets_vs_Chicago_Bulls",
+      "date_posted": "2026-11-23",
+      "match": "Denver Nuggets vs Chicago Bulls",
+      "selection": "DENVER NUGGETS ML",
+      "approx_odds": 1.24,
+      "type": "UNOFFICIAL",
+      "lane": "UNOFFICIAL",
+      "result": "WIN",
+      "publication_receipt": "data/published/2026-11-23_Denver_Nuggets_vs_Chicago_Bulls.json",
+      "telegram_message_id": 300,
+      "publication_url": "https://www.instagram.com/puntmatenz/p/DgDbAORCVk4/",
+      "publication_urls": [
+        "https://www.instagram.com/puntmatenz/p/DgDbAORCVk4/",
+        "https://t.me/puntmatenz/300"
+      ],
+      "notes": "UNOFFICIAL full-game moneyline single, not on the official record. Published Instagram 07:13 NZDT and Telegram 12:41 NZDT, same selection, not two picks. Existing Telegram message 300 later repaired with accepted pick image, original time/caption retained. Denver won 151-145 in overtime after regulation tied 131-131; Chicago erased a seven-point deficit in the final 40 seconds. Indicative public odds, not TAB. No personal bet, stake, profit or placement recorded. Lane kept as actually published UNOFFICIAL, no inferred Investor/Punter/Gambler/Degen assignment.",
+      "outcome_source": "https://www.cbssports.com/nba/news/jamal-murray-scores-45-as-nuggets-hold-off-bulls-in-151-145-ot-win/",
+      "outcome_sources": [
+        "https://www.cbssports.com/nba/news/jamal-murray-scores-45-as-nuggets-hold-off-bulls-in-151-145-ot-win/",
+        "https://sportsdata.usatoday.com/basketball/nba/stats/3018322"
+      ],
+      "outcome_checked_at": "2026-11-23T16:49:54+13:00",
+      "market": "Moneyline (full game, including overtime)",
+      "sport": "basketball_nba",
+      "event_id": null,
+      "kickoff": "2026-11-23T00:00:00Z",
+      "home_team": "Chicago Bulls",
+      "away_team": "Denver Nuggets",
+      "final_score": {
+        "Denver Nuggets": 151,
+        "Chicago Bulls": 145
+      },
+      "overtime": true
     }
   ],
   "coverage_audit": {
