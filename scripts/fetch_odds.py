@@ -151,6 +151,30 @@ DRAW_POSSIBLE_SPORTS = {
 LAST_FETCH_ERRORS = []
 
 
+def fetch_active_sport_keys():
+    """Return the set of sport keys The Odds API currently lists as active.
+
+    2026-11-25: the /v4/sports endpoint does NOT count against the usage
+    quota, so we call it once per run and skip out-of-season sports
+    (Wimbledon in November, the World Cup after July, etc.) instead of
+    spending credits on them. Returns None if the call fails, in which case
+    the caller falls back to fetching every configured sport as before.
+    """
+    try:
+        r = requests.get(f"{BASE_URL}/sports", params={"apiKey": ODDS_API_KEY}, timeout=10)
+        if r.status_code != 200:
+            print(f"[sports list] HTTP {r.status_code}: {r.text[:300]}")
+            return None
+        data = r.json()
+        if not isinstance(data, list) or not any(isinstance(x, dict) and "key" in x for x in data):
+            return None  # unexpected shape: fall back to fetching everything
+        return {x["key"] for x in data if isinstance(x, dict) and x.get("active")}
+    except Exception as e:
+        print(f"[sports list] Error: {e}")
+        return None
+
+
+
 def fetch_upcoming_odds(hours_ahead=24):
     """Fetch odds for all configured sports. Returns list of match dicts.
 
@@ -163,7 +187,14 @@ def fetch_upcoming_odds(hours_ahead=24):
     LAST_FETCH_ERRORS = []
     all_matches = []
 
-    for sport in SPORTS:
+    active = fetch_active_sport_keys()
+    sports_to_fetch = SPORTS if active is None else [s for s in SPORTS if s in active]
+    if active is not None:
+        skipped = [s for s in SPORTS if s not in active]
+        if skipped:
+            print(f"Skipping out-of-season sports (saves quota): {', '.join(skipped)}")
+
+    for sport in sports_to_fetch:
         try:
             wants_extra_markets = sport in EXPANDED_MARKET_SPORTS
             wants_totals_only = sport in TOTALS_ONLY_SPORTS
@@ -244,7 +275,10 @@ def fetch_upcoming_odds(hours_ahead=24):
             print(f"[{sport}] {added} matches today. Quota remaining: {quota}")
 
         except requests.exceptions.HTTPError as e:
-            print(f"[{sport}] HTTP {e.response.status_code}: {e}")
+            # Log the API's own message (first 300 chars) so a 401 can be told
+            # apart: OUT_OF_USAGE_CREDITS (quota used up) vs an invalid key.
+            body = (e.response.text or "")[:300]
+            print(f"[{sport}] HTTP {e.response.status_code}: {e} | {body}")
             LAST_FETCH_ERRORS.append({"sport": sport, "status_code": e.response.status_code, "error": str(e)})
         except Exception as e:
             print(f"[{sport}] Error: {e}")
